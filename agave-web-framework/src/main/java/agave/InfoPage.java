@@ -25,7 +25,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.darkarbiter.agave;
+package agave;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,9 +35,9 @@ import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.darkarbiter.agave.annotations.ContentType;
-import org.darkarbiter.agave.annotations.Path;
-import org.darkarbiter.agave.annotations.PositionalParameters;
+import agave.annotations.ContentType;
+import agave.annotations.Path;
+import agave.annotations.PositionalParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,16 +141,10 @@ public final class InfoPage implements ResourceHandler {
     public void render(final HandlerContext context) throws IOException {
         PrintWriter out = context.getResponse().getWriter();
         XHTMLTemplateGroup group = new XHTMLTemplateGroup("info");
-        StringTemplate info = group.getInstanceOf("org/darkarbiter/framework/InfoPage");
+        StringTemplate info = group.getInstanceOf("InfoPage");
         info.setAttribute("defaultContentType", HandlerManager.DEFAULT_CONTENT_TYPE);
         
         List<ResourceHandlerDescriptor> resources = new ArrayList<ResourceHandlerDescriptor>();
-        
-        
-        
-        LOGGER.info("context is null: " + (context == null));
-        LOGGER.info("resource handlers are null: " + (context.getResourceHandlers() == null));
-        
         
         for (String path : context.getResourceHandlers().keySet()) {
             ResourceHandlerDescriptor descriptor = new ResourceHandlerDescriptor();

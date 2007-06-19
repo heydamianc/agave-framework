@@ -25,18 +25,18 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.darkarbiter.agave;
+package agave;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.darkarbiter.agave.HandlerContext;
-import org.darkarbiter.agave.HandlerException;
-import org.darkarbiter.agave.MissingAnnotationException;
-import org.darkarbiter.agave.ResourceHandler;
-import org.darkarbiter.agave.XHTMLTemplateGroup;
-import org.darkarbiter.agave.annotations.Template;
+import agave.HandlerContext;
+import agave.HandlerException;
+import agave.MissingAnnotationException;
+import agave.ResourceHandler;
+import agave.XHTMLTemplateGroup;
+import agave.annotations.Template;
 
 /**
  *

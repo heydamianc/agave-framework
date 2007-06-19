@@ -25,7 +25,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.darkarbiter.agave;
+package agave;
 
 import java.io.IOException;
 
@@ -41,7 +41,7 @@ public interface ResourceHandler extends Handler {
      * Renders this resource.
      * @param context The resource servletContext
      * @throws java.io.IOException
-     * @throws org.darkarbiter.framework.HandlerException 
+     * @throws agave.HandlerException 
      * 
      */
     public void render(HandlerContext context) throws HandlerException, IOException;

@@ -25,7 +25,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.darkarbiter.agave.annotations;
+package agave.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
@@ -42,6 +42,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Converter {
 
-	Class<? extends org.darkarbiter.agave.converters.Converter> value();
+	Class<? extends agave.converters.Converter> value();
 	
 }
