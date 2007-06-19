@@ -25,8 +25,13 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.darkarbiter.agave;
+package agave;
 
+import agave.annotations.ContentType;
+import agave.converters.Converter;
+import agave.annotations.Path;
+import agave.annotations.PositionalParameters;
+import agave.annotations.Required;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -47,11 +52,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.darkarbiter.agave.annotations.ContentType;
-import org.darkarbiter.agave.converters.Converter;
-import org.darkarbiter.agave.annotations.Path;
-import org.darkarbiter.agave.annotations.PositionalParameters;
-import org.darkarbiter.agave.annotations.Required;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,7 +174,7 @@ public class HandlerManager implements Filter {
     /**
      *
      * @param context
-     * @throws org.darkarbiter.framework.HandlerException
+     * @throws agave.HandlerException
      * @throws java.io.IOException
      */
     protected void handlePost(HandlerContext context) throws HandlerException, IOException {
@@ -210,7 +210,7 @@ public class HandlerManager implements Filter {
      *
      * @param context
      * @throws java.io.IOException
-     * @throws org.darkarbiter.framework.HandlerException
+     * @throws agave.HandlerException
      */
     protected void handleGet(HandlerContext context) throws HandlerException, IOException {
         Class<? extends ResourceHandler> handlerClass = resourceHandlers.get(context.getMatchedPath());
@@ -350,8 +350,8 @@ public class HandlerManager implements Filter {
                     
                     if (method != null) {
                         // If there is a converter on the setter, use it
-                        org.darkarbiter.agave.annotations.Converter converterAnn =
-                                method.getAnnotation(org.darkarbiter.agave.annotations.Converter.class);
+                        agave.annotations.Converter converterAnn =
+                                method.getAnnotation(agave.annotations.Converter.class);
                         if (converterAnn != null) {
                             Class<? extends Converter> converterClass = converterAnn.value();
                             Constructor<? extends Converter> constructor = converterClass.getConstructor();
