@@ -27,3 +27,9 @@ body {
 #grid tr td a:hover {
 	color: #c0c0c0;
 }
+
+#pattern {
+	display: block;
+	float: left;
+	text-align: left;
+}

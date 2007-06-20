@@ -9,25 +9,35 @@
 		<link rel="stylesheet" type="text/css" href="$contextPath$/style/layout.css"/>
 	</head>
 	<body>
-
+		
+		$if(!running)$
+		<div id="pattern">
+			<ul>
+				<li><a href="$contextPath$/setup/block">Block</a></li>
+				<li><a href="$contextPath$/setup/boat">Boat</a></li>
+				<li><a href="$contextPath$/setup/glider">Glider</a></li>
+				<li><a href="$contextPath$/setup/gosper_glider_gun">Gosper Glider Gun</a></li>
+				<li><a href="$contextPath$/setup/toad">Toad</a></li>
+			</ul>
+		</div>
+		$endif$
+		
 		<table id="grid">
 $grid: { row | 
 <tr>
-	$row: { cell | 
-	<td class="$if(cell.alive)$a$else$d$endif$">
-		<a href="$contextPath$/toggle/$cell.row$/$cell.col$">@</a>
-	</td>
-	}$
+	$row: { cell | <td class="$if(cell.alive)$a$else$d$endif$"><a href="$contextPath$/toggle/$cell.row$/$cell.col$">@</a></td>}$
 </tr>
 }$
 		</table>
 		<p>
-			<a href="$contextPath$/setup">Setup</a>
-			|
-			<a href="$contextPath$/run">Run</a>
-			|
+			<a href="$contextPath$/setup">Setup</a> |
+				<a href="$contextPath$/run">Run</a> |
 			<a href="$contextPath$/stop">Stop</a>
 		</p>
+		
+		$if(iterations)$
+		<p>$iterations$ iterations ($if(running)$running$else$stopped$endif$)</p>
+		$endif$
 
 	</body>
 </html>

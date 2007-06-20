@@ -57,6 +57,10 @@ public abstract class AbstractGridHandler extends StringTemplateHandler {
 		Integer iterations = (Integer)session.getAttribute(ITERATIONS);
 		if (iterations == null) {
 			iterations = new Integer(0);
+		} else {
+			if (running) {
+				iterations = iterations + 1;
+			}
 		}
 		
 		running = updateGrid(context, template, grid, running);
