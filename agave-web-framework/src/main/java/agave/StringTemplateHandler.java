@@ -70,6 +70,7 @@ public abstract class StringTemplateHandler implements ResourceHandler {
         out.close();
     }
     
-    public abstract void prepareTemplate(HandlerContext context, StringTemplate template) throws HandlerException;
+    public abstract void prepareTemplate(HandlerContext context, StringTemplate template) 
+	throws HandlerException, IOException;
 
 }
