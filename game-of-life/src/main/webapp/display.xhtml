@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Conway's Game of Life</title>
+		$if(running)$<meta http-equiv="refresh" content="0.75"/>$endif$
+		<link rel="stylesheet" type="text/css" href="$contextPath$/style/layout.css"/>
+	</head>
+	<body>
+
+		<table id="grid">
+$grid: { row | 
+<tr>
+	$row: { cell | 
+	<td class="$if(cell.alive)$a$else$d$endif$">
+		<a href="$contextPath$/toggle/$cell.row$/$cell.col$">@</a>
+	</td>
+	}$
+</tr>
+}$
+		</table>
+		<p>
+			<a href="$contextPath$/setup">Setup</a>
+			|
+			<a href="$contextPath$/run">Run</a>
+			|
+			<a href="$contextPath$/stop">Stop</a>
+		</p>
+
+	</body>
+</html>
