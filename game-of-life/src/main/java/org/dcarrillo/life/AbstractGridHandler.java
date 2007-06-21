@@ -15,9 +15,9 @@ import org.antlr.stringtemplate.StringTemplate;
 
 public abstract class AbstractGridHandler extends StringTemplateHandler {
 
-	protected static final String GRID       = "grid";
-	protected static final String RUNNING    = "running";
-	protected static final String ITERATIONS = "iterations";
+	static final String GRID       = "grid";
+	static final String RUNNING    = "running";
+	static final String ITERATIONS = "iterations";
 
 	private int row;
 	private int col;
@@ -54,16 +54,12 @@ public abstract class AbstractGridHandler extends StringTemplateHandler {
 			running = Boolean.FALSE;
 		}
 		
-		Integer iterations = (Integer)session.getAttribute(ITERATIONS);
-		if (iterations == null) {
-			iterations = new Integer(0);
-		} else {
-			if (running) {
-				iterations = iterations + 1;
-			}
-		}
-		
 		running = updateGrid(context, template, grid, running);
+		
+		Integer iterations = (Integer)session.getAttribute(ITERATIONS);
+		if (iterations != null && running) {
+			iterations = iterations + 1;
+		}
 		
 		template.setAttribute(GRID, grid.getCurrent());
 		template.setAttribute(RUNNING, running);

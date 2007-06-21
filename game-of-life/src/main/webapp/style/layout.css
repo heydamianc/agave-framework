@@ -1,9 +1,11 @@
 body {
 	font-family: fixed; 
 	text-align: center;
+	
 }
 
 #grid {
+	font-size: 0.6em;
 	border: 1px solid #e6e6e6;
 	border-collapse: collapse; 
 	margin-left: auto; 
