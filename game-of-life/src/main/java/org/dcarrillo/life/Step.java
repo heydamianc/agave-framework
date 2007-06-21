@@ -4,18 +4,16 @@ import agave.HandlerContext;
 import agave.HandlerException;
 import agave.annotations.ContentType;
 import agave.annotations.Path;
-import agave.annotations.PositionalParameters;
 import agave.annotations.Template;
 
 import java.io.IOException;
 
 import org.antlr.stringtemplate.StringTemplate;
 
-@Path("/toggle")
-@PositionalParameters({"row", "col"})
+@Path("/step")
 @ContentType(ContentType.APPLICATION_XHTML_XML)
 @Template(path = "/", name = "display")
-public final class Toggle extends AbstractGridHandler {
+public final class Step extends AbstractGridHandler {
 	
 	protected Boolean updateGrid(
 		final HandlerContext context,
@@ -23,18 +21,8 @@ public final class Toggle extends AbstractGridHandler {
 		final Grid grid,
 		Boolean running
 	) throws HandlerException, IOException {
-		if (grid == null) {
-			context.getResponse().sendRedirect(context.getRequest().getContextPath() + "/setup");
-		}
-		
-		Cell cell = grid.getCurrent().get(getRow()).get(getCol());
-		cell.toggle();
-		
-		if (running) {
-			context.getResponse().sendRedirect(context.getRequest().getContextPath() + "/run");
-		}
-		
-		return running;
+		grid.evolve();
+		return Boolean.FALSE;
 	}
 	
 }
