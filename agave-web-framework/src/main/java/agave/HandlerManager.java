@@ -337,7 +337,7 @@ public class HandlerManager implements Filter {
                     String setterName = "set" + paramName.substring(0,1).toUpperCase() +
                             paramName.substring(1);
                     
-                    Method[] methods = handlerClass.getDeclaredMethods();
+                    Method[] methods = handlerClass.getMethods();
                     Method method = null;
                     
                     // Find the method named by the setterName above
