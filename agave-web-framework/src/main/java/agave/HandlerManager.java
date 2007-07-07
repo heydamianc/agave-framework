@@ -370,9 +370,18 @@ public class HandlerManager implements Filter {
 		return longestMatch;
 	}
 	
+	/**
+	 * Bind a possibly converted value of some sort to a property in a class.
+	 * @param context The context in which the handler operates in
+	 * @param handlerClass The handler class
+	 * @param handler The instance of the handlerClass that has been created
+	 *        for each request.
+	 * @param params The parameters to set on the handler instance
+	 * @throws agave.HandlerException if any exception occurs
+	 */
 	protected <T> void bindParameters(HandlerContext context, 
 		Class<? extends Handler> handlerClass, Handler handler, 
-		Map<String, T> params) throws ServletException {
+		Map<String, T> params) throws HandlerException {
 		for (String paramName : params.keySet()) {
 			T paramValue = params.get(paramName);
 			if (paramValue != null) {
@@ -412,7 +421,7 @@ public class HandlerManager implements Filter {
 								" on class " + handlerClass.getName());
 					}
 				} catch (Exception ex) {
-					throw new ServletException("Could not bind positional parameter '" +
+					throw new HandlerException("Could not bind positional parameter '" +
 						paramName + "'", ex);
 				}
 			}
