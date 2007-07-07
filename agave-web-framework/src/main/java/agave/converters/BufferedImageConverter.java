@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 - 2007 Damian Carrillo.  All rights reserved.
+ * Copyright (c) 2006 - 2007 Damian Carrillo.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
@@ -25,11 +25,29 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave;
+package agave.converters;
+
+import agave.HandlerContext;
+
+import java.io.File;
+import java.awt.image.BufferedImage;
 
 /**
- *
+ * Converts the input File into a BufferedImage object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @since 1.0
  */
-public interface Handler {
+public class BufferedImageConverter implements Converter<File, BufferedImage> {
+
+	public BufferedImage convert(HandlerContext ctx, File value) 
+	throws ConversionException {
+		BufferedImage img = null;
+		try {
+		    img = ImageIO.read(value);
+		} catch (IOException ex) {
+			throw new ConversionException(ex);
+		}
+		return img;
+	}
+	
 }

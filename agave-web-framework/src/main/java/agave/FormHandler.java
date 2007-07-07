@@ -4,12 +4,12 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  o Redistributions of source code must retain the above copyright notice,
+ *  * Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- *  o Redistributions in binary form must reproduce the above copyright notice,
+ *  * Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *  o Neither the name of the <ORGANIZATION> nor the names of its contributors
+ *  * Neither the name of the <ORGANIZATION> nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -39,6 +39,6 @@ public interface FormHandler extends Handler {
      * @param context
      * @return the path to take
      */
-    public String process(HandlerContext context);
+    public String process(HandlerContext context) throws HandlerException;
     
 }
