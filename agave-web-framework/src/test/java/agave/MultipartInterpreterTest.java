@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006 - 2007 Damian Carrillo.  All rights reserved.
+ * Copyright (c) 2005 - 2007 Damian Carrillo.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,23 +27,36 @@
  */
 package agave;
 
+import java.io.InputStream;
 import java.io.IOException;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /**
- * A resource is something that is accessible through the HTTP protocol so that
- * it is visible to a user.
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
- * @since 1.0
+ * 
+ * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface ResourceHandler extends Handler {
-    
-    /**
-     * Renders this resource.
-     * @param context The resource servletContext
-     * @throws java.io.IOException
-     * @throws agave.HandlerException 
-     * 
-     */
-    public void render(HandlerContext context) throws HandlerException, IOException;
-    
+public class MultipartInterpreterTest {
+	
+	InputStream in = getClass().getClassLoader().getResourceAsStream("teststream.txt");
+	String boundary = "---------------------------105548196212704111141517174524";
+	
+	@Test
+	public void testConstructor() throws IOException {
+		MultipartInterpreter mi = new MultipartInterpreter(in, boundary, true);
+		
+		assertNotNull(mi.getProperties());
+		assertNotNull(mi.getProperties().get("text1"));
+		assertEquals(mi.getProperties().get("text1"), "one");
+		assertNotNull(mi.getProperties().get("text2"));
+		assertEquals(mi.getProperties().get("text2"), "two");
+		
+		assertNotNull(mi.getFiles());
+		assertNotNull(mi.getFiles().get("image1"));
+		assertTrue(mi.getFiles().get("image1").exists());
+		assertNotNull(mi.getFiles().get("image2"));
+		assertTrue(mi.getFiles().get("image2").exists());
+	}
+
 }

@@ -4,12 +4,12 @@
  * Redistribution and use in source and binary forms, with or without 
  * modification, are permitted provided that the following conditions are met:
  *
- *  o Redistributions of source code must retain the above copyright notice, 
+ *  * Redistributions of source code must retain the above copyright notice, 
  *    this list of conditions and the following disclaimer.
- *  o Redistributions in binary form must reproduce the above copyright notice, 
+ *  * Redistributions in binary form must reproduce the above copyright notice, 
  *    this list of conditions and the following disclaimer in the documentation 
  *    and/or other materials provided with the distribution.
- *  o Neither the name of the <ORGANIZATION> nor the names of its contributors 
+ *  * Neither the name of the <ORGANIZATION> nor the names of its contributors 
  *    may be used to endorse or promote products derived from this software 
  *    without specific prior written permission.
  * 
@@ -27,14 +27,17 @@
  */
 package agave.converters;
 
+import agave.HandlerContext;
+
 /**
  * Converts the input string into an Float object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  * @since 1.0
  */
-public class FloatConverter implements Converter<Float> {
+public class FloatConverter implements Converter<String, Float> {
 
-	public Float convert(String value) throws ConversionException {
+	public Float convert(HandlerContext ctx, String value) 
+	throws ConversionException {
 		return new Float(value);
 	}
 	

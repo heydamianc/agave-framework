@@ -4,14 +4,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  o Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *  o Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *  o Neither the name of the <ORGANIZATION> nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
+ *	* Redistributions of source code must retain the above copyright notice,
+ *	  this list of conditions and the following disclaimer.
+ *	* Redistributions in binary form must reproduce the above copyright notice,
+ *	  this list of conditions and the following disclaimer in the documentation
+ *	  and/or other materials provided with the distribution.
+ *	* Neither the name of the <ORGANIZATION> nor the names of its contributors
+ *	  may be used to endorse or promote products derived from this software
+ *	  without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,21 +27,24 @@
  */
 package agave.converters;
 
+import agave.HandlerContext;
+
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Convert a very simple date.
+ * Convert a very simple date in the format of 1982-5-7.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  * @since 1.0
  */
-public class DateConverter implements Converter<Date> {
-    
-    public Date convert(String value) throws ConversionException {
-        String[] components = value.split("-");
-        GregorianCalendar cal = new GregorianCalendar(Integer.parseInt(components[0]),
-                Integer.parseInt(components[1]) - 1, Integer.parseInt(components[2]));
-        return cal.getTime();
-    }
-    
+public class DateConverter implements Converter<String, Date> {
+	
+	public Date convert(HandlerContext ctx, String value) 
+	throws ConversionException {
+		String[] components = value.split("-");
+		GregorianCalendar cal = new GregorianCalendar(Integer.parseInt(components[0]),
+				Integer.parseInt(components[1]) - 1, Integer.parseInt(components[2]));
+		return cal.getTime();
+	}
+	
 }
