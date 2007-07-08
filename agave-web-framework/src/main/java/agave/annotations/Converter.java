@@ -40,7 +40,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
-public @interface Converter {
+public @interface Converters {
 
 	Class<? extends agave.converters.Converter> value();
 	
