@@ -27,6 +27,8 @@
  */
 package agave.annotations;
 
+import agave.converters.Converter;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.lang.annotation.Retention;
@@ -42,6 +44,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Converters {
 
-	Class<? extends agave.converters.Converter> value();
+	Class<? extends Converter>[] value();
 	
 }

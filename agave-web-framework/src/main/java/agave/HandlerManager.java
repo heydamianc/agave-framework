@@ -28,10 +28,11 @@
 package agave;
 
 import agave.annotations.ContentType;
-import agave.converters.Converter;
+import agave.annotations.Converters;
 import agave.annotations.Path;
 import agave.annotations.PositionalParameters;
 import agave.annotations.Required;
+import agave.converters.ConverterChain;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -80,6 +81,7 @@ public class HandlerManager implements Filter {
 	public static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_XHTML_XML;
 	
 	private FilterConfig filterConfig = null;
+	private Map<String, String> configuration;
 	protected Map<String, Class<? extends ResourceHandler>> resourceHandlers;
 	protected Map<String, Class<? extends FormHandler>> formHandlers;
 	
@@ -99,6 +101,15 @@ public class HandlerManager implements Filter {
 		}
 		
 		this.filterConfig = filterConfig;
+		configuration = new HashMap<String, String>();
+		
+		Enumeration<String> initParameters = filterConfig.getInitParameterNames();
+		while (initParameters.hasMoreElements()) {
+			String configKey = initParameters.nextElement();
+			String configValue = filterConfig.getInitParameter(configKey);
+			configuration.put(configKey, configValue);
+		}
+		
 		resourceHandlers = new LinkedHashMap<String, Class<? extends ResourceHandler>>();
 		formHandlers = new LinkedHashMap<String, Class<? extends FormHandler>>();
 		
@@ -135,9 +146,11 @@ public class HandlerManager implements Filter {
 			HttpServletRequest request = (HttpServletRequest)req;
 			HttpServletResponse response = (HttpServletResponse)resp;
 		
-			String msg = "Displaying request headers (disable this by " + 
-				"removing the debug parameter to HandlerManager in the web.xml)";
-			LOGGER.debug(msg);
+			if (LOGGER.isDebugEnabled()) {
+				String msg = "Displaying request headers (disable this by " + 
+					"removing the debug parameter to HandlerManager in the web.xml)";
+				LOGGER.debug(msg);
+			}
 			
 			Enumeration<String> headerNames = request.getHeaderNames();
 			while (headerNames.hasMoreElements()) {
@@ -159,6 +172,7 @@ public class HandlerManager implements Filter {
 				String matchedPath = matchPath(requestedPath, formHandlers.keySet());
 				if (matchedPath != null) {
 					handlePost(new HandlerContext(
+							configuration,
 							filterConfig.getServletContext(),
 							request,
 							response,
@@ -174,6 +188,7 @@ public class HandlerManager implements Filter {
 				String matchedPath = matchPath(requestedPath, resourceHandlers.keySet());
 				if (matchedPath != null) {
 					handleGet(new HandlerContext(
+							configuration,
 							filterConfig.getServletContext(),
 							request,
 							response,
@@ -390,35 +405,30 @@ public class HandlerManager implements Filter {
 						paramName.substring(1);
 					
 					Method[] methods = handlerClass.getMethods();
-					Method method = null;
+					Method setter = null;
 					
 					// Find the method named by the setterName above
 					for (Method m : methods) {
 						if (m.getName().equals(setterName)) {
-							method = m;
+							setter = m;
 							break;
 						}
 					}
 					
-					if (method != null) {
+					if (setter != null) {
 						// If there is a converter on the setter, use it
-						agave.annotations.Converter converterAnn =
-								method.getAnnotation(agave.annotations.Converter.class);
-						if (converterAnn != null) {
-							Class<? extends Converter> converterClass = converterAnn.value();
-							Constructor<? extends Converter> constructor = 
-								converterClass.getConstructor();
-							 
-							Converter converter = constructor.newInstance();
-							method.invoke(handler, converter.convert(context, paramValue));
+						Converters converters = setter.getAnnotation(Converters.class);
+						if (converters != null) {
+							ConverterChain chain = new ConverterChain(converters.value());
+							setter.invoke(handler, chain.convertAll(context, paramValue));
 						} else {
-							method.invoke(handler, paramValue);
-							LOGGER.debug("Calling setter '" + method.getName() +
+							setter.invoke(handler, paramValue);
+							LOGGER.debug("Calling setter '" + setter.getName() +
 								"' with paramater " + paramValue.toString());
 						}
 					} else {
 						throw new NoSuchMethodException("Could not find setter " + setterName +
-								" on class " + handlerClass.getName());
+							" on class " + handlerClass.getName());
 					}
 				} catch (Exception ex) {
 					throw new HandlerException("Could not bind positional parameter '" +

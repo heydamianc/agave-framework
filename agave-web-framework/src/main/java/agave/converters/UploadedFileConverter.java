@@ -29,36 +29,45 @@ package agave.converters;
 
 import agave.HandlerContext;
 
-import javax.imageio.ImageIO;
-
 import java.io.File;
-import java.io.IOException;
-import java.awt.image.BufferedImage;
+
+import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory ;
 
 /**
- * Converts the input File into a BufferedImage object.
+ * Converts the input file into a file accessible by the webapp.  Initially,
+ * the uploaded file ends up in the system-wide temp directory, which is 
+ * typically not accessible from a webapp.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  * @since 1.0
  */
-public class BufferedImageConverter implements Converter<File, BufferedImage> {
+public class UploadedFileConverter implements Converter<File, File> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BufferedImageConverter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UploadedFileConverter.class);
 
-	public BufferedImage convert(HandlerContext ctx, File value) 
+	public File convert(HandlerContext ctx, File uploadedFile) 
 	throws ConversionException {
+		ServletContext sctx = ctx.getServletContext();
 		
-		LOGGER.debug("Attempting to read image: " + value.getAbsolutePath());
+		File uploadDir = new File(sctx.getRealPath("/"));
 		
-		BufferedImage img = null;
-		try {
-		    img = ImageIO.read(value);
-		} catch (IOException ex) {
-			throw new ConversionException(ex);
+		String uploadPath = ctx.getConfiguration().get("upload-directory");
+		String[] uploadPathDirs = uploadPath.split(File.pathSeparator);
+		
+		for (String traversedDir : uploadPath.split("/")) {
+			uploadDir = new File(uploadDir, traversedDir);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdir();
+			}
 		}
-		return img;
+		
+		File moved = new File(uploadDir, uploadedFile.getName());
+		uploadedFile.renameTo(moved);
+		
+		LOGGER.debug("Moved uploaded file to " + moved.getAbsolutePath());
+		return moved;
 	}
 	
 }
