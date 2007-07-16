@@ -185,6 +185,9 @@ public class HandlerManager implements Filter {
      */
     public void destroy() {
         filterConfig = null;
+        configuration = null;
+        resourceHandlers = null;
+        formHandlers = null;
     }
 
     /**
