@@ -399,7 +399,7 @@ public class HandlerManager implements Filter {
 		Map<String, T> params) throws HandlerException {
 		for (String paramName : params.keySet()) {
 			T paramValue = params.get(paramName);
-			if (paramValue != null) {
+			if (paramValue != null && !paramValue.equals("")) {
 				try {
 					String setterName = "set" + paramName.substring(0, 1).toUpperCase() +
 						paramName.substring(1);
