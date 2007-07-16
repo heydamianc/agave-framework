@@ -99,7 +99,7 @@ public class HandlerManager implements Filter {
 
         Enumeration initParameters = filterConfig.getInitParameterNames();
         while (initParameters.hasMoreElements()) {
-            String configKey = (String) initParameters.nextElement();
+            String configKey = (String)initParameters.nextElement();
             String configValue = filterConfig.getInitParameter(configKey);
             configuration.put(configKey, configValue);
         }
@@ -134,8 +134,8 @@ public class HandlerManager implements Filter {
      */
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         if (req instanceof HttpServletRequest && resp instanceof HttpServletResponse) {
-            HttpServletRequest request = (HttpServletRequest) req;
-            HttpServletResponse response = (HttpServletResponse) resp;
+            HttpServletRequest request = (HttpServletRequest)req;
+            HttpServletResponse response = (HttpServletResponse)resp;
 
             if (LOGGER.isDebugEnabled()) {
                 String msg = "Displaying request headers (disable this by " + "removing the debug parameter to HandlerManager in the web.xml)";
@@ -227,7 +227,7 @@ public class HandlerManager implements Filter {
             } else {
                 Enumeration requestParamNames = context.getRequest().getParameterNames();
                 while (requestParamNames.hasMoreElements()) {
-                    String requestParamName = (String) requestParamNames.nextElement();
+                    String requestParamName = (String)requestParamNames.nextElement();
                     String requestParamValue = context.getRequest().getParameter(requestParamName);
 
                     LOGGER.debug("Request parameter: " + requestParamName + " = " + requestParamValue);
@@ -266,7 +266,7 @@ public class HandlerManager implements Filter {
             Enumeration requestParamNames = context.getRequest().getParameterNames();
 
             while (requestParamNames.hasMoreElements()) {
-                String requestParamName = (String) requestParamNames.nextElement();
+                String requestParamName = (String)requestParamNames.nextElement();
                 String requestParamValue = context.getRequest().getParameter(requestParamName);
                 if (requestParamValue != null) {
                     params.put(requestParamName, requestParamValue);
@@ -434,9 +434,9 @@ public class HandlerManager implements Filter {
                     if (target.isAssignableFrom(candidate)) {
                         // Class heirarchy is tested for so the following should not be
                         // a problem
-                        @SuppressWarnings("unchecked")
-                        Class<T> match = (Class<T>) candidate;
-                        
+                        @SuppressWarnings(value = "unchecked")
+                        Class<T> match = (Class<T>)candidate;
+
                         matches.add(match);
                     }
                 } catch (ClassNotFoundException ex) {
