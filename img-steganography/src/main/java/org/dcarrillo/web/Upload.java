@@ -38,15 +38,20 @@ import agave.annotations.Converters;
 import agave.annotations.Path;
 import agave.annotations.Template;
 import agave.converters.UploadedFileConverter;
-import agave.converters.IntegerConverter;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.awt.image.FilteredImageSource;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.antlr.stringtemplate.StringTemplate;
+import org.dcarrillo.image.TextEncodingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +68,7 @@ public class Upload extends StringTemplateHandler implements FormHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(Upload.class);
 
     private File image;
-    private int x;
-    private int y;
+    private String text;
 
     @Converters(value = {UploadedFileConverter.class})
     public void setImage(File image) {
@@ -75,27 +79,12 @@ public class Upload extends StringTemplateHandler implements FormHandler {
         return image;
     }
 
-    @Converters(value = {IntegerConverter.class})
-    public void setX(int x) {
-        this.x = x;
+    public String getText() {
+        return text;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    @Converters(value = {IntegerConverter.class})
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public Upload() {
-        setX(-1);
-        setY(-1);
+    public void setText(String text) {
+        this.text = text;
     }
 
     /**
@@ -111,20 +100,32 @@ public class Upload extends StringTemplateHandler implements FormHandler {
         HttpSession session = request.getSession(true);
 
         File img = (File)session.getAttribute("img");
-        Integer xcoord = (Integer)session.getAttribute("x");
-        Integer ycoord = (Integer)session.getAttribute("y");
+        String txt = (String)session.getAttribute("txt");
 
         if (img != null) {
             template.setAttribute("img", img.getName());
 
-            BufferedImage bimage = null;
+            BufferedImage bi = null;
             try {
-                bimage = ImageIO.read(img);
-                WritableRaster raster = bimage.getRaster();
+                bi = ImageIO.read(img);
+                TextEncodingFilter tef = new TextEncodingFilter(txt);
+                Toolkit tk = Toolkit.getDefaultToolkit();
+                FilteredImageSource fis = new FilteredImageSource(bi.getSource(), tef);
+                Image fi = tk.createImage(fis);
 
-                if (raster != null) {
-                    template.setAttribute("raster", raster);
-                    template.setAttribute("classname", raster.getSampleModel().getClass().getName());
+                int w = bi.getWidth();
+                int h = bi.getHeight();
+                
+                BufferedImage fbi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2d = fbi.createGraphics();
+                g2d.drawImage(fi, 0, 0, w, h, null);
+
+                Matcher fm = Pattern.compile("^(.*)\\.(.*)$").matcher(img.getAbsolutePath());
+                if (fm.matches() && fm.groupCount() >= 2) {
+                    File fimg = new File(fm.group(1) + ".filtered." + fm.group(2));
+                    fimg.createNewFile();
+                    ImageIO.write(fbi, "jpg", fimg);
+                    template.setAttribute("fimg", fimg.getName());
                 }
             } catch (IOException ex) {
                 throw new HandlerException(ex);
@@ -142,18 +143,12 @@ public class Upload extends StringTemplateHandler implements FormHandler {
         HttpServletRequest request = context.getRequest();
         HttpSession session = request.getSession(true);
 
-        if (getImage() != null) {
-            session.setAttribute("img", getImage());
+        if (image != null) {
+            session.setAttribute("img", image);
         }
-
-        if (getX() != -1) {
-            session.setAttribute("x", new Integer(getX()));
+        if (text != null && !text.equals("")) {
+            session.setAttribute("txt", text);
         }
-
-        if (getY() != -1) {
-            session.setAttribute("y", new Integer(getY()));
-        }
-
         return request.getContextPath() + "/upload";
     }
 }

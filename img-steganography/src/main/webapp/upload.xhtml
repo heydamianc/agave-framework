@@ -17,12 +17,8 @@
                     <td><input name="image" type="file"/></td>
                 </tr>
                 <tr>
-                    <td><label>X-coordinate:</label></td>
-                    <td><input name="x" type="input"/></td>
-                </tr>
-                <tr>
-                    <td><label>Y-coordinate:</label></td>
-                    <td><input name="y" type="input"/></td>
+                    <td><label>Text:</label></td>
+                    <td><input name="text" type="input"/></td>
                 </tr>
             </table>
             <input type="submit" value="Submit"/>
@@ -30,42 +26,13 @@
         
         $if(img)$
         <hr/>
-        <img src="$contextPath$/images/upload/$img$" style="float: left;"/><br/>
-        <table>
-            <tr><th colspan="2">WritableRaster</th></tr>
-            <tr><td>Bands:</td><td>$raster.numBands$</td></tr>
-            <tr><td>Data Elements:</td><td>$raster.numDataElements$</td></tr>
-            <tr><td>Height:</td><td>$raster.height$</td></tr>
-            <tr><td>Width:</td><td>$raster.width$</td></tr>
-            <tr><td>Min-X:</td><td>$raster.minX$</td></tr>
-            <tr><td>Min-Y:</td><td>$raster.minY$</td></tr>
-            <tr><th colspan="2">SampleModel</th></tr>
-            <tr><td>Classname:</td><td>$raster.sampleModel.class.name$</td></tr>
-            <tr><th colspan="2">DataBufer</th></tr>
-            <tr><td>Number of Banks:</td><td>$raster.dataBuffer.numBanks$</td></tr>
-            <tr><td>Offset:</td><td>$raster.dataBuffer.offset$</td></tr>
-            <tr><td>Size</td><td>$raster.dataBuffer.size$</td></tr>
-        </table>
-        
-        $if(red)$
-        $if(green)$
-        $if(blue)$
-        <table>
-            <tr>
-                <th>Red</th>
-                <th>Green</th>
-                <th>Blue</th>
-            </tr>
-            <tr>
-                <td>$red$</td>
-                <td>$green$</td>
-                <td>$blue$</td>
-            </tr>
-        </table>
-        $endif$
-        $endif$
+        <h2>Original Image</h2>
+        <img src="$contextPath$/images/upload/$img$" alt="Original Image"/><br/>
         $endif$
         
+        $if (fimg)$
+        <h2>Encoded Image</h2>
+        <img src="$contextPath$/images/upload/$fimg$" alt="Encoded Image"/><br/>
         $endif$
     </body>
 </html>
