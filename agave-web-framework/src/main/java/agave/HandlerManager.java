@@ -33,6 +33,7 @@ import agave.annotations.Path;
 import agave.annotations.PositionalParameters;
 import agave.annotations.Required;
 import agave.converters.ConverterChain;
+import java.io.BufferedReader;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -44,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -218,11 +220,12 @@ public class HandlerManager implements Filter {
                 String boundary = null;
                 if (bm.matches() && bm.groupCount() >= 1) {
                     boundary = bm.group(1);
-                    MultipartInterpreter mi = new MultipartInterpreter(in, boundary, true);
-                    params.putAll(mi.getProperties());
+                    SimpleMultipartInterpreter mi = new SimpleMultipartInterpreter(in, boundary);
+                    params.putAll(mi.getParameters());
+                    
                     bindParameters(context, handlerClass, handler, mi.getFiles());
                 } else {
-                    throw new IOException("Unable to process multipart form post: " + " part boundary was malformed (in the Content-Type header)");
+                    throw new IOException("Unable to process multipart form post: part boundary was malformed (in the Content-Type header)");
                 }
             } else {
                 Enumeration requestParamNames = context.getRequest().getParameterNames();
