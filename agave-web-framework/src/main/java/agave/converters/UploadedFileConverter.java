@@ -34,7 +34,7 @@ import java.io.File;
 import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory ;
+import org.slf4j.LoggerFactory;
 
 /**
  * Converts the input file into a file accessible by the webapp.  Initially,
