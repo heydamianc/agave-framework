@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Image Steganography</title>
+		<style type="text/css">
+			#header {margin-bottom: 10px; border-bottom: 1px dotted #000;}
+			th {text-align: left; padding-top: 10px;}
+			div#results {border-top: 3px double #000; margin-top: 10px; padding-top: 10px;}
+			#footer {margin-top: 10px; padding-top: 5px; border-top: 1px dotted #000; text-align: center;}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<h1>Image Steganography</h1>
+			<p>
+				by <a href="damiancarrillo@gmail.com">Damian Carrillo</a> using the 
+				<a href="http://code.google.com/p/agave-web-framework">Agave Web Framework</a>
+				<br/>
+				Last updated on August 19, 2007
+			</p>
+		</div>
+		<form method="post" enctype="multipart/form-data" action="$contextPath$/upload">
+			<table>
+				<tr>
+					<td><label for="image">Upload an image:</label></td>
+					<td><input id="image" name="image" type="file"/></td>
+				</tr>
+				<tr>
+					<td><label for="action">Choose an action</label></td>
+					<td>
+						<select name="action" id="action">
+							<option value="encode">Encode a message</option>
+							<option value="decode">Decode a message</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><label for="message">Text:</label></td>
+					<td><textarea id="message" name="message" cols="80" rows="10"></textarea></td>
+				</tr>
+			</table>
+			<input type="submit" value="Submit"/>
+		</form>
+		$if(action)$
+		<div id="results">
+			$(action)()$
+		</div>
+		$endif$
+		<div id="footer">
+			<img src="$contextPath$/images/140px-Glider.png" height="35" width="35" alt="Hacker" title="Hacker"/>
+		</div>
+	</body>
+</html>
