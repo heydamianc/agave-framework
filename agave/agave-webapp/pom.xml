@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<project>
+  <parent>
+    <artifactId>agave</artifactId>
+    <groupId>agave</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>agave</groupId>
+  <artifactId>agave-webapp</artifactId>
+  <name>Agave Webapp</name>
+  <version>1.0-SNAPSHOT</version>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+  </dependencies>
+</project>
