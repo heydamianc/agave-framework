@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <parent>
+    <artifactId>agave</artifactId>
+    <groupId>agave</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>agave</groupId>
+  <artifactId>agave-guice</artifactId>
+  <name>Agave Guice</name>
+  <version>1.0-SNAPSHOT</version>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>agave</groupId>
+      <artifactId>agave-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+</project>
