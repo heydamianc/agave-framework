@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+ <head>
+   <title>Agave package</title>
+ </head>
+ <body>
+   <p>
+     Serves as the main interface to Agave for a webapp developer, with the {@link agave.AgaveFilter AgaveFilter} 
+     serving as the Front Controller in an Model-View-Controller architecture, and several annotations to describe
+     how handler methods will field HTTP requests.  An example of a handler method is:
+   </p>
+   <pre>public class FunHandler {
+
+    &#64;HandlesRequestsTo(&quot;/haveFun&quot;)
+    public void haveSomeFun(FunForm funForm) throws ServletException, IOException {
+        // wheeee!
+    }
+
+}</pre>
+ </body>
+</html>
