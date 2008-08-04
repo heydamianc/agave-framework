@@ -41,7 +41,7 @@ public interface HandlerRegistry {
      * Adds handlers descriptors to a sorted set of descriptors.  The set is sorted according to the 
      * specificity of the URIPattern.
      * @param added the HandlerDescriptor to be added.
-     * @see agave.internalURIPattern#compareTo(URIPattern) for the algorithm used in determining the 
+     * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm used in determining the 
      * specificity
      */ 
     public void addDescriptor(HandlerDescriptor added) throws DuplicateURIPatternError;

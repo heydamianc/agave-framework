@@ -25,40 +25,81 @@
  */
 package agave.internal;
 
-import java.util.Collection;
-
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.EmptyVisitor;
+import java.io.File;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
+public class PartImpl implements Part {
 
-    Collection<HandlerIdentifier> handlerIdentifiers;
-    String className;
+    private String name;
+    private String filename;
+    private String contentType; 
+    private File contents;
+    private String parameterValue;
+    private Map<String, String> otherHeaders = new HashMap<String, String>();
 
-    public HandlerScanner(Collection<HandlerIdentifier> handlerIdentifiers) {
-        super();
-        this.handlerIdentifiers = handlerIdentifiers;
+    public PartImpl() {
     }
 
-    public void visit(int version, int access, String name, String signature, String superName, 
-        String[] interfaces) {
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            this.className = name;
-        }
+    public String getName() {
+        return name;
     }
 
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, 
-        String[] interfaces) {
-        MethodVisitor methodScanner = null;
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            methodScanner = new MethodScanner(handlerIdentifiers, className, name, desc);
-        }
-        return methodScanner;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public File getContents() {
+        return contents;
+    }
+
+    public void setContents(File contents) {
+        this.contents = contents;
+    }
+
+    public String getParameterValue() {
+        return parameterValue;
+    }
+
+    public void setParameterValue(String parameterValue) {
+        this.parameterValue = parameterValue;
+    }
+
+    public void addHeader(String headerName, String headerValue) {
+        otherHeaders.put(headerName, headerValue);
+    }
+
+    public String getHeader(String headerName) {
+        return otherHeaders.get(headerName);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("Part[")
+            .append("name:").append(getName()).append(", ")
+            .append("fileName:").append(getFilename()).append(", ")
+            .append("contentType:").append(getContentType())
+            .append("]")
+            .toString();
     }
 
 }

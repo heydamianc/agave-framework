@@ -25,40 +25,30 @@
  */
 package agave.internal;
 
-import java.util.Collection;
-
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.EmptyVisitor;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * A part in a mulitpart/form-data HTTP post which either encapsulates a {@code File} upload or a 
+ * {@code String} parameter.  In the case of a {@code String} parameter this can have the name and 
+ * the parameter value set.  In the case of a {@code File} part, the name, filename, content type,
+ * and contents will be set.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
+public interface Part {
 
-    Collection<HandlerIdentifier> handlerIdentifiers;
-    String className;
-
-    public HandlerScanner(Collection<HandlerIdentifier> handlerIdentifiers) {
-        super();
-        this.handlerIdentifiers = handlerIdentifiers;
-    }
-
-    public void visit(int version, int access, String name, String signature, String superName, 
-        String[] interfaces) {
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            this.className = name;
-        }
-    }
-
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, 
-        String[] interfaces) {
-        MethodVisitor methodScanner = null;
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            methodScanner = new MethodScanner(handlerIdentifiers, className, name, desc);
-        }
-        return methodScanner;
-    }
+    public String getName();
+    public void setName(String name);
+    public String getContentType();
+    public void setContentType(String contentType);
+    public String getFilename();
+    public void setFilename(String filename);
+    public String getParameterValue();
+    public void setParameterValue(String parameterValue);
+    public void addHeader(String headerName, String headerValue);
+    public String getHeader(String headerName);
+    public File getContents();
+    public void setContents(File contents);
 
 }

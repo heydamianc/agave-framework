@@ -145,104 +145,108 @@ public class AgaveFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse)resp;
         
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request.getRequestURI());
-        if (descriptor != null) {
-            if ("multipart/form-data".equals(request.getContentType())) {
-                // TODO handle multipart form submissions
-            } else if ("application/x-www-form-urlencoded".equals(request.getContentType())) {
+        if (descriptor != null
+            && (MultipartRequestImpl.isMultipart(request) || MultipartRequestImpl.isFormURLEncoded(request))) {
 
-                // 1. instantiate form and bind parameters
+            if (MultipartRequestImpl.isMultipart(request)) {
+                request = new MultipartRequestImpl(request);
+            }
 
-                Object formInstance = null;
-                try {
-                    formInstance = classEnvironment.createFormInstance(descriptor);
-                    if (formInstance != null) {
+            // 1. instantiate form and bind parameters
 
-                        // 2. Bind parameters if necessary
+            Object formInstance = null;
+            try {
+                formInstance = classEnvironment.createFormInstance(descriptor);
+                if (formInstance != null) {
 
-                        ParameterBinder binder = new ParameterBinderImpl(formInstance, descriptor);
-                        binder.bindRequestParameters(request);
-                        binder.bindURIParameters(request);
+                    // 2. Bind parameters if necessary
+
+                    ParameterBinder binder = new ParameterBinderImpl(formInstance, descriptor);
+                    binder.bindRequestParameters(request);
+                    binder.bindURIParameters(request);
+
+                    if (MultipartRequestImpl.isMultipart(request)) {
+                        MultipartReqeust multipartRequest = (MultipartRequest)request;
+                        
                     }
-                } catch (ClassNotFoundException ex) {
-                    throw new ServletException("Unable to create a form instance for: " + 
-                        descriptor.getFormClass().getName(), ex);
-                } catch (InstantiationException ex) {
-                    throw new ServletException("Unable to create a form instance for: " + 
-                        descriptor.getFormClass().getName(), ex);
+                }
+            } catch (ClassNotFoundException ex) {
+                throw new ServletException("Unable to create a form instance for: " + 
+                    descriptor.getFormClass().getName(), ex);
+            } catch (InstantiationException ex) {
+                throw new ServletException("Unable to create a form instance for: " + 
+                    descriptor.getFormClass().getName(), ex);
+            } catch (IllegalAccessException ex) {
+                throw new ServletException("Unable to create a form instance for: " + 
+                    descriptor.getFormClass().getName(), ex);
+            }
+
+            // 3. instantiate handler
+
+            Object handlerInstance = null;
+            try {
+                handlerInstance = classEnvironment.createHandlerInstance(descriptor);
+            } catch (ClassNotFoundException ex) {
+                throw new ServletException("Unable to create a handler instance for: " + 
+                    descriptor.getHandlerClass().getName(), ex);
+            } catch (InstantiationException ex) {
+                throw new ServletException("Unable to create a handler instance for: " + 
+                    descriptor.getHandlerClass().getName(), ex);
+            } catch (IllegalAccessException ex) {
+                throw new ServletException("Unable to create a handler instance for: " + 
+                    descriptor.getHandlerClass().getName(), ex);
+            }
+
+            // 4. bind request to handler
+
+            if (descriptor.getRequestSetter() != null) {
+                try {
+                    descriptor.getRequestSetter().invoke(handlerInstance, request);
                 } catch (IllegalAccessException ex) {
-                    throw new ServletException("Unable to create a form instance for: " + 
-                        descriptor.getFormClass().getName(), ex);
-                }
-
-                // 3. instantiate handler
-
-                Object handlerInstance = null;
-                try {
-                    handlerInstance = classEnvironment.createHandlerInstance(descriptor);
-                } catch (ClassNotFoundException ex) {
-                    throw new ServletException("Unable to create a handler instance for: " + 
+                    throw new ServletException("Unable to set request for: " + 
                         descriptor.getHandlerClass().getName(), ex);
-                } catch (InstantiationException ex) {
-                    throw new ServletException("Unable to create a handler instance for: " + 
-                        descriptor.getHandlerClass().getName(), ex);
-                } catch (IllegalAccessException ex) {
-                    throw new ServletException("Unable to create a handler instance for: " + 
-                        descriptor.getHandlerClass().getName(), ex);
-                }
-
-                // 4. bind request to handler
-
-                if (descriptor.getRequestSetter() != null) {
-                    try {
-                        descriptor.getRequestSetter().invoke(handlerInstance, request);
-                    } catch (IllegalAccessException ex) {
-                        throw new ServletException("Unable to set request for: " + 
-                            descriptor.getHandlerClass().getName(), ex);
-                    } catch (InvocationTargetException ex) {
-                        throw new ServletException("Unable to set request for: " + 
-                            descriptor.getHandlerClass().getName(), ex.getCause());
-                    }
-                }
-
-                // 5. bind response to handler
-
-                if (descriptor.getResponseSetter() != null) {
-                    try {
-                        descriptor.getResponseSetter().invoke(handlerInstance, response);
-                    } catch (IllegalAccessException ex) {
-                        throw new ServletException("Unable to set response for: " +
-                            descriptor.getHandlerClass().getName(), ex);
-                    } catch (InvocationTargetException ex) {
-                        throw new ServletException("Unable to set response for: " + 
-                            descriptor.getHandlerClass().getName(), ex.getCause());
-                    }
-                }
-
-                // 6. invoke handler method
-
-                try {
-                    if (formInstance != null) {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, formInstance);
-                    } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance);
-                    }
                 } catch (InvocationTargetException ex) {
-                    if (ex.getCause() instanceof ServletException) {
-                        throw (ServletException)ex.getCause(); 
-                    } else if (ex.getCause() instanceof IOException) {
-                        throw (IOException)ex.getCause();
-                    } else if (ex.getCause() instanceof RuntimeException) {
-                        throw (RuntimeException)ex.getCause();
-                    } else {
-                        throw new ServletException(ex.getCause());
-                    }
-                } catch (IllegalAccessException ex) {
-                    throw new ServletException("Unable to invoke handler method: " + 
-                        descriptor.getHandlerMethod().getName() + " on class: " + 
-                        descriptor.getHandlerClass().getName(), ex);
+                    throw new ServletException("Unable to set request for: " + 
+                        descriptor.getHandlerClass().getName(), ex.getCause());
                 }
-            } else {
-                chain.doFilter(req, resp);
+            }
+
+            // 5. bind response to handler
+
+            if (descriptor.getResponseSetter() != null) {
+                try {
+                    descriptor.getResponseSetter().invoke(handlerInstance, response);
+                } catch (IllegalAccessException ex) {
+                    throw new ServletException("Unable to set response for: " +
+                        descriptor.getHandlerClass().getName(), ex);
+                } catch (InvocationTargetException ex) {
+                    throw new ServletException("Unable to set response for: " + 
+                        descriptor.getHandlerClass().getName(), ex.getCause());
+                }
+            }
+
+            // 6. invoke handler method
+
+            try {
+                if (formInstance != null) {
+                    descriptor.getHandlerMethod().invoke(handlerInstance, formInstance);
+                } else {
+                    descriptor.getHandlerMethod().invoke(handlerInstance);
+                }
+            } catch (InvocationTargetException ex) {
+                if (ex.getCause() instanceof ServletException) {
+                    throw (ServletException)ex.getCause(); 
+                } else if (ex.getCause() instanceof IOException) {
+                    throw (IOException)ex.getCause();
+                } else if (ex.getCause() instanceof RuntimeException) {
+                    throw (RuntimeException)ex.getCause();
+                } else {
+                    throw new ServletException(ex.getCause());
+                }
+            } catch (IllegalAccessException ex) {
+                throw new ServletException("Unable to invoke handler method: " + 
+                    descriptor.getHandlerMethod().getName() + " on class: " + 
+                    descriptor.getHandlerClass().getName(), ex);
             }
         } else {
             chain.doFilter(req, resp);
