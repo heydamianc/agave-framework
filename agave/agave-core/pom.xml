@@ -3,7 +3,7 @@
   <parent>
     <artifactId>agave</artifactId>
     <groupId>agave</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>agave</groupId>
@@ -29,6 +29,17 @@
       <version>3.1</version>
     </dependency>
   </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <stylesheet>java</stylesheet>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   <profiles>
     <profile>
       <id>debug</id>

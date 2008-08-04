@@ -23,42 +23,13 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave;
 
-import java.util.Collection;
-
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.EmptyVisitor;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
-
-    Collection<HandlerIdentifier> handlerIdentifiers;
-    String className;
-
-    public HandlerScanner(Collection<HandlerIdentifier> handlerIdentifiers) {
-        super();
-        this.handlerIdentifiers = handlerIdentifiers;
-    }
-
-    public void visit(int version, int access, String name, String signature, String superName, 
-        String[] interfaces) {
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            this.className = name;
-        }
-    }
-
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, 
-        String[] interfaces) {
-        MethodVisitor methodScanner = null;
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            methodScanner = new MethodScanner(handlerIdentifiers, className, name, desc);
-        }
-        return methodScanner;
-    }
+public interface MultipartRequest extends HttpServletRequest {
 
 }

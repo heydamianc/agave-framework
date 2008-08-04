@@ -80,7 +80,7 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public Class<?> getHandlerClass();
 
     /**
-     * Gets the form class that this {@code HandlerDescriptor describes.
+     * Gets the form class that this {@code HandlerDescriptor} describes.
      */
     public Class<?> getFormClass();
 

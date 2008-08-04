@@ -38,7 +38,7 @@ public class ByteListConverter implements ListConverter<Byte> {
 
     /**
      * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
+     * @param inputs the input parameter as a {@code String}.
      * @return a {@code Byte} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 

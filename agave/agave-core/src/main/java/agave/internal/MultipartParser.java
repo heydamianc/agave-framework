@@ -25,40 +25,19 @@
  */
 package agave.internal;
 
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
+public interface MultipartParser {
 
-    Collection<HandlerIdentifier> handlerIdentifiers;
-    String className;
-
-    public HandlerScanner(Collection<HandlerIdentifier> handlerIdentifiers) {
-        super();
-        this.handlerIdentifiers = handlerIdentifiers;
-    }
-
-    public void visit(int version, int access, String name, String signature, String superName, 
-        String[] interfaces) {
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            this.className = name;
-        }
-    }
-
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, 
-        String[] interfaces) {
-        MethodVisitor methodScanner = null;
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            methodScanner = new MethodScanner(handlerIdentifiers, className, name, desc);
-        }
-        return methodScanner;
-    }
+    public void parseInput(InputStream in) throws IOException;
+    public Map<String, Collection<String>> getParameters();
+    public Map<String, Part> getParts();
 
 }
