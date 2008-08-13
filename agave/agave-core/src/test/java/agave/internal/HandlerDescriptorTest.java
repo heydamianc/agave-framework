@@ -25,10 +25,7 @@
  */
 package agave.internal;
 
-import java.lang.reflect.Method;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -48,13 +45,13 @@ public class HandlerDescriptorTest {
         Assert.assertNotNull(a.getHandlerMethod());
         Assert.assertNotNull(a.getRequestSetter());
         Assert.assertNotNull(a.getResponseSetter());
-        Assert.assertNotNull(a.getParameterSetters());
-        Assert.assertEquals(3, a.getParameterSetters().size());
-        Assert.assertTrue(a.getParameterSetters().containsKey("username"));
-        Assert.assertTrue(a.getParameterSetters().containsKey("password"));
-        Assert.assertTrue(a.getParameterSetters().containsKey("remembered"));
-        Assert.assertEquals(1, a.getParameterConverters().size());
-        Assert.assertTrue(a.getParameterConverters().containsKey("remembered"));
+        Assert.assertNotNull(a.getMutators());
+        Assert.assertEquals(3, a.getMutators().size());
+        Assert.assertTrue(a.getMutators().containsKey("username"));
+        Assert.assertTrue(a.getMutators().containsKey("password"));
+        Assert.assertTrue(a.getMutators().containsKey("remembered"));
+        Assert.assertEquals(1, a.getConverters().size());
+        Assert.assertTrue(a.getConverters().containsKey("remembered"));
     }
 
     @Test

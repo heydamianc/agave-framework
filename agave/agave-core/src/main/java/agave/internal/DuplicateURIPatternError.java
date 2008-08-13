@@ -25,17 +25,15 @@
  */
 package agave.internal;
 
-import agave.internal.HandlerDescriptor;
-
-import javax.servlet.ServletException;
-
 /**
  * An exception that is thrown to indicate that two handlers share the same {@code URIPattern}.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class DuplicateURIPatternError extends Error {
+	
+	private static final long serialVersionUID = 1L;
 
-    public DuplicateURIPatternError(HandlerDescriptor existing, HandlerDescriptor added) {
+	public DuplicateURIPatternError(HandlerDescriptor existing, HandlerDescriptor added) {
         super("Failed to register a duplicate handler mapping, \"" + added.getPattern().toString() + "\"" +
             " for " + added.getHandlerClass().getName() + ".  Handler is already mapped in " + 
             existing.getHandlerClass().getName() + ".");

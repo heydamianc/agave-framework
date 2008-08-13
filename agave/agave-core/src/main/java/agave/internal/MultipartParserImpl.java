@@ -27,16 +27,15 @@ package agave.internal;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -44,12 +43,11 @@ import java.util.regex.Matcher;
 public class MultipartParserImpl implements MultipartParser {
 
     private static enum MatchType {STREAM_END, PART_END, HEADERS_END};
-    private static enum InputType {PARAMETER, PART};
 
     private static final String contentDisposition = "Content-Disposition:\\s*form-data;\\s*name=\"(.*)\"";
 
     private static final Pattern filePattern = Pattern.compile(contentDisposition + ";\\s*filename=\"(.+)\"");
-    private static final Pattern filenamePattern = Pattern.compile(".*\\..*");
+    private static final Pattern filenamePattern = Pattern.compile("(.*)\\.(.*)");
     private static final Pattern parameterPattern = Pattern.compile(contentDisposition);
     private static final Pattern contentTypePattern = Pattern.compile("Content-Type:\\s*(.+)");
     private static final Pattern otherHeaderPattern = Pattern.compile("(\\S+):\\s*(.+?)");

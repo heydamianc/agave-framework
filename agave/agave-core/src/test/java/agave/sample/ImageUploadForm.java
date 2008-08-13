@@ -23,30 +23,40 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.sample;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import agave.BindsInput;
+import agave.ConvertWith;
+import agave.conversion.BufferedImageConverter;
 
 /**
- * Converts a {@code String} input into a {@code Short} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverter implements StringConverter<Short> {
+public class ImageUploadForm {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    public Short convert(String input) throws ConversionException {
-        Short value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Short.parseShort(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
-            }
-        }
-        return value;
-    }
+	// matchers the parameters in the test file
+	private File file1;
+	private BufferedImage file2;
+
+	public File getFile1() {
+		return file1;
+	}
+
+	@BindsInput
+	public void setFile1(File file1) {
+		this.file1 = file1;
+	}
+
+	public BufferedImage getFile2() {
+		return file2;
+	}
+
+	@BindsInput
+	public void setFile2(@ConvertWith(BufferedImageConverter.class) BufferedImage file2) {
+		this.file2 = file2;
+	}
 
 }

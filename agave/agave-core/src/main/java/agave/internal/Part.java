@@ -26,8 +26,6 @@
 package agave.internal;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A part in a mulitpart/form-data HTTP post which either encapsulates a {@code File} upload or a 

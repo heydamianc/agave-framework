@@ -25,10 +25,7 @@
  */
 package agave.internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.TreeSet;
 
 /**
  * A repository used to group all registered handlers.  Handlers are registered by means of scanning

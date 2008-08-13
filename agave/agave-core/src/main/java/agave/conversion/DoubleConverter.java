@@ -43,7 +43,7 @@ public class DoubleConverter implements StringConverter<Double> {
             try {
                 value = Double.parseDouble(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Double object", ex);
+                throw new ConversionException("Could not convert " + input + " to a Double object", ex.getCause());
             }
         }
         return value;

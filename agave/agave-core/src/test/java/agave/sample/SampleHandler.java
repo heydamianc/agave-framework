@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SampleHandler {
     
     private HttpServletRequest request;
-    private HttpServletResponse response;
+	private HttpServletResponse response;
 
     
     @HandlesRequestsTo("/login")
@@ -48,6 +48,7 @@ public class SampleHandler {
         } else {
             request.setAttribute("loggedIn", Boolean.FALSE);
         }
+        response.setStatus(400);
     }
 
     @HandlesRequestsTo("/aliased")

@@ -25,62 +25,30 @@
  */
 package agave.internal;
 
-import agave.MultipartRequest;
-
 import java.io.InputStream;
-import java.io.IOException;
-import java.io.BufferedInputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.DelegatingServletInputStream;
 import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
+
+import agave.MultipartRequest;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class MultipartRequestTest {
     final InputStream testStream = getClass().getClassLoader().getResourceAsStream("multipart-parameter-test");
-    final ServletInputStream delegatingStream = new ServletInputStream() {
-        public int available() throws IOException {
-            return testStream.available();
-        }
-        public void close() throws IOException {
-            testStream.close();
-        }
-        public void mark(int readlimit) {
-            testStream.mark(readlimit);
-        }
-        public boolean markSupported() {
-            return testStream.markSupported();
-        }
-        public int read() throws IOException {
-            return testStream.read();
-        }
-        public int read(byte[] bs) throws IOException {
-            return testStream.read(bs);
-        }
-        public int read(byte[] bs, int off, int len) throws IOException {
-            return testStream.read(bs, off, len);
-        }
-        public void reset() throws IOException {
-            testStream.reset();
-        }
-        public long skip(long n) throws IOException {
-            return testStream.skip(n);
-        }
-        public int readLine(byte[] b, int off, int len) {
-            return -1;
-        }
-    };
+    final ServletInputStream delegatingStream = new DelegatingServletInputStream(testStream);
 
     Mockery context = new Mockery();
     HttpServletRequest request;
@@ -104,9 +72,10 @@ public class MultipartRequestTest {
         Assert.assertEquals("over there", multipartRequest.getParameter("where"));
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testGetParameterMap() throws Exception {
-        final Map spm = new HashMap(); // like the one in servlet request
+        final Map<String, String[]> spm = new HashMap<String, String[]>(); // like the one in servlet request
         spm.put("a", new String[] {"a", "b"});
         spm.put("b", new String[] {"1", "2"});
         context.checking(new Expectations() {{
@@ -119,13 +88,14 @@ public class MultipartRequestTest {
 
         Assert.assertNotNull(parameterMap);
         Assert.assertEquals(4, parameterMap.size());
-        Assert.assertEquals(new String[] {"a", "b"}, parameterMap.get("a"));
-        Assert.assertEquals(new String[] {"1", "2"}, parameterMap.get("b"));
-        Assert.assertEquals(new String[] {"because"}, parameterMap.get("why"));
-        Assert.assertEquals(new String[] {"forever"}, parameterMap.get("when"));
+        Assert.assertArrayEquals(new String[] {"a", "b"}, parameterMap.get("a"));
+        Assert.assertArrayEquals(new String[] {"1", "2"}, parameterMap.get("b"));
+        Assert.assertArrayEquals(new String[] {"because"}, parameterMap.get("why"));
+        Assert.assertArrayEquals(new String[] {"forever"}, parameterMap.get("when"));
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testGetParameterNames() throws Exception {
         ArrayList<String> names = new ArrayList<String>();
         names.add("a");
@@ -133,7 +103,7 @@ public class MultipartRequestTest {
         names.add("why");
         names.add("when");
 
-        final Map spm = new HashMap(); // like the one in servlet request
+        final Map<String, String[]> spm = new HashMap<String, String[]>();
         spm.put("a", new String[] {"a", "b"});
         spm.put("b", new String[] {"1", "2"});
 
@@ -153,7 +123,7 @@ public class MultipartRequestTest {
 
     @Test
     public void testGetParameterValues() throws Exception {
-        final Map spm = new HashMap(); // like the one in servlet request
+        final Map<String, String[]> spm = new HashMap<String, String[]>(); // like the one in servlet request
         spm.put("a", new String[] {"a", "b"});
         spm.put("b", new String[] {"1", "2"}); 
 
@@ -163,10 +133,10 @@ public class MultipartRequestTest {
         }});
 
         MultipartRequest multipartRequest = new MultipartRequestImpl(request);
-        Assert.assertEquals(new String[] {"a", "b"}, multipartRequest.getParameterValues("a"));
-        Assert.assertEquals(new String[] {"1", "2"}, multipartRequest.getParameterValues("b"));
-        Assert.assertEquals(new String[] {"because"}, multipartRequest.getParameterValues("why"));
-        Assert.assertEquals(new String[] {"forever"}, multipartRequest.getParameterValues("when"));
+        Assert.assertArrayEquals(new String[] {"a", "b"}, multipartRequest.getParameterValues("a"));
+        Assert.assertArrayEquals(new String[] {"1", "2"}, multipartRequest.getParameterValues("b"));
+        Assert.assertArrayEquals(new String[] {"because"}, multipartRequest.getParameterValues("why"));
+        Assert.assertArrayEquals(new String[] {"forever"}, multipartRequest.getParameterValues("when"));
     }
 
 }
