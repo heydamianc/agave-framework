@@ -25,22 +25,17 @@
  */
 package agave.internal;
 
-import agave.conversion.StringConverter;
-import agave.conversion.ConversionException;
-import agave.conversion.ListConverter;
-
-import java.util.Map;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import javax.servlet.http.HttpServletRequest;
+
+import agave.conversion.ConversionException;
+import agave.internal.BindException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface ParameterBinder {
 
-    public void bindRequestParameters(HttpServletRequest request) throws ConversionException;
-    public void bindURIParameters(HttpServletRequest request) throws ConversionException;
+    public void bindRequestParameters(HttpServletRequest request) throws BindException, ConversionException;
+    public void bindURIParameters(HttpServletRequest request) throws BindException, ConversionException;
 
 }

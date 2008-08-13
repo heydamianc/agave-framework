@@ -43,7 +43,7 @@ public class ByteConverter implements StringConverter<Byte> {
             try {
                 value = Byte.parseByte(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " into a Byte object", ex);
+                throw new ConversionException("Could not convert " + input + " into a Byte object", ex.getCause());
             }
         }
         return value;

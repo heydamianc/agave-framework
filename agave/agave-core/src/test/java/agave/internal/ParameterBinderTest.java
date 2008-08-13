@@ -52,25 +52,25 @@ public class ParameterBinderTest {
     Mockery context; 
     final HttpServletRequest request;
     final HandlerDescriptor descriptor;
-    final Map<String, Method> parameterSetters;
-    final Map<String, String[]> parameterMap;
-    final Map<String, Class<? extends Converter<?,?>>> parameterConverters;
+    final Map<String, Method> mutators;
+    final Map<String, String[]> parameters;
+    final Map<String, Class<? extends Converter<?,?>>> converters;
    
 
     public ParameterBinderTest() throws Exception {
         context = new Mockery();
         request = context.mock(HttpServletRequest.class);
         descriptor = context.mock(HandlerDescriptor.class);
-        parameterSetters = new HashMap<String, Method>();
-        parameterMap = new HashMap<String, String[]>();
-        parameterConverters = new HashMap<String, Class<? extends Converter<?,?>>>();
+        mutators = new HashMap<String, Method>();
+        parameters = new HashMap<String, String[]>();
+        converters = new HashMap<String, Class<? extends Converter<?,?>>>();
     }
 
     @Before
     public void setup() throws Exception {
-        parameterSetters.clear();
-        parameterMap.clear();
-        parameterConverters.clear();
+        mutators.clear();
+        parameters.clear();
+        converters.clear();
     }
 
     @Test
@@ -78,16 +78,16 @@ public class ParameterBinderTest {
         LoginForm form = new LoginForm();
         ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
 
-        parameterSetters.put("username", LoginForm.class.getMethod("setUsername", String.class));
-        parameterSetters.put("password", LoginForm.class.getMethod("setPassword", String.class));
+        mutators.put("username", LoginForm.class.getMethod("setUsername", String.class));
+        mutators.put("password", LoginForm.class.getMethod("setPassword", String.class));
 
-        parameterMap.put("username", new String[] {"damiancarrillo"});
-        parameterMap.put("password", new String[] {"unsung", "hero"});
+        parameters.put("username", new String[] {"damiancarrillo"});
+        parameters.put("password", new String[] {"unsung", "hero"});
 
         context.checking(new Expectations() {{
-            allowing(descriptor).getParameterSetters(); will(returnValue(parameterSetters));
-            allowing(descriptor).getParameterConverters(); will(returnValue(parameterConverters));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+            allowing(descriptor).getConverters(); will(returnValue(converters));
+            allowing(request).getParameterMap(); will(returnValue(parameters));
         }});
 
         binder.bindRequestParameters(request);    
@@ -101,20 +101,20 @@ public class ParameterBinderTest {
         MultiForm form = new MultiForm();
         ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
 
-        parameterSetters.put("arrayValues", MultiForm.class.getMethod("setArrayValues", String[].class));
-        parameterSetters.put("listValues", MultiForm.class.getMethod("setListValues", List.class));
-        parameterMap.put("arrayValues", new String[] {"one", "two", "three"});
-        parameterMap.put("listValues", new String[] {"a", "b", "c"});
+        mutators.put("arrayValues", MultiForm.class.getMethod("setArrayValues", String[].class));
+        mutators.put("listValues", MultiForm.class.getMethod("setListValues", List.class));
+        parameters.put("arrayValues", new String[] {"one", "two", "three"});
+        parameters.put("listValues", new String[] {"a", "b", "c"});
 
         context.checking(new Expectations() {{
-            allowing(descriptor).getParameterSetters(); will(returnValue(parameterSetters));
-            allowing(descriptor).getParameterConverters(); will(returnValue(parameterConverters));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+            allowing(descriptor).getConverters(); will(returnValue(converters));
+            allowing(request).getParameterMap(); will(returnValue(parameters));
         }});
      
         binder.bindRequestParameters(request);
       
-        Assert.assertEquals(new String[] {"one", "two", "three"}, form.getArrayValues());
+        Assert.assertArrayEquals(new String[] {"one", "two", "three"}, form.getArrayValues());
         Assert.assertEquals(3, form.getListValues().size());
         Assert.assertEquals("a", form.getListValues().get(0));
         Assert.assertEquals("b", form.getListValues().get(1));
@@ -126,14 +126,14 @@ public class ParameterBinderTest {
         LoginForm form = new LoginForm();
         ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
 
-        parameterSetters.put("remembered", LoginForm.class.getMethod("setRemembered", Boolean.class));   
-        parameterMap.put("remembered", new String[] {"t"});
-        parameterConverters.put("remembered", BooleanConverter.class);
+        mutators.put("remembered", LoginForm.class.getMethod("setRemembered", Boolean.class));   
+        parameters.put("remembered", new String[] {"t"});
+        converters.put("remembered", BooleanConverter.class);
 
         context.checking(new Expectations() {{
-            allowing(descriptor).getParameterSetters(); will(returnValue(parameterSetters));
-            allowing(descriptor).getParameterConverters(); will(returnValue(parameterConverters));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+            allowing(descriptor).getConverters(); will(returnValue(converters));
+            allowing(request).getParameterMap(); will(returnValue(parameters));
         }});
 
         binder.bindRequestParameters(request);
@@ -147,18 +147,18 @@ public class ParameterBinderTest {
         ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
         
         // parameters are aliased
-        parameterSetters.put("someAlias", AliasedForm.class.getMethod("setSomeProperty", String.class));
-        parameterSetters.put("anotherAlias", AliasedForm.class.getMethod("setAnotherProperty", Boolean.class));
+        mutators.put("someAlias", AliasedForm.class.getMethod("setSomeProperty", String.class));
+        mutators.put("anotherAlias", AliasedForm.class.getMethod("setAnotherProperty", Boolean.class));
 
-        parameterMap.put("someAlias", new String[] {"alpha"});
-        parameterMap.put("anotherAlias", new String[] {"true"});
+        parameters.put("someAlias", new String[] {"alpha"});
+        parameters.put("anotherAlias", new String[] {"true"});
 
-        parameterConverters.put("anotherAlias", BooleanConverter.class);
+        converters.put("anotherAlias", BooleanConverter.class);
         
         context.checking(new Expectations() {{
-            allowing(descriptor).getParameterSetters(); will(returnValue(parameterSetters));
-            allowing(descriptor).getParameterConverters(); will(returnValue(parameterConverters));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+            allowing(descriptor).getConverters(); will(returnValue(converters));
+            allowing(request).getParameterMap(); will(returnValue(parameters));
         }});
 
         binder.bindRequestParameters(request);
@@ -173,14 +173,14 @@ public class ParameterBinderTest {
         LoginForm form = new LoginForm();
         ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
 
-        parameterSetters.put("username", LoginForm.class.getMethod("setUsername", String.class));
-        parameterSetters.put("password", LoginForm.class.getMethod("setPassword", String.class));
+        mutators.put("username", LoginForm.class.getMethod("setUsername", String.class));
+        mutators.put("password", LoginForm.class.getMethod("setPassword", String.class));
 
         final URIPattern pattern = new URIPatternImpl("/uri-params/${username}/${password}");
 
         context.checking(new Expectations() {{
-            allowing(descriptor).getParameterSetters(); will(returnValue(parameterSetters));
-            allowing(descriptor).getParameterConverters(); will(returnValue(parameterConverters));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+            allowing(descriptor).getConverters(); will(returnValue(converters));
             allowing(descriptor).getPattern(); will(returnValue(pattern));
             allowing(request).getRequestURI(); will(returnValue("/uri-params/damian/ornery/"));
         }});
@@ -196,14 +196,14 @@ public class ParameterBinderTest {
         LoginForm form = new LoginForm();
         ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
 
-        parameterSetters.put("remembered", LoginForm.class.getMethod("setRemembered", Boolean.class));
-        parameterConverters.put("remembered", BooleanConverter.class);
+        mutators.put("remembered", LoginForm.class.getMethod("setRemembered", Boolean.class));
+        converters.put("remembered", BooleanConverter.class);
 
         final URIPattern pattern = new URIPatternImpl("/uri-params/${remembered}");
 
         context.checking(new Expectations() {{
-            allowing(descriptor).getParameterSetters(); will(returnValue(parameterSetters));
-            allowing(descriptor).getParameterConverters(); will(returnValue(parameterConverters));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+            allowing(descriptor).getConverters(); will(returnValue(converters));
             allowing(descriptor).getPattern(); will(returnValue(pattern));
             allowing(request).getRequestURI(); will(returnValue("/uri-params/true/"));
         }});

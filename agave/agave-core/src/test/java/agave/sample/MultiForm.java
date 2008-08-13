@@ -25,7 +25,7 @@
  */
 package agave.sample;
 
-import agave.BindsParameter;
+import agave.BindsInput;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class MultiForm {
     private String[] arrayValues;
     private List<String> listValues;
     
-    @BindsParameter
+    @BindsInput
     public void setArrayValues(String[] arrayValues) {
         this.arrayValues = arrayValues;
     }
@@ -46,7 +46,7 @@ public class MultiForm {
         return arrayValues;
     }
 
-    @BindsParameter
+    @BindsInput
     public void setListValues(List<String> listValues) {
         this.listValues = listValues;
     }

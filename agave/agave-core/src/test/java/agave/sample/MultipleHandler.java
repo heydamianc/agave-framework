@@ -37,11 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MultipleHandler {
     
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+	private HttpServletRequest request;
+	private HttpServletResponse response;
     
     @HandlesRequestsTo("/test1")
     public void test1(LoginForm loginForm) throws ServletException, IOException {
+    	request.setAttribute("x", "x");
+    	response.setStatus(400);
     }
     
     @HandlesRequestsTo("/test2")

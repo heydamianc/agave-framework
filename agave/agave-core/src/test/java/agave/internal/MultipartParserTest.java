@@ -25,16 +25,12 @@
  */
 package agave.internal;
 
-import java.io.InputStream;
 import java.io.FileInputStream;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 
 public class MultipartParserTest {
     

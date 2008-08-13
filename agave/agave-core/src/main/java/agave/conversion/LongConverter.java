@@ -43,7 +43,7 @@ public class LongConverter implements StringConverter<Long> {
             try {
                 value = Long.parseLong(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Long object", ex);
+                throw new ConversionException("Could not convert " + input + " to a Long object", ex.getCause());
             }
         }
         return value;

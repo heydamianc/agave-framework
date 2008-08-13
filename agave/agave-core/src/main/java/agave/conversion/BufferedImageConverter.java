@@ -25,28 +25,28 @@
  */
 package agave.conversion;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import agave.internal.Part;
+
 /**
- * Converts a {@code String} input into a {@code Short} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverter implements StringConverter<Short> {
+public class BufferedImageConverter implements PartConverter<BufferedImage> {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    public Short convert(String input) throws ConversionException {
-        Short value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Short.parseShort(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
-            }
-        }
-        return value;
-    }
+	public BufferedImage convert(Part input) throws ConversionException {
+		BufferedImage image = null;
+		if (input != null && input.getContents() != null) {
+			try {
+				image = ImageIO.read(input.getContents());
+			} catch (IOException ex) {
+				throw new ConversionException(ex.getCause());
+			}
+		}
+		return image;
+	}
 
 }

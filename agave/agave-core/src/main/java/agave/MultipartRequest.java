@@ -25,11 +25,19 @@
  */
 package agave;
 
+import agave.internal.Part;
+
+import java.util.Collection;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface MultipartRequest extends HttpServletRequest {
+
+    public Map<String, Collection<String>> getParameters();
+    public Map<String, Part> getParts();
 
 }

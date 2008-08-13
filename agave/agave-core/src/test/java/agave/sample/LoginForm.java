@@ -25,7 +25,7 @@
  */
 package agave.sample;
 
-import agave.BindsParameter;
+import agave.BindsInput;
 import agave.ConvertWith;
 import agave.conversion.BooleanConverter;
 
@@ -35,7 +35,7 @@ public class LoginForm {
     private String password;
     private Boolean remembered;
 
-    @BindsParameter
+    @BindsInput
     public void setUsername(String username) {
         this.username = username;
     }
@@ -44,7 +44,7 @@ public class LoginForm {
         return username;
     }
     
-    @BindsParameter
+    @BindsInput
     public void setPassword(String password) {
         this.password = password;
     }
@@ -53,7 +53,7 @@ public class LoginForm {
         return password;
     }
     
-    @BindsParameter
+    @BindsInput
     public void setRemembered(@ConvertWith(BooleanConverter.class) Boolean remembered) {
         this.remembered = remembered;
     }

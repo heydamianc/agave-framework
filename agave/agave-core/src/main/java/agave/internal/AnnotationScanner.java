@@ -25,14 +25,9 @@
  */
 package agave.internal;
 
-import agave.HandlesRequestsTo;
-
 import java.util.Collection;
 
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 /**
  * Scans the annotation of methods in search for a handler method.
@@ -43,7 +38,11 @@ public class AnnotationScanner implements AnnotationVisitor {
     private Collection<HandlerIdentifier> handlerIdentifiers;
     private String className;
     private String methodName;
-    private String methodDescriptor;
+    
+    @SuppressWarnings("unused")
+	private String methodDesciptor;
+    
+    @SuppressWarnings("unused")
     private String annotationDescriptor;
 
     public AnnotationScanner(Collection<HandlerIdentifier> handlerIdentifiers, String className, String methodName,
@@ -51,7 +50,7 @@ public class AnnotationScanner implements AnnotationVisitor {
         this.handlerIdentifiers = handlerIdentifiers;
         this.className = className.replace("/", ".");
         this.methodName = methodName;
-        this.methodDescriptor = methodDescriptor;
+        this.methodDesciptor = methodDescriptor;
         this.annotationDescriptor = annotationDescriptor;
     }
     

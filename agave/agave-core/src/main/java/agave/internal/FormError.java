@@ -27,7 +27,9 @@ package agave.internal;
 
 public class FormError extends Error {
 
-    public FormError() {
+	private static final long serialVersionUID = 1L;
+
+	public FormError() {
         super();
     }
 

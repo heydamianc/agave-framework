@@ -25,30 +25,35 @@
  */
 package agave;
 
-import agave.internal.*;
-import agave.sample.*;
-import agave.conversion.*;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.DelegatingServletInputStream;
+import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.objectweb.asm.ClassReader;
+
+import agave.conversion.BooleanConverter;
+import agave.internal.HandlerDescriptor;
+import agave.internal.HandlerRegistryImpl;
+import agave.internal.ParameterBinder;
+import agave.internal.ParameterBinderImpl;
+import agave.sample.AliasedForm;
+import agave.sample.LoginForm;
+import agave.sample.MultipleHandler;
+import agave.sample.SampleHandler;
 
 
 /**
@@ -97,12 +102,12 @@ public class AgaveFilterTest {
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
         Assert.assertEquals(LoginForm.class, desc.getFormClass());
         Assert.assertEquals(LoginForm.class.getMethod("setUsername", String.class), 
-            desc.getParameterSetters().get("username"));
+            desc.getMutators().get("username"));
         Assert.assertEquals(LoginForm.class.getMethod("setPassword", String.class), 
-            desc.getParameterSetters().get("password"));
+            desc.getMutators().get("password"));
         Assert.assertEquals(LoginForm.class.getMethod("setRemembered", Boolean.class), 
-            desc.getParameterSetters().get("remembered"));
-        Assert.assertEquals(BooleanConverter.class, desc.getParameterConverters().get("remembered"));
+            desc.getMutators().get("remembered"));
+        Assert.assertEquals(BooleanConverter.class, desc.getConverters().get("remembered"));
     }
 
     @Test
@@ -136,10 +141,10 @@ public class AgaveFilterTest {
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
         Assert.assertEquals(AliasedForm.class, desc.getFormClass());
         Assert.assertEquals(AliasedForm.class.getMethod("setSomeProperty", String.class), 
-            desc.getParameterSetters().get("someAlias"));
+            desc.getMutators().get("someAlias"));
         Assert.assertEquals(AliasedForm.class.getMethod("setAnotherProperty", Boolean.class),
-            desc.getParameterSetters().get("anotherAlias"));
-        Assert.assertEquals(BooleanConverter.class, desc.getParameterConverters().get("anotherAlias"));
+            desc.getMutators().get("anotherAlias"));
+        Assert.assertEquals(BooleanConverter.class, desc.getConverters().get("anotherAlias"));
     }
 
     @Test
@@ -184,8 +189,6 @@ public class AgaveFilterTest {
         parameterMap.put("password", new String[] {"password"});
         parameterMap.put("remembered", new String[] {"false"});
 
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-
         context.checking(new Expectations() {{
             allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
             allowing(config).getServletContext(); will(returnValue(servletContext));
@@ -195,6 +198,7 @@ public class AgaveFilterTest {
 
             // expect the handler to set an attribute
             one(request).setAttribute("loggedIn", Boolean.TRUE);
+            one(response).setStatus(400);
         }});
 
         filter.init(config);
@@ -211,6 +215,7 @@ public class AgaveFilterTest {
 
             // expect the handler to set an attribute
             one(request).setAttribute("loggedIn", Boolean.FALSE);
+            one(response).setStatus(400);
         }});
 
         filter.init(config);
@@ -284,6 +289,7 @@ public class AgaveFilterTest {
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
+            // expect an attribute
             one(request).setAttribute("noErrors", Boolean.TRUE);
         }});
 
@@ -310,6 +316,7 @@ public class AgaveFilterTest {
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
+            // expect an attribute
             one(chain).doFilter(request, response);
         }});
 
@@ -336,6 +343,7 @@ public class AgaveFilterTest {
             allowing(request).getContentType(); will(returnValue("text/plain"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
+            // expect an attribute
             one(chain).doFilter(request, response);
         }});
 
@@ -364,8 +372,37 @@ public class AgaveFilterTest {
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
+            // expect a couple of attributes
             one(request).setAttribute("username", "damian");
             one(request).setAttribute("password", "secret");
+        }});
+
+        filter.init(config);
+        filter.doFilter(request, response, chain);
+    }
+    
+    @Test
+    public void testMultipartRequest() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+
+        URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final ServletContext servletContext = context.mock(ServletContext.class);
+        final HttpServletRequest request = context.mock(HttpServletRequest.class);
+        final HttpServletResponse response = context.mock(HttpServletResponse.class);
+        final FilterChain chain = context.mock(FilterChain.class);
+        final InputStream in = getClass().getClassLoader().getResourceAsStream("multipart-sample-tomcat");
+
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(config).getServletContext(); will(returnValue(servletContext));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getRequestURI(); will(returnValue("/upload/file"));
+            allowing(request).getContentType(); will(returnValue("multipart/form-data"));
+            allowing(request).getInputStream(); will(returnValue(new DelegatingServletInputStream(in)));
+            
+            one(request).setAttribute("file", true);
+            one(response).setStatus(400);
         }});
 
         filter.init(config);

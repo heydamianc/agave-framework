@@ -25,7 +25,7 @@
  */
 package agave.sample;
 
-import agave.BindsParameter;
+import agave.BindsInput;
 import agave.ConvertWith;
 import agave.conversion.BooleanConverter;
 
@@ -40,7 +40,7 @@ public class AliasedForm {
     /**
      * &quot;someAlias&quot; serves as an alias for the {@code someProperty}.
      */
-    @BindsParameter(name = "someAlias") 
+    @BindsInput(name = "someAlias") 
     public void setSomeProperty(String someProperty) {
         this.someProperty = someProperty;
     }
@@ -49,7 +49,7 @@ public class AliasedForm {
         return someProperty;
     }
 
-    @BindsParameter(name = "anotherAlias")
+    @BindsInput(name = "anotherAlias")
     public void setAnotherProperty(@ConvertWith(BooleanConverter.class) Boolean anotherProperty) {
         this.anotherProperty = anotherProperty;
     }

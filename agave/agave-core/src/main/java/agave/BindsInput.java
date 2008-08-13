@@ -23,30 +23,23 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Converts a {@code String} input into a {@code Short} object.
+ * Indicates which {@code Converter} to use.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverter implements StringConverter<Short> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    public Short convert(String input) throws ConversionException {
-        Short value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Short.parseShort(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
-            }
-        }
-        return value;
-    }
-
+@Documented
+@Inherited
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface BindsInput {
+    String name() default "";
 }

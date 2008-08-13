@@ -43,7 +43,7 @@ public class CharacterConverter implements StringConverter<Character> {
             try {
                 value = (char)Character.codePointAt(input, 0);
             } catch (Exception ex) {
-                throw new ConversionException("Could not convert " + input + " to a Character object", ex);
+                throw new ConversionException("Could not convert " + input + " to a Character object", ex.getCause());
             }
         }
         return value;

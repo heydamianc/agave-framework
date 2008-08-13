@@ -25,16 +25,10 @@
  */
 package agave.internal;
 
-import agave.BindsParameter;
-import agave.BindsRequest;
-import agave.BindsResponse;
-import agave.ConvertWith;
-import agave.conversion.Converter;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.HashMap;
+
+import agave.conversion.Converter;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -100,15 +94,15 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public Method getResponseSetter();
 
     /**
-     * Gets the collection of parameter setters on the form class that this {@code HandlerDescriptor} describes.
+     * Gets the collection of setters on the form class that this {@code HandlerDescriptor} describes.
      */
-    public Map<String, Method> getParameterSetters();
+    public Map<String, Method> getMutators();
 
     /**
-     * Gets the collection of parameter converters for the setters on the form class that this
+     * Gets the collection of converters for the setters on the form class that this
      * {@code HandlerDescriptor} describes.
      */
-    public Map<String, Class<? extends Converter<?,?>>> getParameterConverters();
+    public Map<String, Class<? extends Converter<?,?>>> getConverters();
 
     /**
      * Whether or not this {@code HandlerDescriptor} matches the URI string supplied.  The URI string 

@@ -25,10 +25,7 @@
  */
 package agave.internal;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * A {@code URIPattern} is the object that indicates which handler should be
