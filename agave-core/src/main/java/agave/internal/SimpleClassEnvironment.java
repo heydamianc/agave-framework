@@ -32,7 +32,6 @@ public class SimpleClassEnvironment implements ClassEnvironment {
 
     public void initializeEnvironment() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
         InstantiationException {
-        // sit there and look sexy
     }
 
     /**

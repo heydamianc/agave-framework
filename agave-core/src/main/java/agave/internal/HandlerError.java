@@ -27,7 +27,9 @@ package agave.internal;
 
 public class HandlerError extends Error {
 
-    public HandlerError() {
+	private static final long serialVersionUID = 3050120974124450733L;
+
+	public HandlerError() {
         super();
     }
 

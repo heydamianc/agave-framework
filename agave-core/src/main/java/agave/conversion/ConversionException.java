@@ -32,7 +32,9 @@ import javax.servlet.ServletException;
  */
 public class ConversionException extends ServletException {
 
-    public ConversionException() {
+	private static final long serialVersionUID = 1L;
+
+	public ConversionException() {
         super();
     }
 

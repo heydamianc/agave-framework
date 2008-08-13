@@ -23,30 +23,50 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package javax.servlet;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Converts a {@code String} input into a {@code Short} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverter implements StringConverter<Short> {
+public class DelegatingServletInputStream extends ServletInputStream {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    public Short convert(String input) throws ConversionException {
-        Short value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Short.parseShort(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
-            }
-        }
-        return value;
+	InputStream in;
+	
+	public DelegatingServletInputStream(InputStream in) {
+		this.in = in;
+	}
+	
+    public int available() throws IOException {
+        return in.available();
     }
-
+    public void close() throws IOException {
+        in.close();
+    }
+    public void mark(int readlimit) {
+        in.mark(readlimit);
+    }
+    public boolean markSupported() {
+        return in.markSupported();
+    }
+    public int read() throws IOException {
+        return in.read();
+    }
+    public int read(byte[] bs) throws IOException {
+        return in.read(bs);
+    }
+    public int read(byte[] bs, int off, int len) throws IOException {
+        return in.read(bs, off, len);
+    }
+    public void reset() throws IOException {
+        in.reset();
+    }
+    public long skip(long n) throws IOException {
+        return in.skip(n);
+    }
+    public int readLine(byte[] b, int off, int len) {
+        return -1;
+    }
 }

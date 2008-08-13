@@ -25,7 +25,7 @@
  */
 package agave.internal;
 
-import agave.BindsParameter;
+import agave.BindsInput;
 import agave.BindsRequest;
 import agave.BindsResponse;
 import agave.ConvertWith;
@@ -49,8 +49,8 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     private Method handlerMethod;
     private Method requestSetter;
     private Method responseSetter;
-    private Map<String, Method> parameterSetters = new HashMap<String, Method>();
-    private Map<String, Class<? extends Converter<?,?>>> parameterConverters = 
+    private Map<String, Method> mutators = new HashMap<String, Method>();
+    private Map<String, Class<? extends Converter<?,?>>> converters = 
         new HashMap<String, Class<? extends Converter<?,?>>>();
 
     public HandlerDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException {
@@ -95,7 +95,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
      */
     private void locateAnnotatedFormMethods(HandlerIdentifier identifier) {
         for (Method method : this.formClass.getMethods()) {
-            BindsParameter annotation = method.getAnnotation(BindsParameter.class);
+            BindsInput annotation = method.getAnnotation(BindsInput.class);
             if (annotation != null) {
                 String paramName = null;
                 if (annotation.name() != null && "".equals(annotation.name().trim())) {
@@ -106,14 +106,14 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                 } else {
                     paramName = annotation.name();
                 }
-                parameterSetters.put(paramName, method);
+                mutators.put(paramName, method);
                 if (method.getParameterAnnotations().length != 1) {
                     throw new FormError("Illegal setter for " + paramName + " on form class " 
                         + this.formClass.getName() + ". A single parameter is required for parameter mutators.");
                 }
                 for (Annotation paramAnnotation : method.getParameterAnnotations()[0]) {
                     if (paramAnnotation instanceof ConvertWith) {
-                        parameterConverters.put(paramName, ((ConvertWith)paramAnnotation).value());        
+                        converters.put(paramName, ((ConvertWith)paramAnnotation).value());        
                     }
                 }
             }
@@ -144,12 +144,12 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         return responseSetter;
     }
 
-    public Map<String, Method> getParameterSetters() {
-        return parameterSetters;
+    public Map<String, Method> getMutators() {
+        return mutators;
     }
 
-    public Map<String, Class<? extends Converter<?,?>>> getParameterConverters() {
-        return parameterConverters;
+    public Map<String, Class<? extends Converter<?,?>>> getConverters() {
+        return converters;
     }
 
     public int compareTo(HandlerDescriptor that) {

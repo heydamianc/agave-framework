@@ -25,28 +25,14 @@
  */
 package agave.conversion;
 
+import agave.internal.Part;
+
 /**
- * Converts a {@code String} input into a {@code Short} object.
+ * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverter implements StringConverter<Short> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    public Short convert(String input) throws ConversionException {
-        Short value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Short.parseShort(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
-            }
-        }
-        return value;
-    }
-
+public interface PartConverter<OutputT> extends Converter<Part, OutputT> {
+    
+    public OutputT convert(Part input) throws ConversionException;
+    
 }

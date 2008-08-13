@@ -43,7 +43,7 @@ public class FloatConverter implements StringConverter<Float> {
             try {
                 value = Float.parseFloat(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Float object", ex);
+                throw new ConversionException("Could not convert " + input + " to a Float object", ex.getCause());
             }
         }
         return value;

@@ -25,8 +25,6 @@
  */
 package agave.internal;
 
-import agave.MultipartRequest;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +36,8 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import agave.MultipartRequest;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -106,9 +106,10 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
         return this.parameterMap;
     }
    
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public Enumeration<String> getParameterNames() {
-        Vector<String> parameterNames = new Vector();
+        Vector<String> parameterNames = new Vector<String>();
         parameterNames.addAll(super.getParameterMap().keySet());
         parameterNames.addAll(getParameters().keySet());
         return parameterNames.elements();

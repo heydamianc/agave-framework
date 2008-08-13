@@ -25,18 +25,13 @@
  */
 package agave;
 
-import agave.internal.*;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,6 +43,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.objectweb.asm.ClassReader;
+
+import agave.internal.ClassEnvironment;
+import agave.internal.HandlerDescriptor;
+import agave.internal.HandlerDescriptorImpl;
+import agave.internal.HandlerIdentifier;
+import agave.internal.HandlerRegistry;
+import agave.internal.HandlerRegistryImpl;
+import agave.internal.HandlerScanner;
+import agave.internal.MultipartRequestImpl;
+import agave.internal.ParameterBinder;
+import agave.internal.ParameterBinderImpl;
+import agave.internal.PartBinder;
+import agave.internal.PartBinderImpl;
+import agave.internal.SimpleClassEnvironment;
 
 /**
  * Scans the classes directory of a deployed context for any configured handlers and forwards HTTP requests 
@@ -134,7 +143,7 @@ public class AgaveFilter implements Filter {
      * @throws ServletException if a Servlet error occurs
      * @see <a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4">W3C Form Encoding Types</a>
      * @see agave.HandlesRequestsTo
-     * @see agave.BindsParameter
+     * @see agave.BindsInput
      * @see agave.ConvertWith
      * @see agave.BindsRequest
      * @see agave.BindsResponse
@@ -146,7 +155,8 @@ public class AgaveFilter implements Filter {
         
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request.getRequestURI());
         if (descriptor != null
-            && (MultipartRequestImpl.isMultipart(request) || MultipartRequestImpl.isFormURLEncoded(request))) {
+            && (MultipartRequestImpl.isMultipart(request) 
+            	|| MultipartRequestImpl.isFormURLEncoded(request))) {
 
             if (MultipartRequestImpl.isMultipart(request)) {
                 request = new MultipartRequestImpl(request);
@@ -166,8 +176,8 @@ public class AgaveFilter implements Filter {
                     binder.bindURIParameters(request);
 
                     if (MultipartRequestImpl.isMultipart(request)) {
-                        MultipartReqeust multipartRequest = (MultipartRequest)request;
-                        
+                    	PartBinder partBinder = new PartBinderImpl(formInstance, descriptor);
+                        partBinder.bindParts((MultipartRequest)request);
                     }
                 }
             } catch (ClassNotFoundException ex) {

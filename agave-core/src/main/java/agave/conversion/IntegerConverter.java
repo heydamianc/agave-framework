@@ -43,7 +43,7 @@ public class IntegerConverter implements StringConverter<Integer> {
             try {
                 value = Integer.parseInt(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Integer object", ex);
+                throw new ConversionException("Could not convert " + input + " to a Integer object", ex.getCause());
             }
         }
         return value;

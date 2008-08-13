@@ -23,23 +23,42 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave;
+package agave.conversion;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.awt.Image;
+import java.io.File;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import agave.internal.Part;
+import agave.internal.PartImpl;
 
 /**
- * Indicates which {@code Converter} to use.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface BindsParameter {
-    String name() default "";
+public class ImageConverterTest {
+	
+	private BufferedImageConverter converter;
+	private File imageFile;
+	
+	@Before
+	public void setup() throws Exception {
+		converter = new BufferedImageConverter();
+		imageFile = new File(getClass().getClassLoader().getResource("vim.gif").toURI());
+	}
+	
+	@Test
+	public void testConvert() throws Exception {
+		Part part = new PartImpl();
+		part.setContents(imageFile);
+		Image image = converter.convert(part);
+		
+		Assert.assertNotNull(image);
+		Assert.assertEquals(32, image.getHeight(null));
+		Assert.assertEquals(32, image.getWidth(null));
+	}
+	
 }

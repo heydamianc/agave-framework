@@ -276,4 +276,9 @@ public class URIPatternImpl implements URIPattern {
         return parameterMap;           
     }
 
+    @Override
+    public String toString() {
+    	return getPattern();
+    }
+    
 }

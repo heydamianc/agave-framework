@@ -25,18 +25,18 @@
  */
 package agave.internal;
 
-import agave.conversion.Converter;
-import agave.conversion.ConversionException;
-import agave.conversion.StringConverter;
-import agave.conversion.ListConverter;
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
+
+import agave.conversion.ConversionException;
+import agave.conversion.Converter;
+import agave.conversion.ListConverter;
+import agave.conversion.StringConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -51,75 +51,77 @@ public class ParameterBinderImpl implements ParameterBinder {
         this.descriptor = descriptor;
     }
 
-    public void bindRequestParameters(HttpServletRequest request) throws ConversionException {
+    @SuppressWarnings("unchecked")
+	public void bindRequestParameters(HttpServletRequest request) throws BindException, ConversionException {
         Map<String, String[]> parameterMap = (Map<String, String[]>)request.getParameterMap();
         try {
             for (String parameterName : parameterMap.keySet()) {
                 String[] values = parameterMap.get(parameterName);
                 if (values != null && values.length > 0) {
-                    Method parameterSetter = descriptor.getParameterSetters().get(parameterName);
-                    Class<? extends Converter<?,?>> converterClass = 
-                        descriptor.getParameterConverters().get(parameterName);
-                    if (converterClass == null) {
-                        if (parameterSetter.getParameterTypes().length > 0) {
-                            Class parameterType = parameterSetter.getParameterTypes()[0];
-                            if (parameterType.isAssignableFrom(String.class)) {
-                                parameterSetter.invoke(form, values[0]);
-                            } else if (parameterType.isAssignableFrom(List.class)) {
-                                parameterSetter.invoke(form, Arrays.asList(values));
-                            } else if (parameterType.isAssignableFrom(String[].class)) {
-                                // wrap the array in an object array - the jvm will unwrap 
-                                // it and use the string array instead of using each string
-                                // element as a separate argument in the var args
-                                parameterSetter.invoke(form, new Object[] {values});
-                            }
-                        }
-                    } else {
-                        Converter<?,?> converter = converterClass.newInstance();
-                        if (converter instanceof StringConverter<?>) {
-                            parameterSetter.invoke(form, ((StringConverter<?>)converter).convert(values[0]));
-                        } else if (converter instanceof ListConverter<?>) {
-                            parameterSetter.invoke(form, ((ListConverter<?>)converter).convert(values));
-                        }
+                    Method parameterMutator = descriptor.getMutators().get(parameterName);
+                    if (parameterMutator != null) {
+	                    Class<? extends Converter<?,?>> converterClass = descriptor.getConverters().get(parameterName);
+	                    if (converterClass == null) {
+	                        if (parameterMutator.getParameterTypes().length > 0) {
+	                            Class argumentType = parameterMutator.getParameterTypes()[0];
+	                            if (argumentType.isAssignableFrom(String.class)) {
+	                                parameterMutator.invoke(form, values[0]);
+	                            } else if (argumentType.isAssignableFrom(List.class)) {
+	                                parameterMutator.invoke(form, Arrays.asList(values));
+	                            } else if (argumentType.isAssignableFrom(String[].class)) {
+	                                parameterMutator.invoke(form, new Object[] {values});
+	                            }
+	                        }
+	                    } else {
+	                        Converter<?,?> converter = converterClass.newInstance();
+	                        if (converter instanceof StringConverter<?>) {
+	                            parameterMutator.invoke(form, ((StringConverter<?>)converter).convert(values[0]));
+	                        } else if (converter instanceof ListConverter<?>) {
+	                            parameterMutator.invoke(form, ((ListConverter<?>)converter).convert(values));
+	                        } else {
+	                            throw new ConversionException("Unsupported converter '" + converterClass.getName() 
+	                                + "' for supplied values");
+	                        }
+	                    }
                     }
                 }
             }
         } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
+            throw new ConversionException(ex);
         } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
+            throw new ConversionException(ex);
         } catch (InvocationTargetException ex) {
-            ex.printStackTrace();
+            throw new ConversionException(ex);
         } catch (InstantiationException ex) {
-            ex.printStackTrace();
+            throw new ConversionException(ex);
         }
     }
 
-    public void bindURIParameters(HttpServletRequest request) throws ConversionException {
+    public void bindURIParameters(HttpServletRequest request) throws BindException, ConversionException {
         Map<String, String> parameterMap = descriptor.getPattern().getParameterMap(request.getRequestURI());
         try {
             for (String parameterName : parameterMap.keySet()) {
                 String parameterValue = parameterMap.get(parameterName);
-                Method parameterSetter = descriptor.getParameterSetters().get(parameterName);       
+                Method parameterMutator = descriptor.getMutators().get(parameterName);       
                 Class<? extends Converter<?,?>> converterClass = 
-                    descriptor.getParameterConverters().get(parameterName);
+                    descriptor.getConverters().get(parameterName);
                 if (converterClass == null) {
-                    parameterSetter.invoke(form, parameterValue);
+                    parameterMutator.invoke(form, parameterValue);
                 } else {
                     Converter<?,?> converter = converterClass.newInstance();
                     if (converter instanceof StringConverter<?>) {
-                        parameterSetter.invoke(form, ((StringConverter<?>)converter).convert(parameterValue));
+                        parameterMutator.invoke(form, ((StringConverter<?>)converter).convert(parameterValue));
                     }
                 }
             }
         } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
+        	throw new BindException(ex.getCause());
         } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
+        	throw new BindException(ex.getCause());
         } catch (InvocationTargetException ex) {
-            ex.printStackTrace();
+        	throw new BindException(ex.getCause());
         } catch (InstantiationException ex) {
-            ex.printStackTrace();
+        	throw new BindException(ex.getCause());
         }
     }
 
