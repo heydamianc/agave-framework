@@ -401,7 +401,7 @@ public class AgaveFilterTest {
             allowing(request).getContentType(); will(returnValue("multipart/form-data"));
             allowing(request).getInputStream(); will(returnValue(new DelegatingServletInputStream(in)));
             
-            one(request).setAttribute("file", true);
+            one(request).setAttribute("file", false);
             one(response).setStatus(400);
         }});
 

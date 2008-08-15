@@ -39,7 +39,7 @@ import agave.internal.PartImpl;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ImageConverterTest {
+public class BufferedImageConverterTest {
 	
 	private BufferedImageConverter converter;
 	private File imageFile;
