@@ -37,7 +37,7 @@ import agave.conversion.BufferedImageConverter;
  */
 public class ImageUploadForm {
 
-	// matchers the parameters in the test file
+	// matches the parameters in the test file
 	private File file1;
 	private BufferedImage file2;
 
