@@ -42,13 +42,13 @@ public class ImageUploadHandler {
 	
 	@HandlesRequestsTo("/upload/file")
 	public void uploadFile(ImageUploadForm form) {
-		request.setAttribute("file", form.getFile1() != null);
+		request.setAttribute("file", form.getFile1() == null);
 		response.setStatus(400);
 	}
 	
 	@HandlesRequestsTo("/upload/image")
 	public void uploadImage(ImageUploadForm form) {
-		request.setAttribute("image", form.getFile2() != null);
+		request.setAttribute("image", form.getFile2() == null);
 		response.setStatus(400);
 	}
 
@@ -61,7 +61,5 @@ public class ImageUploadHandler {
 	public void setResponse(HttpServletResponse response) {
 		this.response = response;
 	}
-	
-	
 	
 }
