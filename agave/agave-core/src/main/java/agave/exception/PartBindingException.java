@@ -23,26 +23,39 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave.exception;
 
-public class HandlerError extends Error {
+import java.lang.reflect.Method;
 
-	private static final long serialVersionUID = 3050120974124450733L;
+/**
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ */
+public class PartBindingException extends BindingException {
 
-	public HandlerError() {
+    private static final long serialVersionUID = 1L;
+
+    public PartBindingException() {
         super();
     }
 
-    public HandlerError(String msg) {
-        super(msg);
+    public PartBindingException(String message, Throwable rootCause) {
+        super(message, rootCause);
     }
 
-    public HandlerError(String msg, Throwable cause) {
-        super(msg, cause);
+    public PartBindingException(String message) {
+        super(message);
     }
 
-    public HandlerError(Throwable cause) {
-        super(cause);
+    public PartBindingException(Throwable rootCause) {
+        super(rootCause);
+    }
+    
+    public PartBindingException(Method method, Throwable rootCause) {
+        super(method, rootCause);
+    }
+    
+    public PartBindingException(Method method, Class<?> argumentType) {
+        super(method, argumentType);
     }
 
 }

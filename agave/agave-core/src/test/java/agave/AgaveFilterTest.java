@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.servlet.DelegatingServletInputStream;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -403,6 +404,144 @@ public class AgaveFilterTest {
             
             one(request).setAttribute("file", false);
             one(response).setStatus(400);
+        }});
+
+        filter.init(config);
+        filter.doFilter(request, response, chain);
+    }
+    
+    @Test
+    public void testNullDestination() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        
+        URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final ServletContext servletContext = context.mock(ServletContext.class);
+        final HttpServletRequest request = context.mock(HttpServletRequest.class);
+        final HttpServletResponse response = context.mock(HttpServletResponse.class);
+        final FilterChain chain = context.mock(FilterChain.class);
+
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(config).getServletContext(); will(returnValue(servletContext));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getRequestURI(); will(returnValue("/shout/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+            allowing(response).isCommitted(); will(returnValue(true));
+        }});
+
+        filter.init(config);
+        filter.doFilter(request, response, chain);
+    }
+    
+    @Test
+    public void testReturnDestinationWithForward() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        
+        URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final ServletContext servletContext = context.mock(ServletContext.class);
+        final HttpServletRequest request = context.mock(HttpServletRequest.class);
+        final HttpServletResponse response = context.mock(HttpServletResponse.class);
+        final FilterChain chain = context.mock(FilterChain.class);
+        final RequestDispatcher requestDispatcher = context.mock(RequestDispatcher.class);
+
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(config).getServletContext(); will(returnValue(servletContext));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getRequestURI(); will(returnValue("/say/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(response).isCommitted(); will(returnValue(false));
+            
+            allowing(servletContext).getContextPath(); will(returnValue("/app"));
+            allowing(request).getRequestDispatcher("/app/say.jsp?said=hello"); will(returnValue(requestDispatcher)); 
+            allowing(requestDispatcher).forward(request, response);
+        }});
+
+        filter.init(config);
+        filter.doFilter(request, response, chain);
+    }
+    
+    @Test
+    public void testReturnDestinationWithRedirectAfterPost() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        
+        URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final ServletContext servletContext = context.mock(ServletContext.class);
+        final HttpServletRequest request = context.mock(HttpServletRequest.class);
+        final HttpServletResponse response = context.mock(HttpServletResponse.class);
+        final FilterChain chain = context.mock(FilterChain.class);
+
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(config).getServletContext(); will(returnValue(servletContext));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getRequestURI(); will(returnValue("/say/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("POST"));
+            allowing(response).isCommitted(); will(returnValue(false));
+            
+            allowing(servletContext).getContextPath(); will(returnValue("/app"));
+            allowing(response).sendRedirect("/app/say.jsp?said=hello");
+        }});
+
+        filter.init(config);
+        filter.doFilter(request, response, chain);
+    }
+    
+    @Test
+    public void testReturnDestinationWithExplicitRedirect() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        
+        URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final ServletContext servletContext = context.mock(ServletContext.class);
+        final HttpServletRequest request = context.mock(HttpServletRequest.class);
+        final HttpServletResponse response = context.mock(HttpServletResponse.class);
+        final FilterChain chain = context.mock(FilterChain.class);
+
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(config).getServletContext(); will(returnValue(servletContext));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getRequestURI(); will(returnValue("/whisper/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(response).isCommitted(); will(returnValue(false));
+            
+            allowing(servletContext).getContextPath(); will(returnValue("/app"));
+            allowing(response).sendRedirect("/app/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
+        }});
+
+        filter.init(config);
+        filter.doFilter(request, response, chain);
+    }
+    
+    @Test
+    public void testReturnURI() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        
+        URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final ServletContext servletContext = context.mock(ServletContext.class);
+        final HttpServletRequest request = context.mock(HttpServletRequest.class);
+        final HttpServletResponse response = context.mock(HttpServletResponse.class);
+        final FilterChain chain = context.mock(FilterChain.class);
+
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(config).getServletContext(); will(returnValue(servletContext));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getRequestURI(); will(returnValue("/proclaim/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(response).isCommitted(); will(returnValue(false));
+            
+            allowing(response).sendRedirect("http://www.utexas.edu/");
         }});
 
         filter.init(config);

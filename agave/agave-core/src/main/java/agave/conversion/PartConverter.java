@@ -25,6 +25,7 @@
  */
 package agave.conversion;
 
+import agave.exception.ConversionException;
 import agave.internal.Part;
 
 /**

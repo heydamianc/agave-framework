@@ -23,31 +23,31 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave.exception;
 
 import javax.servlet.ServletException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BindException extends ServletException {
-	
-	private static final long serialVersionUID = 1L;
-	
-	public BindException() {
-		super();
-	}
+public class AgaveException extends ServletException {
 
-	public BindException(String message, Throwable rootCause) {
-		super(message, rootCause);
-	}
+    private static final long serialVersionUID = 1L;
 
-	public BindException(String message) {
-		super(message);
-	}
+    public AgaveException() {
+        super();
+    }
 
-	public BindException(Throwable rootCause) {
-		super(rootCause);
-	}
+    public AgaveException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public AgaveException(String message) {
+        super(message);
+    }
+
+    public AgaveException(Throwable rootCause) {
+        super(rootCause);
+    }
 
 }

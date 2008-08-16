@@ -28,6 +28,8 @@ package agave.conversion;
 import java.util.ArrayList;
 import java.util.List;
 
+import agave.exception.ConversionException;
+
 /**
  * Converts a {@code String} input into a {@code Character} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

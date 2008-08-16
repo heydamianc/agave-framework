@@ -25,6 +25,10 @@
  */
 package agave.internal;
 
+import agave.exception.FormException;
+import agave.exception.HandlerException;
+
+
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -37,19 +41,19 @@ public class SimpleClassEnvironment implements ClassEnvironment {
     /**
      * Creates a new instance of a form object for the form class specified in the supplied descriptor.
      * @param descriptor the handler descriptor that describes which form to instantiate
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      * @throws FormError when a form instance failed to be instantiated
      */
-    public Object createFormInstance(HandlerDescriptor descriptor) throws FormError {
+    public Object createFormInstance(HandlerDescriptor descriptor) throws FormException {
         Object formInstance = null;
         if (descriptor.getFormClass() != null) {
             try {
                 formInstance = descriptor.getFormClass().newInstance();
             } catch (InstantiationException ex) {
-                throw new FormError("Unable to instantiate a form instance for: " + 
-                    descriptor.getFormClass().getName(), ex);
+                throw new FormException(descriptor, ex);
             } catch (IllegalAccessException ex) {
-                throw new FormError("Unable to instantiate a form instance for: " + 
-                    descriptor.getFormClass().getName(), ex);
+                throw new FormException(descriptor, ex);
             }
         }
         return formInstance;
@@ -61,17 +65,15 @@ public class SimpleClassEnvironment implements ClassEnvironment {
      * @param descriptor the handler descriptor that describes which form to instantiate.
      * @throws FormError when a handler instance failed to be instantiated
      */
-    public Object createHandlerInstance(HandlerDescriptor descriptor) throws HandlerError {
+    public Object createHandlerInstance(HandlerDescriptor descriptor) throws HandlerException {
         Object handlerInstance = null;
         if (descriptor.getHandlerClass() != null) {
             try {
                 handlerInstance = descriptor.getHandlerClass().newInstance();
             } catch (InstantiationException ex) {
-                throw new HandlerError("Unable to instantiate a handler instance for: " + 
-                    descriptor.getHandlerClass().getName(), ex);
+                throw new HandlerException(descriptor, ex);
             } catch (IllegalAccessException ex) {
-                throw new HandlerError("Unable to instantiate a handler instance for: " + 
-                    descriptor.getClass().getName(), ex);
+                throw new HandlerException(descriptor, ex);
             }
         }
         return handlerInstance;

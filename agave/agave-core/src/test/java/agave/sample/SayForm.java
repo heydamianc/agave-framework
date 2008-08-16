@@ -23,42 +23,24 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.sample;
 
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import agave.exception.ConversionException;
+import agave.BindsInput;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortListConverterTest {
-
-    private ShortListConverter converter;    
-
-    @Before
-    public void setup() throws Exception {
-        converter = new ShortListConverter();
-    }
-
-    @Test
-    public void testConvert() throws Exception {
-        List<Short> values = converter.convert(new String[] {"4", "5", "5"});
-        Assert.assertNotNull(values);
-        Assert.assertEquals(3, values.size());
-        Assert.assertEquals(new Short((short)4), values.get(0));
-        Assert.assertEquals(new Short((short)5), values.get(1));
-        Assert.assertEquals(new Short((short)5), values.get(2));
-    }
+public class SayForm {
     
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert(new String[] {"some bad input"});
+    private String phrase;
+
+    public String getPhrase() {
+        return phrase;
     }
-    
+
+    @BindsInput
+    public void setPhrase(String phrase) {
+        this.phrase = phrase;
+    }
+
 }
-
