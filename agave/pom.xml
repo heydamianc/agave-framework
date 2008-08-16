@@ -9,7 +9,6 @@
   <url>http://agave-web-framework.googlecode.com</url>
   <modules>
     <module>agave-core</module>
-    <module>agave-webapp</module>
     <module>agave-guice</module>
   </modules>
   <dependencies>
