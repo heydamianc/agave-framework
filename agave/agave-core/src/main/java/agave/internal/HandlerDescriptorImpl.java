@@ -25,16 +25,16 @@
  */
 package agave.internal;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import agave.BindsInput;
 import agave.BindsRequest;
 import agave.BindsResponse;
 import agave.ConvertWith;
 import agave.conversion.Converter;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers and routing requests 
@@ -107,10 +107,6 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                     paramName = annotation.name();
                 }
                 mutators.put(paramName, method);
-                if (method.getParameterAnnotations().length != 1) {
-                    throw new FormError("Illegal setter for " + paramName + " on form class " 
-                        + this.formClass.getName() + ". A single parameter is required for parameter mutators.");
-                }
                 for (Annotation paramAnnotation : method.getParameterAnnotations()[0]) {
                     if (paramAnnotation instanceof ConvertWith) {
                         converters.put(paramName, ((ConvertWith)paramAnnotation).value());        

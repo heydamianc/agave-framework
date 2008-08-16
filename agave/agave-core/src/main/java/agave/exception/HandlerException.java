@@ -23,26 +23,46 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave.exception;
 
-public class FormError extends Error {
+import agave.internal.HandlerDescriptor;
 
-	private static final long serialVersionUID = 1L;
+/**
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ */
+public class HandlerException extends AgaveException {
 
-	public FormError() {
+    private static final long serialVersionUID = 1L;
+
+    public HandlerException() {
         super();
     }
 
-    public FormError(String msg) {
-        super(msg);
+    public HandlerException(String message, Throwable rootCause) {
+        super(message, rootCause);
     }
 
-    public FormError(String msg, Throwable cause) {
-        super(msg, cause);
+    public HandlerException(String message) {
+        super(message);
     }
 
-    public FormError(Throwable cause) {
-        super(cause);
+    public HandlerException(Throwable rootCause) {
+        super(rootCause);
+    }
+
+    // TODO internationalize this
+    public HandlerException(HandlerDescriptor descriptor, InstantiationException rootCause) {
+        this(getErrorMessage(descriptor), rootCause);
+            
+    }
+    
+    // TODO internationalize this
+    public HandlerException(HandlerDescriptor descriptor, IllegalAccessException rootCause) {
+        this(getErrorMessage(descriptor), rootCause);
+    }
+    
+    private synchronized static String getErrorMessage(HandlerDescriptor descriptor) {
+       return  "Unable to create an instance of handler " +  descriptor.getHandlerClass().getName();
     }
 
 }

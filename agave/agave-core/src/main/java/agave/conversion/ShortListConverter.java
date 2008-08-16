@@ -28,6 +28,8 @@ package agave.conversion;
 import java.util.ArrayList;
 import java.util.List;
 
+import agave.exception.ConversionException;
+
 /**
  * Converts an input {@code String} array into a {@code Short List} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

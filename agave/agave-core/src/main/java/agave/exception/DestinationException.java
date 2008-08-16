@@ -23,42 +23,38 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.exception;
 
-import java.util.List;
+import agave.internal.HandlerDescriptor;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import agave.exception.ConversionException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortListConverterTest {
+public class DestinationException extends AgaveException {
 
-    private ShortListConverter converter;    
+    private static final long serialVersionUID = 1L;
 
-    @Before
-    public void setup() throws Exception {
-        converter = new ShortListConverter();
-    }
-
-    @Test
-    public void testConvert() throws Exception {
-        List<Short> values = converter.convert(new String[] {"4", "5", "5"});
-        Assert.assertNotNull(values);
-        Assert.assertEquals(3, values.size());
-        Assert.assertEquals(new Short((short)4), values.get(0));
-        Assert.assertEquals(new Short((short)5), values.get(1));
-        Assert.assertEquals(new Short((short)5), values.get(2));
+    public DestinationException() {
+        this("", null);
     }
     
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert(new String[] {"some bad input"});
+    public DestinationException(String message) {
+        this(message, null);
+    }
+
+    public DestinationException(Throwable rootCause) {
+        this("", rootCause);
+    }
+
+    public DestinationException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+    
+    // TODO internationalize this
+    public DestinationException(HandlerDescriptor descriptor) {
+        this("Invalid destination returned from " + descriptor.getHandlerClass().getName() + "#" +
+                descriptor.getHandlerMethod().getName());
     }
     
 }
-

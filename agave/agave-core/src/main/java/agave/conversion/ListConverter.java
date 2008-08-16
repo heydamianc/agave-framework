@@ -27,6 +27,8 @@ package agave.conversion;
 
 import java.util.List;
 
+import agave.exception.ConversionException;
+
 /**
  * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
