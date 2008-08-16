@@ -25,6 +25,8 @@
  */
 package agave.conversion;
 
+import agave.exception.ConversionException;
+
 /**
  * Converts a {@code String} input into a {@code Integer} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

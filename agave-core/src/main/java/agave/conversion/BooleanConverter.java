@@ -25,6 +25,8 @@
  */
 package agave.conversion;
 
+import agave.exception.ConversionException;
+
 /**
  * Converts an input {@code String} into a {@code Boolean} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

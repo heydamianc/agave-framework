@@ -27,15 +27,16 @@ package agave.internal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import agave.conversion.ConversionException;
-import agave.internal.BindException;
+import agave.exception.ConversionException;
+import agave.exception.ParameterBindingException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface ParameterBinder {
 
-    public void bindRequestParameters(HttpServletRequest request) throws BindException, ConversionException;
-    public void bindURIParameters(HttpServletRequest request) throws BindException, ConversionException;
+    public void bindRequestParameters(HttpServletRequest request) throws ParameterBindingException, ConversionException;
+    
+    public void bindURIParameters(HttpServletRequest request) throws ParameterBindingException, ConversionException;
 
 }

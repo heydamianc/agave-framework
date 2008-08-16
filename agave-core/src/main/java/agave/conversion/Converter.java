@@ -25,6 +25,8 @@
  */
 package agave.conversion;
 
+import agave.exception.ConversionException;
+
 /**
  * Converts an object from the input type to the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

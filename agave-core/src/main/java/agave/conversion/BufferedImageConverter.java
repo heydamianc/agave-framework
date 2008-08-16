@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import agave.exception.ConversionException;
 import agave.internal.Part;
 
 /**

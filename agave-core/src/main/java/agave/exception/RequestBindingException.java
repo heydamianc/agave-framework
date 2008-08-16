@@ -23,42 +23,48 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.exception;
 
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import agave.exception.ConversionException;
+import agave.internal.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortListConverterTest {
+public class RequestBindingException extends BindingException {
 
-    private ShortListConverter converter;    
+    private static final long serialVersionUID = 1L;
 
-    @Before
-    public void setup() throws Exception {
-        converter = new ShortListConverter();
+    public RequestBindingException() {
+        super();
     }
 
-    @Test
-    public void testConvert() throws Exception {
-        List<Short> values = converter.convert(new String[] {"4", "5", "5"});
-        Assert.assertNotNull(values);
-        Assert.assertEquals(3, values.size());
-        Assert.assertEquals(new Short((short)4), values.get(0));
-        Assert.assertEquals(new Short((short)5), values.get(1));
-        Assert.assertEquals(new Short((short)5), values.get(2));
+    public RequestBindingException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public RequestBindingException(String message) {
+        super(message);
+    }
+
+    public RequestBindingException(Throwable rootCause) {
+        super(rootCause);
     }
     
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert(new String[] {"some bad input"});
+    public RequestBindingException(HandlerDescriptor descriptor, IllegalAccessException ex) {
+        this(getErrorMessage(descriptor), ex);
     }
+
+    public RequestBindingException(HandlerDescriptor descriptor, InvocationTargetException ex) {
+        this(getErrorMessage(descriptor), ex);
+    }
+    
+    // TODO syncronize this
+    public synchronized static String getErrorMessage(HandlerDescriptor descriptor) {
+        return "Unable to bind the request object with " 
+            + descriptor.getHandlerClass().getName() + "#" + descriptor.getRequestSetter();
+    }
+    
     
 }
-

@@ -23,42 +23,40 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.exception;
 
-import java.util.List;
+import java.lang.reflect.Method;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import agave.exception.ConversionException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortListConverterTest {
+public class ParameterBindingException extends BindingException {
 
-    private ShortListConverter converter;    
+    private static final long serialVersionUID = 1L;
 
-    @Before
-    public void setup() throws Exception {
-        converter = new ShortListConverter();
+    public ParameterBindingException() {
+        this("", null);
     }
 
-    @Test
-    public void testConvert() throws Exception {
-        List<Short> values = converter.convert(new String[] {"4", "5", "5"});
-        Assert.assertNotNull(values);
-        Assert.assertEquals(3, values.size());
-        Assert.assertEquals(new Short((short)4), values.get(0));
-        Assert.assertEquals(new Short((short)5), values.get(1));
-        Assert.assertEquals(new Short((short)5), values.get(2));
+    public ParameterBindingException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public ParameterBindingException(String message) {
+        this(message, null);
+    }
+
+    public ParameterBindingException(Throwable rootCause) {
+        this("", rootCause);
+    }
+
+    public ParameterBindingException(Method method, Throwable rootCause) {
+        super(method, rootCause);
     }
     
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert(new String[] {"some bad input"});
+    public ParameterBindingException(Method method, Class<?> argumentType) {
+        super(method, argumentType);
     }
     
 }
-

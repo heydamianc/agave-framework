@@ -23,42 +23,44 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.exception;
 
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import agave.exception.ConversionException;
+import java.lang.reflect.Method;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortListConverterTest {
+public class BindingException extends AgaveException {
 
-    private ShortListConverter converter;    
+    private static final long serialVersionUID = 1L;
 
-    @Before
-    public void setup() throws Exception {
-        converter = new ShortListConverter();
+    public BindingException() {
+        super();
     }
 
-    @Test
-    public void testConvert() throws Exception {
-        List<Short> values = converter.convert(new String[] {"4", "5", "5"});
-        Assert.assertNotNull(values);
-        Assert.assertEquals(3, values.size());
-        Assert.assertEquals(new Short((short)4), values.get(0));
-        Assert.assertEquals(new Short((short)5), values.get(1));
-        Assert.assertEquals(new Short((short)5), values.get(2));
+    public BindingException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public BindingException(String message) {
+        super(message);
+    }
+
+    public BindingException(Throwable rootCause) {
+        super(rootCause);
     }
     
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert(new String[] {"some bad input"});
+    // TODO internationalize this
+    public BindingException(Method method, Throwable rootCause) {
+        this("There was a problem while binding a parameter with "
+                + method.getDeclaringClass() + "#" + method.getName()
+                , rootCause);
+    }
+    
+    // TODO internationalize this
+    public BindingException(Method method, Class<?> argumentType) {
+        this(argumentType.getClass().getName() + " is an unknown argument type for "
+                + method.getDeclaringClass().getName() + "#" + method.getName() + "()");
     }
     
 }
-

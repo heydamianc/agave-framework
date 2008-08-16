@@ -29,9 +29,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import agave.MultipartRequest;
-import agave.conversion.ConversionException;
 import agave.conversion.Converter;
 import agave.conversion.PartConverter;
+import agave.exception.ConversionException;
+import agave.exception.PartBindingException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -46,13 +47,13 @@ public class PartBinderImpl implements PartBinder {
         this.descriptor = descriptor;
     }
     
-	public void bindParts(MultipartRequest multipartRequest) throws BindException, ConversionException {
-        try {
-            for (String partName : multipartRequest.getParts().keySet()) {
-                Part part = multipartRequest.getParts().get(partName);
-                if (part != null) {
-                    Method partMutator = descriptor.getMutators().get(partName);
-                    if (partMutator != null) {
+	public void bindParts(MultipartRequest multipartRequest) throws PartBindingException, ConversionException {
+        for (String partName : multipartRequest.getParts().keySet()) {
+            Part part = multipartRequest.getParts().get(partName);
+            if (part != null) {
+                Method partMutator = descriptor.getMutators().get(partName);
+                if (partMutator != null) {
+                    try {
 	                    Class<? extends Converter<?,?>> converterClass = descriptor.getConverters().get(partName);
 	                    if (converterClass == null) {
 	                        if (partMutator.getParameterTypes().length > 0) {
@@ -63,21 +64,20 @@ public class PartBinderImpl implements PartBinder {
 	                        if (converter instanceof PartConverter) {
 	                            partMutator.invoke(form, ((PartConverter<?>)converter).convert(part));
 	                        } else {
-	                            throw new ConversionException("Unsupported converter '" + converterClass.getName()
-	                                + "' for supplied values");
+	                            throw new ConversionException(partMutator, converterClass);
 	                        }
 	                    }
+                    } catch (IllegalAccessException ex) {
+                        throw new PartBindingException(partMutator, ex.getCause());
+                    } catch (IllegalArgumentException ex) {
+                        throw new PartBindingException(partMutator, ex.getCause());
+                    } catch (InstantiationException ex) {
+                        throw new PartBindingException(partMutator, ex.getCause());
+                    } catch (InvocationTargetException ex) {
+                        throw new PartBindingException(partMutator, ex.getCause());
                     }
                 }
             }
-        } catch (IllegalAccessException ex) {
-        	throw new BindException(ex.getCause());
-        } catch (IllegalArgumentException ex) {
-            throw new BindException(ex.getCause());
-        } catch (InvocationTargetException ex) {
-        	throw new BindException(ex.getCause());
-        } catch (InstantiationException ex) {
-            throw new BindException(ex.getCause());
         }
     
     }

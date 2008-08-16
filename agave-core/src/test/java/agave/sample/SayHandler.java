@@ -23,31 +23,52 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.conversion;
+package agave.sample;
 
-import javax.servlet.ServletException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.servlet.http.HttpServletResponse;
+
+import agave.BindsResponse;
+import agave.Destination;
+import agave.HandlesRequestsTo;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ConversionException extends ServletException {
+public class SayHandler {
+    
+    private HttpServletResponse response;
 
-	private static final long serialVersionUID = 1L;
-
-	public ConversionException() {
-        super();
+    @HandlesRequestsTo("/say/${phrase}")
+    public Destination say(SayForm form) {
+        Destination dest = new Destination("/say.jsp");
+        dest.addParameter("said", form.getPhrase());
+        return dest;
+    }
+    
+    @HandlesRequestsTo("/whisper/${phrase}")
+    public Destination whisper(SayForm form) {
+        Destination dest = new Destination("/whisper.jsp", true);
+        dest.addParameter("said", form.getPhrase());
+        dest.addParameter("how", "very softly & sweetly");
+        return dest;
+    }
+    
+    @HandlesRequestsTo("/proclaim/${phrase}")
+    public URI proclaim() throws URISyntaxException {
+        return new URI("http", "//www.utexas.edu/", null);
+    }
+    
+    @HandlesRequestsTo("/shout/${phrase}")
+    public void shout() {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 
-    public ConversionException(String msg) {
-        super(msg);
+    @BindsResponse
+    public void setResponse(HttpServletResponse response) {
+        this.response = response;
     }
-
-    public ConversionException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
-
-    public ConversionException(Throwable cause) {
-        super(cause);
-    }
-
+    
 }

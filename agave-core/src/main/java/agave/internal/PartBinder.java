@@ -26,13 +26,14 @@
 package agave.internal;
 
 import agave.MultipartRequest;
-import agave.conversion.ConversionException;
+import agave.exception.ConversionException;
+import agave.exception.PartBindingException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface PartBinder {
 
-    public void bindParts(MultipartRequest request) throws BindException, ConversionException;
+    public void bindParts(MultipartRequest request) throws PartBindingException, ConversionException;
 
 }
