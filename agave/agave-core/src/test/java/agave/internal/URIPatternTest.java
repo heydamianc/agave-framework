@@ -27,13 +27,26 @@ package agave.internal;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class URIPatternTest {
+    
+    Mockery context = new Mockery();
+    HttpServletRequest request;
+    
+    @Before
+    public void setup() throws Exception {
+        request = context.mock(HttpServletRequest.class);
+    }
 
     @Test // transitively checks testNormalizePattern
     public void testConstructor() throws Exception {
@@ -161,9 +174,15 @@ public class URIPatternTest {
    
     @Test
     public void testGetParameterMap() throws Exception {
+        
+        context.checking(new Expectations() {{
+            allowing(request).getRequestURI(); will(returnValue("/app/one/two/buckle/my/shoe/"));
+            allowing(request).getContextPath(); will(returnValue("/app"));
+        }});
+        
         URIPattern u = new URIPatternImpl("/one/two/${three}/${four}/${five}");
         Assert.assertNotNull(u);
-        Map<String, String> params = u.getParameterMap("/one/two/buckle/my/shoe/");
+        Map<String, String> params = u.getParameterMap(request);
         Assert.assertNotNull(params);
         Assert.assertEquals(3, params.size());
         Assert.assertEquals("buckle", params.get("three"));

@@ -182,7 +182,8 @@ public class ParameterBinderTest {
             allowing(descriptor).getMutators(); will(returnValue(mutators));
             allowing(descriptor).getConverters(); will(returnValue(converters));
             allowing(descriptor).getPattern(); will(returnValue(pattern));
-            allowing(request).getRequestURI(); will(returnValue("/uri-params/damian/ornery/"));
+            allowing(request).getRequestURI(); will(returnValue("/app/uri-params/damian/ornery/"));
+            allowing(request).getContextPath(); will(returnValue("/app"));
         }});
         
         binder.bindURIParameters(request);
@@ -205,7 +206,8 @@ public class ParameterBinderTest {
             allowing(descriptor).getMutators(); will(returnValue(mutators));
             allowing(descriptor).getConverters(); will(returnValue(converters));
             allowing(descriptor).getPattern(); will(returnValue(pattern));
-            allowing(request).getRequestURI(); will(returnValue("/uri-params/true/"));
+            allowing(request).getRequestURI(); will(returnValue("/app/uri-params/true/"));
+            allowing(request).getContextPath(); will(returnValue("/app"));
         }});
         
         binder.bindURIParameters(request);
