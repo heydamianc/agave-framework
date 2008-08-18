@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * A repository used to group all registered handlers.  Handlers are registered by means of scanning
  * the classpath for classes that have methods annotated with the {@code HandlesRequestsTo} annotation.
@@ -74,7 +76,11 @@ public class HandlerRegistryImpl implements HandlerRegistry {
         }
     }
     
-    public HandlerDescriptor findMatch(String uri) {
+    public HandlerDescriptor findMatch(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        if (uri.startsWith(request.getContextPath())) {
+            uri = uri.substring(request.getContextPath().length());
+        }
         for (HandlerDescriptor descriptor : descriptors) {
             if (descriptor.matches(uri)) {
                 return descriptor;

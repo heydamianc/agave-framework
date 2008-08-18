@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * A {@code URIPattern} is the object that indicates which handler should be
  * invoked according to the requested URI. A {@code URIPattern} is similar in
@@ -45,7 +47,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class URIPatternImpl implements URIPattern {
-
+    
     public static final String FORWARD_SLASH = "/";
 
     private String pattern;
@@ -150,7 +152,7 @@ public class URIPatternImpl implements URIPattern {
 
         String[] patternTokens = pattern.split(FORWARD_SLASH);
         String[] uriTokens = normalizeURI(uri).split(FORWARD_SLASH);
-
+        
         int pi = 0, ui = 0;
         for (; pi < patternTokens.length && ui < uriTokens.length; pi++, ui++) {
             if ("**".equals(patternTokens[pi])) {
@@ -257,10 +259,14 @@ public class URIPatternImpl implements URIPattern {
         return value;
     }
 
-    public Map<String, String> getParameterMap(String uriStr) {
+    public Map<String, String> getParameterMap(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        if (request.getContextPath() != null) {
+            uri = uri.substring(request.getContextPath().length());
+        }
         Map<String, String> parameterMap = new HashMap<String, String>();
-        if (parts != null && uriStr != null && uriStr.length() > 1) {
-            String[] requestedParts = uriStr.substring(1).split("/");
+        if (parts != null && uri != null && uri.length() > 1) {
+            String[] requestedParts = uri.substring(1).split("/");
             if (requestedParts.length >= parts.length) {
                 Pattern pattern = Pattern.compile("\\$\\{(.*)\\}");
                 for (int i = 0; i < parts.length; i++) {

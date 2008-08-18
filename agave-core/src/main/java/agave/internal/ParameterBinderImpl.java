@@ -108,7 +108,7 @@ public class ParameterBinderImpl implements ParameterBinder {
     }
 
     public void bindURIParameters(HttpServletRequest request) throws ParameterBindingException, ConversionException {
-        Map<String, String> parameterMap = descriptor.getPattern().getParameterMap(request.getRequestURI());
+        Map<String, String> parameterMap = descriptor.getPattern().getParameterMap(request);
         for (String parameterName : parameterMap.keySet()) {
             String parameterValue = parameterMap.get(parameterName);
             Method parameterMutator = descriptor.getMutators().get(parameterName);

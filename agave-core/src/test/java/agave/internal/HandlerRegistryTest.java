@@ -25,16 +25,24 @@
  */
 package agave.internal;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class HandlerRegistryTest {
 
+    private Mockery context = new Mockery();
     private HandlerRegistry registry;
+    private HttpServletRequest request;
 
     @Before
     public void setup() {
         registry = new HandlerRegistryImpl();
+        request = context.mock(HttpServletRequest.class);
     }
 
     @Test(expected = DuplicateURIPatternError.class)
@@ -49,6 +57,23 @@ public class HandlerRegistryTest {
     public void testAddToUnmodifiable() throws Exception {
         registry.getDescriptors().add(
             new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", "agave.sample.SampleHandler", "login")));
+    }
+    
+    @Test
+    public void testMatches() throws Exception {
+        registry.addDescriptor(
+            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/some/path", "agave.sample.SampleHandler", "login")));
+        registry.addDescriptor(
+            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/other/path", "agave.sample.SampleHandler", "login")));
+        
+        context.checking(new Expectations() {{
+            allowing(request).getContextPath(); will(returnValue("/app"));
+            allowing(request).getRequestURI(); will(returnValue("/app/some/path"));
+        }});
+        
+        HandlerDescriptor descriptor = registry.findMatch(request);
+        Assert.assertNotNull(descriptor);
+        Assert.assertEquals("/some/path", descriptor.getPattern().toString());
     }
    
 }
