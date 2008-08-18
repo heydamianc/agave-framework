@@ -27,6 +27,8 @@ package agave.internal;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * A repository used to group all registered handlers.  Handlers are registered by means of scanning
  * the classpath for classes that have methods annotated with the {@code HandlesRequestsTo} annotation.
@@ -43,7 +45,7 @@ public interface HandlerRegistry {
      */ 
     public void addDescriptor(HandlerDescriptor added) throws DuplicateURIPatternError;
     public void addAllDescriptors(Collection<HandlerDescriptor> descriptors) throws DuplicateURIPatternError;
-    public HandlerDescriptor findMatch(String uri);
+    public HandlerDescriptor findMatch(HttpServletRequest request);
     public Collection<HandlerDescriptor> getDescriptors();
     
 }

@@ -34,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -73,6 +74,8 @@ import agave.internal.SimpleClassEnvironment;
  */
 public class AgaveFilter implements Filter {
 
+    private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
+    
     private FilterConfig config;
     private ClassEnvironment classEnvironment;
     private HandlerRegistry handlerRegistry;
@@ -91,12 +94,31 @@ public class AgaveFilter implements Filter {
         this.config = config;
         try {
             setHandlerRegistry(new HandlerRegistryImpl());
-            scanClassesDirForHandlers(new File(config.getServletContext().getRealPath("/WEB-INF/classes")));
+            File classesDirectory = null;
+            
+            if (config.getInitParameter("classesDirectory") != null) {
+                classesDirectory = new File(config.getInitParameter("classesDirectory"));
+            } else {
+                classesDirectory = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
+            }
+            
+            scanClassesDirForHandlers(classesDirectory);
             classEnvironment = new SimpleClassEnvironment();
             classEnvironment.initializeEnvironment();
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
+        
+        if (!handlerRegistry.getDescriptors().isEmpty()) {
+            for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
+                LOGGER.fine(descriptor.getHandlerClass().getName() + "#" 
+                        + descriptor.getHandlerMethod().getName() + "() registered -> "
+                        + descriptor.getPattern());
+            }
+        } else {
+            LOGGER.fine("No handlers registered");
+        }
+        LOGGER.info("AgaveFilter successfully initialized");
     }
 
     public void destroy() {
@@ -174,10 +196,11 @@ public class AgaveFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        HandlerDescriptor descriptor = handlerRegistry.findMatch(request.getRequestURI());
-        if (descriptor != null
-                && (MultipartRequestImpl.isMultipart(request) || MultipartRequestImpl
-                        .isFormURLEncoded(request))) {
+        HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
+        if (descriptor != null) {
+            
+            LOGGER.fine(request.getRequestURI() + " -> " + descriptor.getHandlerClass().getName() + "#" + 
+                    descriptor.getHandlerMethod() + "()");
 
             if (MultipartRequestImpl.isMultipart(request)) {
                 request = new MultipartRequestImpl(request);
@@ -281,6 +304,7 @@ public class AgaveFilter implements Filter {
                 
             }
         } else {
+            LOGGER.info(request.getRequestURI() + " -> no associated handler");
             chain.doFilter(req, resp);
         }
     }
@@ -302,7 +326,7 @@ public class AgaveFilter implements Filter {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {
                     scanClassesDirForHandlers(node);
-                } else if (node.isFile()) {
+                } else if (node.isFile() && node.getName().endsWith(".class")) {
                     ClassReader classReader = new ClassReader(new FileInputStream(node));
                     Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
                     classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);

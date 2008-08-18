@@ -27,6 +27,8 @@ package agave.internal;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * A {@code URIPattern} is the object that indicates which handler should be
  * invoked according to the requested URI. A {@code URIPattern} is similar in
@@ -81,10 +83,6 @@ public interface URIPattern extends Comparable<URIPattern> {
      */
     public int compareTo(URIPattern that);
 
-    /**
-     * Parameterize a URI string around the parameter tokens in this {@code URIPattern}.
-     * @param uriStr the result of calling {@code HttpServletRequest.getRequestURI()}
-     */
-    public Map<String, String> getParameterMap(String uriStr);
+    public Map<String, String> getParameterMap(HttpServletRequest request);
 
 }
