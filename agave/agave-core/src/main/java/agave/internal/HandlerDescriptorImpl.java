@@ -33,6 +33,7 @@ import java.util.Map;
 import agave.BindsInput;
 import agave.BindsRequest;
 import agave.BindsResponse;
+import agave.BindsServletContext;
 import agave.ConvertWith;
 import agave.conversion.Converter;
 
@@ -49,6 +50,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     private Method handlerMethod;
     private Method requestSetter;
     private Method responseSetter;
+    private Method servletContextSetter;
     private Map<String, Method> mutators = new HashMap<String, Method>();
     private Map<String, Class<? extends Converter<?,?>>> converters = 
         new HashMap<String, Class<? extends Converter<?,?>>>();
@@ -82,6 +84,8 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                 this.requestSetter = method;    
             } else if (method.getAnnotation(BindsResponse.class) != null) {
                 this.responseSetter = method;
+            } else if (method.getAnnotation(BindsServletContext.class) != null) {
+                this.servletContextSetter = method;
             }
         }
     }
@@ -138,6 +142,10 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
 
     public Method getResponseSetter() {
         return responseSetter;
+    }
+    
+    public Method getServletContextSetter() {
+        return servletContextSetter;
     }
 
     public Map<String, Method> getMutators() {
