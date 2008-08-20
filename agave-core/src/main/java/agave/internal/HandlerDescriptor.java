@@ -92,6 +92,11 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
      * Gets the response setter method that this {@code HandlerDescriptor} describes.
      */
     public Method getResponseSetter();
+    
+    /**
+     * Gets the servlet context setter method that this {@code HandlerDescriptor} descripts.
+     */
+    public Method getServletContextSetter();
 
     /**
      * Gets the collection of setters on the form class that this {@code HandlerDescriptor} describes.
