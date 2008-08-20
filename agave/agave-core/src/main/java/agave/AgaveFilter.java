@@ -239,6 +239,16 @@ public class AgaveFilter implements Filter {
                     throw new ResponseBindingException(descriptor, ex);
                 }
             }
+            
+            if (descriptor.getServletContextSetter() != null) {
+                try {
+                    descriptor.getServletContextSetter().invoke(handlerInstance, config.getServletContext());
+                } catch (IllegalAccessException ex) {
+                    throw new ResponseBindingException(descriptor, ex);
+                } catch (InvocationTargetException ex) {
+                    throw new ResponseBindingException(descriptor, ex);
+                }
+            }
 
             Object result = null;
 
@@ -304,7 +314,6 @@ public class AgaveFilter implements Filter {
                 
             }
         } else {
-            LOGGER.info(request.getRequestURI() + " -> no associated handler");
             chain.doFilter(req, resp);
         }
     }
