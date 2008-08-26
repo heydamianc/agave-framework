@@ -43,7 +43,7 @@ import freemarker.template.TemplateException;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FreemarkerHandler {
+public abstract class FreemarkerHandler {
 
     protected ServletContext servletContext;
     protected HttpServletRequest request;
