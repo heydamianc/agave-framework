@@ -23,17 +23,19 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave.exception;
+
+import agave.internal.HandlerDescriptor;
 
 /**
  * An exception that is thrown to indicate that two handlers share the same {@code URIPattern}.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DuplicateURIPatternError extends Error {
+public class DuplicateURIPatternException extends Error {
 	
 	private static final long serialVersionUID = 1L;
 
-	public DuplicateURIPatternError(HandlerDescriptor existing, HandlerDescriptor added) {
+	public DuplicateURIPatternException(HandlerDescriptor existing, HandlerDescriptor added) {
         super("Failed to register a duplicate handler mapping, \"" + added.getPattern().toString() + "\"" +
             " for " + added.getHandlerClass().getName() + ".  Handler is already mapped in " + 
             existing.getHandlerClass().getName() + ".");

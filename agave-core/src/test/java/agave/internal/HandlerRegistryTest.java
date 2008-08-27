@@ -33,6 +33,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import agave.exception.DuplicateURIPatternException;
+
 public class HandlerRegistryTest {
 
     private Mockery context = new Mockery();
@@ -45,7 +47,7 @@ public class HandlerRegistryTest {
         request = context.mock(HttpServletRequest.class);
     }
 
-    @Test(expected = DuplicateURIPatternError.class)
+    @Test(expected = DuplicateURIPatternException.class)
     public void testAddDescriptor() throws Exception {
         registry.addDescriptor(
             new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", "agave.sample.SampleHandler", "login")));
