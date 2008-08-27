@@ -45,6 +45,7 @@ public class FreemarkerContextListener implements ServletContextListener {
     public static final String FREEMARKER_CONFIG_KEY = "freemarkerConfig";
 
     public void contextDestroyed(ServletContextEvent event) {
+        event.getServletContext().removeAttribute(FREEMARKER_CONFIG_KEY);
     }
 
     public void contextInitialized(ServletContextEvent event) {
