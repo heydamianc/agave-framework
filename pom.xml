@@ -9,7 +9,7 @@
   <url>http://agave-web-framework.googlecode.com</url>
   <modules>
     <module>agave-core</module>
-    <module>agave-guice</module>
+    <module>samples</module>
   </modules>
   <dependencies>
     <dependency>
