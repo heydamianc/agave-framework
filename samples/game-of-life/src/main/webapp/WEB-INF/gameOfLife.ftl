@@ -67,6 +67,7 @@
 	<body>
 		<div id="content">
 			<h1>Conway's Game of Life</h1>
+			<p>Load the grid with an initial configuration:</p>
 			<ul>
 				<li><a href="${contextPath}/init/blinker">Blinker</a></li>
 				<li><a href="${contextPath}/init/toad">Toad</a></li>
