@@ -20,10 +20,6 @@
 	<listener>
 		<listener-class>agave.samples.gameOfLife.web.FreemarkerContextListener</listener-class>
 	</listener>
-	<mime-mapping>
-		<extension>xhtml</extension>
-		<mime-type>application/xhtml+xml</mime-type>
-	</mime-mapping>
 	<welcome-file-list>
 		<welcome-file>/init</welcome-file>
 	</welcome-file-list>
