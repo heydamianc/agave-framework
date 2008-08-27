@@ -9,7 +9,7 @@
 	<groupId>agave</groupId>
 	<artifactId>game-of-life</artifactId>
 	<packaging>war</packaging>
-	<name>game-of-life</name>
+	<name>Conway's Game of Life</name>
 	<version>1.0-SNAPSHOT</version>
 	<description>Conway's Game of Life</description>
 	<dependencies>
@@ -29,8 +29,7 @@
 	<repositories>
 		<repository>
 			<id>gson</id>
-			<url>http://google-gson.googlecode.com/svn/mavenrepo
-			</url>
+			<url>http://google-gson.googlecode.com/svn/mavenrepo</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
