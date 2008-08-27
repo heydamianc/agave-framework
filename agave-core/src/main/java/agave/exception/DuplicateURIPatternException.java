@@ -31,7 +31,7 @@ import agave.internal.HandlerDescriptor;
  * An exception that is thrown to indicate that two handlers share the same {@code URIPattern}.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DuplicateURIPatternException extends Error {
+public class DuplicateURIPatternException extends AgaveException {
 	
 	private static final long serialVersionUID = 1L;
 

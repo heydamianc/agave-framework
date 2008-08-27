@@ -330,7 +330,7 @@ public class AgaveFilter implements Filter {
      *            /WEB-INF/classes}
      */
     protected void scanClassesDirForHandlers(File root) throws FileNotFoundException, IOException,
-            ClassNotFoundException {
+            ClassNotFoundException, AgaveException {
         if (root != null && root.canRead()) {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {
