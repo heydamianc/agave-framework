@@ -151,8 +151,8 @@ public class URIPatternImpl implements URIPattern {
         }
 
         // check for root (so as to not match all patterns starting with a '/')
-        if ("/".equals(pattern)) {
-            if ("/".equals(uri)) {
+        if ("/".equals(uri)) {
+            if ("/".equals(pattern)) {
                 return true;
             }
             return false;
