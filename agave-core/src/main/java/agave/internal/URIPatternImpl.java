@@ -154,9 +154,8 @@ public class URIPatternImpl implements URIPattern {
         if ("/".equals(pattern)) {
             if ("/".equals(uri)) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
         
         String[] patternTokens = pattern.split(FORWARD_SLASH);
