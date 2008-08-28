@@ -150,6 +150,15 @@ public class URIPatternImpl implements URIPattern {
             throw new IllegalArgumentException("URI must begin with a forward slash ('/')");
         }
 
+        // check for root (so as to not match all patterns starting with a '/')
+        if ("/".equals(pattern)) {
+            if ("/".equals(uri)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
         String[] patternTokens = pattern.split(FORWARD_SLASH);
         String[] uriTokens = normalizeURI(uri).split(FORWARD_SLASH);
         
