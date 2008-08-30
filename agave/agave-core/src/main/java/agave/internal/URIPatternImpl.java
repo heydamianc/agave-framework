@@ -48,7 +48,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class URIPatternImpl implements URIPattern {
     
-    public static final String FORWARD_SLASH = "/";
+    private static final String FORWARD_SLASH = "/";
+    private static final Pattern replacementPattern = Pattern.compile("\\$\\{(.*)\\}");
 
     private String pattern;
     private String[] parts;
@@ -247,7 +248,7 @@ public class URIPatternImpl implements URIPattern {
                 break;
             }
         }
-
+        
         if (value == null) {
             if (thisTokens.length > thatTokens.length) {
                 value = -1;
@@ -256,6 +257,20 @@ public class URIPatternImpl implements URIPattern {
             } else {
                 int length = (thisTokens.length > thatTokens.length) ? thisTokens.length : thatTokens.length;
                 for (int i = 0; i < length; i++) {
+                    Matcher thisTokenMatcher = replacementPattern.matcher(thisTokens[i]);
+                    Matcher thatTokenMatcher = replacementPattern.matcher(thatTokens[i]);
+                    
+                    if (thisTokenMatcher.matches() && thatTokenMatcher.matches()) {
+                        value = 0;
+                        continue; // just ignore this case - treat all replacement params equal
+                    } else if (!thisTokenMatcher.matches() && thatTokenMatcher.matches()) {
+                        value = -1;
+                        break;
+                    } else if (thisTokenMatcher.matches() && !thatTokenMatcher.matches()) {
+                        value = 1;
+                        break;
+                    }
+                    
                     value = thisTokens[i].compareToIgnoreCase(thatTokens[i]);
                     if (value != 0) {
                         break;
@@ -276,9 +291,8 @@ public class URIPatternImpl implements URIPattern {
         if (parts != null && uri != null && uri.length() > 1) {
             String[] requestedParts = uri.substring(1).split("/");
             if (requestedParts.length >= parts.length) {
-                Pattern pattern = Pattern.compile("\\$\\{(.*)\\}");
                 for (int i = 0; i < parts.length; i++) {
-                    Matcher matcher = pattern.matcher(parts[i]);
+                    Matcher matcher = replacementPattern.matcher(parts[i]);
                     if (matcher.matches() && matcher.groupCount() > 0) {
                         String paramName = matcher.group(1);
                         String paramValue = requestedParts[i]; 

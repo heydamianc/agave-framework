@@ -145,7 +145,7 @@ public class URIPatternTest {
         Assert.assertTrue(new URIPatternImpl("/").compareTo(new URIPatternImpl("/")) == 0);
         Assert.assertTrue(new URIPatternImpl("/one/two/three").compareTo(new URIPatternImpl("/")) < 0);
         Assert.assertTrue(new URIPatternImpl("/").compareTo(new URIPatternImpl("/one/two/three")) > 0);
-        Assert.assertTrue(new URIPatternImpl("/one/two/${var}").compareTo(new URIPatternImpl("/one/${var}/three")) > 0);
+        Assert.assertTrue(new URIPatternImpl("/one/two/${var}").compareTo(new URIPatternImpl("/one/${var}/three")) < 0);
         Assert.assertTrue(new URIPatternImpl("/one/two/${var}").compareTo(new URIPatternImpl("/one/${var}/")) < 0);
         Assert.assertTrue(new URIPatternImpl("/one/two/*").compareTo(new URIPatternImpl("/one/")) < 0);
         Assert.assertTrue(new URIPatternImpl("/one/two/*").compareTo(new URIPatternImpl("/one/two/")) < 0);
@@ -164,6 +164,9 @@ public class URIPatternTest {
         Assert.assertTrue(new URIPatternImpl("/a").compareTo(new URIPatternImpl("/b")) < 0);
         Assert.assertTrue(new URIPatternImpl("/b").compareTo(new URIPatternImpl("/a")) > 0);
         Assert.assertTrue(new URIPatternImpl("/A").compareTo(new URIPatternImpl("/a")) == 0);
+        Assert.assertTrue(new URIPatternImpl("/init").compareTo(new URIPatternImpl("/${uniqueId}")) < 0);
+        Assert.assertTrue(new URIPatternImpl("/${uniqueId}").compareTo(new URIPatternImpl("/init")) > 0);
+        Assert.assertTrue(new URIPatternImpl("/${uniqueId1}").compareTo(new URIPatternImpl("/${uniqueId2}")) == 0);
     }
 
     @Test
