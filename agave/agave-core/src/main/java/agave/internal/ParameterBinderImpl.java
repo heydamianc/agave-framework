@@ -112,6 +112,12 @@ public class ParameterBinderImpl implements ParameterBinder {
         for (String parameterName : parameterMap.keySet()) {
             String parameterValue = parameterMap.get(parameterName);
             Method parameterMutator = descriptor.getMutators().get(parameterName);
+            
+            if (parameterMutator == null) { // URI parameters are required
+                throw new ParameterBindingException("Could not find a mutator for URI parameter \"" + parameterName +
+                        "\" on " + descriptor.getFormClass().getName());
+            }
+            
             try {
                 Class<? extends Converter<?, ?>> converterClass = descriptor.getConverters().get(parameterName);
                 if (converterClass == null) {
