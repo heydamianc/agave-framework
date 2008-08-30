@@ -25,12 +25,6 @@
  */
 package agave.internal;
 
-import agave.conversion.Converter;
-import agave.conversion.BooleanConverter;
-import agave.sample.LoginForm;
-import agave.sample.MultiForm;
-import agave.sample.AliasedForm;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +37,14 @@ import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import agave.conversion.BooleanConverter;
+import agave.conversion.Converter;
+import agave.exception.ParameterBindingException;
+import agave.sample.AliasedForm;
+import agave.sample.LoginForm;
+import agave.sample.MultiForm;
+import agave.sample.SayForm;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -190,6 +192,24 @@ public class ParameterBinderTest {
 
         Assert.assertEquals("damian", form.getUsername());
         Assert.assertEquals("ornery", form.getPassword());
+    }
+    
+    @Test(expected = ParameterBindingException.class)
+    public void testBindURIParametersExpectException() throws Exception {
+        final URIPattern pattern = new URIPatternImpl("/say/${wtf}");
+        final Map<String, Method> mutators = new HashMap<String, Method>();
+        final SayForm form = new SayForm();
+        
+        context.checking(new Expectations() {{
+            allowing(request).getRequestURI(); will(returnValue("/app/say/booyaka"));
+            allowing(request).getContextPath(); will(returnValue("/app"));
+            allowing(descriptor).getFormClass(); will(returnValue(SayForm.class));
+            allowing(descriptor).getPattern(); will(returnValue(pattern));
+            allowing(descriptor).getMutators(); will(returnValue(mutators));
+        }});
+        
+        ParameterBinder binder = new ParameterBinderImpl(form, descriptor);
+        binder.bindURIParameters(request);
     }
 
     @Test
