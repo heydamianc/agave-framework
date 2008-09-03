@@ -55,6 +55,8 @@ public class BooleanConverterTest {
         Assert.assertEquals(Boolean.FALSE, converter.convert("f"));
         Assert.assertEquals(Boolean.FALSE, converter.convert("F"));
         Assert.assertEquals(Boolean.FALSE, converter.convert("0"));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("on"));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("off"));
         Assert.assertEquals(null, converter.convert(null));
         Assert.assertEquals(null, converter.convert(""));
     }
@@ -65,4 +67,5 @@ public class BooleanConverterTest {
     }
     
 }
+
 
