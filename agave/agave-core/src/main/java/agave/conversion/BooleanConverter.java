@@ -59,9 +59,9 @@ public class BooleanConverter implements StringConverter<Boolean> {
         Boolean value = null;
         if (input != null && !"".equals(input)) {
             String parameter = input.toLowerCase();
-            if ("true".equals(parameter) || "t".equals(parameter) || "1".equals(parameter)) {
+            if ("true".equals(parameter) || "t".equals(parameter) || "1".equals(parameter) || "on".equals(parameter)) {
                 value = Boolean.TRUE;
-            } else if ("false".equals(parameter) || "f".equals(parameter) || "0".equals(parameter)) {
+            } else if ("false".equals(parameter) || "f".equals(parameter) || "0".equals(parameter) || "off".equals(parameter)) {
                 value = Boolean.FALSE;
             } else {
                 throw new ConversionException("Could not convert " + input + " into a boolean object");
