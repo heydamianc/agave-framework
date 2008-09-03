@@ -76,7 +76,7 @@
 										</tr>
 										<tr>
 											<td>Private:</td>
-											<td><input type="checkbox" name="private" />
+											<td><input type="checkbox" name="privateSnippet" />
 										</tr>
 										<tr>
 											<td colspan="2">
