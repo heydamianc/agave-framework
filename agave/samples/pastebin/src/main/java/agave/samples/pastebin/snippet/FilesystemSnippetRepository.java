@@ -44,6 +44,10 @@ public class FilesystemSnippetRepository implements SnippetRepository {
     private File repositoryDir;
 
     public FilesystemSnippetRepository(File repositoryDir) {
+        if (!repositoryDir.exists()) {
+            repositoryDir.mkdirs();
+        }
+        
         if (!repositoryDir.canRead()) {
             throw new IllegalArgumentException("Can not read from repository directory: "
                     + repositoryDir.getPath());
