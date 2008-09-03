@@ -25,57 +25,34 @@
  */
 package agave.samples.pastebin.overview;
 
-import java.io.Serializable;
+import junit.framework.Assert;
 
-import org.apache.commons.lang.StringUtils;
-
-import agave.samples.pastebin.snippet.Snippet;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class RecentEntry implements Serializable, Cloneable {
+public class OverviewTest {
 
-    public static final long serialVersionUID = 1l;
-    
-    private String uniqueId;
-    private String owner;
-
-    public RecentEntry() {
-        super();
+    @Test
+    public void testClone() throws Exception {
+        Overview overview = new Overview();
+        
+        RecentEntry a = new RecentEntry();
+        overview.getRecentEntries().add(a);
+        
+        RecentEntry b = new RecentEntry();
+        overview.getRecentEntries().add(b);
+        
+        RecentEntry c = new RecentEntry();
+        overview.getRecentEntries().add(c);
+        
+        Overview clone = (Overview)overview.clone();
+        
+        Assert.assertNotSame(overview, clone);
+        Assert.assertFalse(clone.getRecentEntries().contains(a));
+        Assert.assertFalse(clone.getRecentEntries().contains(b));
+        Assert.assertFalse(clone.getRecentEntries().contains(c));
     }
     
-    public RecentEntry(Snippet snippet) {
-        setUniqueId(snippet.getUniqueId());
-        setOwner(snippet.getOwner());
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        RecentEntry clone = new RecentEntry();
-        if (StringUtils.isNotBlank(uniqueId)) {
-            clone.setUniqueId(new String(uniqueId));
-        }
-        if (StringUtils.isNotBlank(owner)) {
-            clone.setOwner(new String(owner));
-        }
-        return clone;
-    }
-
 }
