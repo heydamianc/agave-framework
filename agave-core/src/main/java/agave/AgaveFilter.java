@@ -52,7 +52,6 @@ import agave.exception.DestinationException;
 import agave.exception.HandlerException;
 import agave.exception.RequestBindingException;
 import agave.exception.ResponseBindingException;
-import agave.internal.ClassEnvironment;
 import agave.internal.HandlerDescriptor;
 import agave.internal.HandlerDescriptorImpl;
 import agave.internal.HandlerIdentifier;
@@ -84,7 +83,7 @@ public class AgaveFilter implements Filter {
      * Initializes the {@code AgaveFilter} by scanning for handler classes and
      * populating a {@link agave.internal.HandlerRegistry HandlerRegistry} with
      * them. Then, this initializes the dependency injection container (if any)
-     * by instantiation a {@link agave.internal.ClassEnvironment}.
+     * by instantiation a {@link agave.ClassEnvironment}.
      * 
      * @param config
      *            the supplied filter configuration object
@@ -135,7 +134,7 @@ public class AgaveFilter implements Filter {
      * 
      * <ol>
      * <li>
-     * {@link agave.internal.ClassEnvironment#createFormInstance Instantiate a
+     * {@link agave.ClassEnvironment#createFormInstance Instantiate a
      * form if necessary}
      * <ol>
      * <li>{@link agave.internal.ParameterBinder#bindRequestParameters Bind
@@ -144,7 +143,7 @@ public class AgaveFilter implements Filter {
      * parameters if necessary}</li>
      * </ol>
      * </li>
-     * <li>{@link agave.internal.ClassEnvironment#createHandlerInstance
+     * <li>{@link agave.ClassEnvironment#createHandlerInstance
      * Instantiate a handler}</li>
      * <li>Bind the request to the handler if necessary</li>
      * <li>Bind the response to the handler if necessary</li>

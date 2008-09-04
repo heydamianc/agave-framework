@@ -23,10 +23,11 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave;
 
 import agave.exception.FormException;
 import agave.exception.HandlerException;
+import agave.internal.HandlerDescriptor;
 
 
 /**

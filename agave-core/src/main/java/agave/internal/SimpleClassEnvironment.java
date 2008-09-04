@@ -25,6 +25,7 @@
  */
 package agave.internal;
 
+import agave.ClassEnvironment;
 import agave.exception.FormException;
 import agave.exception.HandlerException;
 
