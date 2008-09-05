@@ -33,13 +33,12 @@ import agave.internal.HandlerDescriptor;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface ClassEnvironment {
-
-    public void initializeEnvironment() throws ClassNotFoundException, InstantiationException, 
-        IllegalAccessException;
+public interface InstanceFactory {
 
     public Object createFormInstance(HandlerDescriptor descriptor) throws FormException;
 
-    public Object createHandlerInstance(HandlerDescriptor descriptor) throws HandlerException; 
+    public Object createHandlerInstance(HandlerDescriptor descriptor) throws HandlerException;
+
+    public void initialize(); 
 
 }

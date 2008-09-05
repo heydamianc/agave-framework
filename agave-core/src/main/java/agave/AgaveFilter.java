@@ -63,7 +63,7 @@ import agave.internal.ParameterBinder;
 import agave.internal.ParameterBinderImpl;
 import agave.internal.PartBinder;
 import agave.internal.PartBinderImpl;
-import agave.internal.SimpleClassEnvironment;
+import agave.internal.ReflectionInstanceFactory;
 
 /**
  * Scans the classes directory of a deployed context for any configured handlers
@@ -76,14 +76,14 @@ public class AgaveFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
     
     private FilterConfig config;
-    private ClassEnvironment classEnvironment;
+    private InstanceFactory instanceFactory;
     private HandlerRegistry handlerRegistry;
 
     /**
      * Initializes the {@code AgaveFilter} by scanning for handler classes and
      * populating a {@link agave.internal.HandlerRegistry HandlerRegistry} with
      * them. Then, this initializes the dependency injection container (if any)
-     * by instantiation a {@link agave.ClassEnvironment}.
+     * by instantiation a {@link agave.InstanceFactory}.
      * 
      * @param config
      *            the supplied filter configuration object
@@ -102,8 +102,14 @@ public class AgaveFilter implements Filter {
             }
             
             scanClassesDirForHandlers(classesDirectory);
-            classEnvironment = new SimpleClassEnvironment();
-            classEnvironment.initializeEnvironment();
+            
+            if (config.getInitParameter("instanceFactory") != null) {
+                instanceFactory = 
+                    (InstanceFactory)Class.forName(config.getInitParameter("instanceFactory")).newInstance();
+            } else {
+                instanceFactory = new ReflectionInstanceFactory();
+            }
+            instanceFactory.initialize();
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
@@ -123,7 +129,7 @@ public class AgaveFilter implements Filter {
     public void destroy() {
         config = null;
         handlerRegistry = null;
-        classEnvironment = null;
+        instanceFactory = null;
     }
 
     /**
@@ -134,7 +140,7 @@ public class AgaveFilter implements Filter {
      * 
      * <ol>
      * <li>
-     * {@link agave.ClassEnvironment#createFormInstance Instantiate a
+     * {@link agave.InstanceFactory#createFormInstance Instantiate a
      * form if necessary}
      * <ol>
      * <li>{@link agave.internal.ParameterBinder#bindRequestParameters Bind
@@ -143,7 +149,7 @@ public class AgaveFilter implements Filter {
      * parameters if necessary}</li>
      * </ol>
      * </li>
-     * <li>{@link agave.ClassEnvironment#createHandlerInstance
+     * <li>{@link agave.InstanceFactory#createHandlerInstance
      * Instantiate a handler}</li>
      * <li>Bind the request to the handler if necessary</li>
      * <li>Bind the response to the handler if necessary</li>
@@ -205,7 +211,7 @@ public class AgaveFilter implements Filter {
                 request = new MultipartRequestImpl(request);
             }
 
-            Object formInstance = classEnvironment.createFormInstance(descriptor);
+            Object formInstance = instanceFactory.createFormInstance(descriptor);
             if (formInstance != null) {
                 ParameterBinder binder = new ParameterBinderImpl(formInstance, descriptor);
                 binder.bindRequestParameters(request);
@@ -217,7 +223,7 @@ public class AgaveFilter implements Filter {
                 }
             }
 
-            Object handlerInstance = classEnvironment.createHandlerInstance(descriptor);
+            Object handlerInstance = instanceFactory.createHandlerInstance(descriptor);
 
             if (descriptor.getRequestSetter() != null) {
                 try {
@@ -361,4 +367,9 @@ public class AgaveFilter implements Filter {
     protected HandlerRegistry getHandlerRegistry() {
         return handlerRegistry;
     }
+
+    public InstanceFactory getInstanceFactory() {
+        return instanceFactory;
+    }
+    
 }

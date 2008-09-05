@@ -25,7 +25,7 @@
  */
 package agave.internal;
 
-import agave.ClassEnvironment;
+import agave.InstanceFactory;
 import agave.exception.FormException;
 import agave.exception.HandlerException;
 
@@ -33,11 +33,7 @@ import agave.exception.HandlerException;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class SimpleClassEnvironment implements ClassEnvironment {
-
-    public void initializeEnvironment() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-        InstantiationException {
-    }
+public class ReflectionInstanceFactory implements InstanceFactory {
 
     /**
      * Creates a new instance of a form object for the form class specified in the supplied descriptor.
@@ -78,6 +74,10 @@ public class SimpleClassEnvironment implements ClassEnvironment {
             }
         }
         return handlerInstance;
+    }
+
+
+    public void initialize() {
     }
 
 }
