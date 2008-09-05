@@ -51,6 +51,12 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     
     public static final String BOARD_KEY = "board";
     
+    @HandlesRequestsTo("/")
+    public void root(GameOfLifeForm form) throws HandlerException, IOException, TemplateException {
+        form.setConfiguration(Configuration.Blinker);
+        init(form);
+    }
+    
     @HandlesRequestsTo("/init/${configuration}")
     public void init(GameOfLifeForm form) throws HandlerException, IOException, TemplateException {
         Board board = new Board(form.getRows(), form.getColumns());
@@ -71,7 +77,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
             request.getSession().setAttribute(BOARD_KEY, board);
             displayTemplate(templateModel, response.getWriter());
         } else {
-            destination = new Destination("/init", true);
+            destination = new Destination("/", true);
         }
         return destination;
     }
@@ -90,7 +96,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
             out.print(serializer.toJson(tick, typeOfSrc));
             out.close();
         } else {
-            destination = new Destination("/init", true);
+            destination = new Destination("/", true);
         }
         return destination;
     }

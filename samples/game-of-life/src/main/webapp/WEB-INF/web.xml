@@ -21,6 +21,6 @@
 		<listener-class>agave.samples.gameOfLife.web.FreemarkerContextListener</listener-class>
 	</listener>
 	<welcome-file-list>
-		<welcome-file>/init</welcome-file>
+		<welcome-file>/</welcome-file>
 	</welcome-file-list>
 </web-app>
