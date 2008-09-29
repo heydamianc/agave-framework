@@ -53,8 +53,11 @@ public class ParameterBinderImpl implements ParameterBinder {
     }
 
     @SuppressWarnings("unchecked")
-    public void bindRequestParameters(HttpServletRequest request) throws ParameterBindingException, ConversionException {
+    public void bindRequestParameters(HttpServletRequest request) throws ParameterBindingException, 
+        ConversionException {
+        
         Map<String, String[]> parameterMap = (Map<String, String[]>) request.getParameterMap();
+        
         for (String parameterName : parameterMap.keySet()) {
             String[] values = parameterMap.get(parameterName);
             if (values != null && values.length > 0) {
