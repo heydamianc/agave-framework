@@ -64,6 +64,7 @@ import agave.internal.ParameterBinderImpl;
 import agave.internal.PartBinder;
 import agave.internal.PartBinderImpl;
 import agave.internal.ReflectionInstanceFactory;
+import javax.servlet.ServletContext;
 
 /**
  * Scans the classes directory of a deployed context for any configured handlers
@@ -76,39 +77,83 @@ public class AgaveFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
     
     private FilterConfig config;
+    private LifecycleHooks lifecycleHooks;
     private InstanceFactory instanceFactory;
     private HandlerRegistry handlerRegistry;
 
+    protected LifecycleHooks provideLifecycleHooks(FilterConfig config) 
+        throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        LifecycleHooks hooks = null;
+        
+        String lifecycleHooksParameter = config.getInitParameter("lifecycleHooks");
+        if (lifecycleHooksParameter != null) {
+            hooks = 
+                (LifecycleHooks)Class.forName(lifecycleHooksParameter).newInstance();
+            LOGGER.info("Using lifecycle hooks: " + hooks.getClass().getName());
+        } else {
+            hooks = new DefaultLifecycleHooks();
+        }
+        
+        return hooks;
+    }
+    
+    protected InstanceFactory provideInstanceFactory(FilterConfig config) 
+        throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        InstanceFactory factory = null;
+        
+        String instanceFactoryParameter = config.getInitParameter("instanceFactory");
+        if (instanceFactoryParameter != null) {
+            factory = 
+                (InstanceFactory)Class.forName(instanceFactoryParameter).newInstance();
+            LOGGER.info("Using instance factory: " + factory.getClass().getName());
+        } else {
+            factory = new ReflectionInstanceFactory();
+        }
+        
+        return factory;
+    }
+    
+    /**
+     * This is really only here for testing situations (esp. when running mvn jetty:run)
+     * 
+     * @param config
+     * @return
+     * 
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InstantiationException
+     * @throws java.lang.IllegalAccessException
+     */
+    protected File provideClassesDirectory(FilterConfig config)
+        throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        File classesDirectory = null;
+        
+        if (config.getInitParameter("classesDirectory") != null) {
+            classesDirectory = new File(config.getInitParameter("classesDirectory"));
+        } else {
+            classesDirectory = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
+        }
+        
+        return classesDirectory;
+    }
+    
     /**
      * Initializes the {@code AgaveFilter} by scanning for handler classes and
      * populating a {@link agave.internal.HandlerRegistry HandlerRegistry} with
      * them. Then, this initializes the dependency injection container (if any)
      * by instantiation a {@link agave.InstanceFactory}.
      * 
-     * @param config
-     *            the supplied filter configuration object
+     * @param config  the supplied filter configuration object
      * @throws ServletException
      */
     public void init(FilterConfig config) throws ServletException {
         this.config = config;
+        
         try {
+            lifecycleHooks = provideLifecycleHooks(config);
             setHandlerRegistry(new HandlerRegistryImpl());
-            File classesDirectory = null;
-            
-            if (config.getInitParameter("classesDirectory") != null) {
-                classesDirectory = new File(config.getInitParameter("classesDirectory"));
-            } else {
-                classesDirectory = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
-            }
-            
+            File classesDirectory = provideClassesDirectory(config);
             scanClassesDirForHandlers(classesDirectory);
-            
-            if (config.getInitParameter("instanceFactory") != null) {
-                instanceFactory = 
-                    (InstanceFactory)Class.forName(config.getInitParameter("instanceFactory")).newInstance();
-            } else {
-                instanceFactory = new ReflectionInstanceFactory();
-            }
+            instanceFactory = provideInstanceFactory(config);
             instanceFactory.initialize();
         } catch (Exception ex) {
             throw new ServletException(ex);
@@ -134,62 +179,59 @@ public class AgaveFilter implements Filter {
 
     /**
      * <p>
-     * Handles the routing of HTTP requests through the framework. The algorithm
-     * used internally is as follows:
+     *   Handles the routing of HTTP requests through the framework. The algorithm
+     *   used internally is as follows:
      * </p>
      * 
      * <ol>
-     * <li>
-     * {@link agave.InstanceFactory#createFormInstance Instantiate a
-     * form if necessary}
-     * <ol>
-     * <li>{@link agave.internal.ParameterBinder#bindRequestParameters Bind
-     * request parameters if necessary}</a></li>
-     * <li>{@link agave.internal.ParameterBinder#bindURIParameters Bind URI
-     * parameters if necessary}</li>
-     * </ol>
-     * </li>
-     * <li>{@link agave.InstanceFactory#createHandlerInstance
-     * Instantiate a handler}</li>
-     * <li>Bind the request to the handler if necessary</li>
-     * <li>Bind the response to the handler if necessary</li>
-     * <li>Invoke the handler method with the instantiated form as the only
-     * argument</li>
+     *   <li>
+     *     {@link agave.InstanceFactory#createFormInstance Instantiate a
+     *     form if necessary}
+     *     <ol>
+     *       <li>
+     *         {@link agave.internal.ParameterBinder#bindRequestParameters Bind
+     *         request parameters if necessary}
+     *       </li>
+     *       <li>
+     *         {@link agave.internal.ParameterBinder#bindURIParameters Bind URI
+     *         parameters if necessary}</li>
+     *     </ol>
+     *   </li>
+     *   <li>
+     *     {@link agave.InstanceFactory#createHandlerInstance
+     *      Instantiate a handler}
+     *   </li>
+     *   <li>Bind the request to the handler if necessary</li>
+     *   <li>Bind the response to the handler if necessary</li>
+     *   <li>
+     *     Invoke the handler method with the instantiated form as the only
+     *     argument
+     *   </li>
      * </ol>
      * 
      * <p>
-     * When one of the two supported encoding methods is selected, then this
-     * filter will field the HTTP request that was made and will prevent future
-     * execution of the filter chain. If an unsupported encoding type is
-     * requested or if a handler is not configured for the requested URI, this
-     * filter will simply continue with execution of the filter chain. The two
-     * encoding types that are supported by this method are:
+     *   When one of the two supported encoding methods is selected, then this
+     *   filter will field the HTTP request that was made and will prevent future
+     *   execution of the filter chain. If an unsupported encoding type is
+     *   requested or if a handler is not configured for the requested URI, this
+     *   filter will simply continue with execution of the filter chain. The two
+     *   encoding types that are supported by this method are:
      * </p>
      * 
      * <ul>
-     * <li><a
-     * href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
-     * application/x-www-form-urlencoded</a></li>
-     * <li><a
-     * href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2">
-     * multipart/form-data</a></li>
+     *   <li><a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1">
+     *     application/x-www-form-urlencoded</a></li>
+     *   <li><a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2">
+     *     multipart/form-data</a></li>
      * </ul>
      * 
-     * @param req
-     *            the Servlet request object; it will be cast to an {@code
-     *            HttpServletRequest}
-     * @param resp
-     *            the Servlet response object; it will be cast to an {@code
-     *            HttpServletResponse}
-     * @param chain
-     *            the filter chain this filter is a member of
-     * @throws IOException
-     *             if an I/O error occurs
-     * @throws ServletException
-     *             if a Servlet error occurs
-     * @see <a
-     *      href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4">
-     *      W3C Form Encoding Types< /a>
+     * @param req the Servlet request object; it will be cast to an {@code HttpServletRequest}
+     * @param resp the Servlet response object; it will be cast to an {@code HttpServletResponse}
+     * @param chain the filter chain this filter is a member of
+     * @throws IOException if an I/O error occurs
+     * @throws ServletException if a Servlet error occurs
+     * 
+     * @see <a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4">W3C Form Encoding Types< /a>
      * @see agave.HandlesRequestsTo
      * @see agave.BindsInput
      * @see agave.ConvertWith
@@ -198,11 +240,14 @@ public class AgaveFilter implements Filter {
      */
     public final void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
+        ServletContext servletContext = config.getServletContext();
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
         if (descriptor != null) {
+            
+            lifecycleHooks.beforeFilteringRequest(descriptor, request, response, servletContext);
             
             LOGGER.fine(request.getRequestURI() + " -> " + descriptor.getHandlerClass().getName() + "#" + 
                     descriptor.getHandlerMethod() + "()");
@@ -213,6 +258,9 @@ public class AgaveFilter implements Filter {
 
             Object formInstance = instanceFactory.createFormInstance(descriptor);
             if (formInstance != null) {
+                
+                lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, request, response, servletContext);
+                
                 ParameterBinder binder = new ParameterBinderImpl(formInstance, descriptor);
                 binder.bindRequestParameters(request);
                 binder.bindURIParameters(request);
@@ -221,31 +269,15 @@ public class AgaveFilter implements Filter {
                     PartBinder partBinder = new PartBinderImpl(formInstance, descriptor);
                     partBinder.bindParts((MultipartRequest) request);
                 }
+                
+                lifecycleHooks.afterInitializingForm(descriptor, formInstance, request, response, servletContext);
             }
 
             Object handlerInstance = instanceFactory.createHandlerInstance(descriptor);
 
-            if (descriptor.getRequestSetter() != null) {
-                try {
-                    descriptor.getRequestSetter().invoke(handlerInstance, request);
-                } catch (IllegalAccessException ex) {
-                    throw new RequestBindingException(descriptor, ex);
-                } catch (InvocationTargetException ex) {
-                    throw new RequestBindingException(descriptor, ex);
-                }
-            }
-
-            if (descriptor.getResponseSetter() != null) {
-                try {
-                    descriptor.getResponseSetter().invoke(handlerInstance, response);
-                } catch (IllegalAccessException ex) {
-                    throw new ResponseBindingException(descriptor, ex);
-                } catch (InvocationTargetException ex) {
-                    throw new ResponseBindingException(descriptor, ex);
-                }
-            }
-            
             if (descriptor.getServletContextSetter() != null) {
+                lifecycleHooks.beforeSettingServletContext(descriptor, request, response, servletContext);
+                
                 try {
                     descriptor.getServletContextSetter().invoke(handlerInstance, config.getServletContext());
                 } catch (IllegalAccessException ex) {
@@ -253,10 +285,40 @@ public class AgaveFilter implements Filter {
                 } catch (InvocationTargetException ex) {
                     throw new ResponseBindingException(descriptor, ex);
                 }
+                
+                lifecycleHooks.afterSettingServletContext(descriptor, request, response, servletContext);
+            }
+            
+            if (descriptor.getRequestSetter() != null) {
+                lifecycleHooks.beforeSettingRequest(descriptor, request, response, servletContext);
+                try {
+                    descriptor.getRequestSetter().invoke(handlerInstance, request);
+                } catch (IllegalAccessException ex) {
+                    throw new RequestBindingException(descriptor, ex);
+                } catch (InvocationTargetException ex) {
+                    throw new RequestBindingException(descriptor, ex);
+                }
+
+                lifecycleHooks.afterSettingRequest(descriptor, request, response, servletContext);
             }
 
-            Object result = null;
+            if (descriptor.getResponseSetter() != null) {
+                lifecycleHooks.beforeSettingResponse(descriptor, request, response, servletContext);
+                
+                try {
+                    descriptor.getResponseSetter().invoke(handlerInstance, response);
+                } catch (IllegalAccessException ex) {
+                    throw new ResponseBindingException(descriptor, ex);
+                } catch (InvocationTargetException ex) {
+                    throw new ResponseBindingException(descriptor, ex);
+                }
+                
+                lifecycleHooks.afterSettingResponse(descriptor, request, response, servletContext);
+            }
 
+            lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, request, response, servletContext);
+            Object result = null;
+            
             try {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
@@ -286,12 +348,15 @@ public class AgaveFilter implements Filter {
             }
 
             if (result != null && !response.isCommitted()) {
-                
                 URI uri = null;
                 boolean redirect = false;
                 
                 if (result instanceof Destination) {
                     Destination destination = (Destination)result;
+                    
+                    lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, request, 
+                        response, servletContext);
+                    
                     try {
                         uri = new URI(null, destination.encode(config.getServletContext()), null);
                         if (destination.getRedirect() == null) {
@@ -306,6 +371,10 @@ public class AgaveFilter implements Filter {
                     }
                 } else if (result instanceof URI) {
                     uri = (URI)result;
+                    
+                    lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, request, 
+                        response, servletContext);
+                    
                     redirect = true;
                 } else {
                     throw new DestinationException(descriptor);
@@ -316,7 +385,8 @@ public class AgaveFilter implements Filter {
                 } else {
                     request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
-                
+            } else {
+                lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, request, response, servletContext);
             }
         } else {
             chain.doFilter(req, resp);
@@ -330,9 +400,7 @@ public class AgaveFilter implements Filter {
      * {@link agave.internal.HandlerRegistry HandlerRegistry} as handlers are
      * found.
      * 
-     * @param root
-     *            the root directory to scan files for, typically {@code
-     *            /WEB-INF/classes}
+     * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
      */
     protected void scanClassesDirForHandlers(File root) throws FileNotFoundException, IOException,
             ClassNotFoundException, AgaveException {
@@ -341,12 +409,23 @@ public class AgaveFilter implements Filter {
                 if (node.isDirectory()) {
                     scanClassesDirForHandlers(node);
                 } else if (node.isFile() && node.getName().endsWith(".class")) {
+                    lifecycleHooks.beforeHandlerIsDiscovered(node);
+                    
                     ClassReader classReader = new ClassReader(new FileInputStream(node));
                     Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
                     classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);
+                    
                     for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
-                        handlerRegistry.addDescriptor(new HandlerDescriptorImpl(handlerIdentifier));
+                        HandlerDescriptor descriptor = new HandlerDescriptorImpl(handlerIdentifier);
+                        descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
+                        if (descriptor.getFormClass() != null) {
+                            descriptor.locateAnnotatedFormMethods(handlerIdentifier);
+                        }
+                        handlerRegistry.addDescriptor(descriptor);
+                        
+                        lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext());
                     }
+                    
                 }
             }
         }

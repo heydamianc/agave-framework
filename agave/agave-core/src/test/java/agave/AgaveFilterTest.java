@@ -31,27 +31,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import javax.servlet.DelegatingServletInputStream;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import agave.conversion.BooleanConverter;
 import agave.internal.HandlerDescriptor;
-import agave.internal.HandlerRegistryImpl;
 import agave.internal.ParameterBinder;
 import agave.internal.ParameterBinderImpl;
 import agave.internal.ReflectionInstanceFactory;
@@ -64,48 +53,7 @@ import agave.sample.SampleHandler;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class AgaveFilterTest {
-
-    Mockery context = new Mockery();
-    FilterChain filterChain;
-    FilterConfig filterConfig;
-    HttpServletRequest request;
-    HttpServletResponse response;
-    ServletContext servletContext;
-    RequestDispatcher requestDispatcher;
-
-    @Before
-    public void setup() throws Exception {
-        filterChain = context.mock(FilterChain.class);
-        filterConfig = context.mock(FilterConfig.class);
-        request = context.mock(HttpServletRequest.class);
-        response = context.mock(HttpServletResponse.class);
-        servletContext = context.mock(ServletContext.class);
-        requestDispatcher = context.mock(RequestDispatcher.class);
-    }
-    
-    private AgaveFilter scanRoot() throws Exception {
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        Assert.assertNotNull(rootUrl);
-        File root = new File(rootUrl.toURI());
-        Assert.assertNotNull(root);
-
-        AgaveFilter filter = new AgaveFilter();
-        filter.setHandlerRegistry(new HandlerRegistryImpl());
-        filter.scanClassesDirForHandlers(root);
-        return filter;
-    }
-    
-    private AgaveFilter createSilentAgaveFilter() throws Exception {
-        AgaveFilter filter = new AgaveFilter();
-        
-        Logger agaveFilterLogger = LogManager.getLogManager().getLogger(AgaveFilter.class.getName());
-        if (agaveFilterLogger != null) {
-            agaveFilterLogger.setLevel(Level.OFF);
-        }
-        
-        return filter;
-    }
+public class AgaveFilterTest extends MockedEnvironmentTest {
     
     @Test
     public void testScanClassesDirForLoginHandler() throws Exception {
@@ -116,6 +64,7 @@ public class AgaveFilterTest {
             allowing(request).getContextPath(); will(returnValue("/app"));
         }});
         
+        filter.init(filterConfig);
         HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
@@ -204,14 +153,8 @@ public class AgaveFilterTest {
     public void testInit() throws Exception {
         AgaveFilter filter = createSilentAgaveFilter();
 
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
-
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/login/"));
             allowing(request).getContextPath(); will(returnValue("/app"));
         }});
@@ -226,22 +169,17 @@ public class AgaveFilterTest {
     public void testDoFilter() throws Exception {
         AgaveFilter filter = createSilentAgaveFilter();
 
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put("username", new String[] {"damian"});
         parameterMap.put("password", new String[] {"password"});
         parameterMap.put("remembered", new String[] {"false"});
-
+        
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/login"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
 
             one(request).setAttribute("loggedIn", Boolean.TRUE);
             one(response).setStatus(400);
@@ -253,13 +191,10 @@ public class AgaveFilterTest {
         parameterMap.put("password", new String[] {"secret"});
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/login"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
 
             one(request).setAttribute("loggedIn", Boolean.FALSE);
             one(response).setStatus(400);
@@ -272,20 +207,14 @@ public class AgaveFilterTest {
     @Test(expected = NullPointerException.class)
     public void testThrowsNullPointerException() throws Exception {
         AgaveFilter filter = createSilentAgaveFilter();
-
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/throws/nullPointerException"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
         }});
 
         filter.init(filterConfig);
@@ -295,20 +224,14 @@ public class AgaveFilterTest {
     @Test(expected = IOException.class)
     public void testThrowsIOException() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/throws/ioException"));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
         }});
 
         filter.init(filterConfig);
@@ -318,20 +241,14 @@ public class AgaveFilterTest {
     @Test
     public void testWithoutForm() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/lacks/form"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
 
             one(request).setAttribute("noErrors", Boolean.TRUE);
         }});
@@ -343,20 +260,14 @@ public class AgaveFilterTest {
     @Test
     public void testWithNoMatchingPattern() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/no/matching/pattern"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
 
             one(filterChain).doFilter(request, response);
         }});
@@ -368,22 +279,16 @@ public class AgaveFilterTest {
     @Test
     public void testURIParamsOverrideRequestParams() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
         parameterMap.put("username", new String[] {"damian"});
         parameterMap.put("password", new String[] {"password"});
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getRequestURI(); will(returnValue("/app/uri-params/damian/secret"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
 
             one(request).setAttribute("username", "damian");
             one(request).setAttribute("password", "secret");
@@ -396,21 +301,15 @@ public class AgaveFilterTest {
     @Test
     public void testMultipartRequest() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         final InputStream in = getClass().getClassLoader().getResourceAsStream("multipart-sample-tomcat");
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/upload/file"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("multipart/form-data"));
             allowing(request).getInputStream(); will(returnValue(new DelegatingServletInputStream(in)));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
             
             one(request).setAttribute("file", false);
             one(response).setStatus(400);
@@ -423,21 +322,15 @@ public class AgaveFilterTest {
     @Test
     public void testNullDestination() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-        
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/shout/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
             allowing(response).isCommitted(); will(returnValue(true));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
         }});
 
         filter.init(filterConfig);
@@ -448,21 +341,15 @@ public class AgaveFilterTest {
     public void testReturnDestinationWithForward() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
-
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
+            allowing(servletContext).getContextPath(); will(returnValue("/app"));
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/say/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(response).isCommitted(); will(returnValue(false));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
-            allowing(servletContext).getContextPath(); will(returnValue("/app"));
             
             one(request).getRequestDispatcher("/app/say.jsp?said=hello"); will(returnValue(requestDispatcher)); 
             one(requestDispatcher).forward(request, response);
@@ -476,20 +363,14 @@ public class AgaveFilterTest {
     public void testReturnDestinationWithRedirectAfterPost() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
-
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/say/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getMethod(); will(returnValue("POST"));
             allowing(response).isCommitted(); will(returnValue(false));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
             
             one(servletContext).getContextPath(); will(returnValue("/app"));
             one(response).sendRedirect("/app/say.jsp?said=hello");
@@ -507,16 +388,13 @@ public class AgaveFilterTest {
         final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/whisper/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(response).isCommitted(); will(returnValue(false));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
             
             one(servletContext).getContextPath(); will(returnValue("/app"));
             one(response).sendRedirect("/app/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
@@ -534,16 +412,13 @@ public class AgaveFilterTest {
         final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            specialize(this);
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/proclaim/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(response).isCommitted(); will(returnValue(false));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
             
             one(response).sendRedirect("http://www.utexas.edu/");
         }});
@@ -555,15 +430,9 @@ public class AgaveFilterTest {
     @Test
     public void testWithNoUserSuppliedInstanceFactory() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-        
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
-            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
-            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
+            specialize(this);
         }});
 
         filter.init(filterConfig);

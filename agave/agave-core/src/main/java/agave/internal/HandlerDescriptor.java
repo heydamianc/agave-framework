@@ -64,6 +64,18 @@ import agave.conversion.Converter;
 public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     
     /**
+     * Locates annotated handler methods to field requests with
+     * @param identifier
+     */
+    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier);
+    
+    /**
+     * Locates annotated form methods to set parameters with.
+     * @param identifier
+     */
+    public void locateAnnotatedFormMethods(HandlerIdentifier identifier);
+    
+    /**
      * Gets the {@link agave.internal.URIPattern URIPattern} that this {@code HandlerDescriptor} describes.
      */
     public URIPattern getPattern();
