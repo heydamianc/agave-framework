@@ -73,7 +73,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
      * and {@code BindsResponse}.
      * @param identifier the {@code HandlerIdentifier} that was created while scanning for a handler method
      */
-    private void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
+    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
         for (Method method : this.handlerClass.getMethods()) {
             if (identifier.getMethodName().equals(method.getName())) {
                 this.handlerMethod = method;
@@ -95,9 +95,10 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
      * class to be used when binding parameters.  Once an annotated method is identified, this method
      * will check if the parameter needs a converter.  The annotations this method targets are 
      * {@code BindsParameter} and {@code ConvertWith}.
+     * 
      * @param identifer the {@code HandlerIdentifier} that was created while scanning for a handler method
      */
-    private void locateAnnotatedFormMethods(HandlerIdentifier identifier) {
+    public void locateAnnotatedFormMethods(HandlerIdentifier identifier) {
         for (Method method : this.formClass.getMethods()) {
             BindsInput annotation = method.getAnnotation(BindsInput.class);
             if (annotation != null) {
