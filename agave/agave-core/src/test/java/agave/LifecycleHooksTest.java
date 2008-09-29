@@ -62,7 +62,7 @@ public class LifecycleHooksTest extends MockedEnvironmentTest {
     
     @Test
     public void testInit() throws Exception {
-        AgaveFilter filter = new AgaveFilter();
+        AgaveFilter filter = createSilentAgaveFilter();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
@@ -76,7 +76,7 @@ public class LifecycleHooksTest extends MockedEnvironmentTest {
     
     @Test
     public void testDoFilter() throws Exception {
-        AgaveFilter filter = new AgaveFilter();
+        AgaveFilter filter = createSilentAgaveFilter();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
