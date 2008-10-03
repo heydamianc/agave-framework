@@ -154,7 +154,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         AgaveFilter filter = createSilentAgaveFilter();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
             allowing(request).getRequestURI(); will(returnValue("/app/login/"));
             allowing(request).getContextPath(); will(returnValue("/app"));
         }});
@@ -173,13 +173,12 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         parameterMap.put("username", new String[] {"damian"});
         parameterMap.put("password", new String[] {"password"});
         parameterMap.put("remembered", new String[] {"false"});
-        
+
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/login"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
             one(request).setAttribute("loggedIn", Boolean.TRUE);
             one(response).setStatus(400);
@@ -191,10 +190,9 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         parameterMap.put("password", new String[] {"secret"});
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/login"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
             one(request).setAttribute("loggedIn", Boolean.FALSE);
             one(response).setStatus(400);
@@ -210,11 +208,10 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/throws/nullPointerException"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
         }});
 
         filter.init(filterConfig);
@@ -227,11 +224,10 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/throws/ioException"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
         }});
 
         filter.init(filterConfig);
@@ -244,11 +240,10 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/lacks/form"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
             one(request).setAttribute("noErrors", Boolean.TRUE);
         }});
@@ -263,11 +258,10 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/no/matching/pattern"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
             one(filterChain).doFilter(request, response);
         }});
@@ -284,7 +278,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         parameterMap.put("password", new String[] {"password"});
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/uri-params/damian/secret"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
@@ -304,7 +298,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final InputStream in = getClass().getClassLoader().getResourceAsStream("multipart-sample-tomcat");
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]> ());
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/upload/file"));
             allowing(request).getContextPath(); will(returnValue("/app"));
@@ -324,7 +318,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         AgaveFilter filter = new AgaveFilter();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/shout/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
@@ -342,7 +336,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         AgaveFilter filter = new AgaveFilter();
         
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
             allowing(servletContext).getContextPath(); will(returnValue("/app"));
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/say/hello"));
@@ -364,7 +358,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         AgaveFilter filter = new AgaveFilter();
         
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/say/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
@@ -388,7 +382,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/whisper/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
@@ -412,7 +406,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/proclaim/hello"));
             allowing(request).getContextPath(); will(returnValue("/app"));
@@ -432,7 +426,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         AgaveFilter filter = new AgaveFilter();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
         }});
 
         filter.init(filterConfig);
