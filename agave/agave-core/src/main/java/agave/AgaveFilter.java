@@ -25,6 +25,29 @@
  */
 package agave;
 
+import agave.exception.AgaveException;
+import agave.exception.FormException;
+import agave.exception.DestinationException;
+import agave.exception.HandlerException;
+import agave.exception.RequestBindingException;
+import agave.exception.ResponseBindingException;
+import agave.internal.FormPopulator;
+import agave.internal.FormPopulatorImpl;
+import agave.internal.HandlerDescriptor;
+import agave.internal.HandlerDescriptorImpl;
+import agave.internal.HandlerIdentifier;
+import agave.internal.HandlerRegistry;
+import agave.internal.HandlerRegistryImpl;
+import agave.internal.HandlerScanner;
+import agave.internal.MultipartRequestImpl;
+import agave.internal.ParameterBinder;
+import agave.internal.ParameterBinderImpl;
+import agave.internal.PartBinder;
+import agave.internal.PartBinderImpl;
+import agave.internal.ReflectionInstanceFactory;
+
+import javax.servlet.ServletContext;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,24 +70,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.objectweb.asm.ClassReader;
 
-import agave.exception.AgaveException;
-import agave.exception.DestinationException;
-import agave.exception.HandlerException;
-import agave.exception.RequestBindingException;
-import agave.exception.ResponseBindingException;
-import agave.internal.HandlerDescriptor;
-import agave.internal.HandlerDescriptorImpl;
-import agave.internal.HandlerIdentifier;
-import agave.internal.HandlerRegistry;
-import agave.internal.HandlerRegistryImpl;
-import agave.internal.HandlerScanner;
-import agave.internal.MultipartRequestImpl;
-import agave.internal.ParameterBinder;
-import agave.internal.ParameterBinderImpl;
-import agave.internal.PartBinder;
-import agave.internal.PartBinderImpl;
-import agave.internal.ReflectionInstanceFactory;
-import javax.servlet.ServletContext;
 
 /**
  * Scans the classes directory of a deployed context for any configured handlers
@@ -260,9 +265,15 @@ public class AgaveFilter implements Filter {
             if (formInstance != null) {
                 
                 lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, request, response, servletContext);
-                
+               
+                FormPopulator formPopulator = new FormPopulatorImpl(request);
+                try {
+                    formPopulator.populate(formInstance);
+                } catch (Exception ex) {
+                    throw new FormException(ex);
+                }
+
                 ParameterBinder binder = new ParameterBinderImpl(formInstance, descriptor);
-                binder.bindRequestParameters(request);
                 binder.bindURIParameters(request);
 
                 if (MultipartRequestImpl.isMultipart(request)) {

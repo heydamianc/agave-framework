@@ -26,18 +26,24 @@
 package agave;
 
 import agave.internal.HandlerRegistryImpl;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
@@ -67,7 +73,7 @@ public abstract class MockedEnvironmentTest {
         requestDispatcher = context.mock(RequestDispatcher.class);
     }
     
-    protected void specialize(Expectations expectations) throws URISyntaxException {
+    protected void specialize(Expectations expectations, final Map<String, String[]> parameters) throws URISyntaxException {
         URL rootUrl = getClass().getClassLoader().getResource("agave");
         String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         
@@ -85,6 +91,18 @@ public abstract class MockedEnvironmentTest {
         
         expectations.allowing(filterConfig).getInitParameter("instanceFactory"); 
         expectations.will(Expectations.returnValue(null));
+
+        expectations.allowing(request).getParameterMap();
+        expectations.will(Expectations.returnValue(parameters));
+
+        expectations.allowing(request).getParameterNames();
+        expectations.will(Expectations.returnValue(new Vector<String>(parameters.keySet()).elements()));
+
+        for (String parameter : parameters.keySet()) {
+            expectations.allowing(request).getParameterValues(parameter); 
+            expectations.will(Expectations.returnValue(parameters.get(parameter)));
+        }
+
     }
     
     protected AgaveFilter scanRoot() throws Exception {
@@ -101,7 +119,7 @@ public abstract class MockedEnvironmentTest {
         }
         
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, new HashMap<String, String[]>());
         }});
         
         filter.init(filterConfig);

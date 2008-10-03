@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import org.jmock.Expectations;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ import org.junit.Test;
 public class LifecycleHooksTest extends MockedEnvironmentTest {
 
     @Override
-    protected void specialize(Expectations expectations) throws URISyntaxException {
+    protected void specialize(Expectations expectations, final Map<String, String[]> parameterMap) throws URISyntaxException {
         URL rootUrl = getClass().getClassLoader().getResource("agave");
         String realPath = new File(rootUrl.toURI()).getAbsolutePath();
         
@@ -58,6 +59,12 @@ public class LifecycleHooksTest extends MockedEnvironmentTest {
         
         expectations.allowing(filterConfig).getInitParameter("instanceFactory"); 
         expectations.will(Expectations.returnValue(null));
+
+        expectations.allowing(request).getParameterMap();
+        expectations.will(Expectations.returnValue(parameterMap));
+
+        expectations.allowing(request).getParameterNames();
+        expectations.will(Expectations.returnValue(new Vector<String>(parameterMap.keySet()).elements()));
     }
     
     @Test
@@ -66,7 +73,7 @@ public class LifecycleHooksTest extends MockedEnvironmentTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(servletContext).setAttribute("beforeHandlerIsDiscovered", Boolean.TRUE);
             allowing(servletContext).setAttribute("afterHandlerIsDiscovered", Boolean.TRUE);
         }});
@@ -80,11 +87,10 @@ public class LifecycleHooksTest extends MockedEnvironmentTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         context.checking(new Expectations() {{
-            specialize(this);
+            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/login"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
             
             // from init
             allowing(servletContext).setAttribute("beforeHandlerIsDiscovered", Boolean.TRUE);
