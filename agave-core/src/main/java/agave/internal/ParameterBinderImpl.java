@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import agave.conversion.Converter;
-import agave.conversion.ListConverter;
 import agave.conversion.StringConverter;
 import agave.exception.ConversionException;
 import agave.exception.ParameterBindingException;
@@ -90,8 +89,6 @@ public class ParameterBinderImpl implements ParameterBinder {
                             Converter<?, ?> converter = converterClass.newInstance();
                             if (converter instanceof StringConverter<?>) {
                                 parameterMutator.invoke(form, ((StringConverter<?>) converter).convert(values[0]));
-                            } else if (converter instanceof ListConverter<?>) {
-                                parameterMutator.invoke(form, ((ListConverter<?>) converter).convert(values));
                             } else {
                                 throw new ConversionException(parameterMutator, converterClass);
                             }
