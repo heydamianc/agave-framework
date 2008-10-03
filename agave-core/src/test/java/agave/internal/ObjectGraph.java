@@ -12,6 +12,7 @@ public class ObjectGraph {
     private List<String> nickNames = new ArrayList<String>();
     private Map<String, String> moodIndicators = new HashMap<String, String>();
     private NestedObject nested = new NestedObject();
+    private List<Integer> numbers = new ArrayList<Integer>();
     
     public void setCat(String cat) {
         this.cat = cat;
@@ -64,5 +65,17 @@ public class ObjectGraph {
     public NestedObject getNested() {
         return nested;
     }
+
+    public List<Integer> getNumbers() {
+        return numbers;
+    }
     
+    public void setNumbers(List<Integer> numbers) {
+        this.numbers = numbers;
+    }
+   
+    public void insertInNumbers(int index, Integer value) {
+        numbers.add(index, value);
+    }
+
 }

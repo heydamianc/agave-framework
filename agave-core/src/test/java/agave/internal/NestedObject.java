@@ -16,6 +16,8 @@ public class NestedObject {
     private List<String> names = new ArrayList<String>();
     private List<String> nickNames = new ArrayList<String>();
     private Map<String, String> moodIndicators = new HashMap<String, String>();
+    private Map<String, Integer> bites = new HashMap<String, Integer>();
+    private Map<String, FavoritePopStar> favoritePopStars = new HashMap<String, FavoritePopStar>();
     
     public void setCat(String cat) {
         this.cat = cat;
@@ -85,4 +87,29 @@ public class NestedObject {
         moodIndicators.put(indicator, mood);
     }
     
+    public void setBites(Map<String, Integer> bites) {
+        this.bites = bites;
+    }
+
+    public Map<String, Integer> getBites() {
+        return bites;
+    }
+
+    public void putInBites(String byteType, Integer count) {
+        bites.put(byteType, count);
+    }
+
+    public void setFavoritePopStars(Map<String, FavoritePopStar> favoritePopStars) {
+        this.favoritePopStars = favoritePopStars;
+    }
+    
+    public Map<String, FavoritePopStar> getFavoritePopStars() {
+        return favoritePopStars;    
+    }
+
+
+    public void putInFavoritePopStars(String genre, @ConvertWith(FavoritePopStarConverter.class) FavoritePopStar popStar) {
+        favoritePopStars.put(genre, popStar);
+    }
+
 }
