@@ -25,6 +25,8 @@
  */
 package agave.internal;
 
+import agave.exception.FormException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Enumeration;
@@ -134,6 +136,13 @@ public class FormPopulatorTest {
         parameterNames.add("nested.nickNames!1");
         parameterNames.add("nested.moodIndicators$teeth");
         parameterNames.add("nested.moodIndicators$questionMarkTail");
+        parameterNames.add("nested.bites$hard");
+        parameterNames.add("nested.bites$soft");
+        parameterNames.add("nested.bites$gnawing");
+        parameterNames.add("numbers!0");
+        parameterNames.add("numbers!1");
+        parameterNames.add("nested.favoritePopStars$pop");
+        parameterNames.add("nested.favoritePopStars$dance");
         
         final Enumeration enumeration = parameterNames.elements();
         
@@ -154,6 +163,13 @@ public class FormPopulatorTest {
             allowing(request).getParameterValues("nested.nickNames!1"); will(returnValue(new String[] {"grub"}));
             allowing(request).getParameterValues("nested.moodIndicators$teeth"); will(returnValue(new String[] {"mad"}));
             allowing(request).getParameterValues("nested.moodIndicators$questionMarkTail"); will(returnValue(new String[] {"happy"}));
+            allowing(request).getParameterValues("nested.bites$hard"); will(returnValue(new String [] {"2"}));
+            allowing(request).getParameterValues("nested.bites$soft"); will(returnValue(new String [] {"6"}));
+            allowing(request).getParameterValues("nested.bites$gnawing"); will(returnValue(new String [] {"1"}));
+            allowing(request).getParameterValues("numbers!0"); will(returnValue(new String [] {"0"}));
+            allowing(request).getParameterValues("numbers!1"); will(returnValue(new String [] {"1"}));
+            allowing(request).getParameterValues("nested.favoritePopStars$pop"); will(returnValue(new String [] {"Prince"}));
+            allowing(request).getParameterValues("nested.favoritePopStars$dance"); will(returnValue(new String [] {"Tatu"}));
         }});
         
         FormPopulator populator = new FormPopulatorImpl(request);
@@ -177,6 +193,14 @@ public class FormPopulatorTest {
         Assert.assertEquals("grub", form.getNested().getNickNames().get(1));
         Assert.assertEquals("mad", form.getNested().getMoodIndicators().get("teeth"));
         Assert.assertEquals("happy", form.getNested().getMoodIndicators().get("questionMarkTail"));
+        Assert.assertEquals(2, (int)form.getNested().getBites().get("hard"));
+        Assert.assertEquals(6, (int)form.getNested().getBites().get("soft"));
+        Assert.assertEquals(1, (int)form.getNested().getBites().get("gnawing"));
+        Assert.assertEquals(0, (int)form.getNumbers().get(0));
+        Assert.assertEquals(1, (int)form.getNumbers().get(1));
+        Assert.assertEquals("Prince", form.getNested().getFavoritePopStars().get("pop").name());
+        Assert.assertEquals("Tatu", form.getNested().getFavoritePopStars().get("dance").name());
     }
+
 
 }
