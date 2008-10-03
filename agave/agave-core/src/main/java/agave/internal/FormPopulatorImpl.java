@@ -169,7 +169,8 @@ public class FormPopulatorImpl implements FormPopulator {
         mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
     }
     
-    private Object convertIfNecessary(Method mutator, String parameterValue) 
+    @SuppressWarnings("unchecked")
+    private Object convertIfNecessary(Method mutator, Object parameterValue) 
     throws ConversionException, 
            InstantiationException,
            IllegalAccessException {
@@ -179,16 +180,16 @@ public class FormPopulatorImpl implements FormPopulator {
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
             Class<?> parameterType = parameterTypes[parameterOffset];
             ConvertWith converterAnnotation = null;
-            StringConverter<?> converter = null;
+            Converter converter = null; // keep this vague
             
             // first look for a ConvertWith annotation
             for (Annotation annotation : mutator.getParameterAnnotations()[parameterOffset]) {
                 if (annotation instanceof ConvertWith) {
-                    converter = (StringConverter<?>)((ConvertWith)annotation).value().newInstance();
+                    converter = ((ConvertWith)annotation).value().newInstance();
                     break;
                 }
             }
-            
+
             // try to look up a converter for common types
             if (converter == null) {
                 if (parameterType.isAssignableFrom(Boolean.class) || parameterType.isAssignableFrom(boolean.class)) {
