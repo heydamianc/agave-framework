@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FormPopulatorImpl implements FormPopulator {
 
-    private SortedMap<String, List<String>> parameters = new TreeMap<String, List<String>>();
+    private SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
 
     public FormPopulatorImpl(HttpServletRequest request) {
         collectParameters(request);
@@ -56,7 +56,7 @@ public class FormPopulatorImpl implements FormPopulator {
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String parameterName = parameterNames.nextElement();
-            List<String> parameterValues = new ArrayList<String>();
+            List<Object> parameterValues = new ArrayList<Object>();
             if (request.getParameterValues(parameterName) != null) {
                 parameterValues.addAll(Arrays.asList(request.getParameterValues(parameterName)));
             }
@@ -64,7 +64,7 @@ public class FormPopulatorImpl implements FormPopulator {
         }
     }
     
-    public SortedMap<String, List<String>> getParameters() {
+    public SortedMap<String, List<Object>> getParameters() {
         return parameters;
     }
 
@@ -78,7 +78,7 @@ public class FormPopulatorImpl implements FormPopulator {
                ConversionException {
         CallChain callChain = null;
         for (String parameterName : parameters.keySet()) {
-            List<String> parameterValues = parameters.get(parameterName);
+            List<Object> parameterValues = parameters.get(parameterName);
             boolean unique = true;
             if (parameterValues != null && parameterValues.size() > 1) {
                 unique = false;
@@ -88,7 +88,7 @@ public class FormPopulatorImpl implements FormPopulator {
         }
     }
     
-    private void populateProperty(Object formInstance, CallChain callChain, List<String> parameterValues) 
+    private void populateProperty(Object formInstance, CallChain callChain, List<Object> parameterValues) 
     throws NoSuchMethodException, 
            SecurityException, 
            IllegalAccessException, 
@@ -112,7 +112,7 @@ public class FormPopulatorImpl implements FormPopulator {
     
         for (Method mutator : targetClass.getMethods()) {
             if (mutator.getName().equals(callChain.getMutatorName())) {
-                String parameterValue = null;
+                Object parameterValue = null;
                 switch (callChain.getMutatorType()) {
                     case SETTING:
                         if (parameterValues != null && !parameterValues.isEmpty()) {
@@ -121,7 +121,7 @@ public class FormPopulatorImpl implements FormPopulator {
                         setOrAppendProperty(mutator, targetInstance, parameterValue);
                         break;
                     case APPENDING:
-                        for (String param: parameterValues) {
+                        for (Object param: parameterValues) {
                             setOrAppendProperty(mutator, targetInstance, param);
                         }
                         break;
@@ -142,7 +142,7 @@ public class FormPopulatorImpl implements FormPopulator {
         }
     }
     
-    private void setOrAppendProperty(Method mutator, Object targetInstance, String parameterValue) 
+    private void setOrAppendProperty(Method mutator, Object targetInstance, Object parameterValue) 
         throws IllegalAccessException, 
                IllegalArgumentException, 
                InvocationTargetException, 
@@ -151,7 +151,7 @@ public class FormPopulatorImpl implements FormPopulator {
         mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
     }
 
-    private void insertProperty(Method mutator, Object targetInstance, int index, String parameterValue)
+    private void insertProperty(Method mutator, Object targetInstance, int index, Object parameterValue)
         throws IllegalAccessException, 
                IllegalArgumentException, 
                InvocationTargetException, 
@@ -160,7 +160,7 @@ public class FormPopulatorImpl implements FormPopulator {
         mutator.invoke(targetInstance, index, convertIfNecessary(mutator, parameterValue));
     }
     
-    private void putProperty(Method mutator, Object targetInstance, String key, String parameterValue)
+    private void putProperty(Method mutator, Object targetInstance, String key, Object parameterValue)
     throws IllegalAccessException, 
            IllegalArgumentException, 
            InvocationTargetException, 
