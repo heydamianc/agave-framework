@@ -44,26 +44,10 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FormPopulatorImpl implements FormPopulator {
+public abstract class AbstractFormPopulator implements FormPopulator {
 
-    private SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
+    protected SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
 
-    public FormPopulatorImpl(HttpServletRequest request) {
-        collectParameters(request);
-    }
-    
-    private void collectParameters(HttpServletRequest request) {
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String parameterName = parameterNames.nextElement();
-            List<Object> parameterValues = new ArrayList<Object>();
-            if (request.getParameterValues(parameterName) != null) {
-                parameterValues.addAll(Arrays.asList(request.getParameterValues(parameterName)));
-            }
-            parameters.put(parameterName, parameterValues);
-        }
-    }
-    
     public SortedMap<String, List<Object>> getParameters() {
         return parameters;
     }

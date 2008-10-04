@@ -32,7 +32,6 @@ import agave.exception.HandlerException;
 import agave.exception.RequestBindingException;
 import agave.exception.ResponseBindingException;
 import agave.internal.FormPopulator;
-import agave.internal.FormPopulatorImpl;
 import agave.internal.HandlerDescriptor;
 import agave.internal.HandlerDescriptorImpl;
 import agave.internal.HandlerIdentifier;
@@ -40,11 +39,11 @@ import agave.internal.HandlerRegistry;
 import agave.internal.HandlerRegistryImpl;
 import agave.internal.HandlerScanner;
 import agave.internal.MultipartRequestImpl;
-import agave.internal.ParameterBinder;
-import agave.internal.ParameterBinderImpl;
 import agave.internal.PartBinder;
 import agave.internal.PartBinderImpl;
 import agave.internal.ReflectionInstanceFactory;
+import agave.internal.RequestParameterFormPopulator;
+import agave.internal.URIParameterFormPopulator;
 
 import javax.servlet.ServletContext;
 
@@ -266,15 +265,19 @@ public class AgaveFilter implements Filter {
                 
                 lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, request, response, servletContext);
                
-                FormPopulator formPopulator = new FormPopulatorImpl(request);
+                FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                 try {
                     formPopulator.populate(formInstance);
                 } catch (Exception ex) {
                     throw new FormException(ex);
                 }
 
-                ParameterBinder binder = new ParameterBinderImpl(formInstance, descriptor);
-                binder.bindURIParameters(request);
+				formPopulator = new URIParameterFormPopulator(request, descriptor);
+				try {
+					formPopulator.populate(formInstance);
+				} catch (Exception ex) {
+					throw new FormException(ex);
+				}
 
                 if (MultipartRequestImpl.isMultipart(request)) {
                     PartBinder partBinder = new PartBinderImpl(formInstance, descriptor);

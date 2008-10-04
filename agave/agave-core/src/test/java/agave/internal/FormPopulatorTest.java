@@ -80,7 +80,7 @@ public class FormPopulatorTest {
             allowing(request).getParameterValues("three.a.d!1"); will(returnValue(new String[] {"n"}));
         }});
         
-        FormPopulator populator = new FormPopulatorImpl(request);
+        FormPopulator populator = new RequestParameterFormPopulator(request);
         
         Map<String, List<Object>> params = populator.getParameters();
         
@@ -172,7 +172,7 @@ public class FormPopulatorTest {
             allowing(request).getParameterValues("nested.favoritePopStars$dance"); will(returnValue(new String [] {"Tatu"}));
         }});
         
-        FormPopulator populator = new FormPopulatorImpl(request);
+        FormPopulator populator = new RequestParameterFormPopulator(request);
         ObjectGraph form = new ObjectGraph();
         populator.populate(form);
         
