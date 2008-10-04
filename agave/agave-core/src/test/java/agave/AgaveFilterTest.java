@@ -41,8 +41,6 @@ import org.junit.Test;
 
 import agave.conversion.BooleanConverter;
 import agave.internal.HandlerDescriptor;
-import agave.internal.ParameterBinder;
-import agave.internal.ParameterBinderImpl;
 import agave.internal.ReflectionInstanceFactory;
 import agave.sample.AliasedForm;
 import agave.sample.LoginForm;
@@ -104,28 +102,6 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
         Assert.assertEquals(LoginForm.class.getMethod("setRemembered", Boolean.class), 
             desc.getMutators().get("remembered"));
         Assert.assertEquals(BooleanConverter.class, desc.getConverters().get("remembered"));
-    }
-
-    @Test
-    public void testBindURIParametersWithActualDescriptor() throws Exception {
-        AgaveFilter filter = scanRoot();
-
-        context.checking(new Expectations() {{
-            allowing(request).getRequestURI(); will(returnValue("/app/uri-params/damian/password/"));
-            allowing(request).getContextPath(); will(returnValue("/app"));
-            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
-        }});
-        
-        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
-        Assert.assertNotNull(desc);
-
-        LoginForm form = new LoginForm();
-        ParameterBinder binder = new ParameterBinderImpl(form, desc);
-
-        binder.bindURIParameters(request);
-
-        Assert.assertEquals("damian", form.getUsername());
-        Assert.assertEquals("password", form.getPassword());
     }
 
     @Test
