@@ -26,14 +26,14 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
-import agave.internal.Part;
+import java.io.File;
 
 /**
  * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface PartConverter<OutputT> extends Converter<Part, OutputT> {
+public interface PartConverter<OutputT> extends Converter<File, OutputT> {
     
-    public OutputT convert(Part input) throws ConversionException;
+    public OutputT convert(File input) throws ConversionException;
     
 }

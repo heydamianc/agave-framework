@@ -39,10 +39,9 @@ import agave.internal.HandlerRegistry;
 import agave.internal.HandlerRegistryImpl;
 import agave.internal.HandlerScanner;
 import agave.internal.MultipartRequestImpl;
-import agave.internal.PartBinder;
-import agave.internal.PartBinderImpl;
 import agave.internal.ReflectionInstanceFactory;
 import agave.internal.RequestParameterFormPopulator;
+import agave.internal.RequestPartFormPopulator;
 import agave.internal.URIParameterFormPopulator;
 
 import javax.servlet.ServletContext;
@@ -264,25 +263,25 @@ public class AgaveFilter implements Filter {
             if (formInstance != null) {
                 
                 lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, request, response, servletContext);
-               
-                FormPopulator formPopulator = new RequestParameterFormPopulator(request);
-                try {
-                    formPopulator.populate(formInstance);
-                } catch (Exception ex) {
-                    throw new FormException(ex);
-                }
-
-				formPopulator = new URIParameterFormPopulator(request, descriptor);
+             	
 				try {
+	                FormPopulator formPopulator = new RequestParameterFormPopulator(request);
+   	                formPopulator.populate(formInstance);
+					if (MultipartRequestImpl.isMultipart(request)) {
+						formPopulator = new RequestPartFormPopulator((MultipartRequest)request);
+						formPopulator.populate(formInstance);
+                	}
+					formPopulator = new URIParameterFormPopulator(request, descriptor);
 					formPopulator.populate(formInstance);
-				} catch (Exception ex) {
+				} catch (NoSuchMethodException ex) {
+					throw new FormException(ex);
+				} catch (IllegalAccessException ex) {
+					throw new FormException(ex);
+				} catch (InvocationTargetException ex) {
+					throw new FormException(ex.getCause());
+				} catch (InstantiationException ex) {
 					throw new FormException(ex);
 				}
-
-                if (MultipartRequestImpl.isMultipart(request)) {
-                    PartBinder partBinder = new PartBinderImpl(formInstance, descriptor);
-                    partBinder.bindParts((MultipartRequest) request);
-                }
                 
                 lifecycleHooks.afterInitializingForm(descriptor, formInstance, request, response, servletContext);
             }

@@ -26,14 +26,23 @@
 package agave.internal;
 
 import agave.MultipartRequest;
-import agave.exception.ConversionException;
-import agave.exception.PartBindingException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface PartBinder {
+public class RequestPartFormPopulator extends AbstractFormPopulator {
 
-    public void bindParts(MultipartRequest request) throws PartBindingException, ConversionException;
+    public RequestPartFormPopulator(MultipartRequest request) {
+		super();
 
+		for (String partName : request.getParts().keySet()) {
+			List<Object> partContents = new ArrayList<Object>(1);
+			partContents.add(request.getParts().get(partName).getContents());
+			parameters.put(partName, partContents);
+		}
+    }
+    
 }

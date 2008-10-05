@@ -32,6 +32,7 @@ import agave.exception.ConversionException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -45,6 +46,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
 public abstract class AbstractFormPopulator implements FormPopulator {
+
+	private static final String ILLEGAL_ARGUMENT_EXCEPTION_MSG = 
+		"Mutator {0}#{1}(...) is expecting argument of type {2} and recieved {3}";
 
     protected SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
 
@@ -132,7 +136,16 @@ public abstract class AbstractFormPopulator implements FormPopulator {
                InvocationTargetException, 
                InstantiationException,
                ConversionException {
-        mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
+		try {
+	        mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
+		} catch (IllegalArgumentException ex) {
+			String errorMessage = MessageFormat.format(ILLEGAL_ARGUMENT_EXCEPTION_MSG, 
+				mutator.getDeclaringClass().getName(), 
+				mutator.getName(), 
+				mutator.getParameterTypes()[0].getName(), 
+				parameterValue.getClass().getName());
+			throw new IllegalArgumentException(errorMessage);
+		}
     }
 
     private void insertProperty(Method mutator, Object targetInstance, int index, Object parameterValue)
@@ -152,7 +165,7 @@ public abstract class AbstractFormPopulator implements FormPopulator {
            ConversionException {
         mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
     }
-    
+	
     @SuppressWarnings("unchecked")
     private Object convertIfNecessary(Method mutator, Object parameterValue) 
     throws ConversionException, 
@@ -164,8 +177,7 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
             Class<?> parameterType = parameterTypes[parameterOffset];
             ConvertWith converterAnnotation = null;
-            Converter converter = null; // keep this vague
-            
+            Converter converter = null; // keep this vague 
             // first look for a ConvertWith annotation
             for (Annotation annotation : mutator.getParameterAnnotations()[parameterOffset]) {
                 if (annotation instanceof ConvertWith) {
