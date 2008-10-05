@@ -1,4 +1,4 @@
-package agave.internal;
+package agave.sample;
 
 public class FavoritePopStar {
 

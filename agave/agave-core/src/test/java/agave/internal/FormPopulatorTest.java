@@ -26,6 +26,7 @@
 package agave.internal;
 
 import agave.exception.FormException;
+import agave.sample.ObjectGraph;
 
 import javax.servlet.http.HttpServletRequest;
 
