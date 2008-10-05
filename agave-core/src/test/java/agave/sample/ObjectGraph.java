@@ -1,4 +1,4 @@
-package agave.internal;
+package agave.sample;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package agave.internal;
+package agave.sample;
 
 import agave.conversion.StringConverter;
 
