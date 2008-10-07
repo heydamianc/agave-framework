@@ -1,0 +1,14 @@
+<archetype>
+  <id>agave-webapp</id>
+  <sources>
+    <source>src/main/java/WelcomeHandler.java</source>
+  </sources>
+  <testSources>
+    <source>src/test/java/WelcomeHandlerTest.java</source>
+  </testSources>
+  <resources>
+    <resource>src/main/webapp/css/theme.css</resource>
+    <resource>src/main/webapp/css/structure.css</resource>
+    <resource>src/main/webapp/WEB-INF/web.xml</resource>
+  </resources>
+</archetype>
