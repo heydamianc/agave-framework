@@ -149,7 +149,7 @@ public class MultipartParserImpl implements MultipartParser {
         
         File temporaryFile = File.createTempFile(prefix, suffix);
         if (deleteTemporaryFilesOnExit) {
-            //temporaryFile.deleteOnExit();
+            temporaryFile.deleteOnExit();
         }
         
         FileOutputStream out = new FileOutputStream(temporaryFile);
