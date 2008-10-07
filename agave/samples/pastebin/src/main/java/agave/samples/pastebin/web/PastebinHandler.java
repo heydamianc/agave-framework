@@ -80,7 +80,7 @@ public class PastebinHandler extends AbstractHandler {
             if (overview.getRecentEntries().size() >= 10) {
                 overview.getRecentEntries().removeLast();
             }
-            overview.getRecentEntries().push(new RecentEntry(snippet));
+            overview.getRecentEntries().addFirst(new RecentEntry(snippet));
             overviewService.storeOverview(overview);
         }
         
