@@ -9,12 +9,9 @@
 	<name>Agave Parent</name>
 	<url>http://agave-web-framework.googlecode.com</url>
 	<modules>
+		<module>agave-archetype</module>
 		<module>agave-core</module>
-		<module>samples</module>
-		<module>agave-pico</module>
-		<module>agave-pico</module>
-		<module>agave-guice</module>
-		<module>agave-guice</module>
+		<module>agave-samples</module>
 	</modules>
 	<dependencies>
 		<dependency>
