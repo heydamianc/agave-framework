@@ -22,10 +22,10 @@ public class WelcomeHandler extends AbstractHandler {
         out.println("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
         out.println("  <head>");
         out.println("    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-        out.format("    <title>Hello, {0}!</title>", context);
+        out.format("    <title>Hello, %s!</title>\n", context);
         out.println("  </head>");
         out.println("  <body>");
-        out.format("    <p>Hello, {0}!</p>", context);
+        out.format("    <p>Hello, %s!</p>\n", context);
         out.println("  </body>");
         out.println("</html>");
         
