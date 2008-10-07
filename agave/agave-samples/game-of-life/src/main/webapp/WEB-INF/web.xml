@@ -7,11 +7,6 @@
 	<filter>
 		<filter-name>AgaveFilter</filter-name>
 		<filter-class>agave.AgaveFilter</filter-class>
-		<init-param>
-			<!-- Override the directory the agave filter scans for classes (for running mvn jetty:run) -->
-			<param-name>classesDirectory</param-name>
-			<param-value>/home/damian/dev/trunk/agave/samples/game-of-life/target/classes</param-value>
-		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>AgaveFilter</filter-name>
