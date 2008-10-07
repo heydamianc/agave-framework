@@ -25,8 +25,6 @@
  */
 package agave.internal;
 
-import agave.internal.HandlerDescriptor;
-
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
