@@ -234,7 +234,7 @@ public class AgaveFilter implements Filter {
      * @throws IOException if an I/O error occurs
      * @throws ServletException if a Servlet error occurs
      * 
-     * @see <a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4">W3C Form Encoding Types< /a>
+     * @see <a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4">W3C Form Encoding Types</a>
      * @see agave.HandlesRequestsTo
      * @see agave.BindsInput
      * @see agave.ConvertWith
