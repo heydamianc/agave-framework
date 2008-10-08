@@ -96,9 +96,9 @@ public class DestinationTest {
             allowing(servletContext).getContextPath(); will(returnValue("/app"));
         }});
         
-        Assert.assertEquals("/app/some/resource?cat=meow&cat=purr&dog=bark&dog=woof", dest.encode(servletContext));
+        Assert.assertEquals("/some/resource?cat=meow&cat=purr&dog=bark&dog=woof", dest.encode(servletContext));
         dest.addParameter("bird", "chirp&chirp");
-        Assert.assertEquals("/app/some/resource?bird=chirp&amp;chirp&cat=meow&cat=purr&dog=bark&dog=woof", dest.encode(servletContext));
+        Assert.assertEquals("/some/resource?bird=chirp&amp;chirp&cat=meow&cat=purr&dog=bark&dog=woof", dest.encode(servletContext));
     }
     
 }
