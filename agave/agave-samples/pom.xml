@@ -8,7 +8,6 @@
   <modules>
     <module>game-of-life</module>
     <module>pastebin</module>
-    <module>guestbook</module>
   </modules>
   <modelVersion>4.0.0</modelVersion>
   <groupId>agave</groupId>
