@@ -321,7 +321,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(response).isCommitted(); will(returnValue(false));
             
-            one(request).getRequestDispatcher("/app/say.jsp?said=hello"); will(returnValue(requestDispatcher)); 
+            one(request).getRequestDispatcher("/say.jsp?said=hello"); will(returnValue(requestDispatcher)); 
             one(requestDispatcher).forward(request, response);
         }});
 
@@ -343,7 +343,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
             allowing(response).isCommitted(); will(returnValue(false));
             
             one(servletContext).getContextPath(); will(returnValue("/app"));
-            one(response).sendRedirect("/app/say.jsp?said=hello");
+            one(response).sendRedirect("/say.jsp?said=hello");
         }});
 
         filter.init(filterConfig);
@@ -367,7 +367,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
             allowing(response).isCommitted(); will(returnValue(false));
             
             one(servletContext).getContextPath(); will(returnValue("/app"));
-            one(response).sendRedirect("/app/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
+            one(response).sendRedirect("/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
         }});
 
         filter.init(filterConfig);

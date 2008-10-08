@@ -109,7 +109,7 @@ public class Destination {
      * @return
      */
     public String encode(ServletContext context) {
-        StringBuilder path = new StringBuilder(context.getContextPath());
+        StringBuilder path = new StringBuilder();
         if (getPath() != null) {
             path.append(getPath());
         }
