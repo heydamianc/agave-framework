@@ -25,23 +25,10 @@
  */
 package agave.samples;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+public class ImageStegoServiceFactory {
 
-import java.io.File;
-
-public class ImageDirectoryListener implements ServletContextListener {
-
-    public void contextInitialized(ServletContextEvent event) {
-        File dir = new File(event.getServletContext().getRealPath(StegoHandler.USER_SUBMITTED_IMAGE_DIR));
-        
-        if (!dir.exists()) {
-                dir.mkdirs();
-        }
-    }
-    
-    public void contextDestroyed(ServletContextEvent event) {
-        
-    }
-    
+	public static ImageStegoService createImageStegoService() {
+		return new ImageStegoServiceImpl();
+	}
+	
 }
