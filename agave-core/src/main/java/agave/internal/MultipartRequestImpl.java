@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import agave.MultipartRequest;
+import agave.Part;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -129,7 +130,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
     }
 
     public static boolean isMultipart(HttpServletRequest request) {
-        return "multipart/form-data".equals(request.getContentType());
+    	return request.getContentType() != null && request.getContentType().startsWith("multipart/form-data");
     }
 
     public static boolean isFormURLEncoded(HttpServletRequest request) {
