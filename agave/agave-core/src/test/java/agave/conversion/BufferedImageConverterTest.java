@@ -33,6 +33,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import agave.Part;
+import agave.internal.PartImpl;
+
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -49,7 +52,11 @@ public class BufferedImageConverterTest {
 	
 	@Test
 	public void testConvert() throws Exception {
-		Image image = converter.convert(imageFile);
+		Part part = new PartImpl();
+		part.setContents(imageFile);
+		part.setName("sampleImg");
+		part.setFilename("vim.gif");
+		Image image = converter.convert(part);
 		
 		Assert.assertNotNull(image);
 		Assert.assertEquals(32, image.getHeight(null));

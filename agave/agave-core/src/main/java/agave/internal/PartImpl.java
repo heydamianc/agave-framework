@@ -29,6 +29,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 
+import agave.Part;
+
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -96,7 +98,7 @@ public class PartImpl implements Part {
     public String toString() {
         return new StringBuilder("Part[")
             .append("name:").append(getName()).append(", ")
-            .append("fileName:").append(getFilename()).append(", ")
+            .append("filename:").append(getFilename()).append(", ")
             .append("contentType:").append(getContentType())
             .append("]")
             .toString();

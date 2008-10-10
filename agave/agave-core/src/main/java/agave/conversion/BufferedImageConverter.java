@@ -27,10 +27,10 @@ package agave.conversion;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import agave.Part;
 import agave.exception.ConversionException;
 
 /**
@@ -38,11 +38,11 @@ import agave.exception.ConversionException;
  */
 public class BufferedImageConverter implements PartConverter<BufferedImage> {
 
-	public BufferedImage convert(File input) throws ConversionException {
+	public BufferedImage convert(Part input) throws ConversionException {
 		BufferedImage image = null;
 		if (input != null) {
 			try {
-				image = ImageIO.read(input);
+				image = ImageIO.read(input.getContents());
 			} catch (IOException ex) {
 				throw new ConversionException(ex.getCause());
 			}
