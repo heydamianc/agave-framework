@@ -1,4 +1,5 @@
 <%@ page contentType="application/xhtml+xml" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -34,6 +35,16 @@
         <input type="submit" value="Obscure the Payload!" />
       </form>
     </fieldset>
+    <c:if test="${!empty sessionScope.filename}">
+      <div id="imageSection">
+        <img 
+          src="${sessionScope.filename}" 
+          alt="Original image" />
+        <img 
+          src="${sessionScope.encodedFilename}" 
+          alt="Image carrying the payload" />
+      </div>
+    </c:if>
     <fieldset>
       <legend>Extract Obscured Text from an Image</legend>
       <form 
@@ -52,5 +63,10 @@
         <input type="submit" value="Extract the Payload!" />
       </form>
     </fieldset>
+    <c:if test="${!empty sessionScope.extractedPayload}">
+      <div id="imageSection">
+        <c:out value="${sessionScope.extractedPayload}" />
+      </div>
+    </c:if>
   </body>
 </html>

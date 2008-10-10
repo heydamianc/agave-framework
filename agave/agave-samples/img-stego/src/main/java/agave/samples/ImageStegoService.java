@@ -25,23 +25,15 @@
  */
 package agave.samples;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import java.io.File;
+import java.io.IOException;
 
-public class ImageDirectoryListener implements ServletContextListener {
+/**
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ */
+public interface ImageStegoService {
 
-    public void contextInitialized(ServletContextEvent event) {
-        File dir = new File(event.getServletContext().getRealPath(StegoHandler.USER_SUBMITTED_IMAGE_DIR));
-        
-        if (!dir.exists()) {
-                dir.mkdirs();
-        }
-    }
-    
-    public void contextDestroyed(ServletContextEvent event) {
-        
-    }
-    
+	public File encode(File imageFile, String message, String encodedFilenamePrefix) throws IOException;
+
+	public String decode(File imageFile) throws IOException;
 }
