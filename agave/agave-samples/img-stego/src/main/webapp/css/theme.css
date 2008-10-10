@@ -1,0 +1,22 @@
+/* Theme */
+
+body {
+    font-family: Georgia, sans-serif; 
+    padding: 10px; 
+    padding-top: 0;
+}
+
+fieldset {
+    background-color: white; 
+    border: none; 
+    border-top: 3px double midnightblue;
+}
+
+legend {
+    margin: 5px 0;
+    padding: 5px;
+    border: 1px solid midnightblue; 
+    color: midnightblue; 
+    background-color: #e0e0e0;
+    font-family: Verdana, sans-serif;
+}
