@@ -25,21 +25,20 @@
  */
 package agave.internal;
 
-import agave.exception.FormException;
-import agave.sample.ObjectGraph;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Map;
-import java.util.List;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import agave.sample.ObjectGraph;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -66,7 +65,7 @@ public class FormPopulatorTest {
         parameterNames.add("three.a.c$glee");
         parameterNames.add("three.a.d!0");
         parameterNames.add("three.a.d!1");
-        final Enumeration enumeration = parameterNames.elements();
+        final Enumeration<String> enumeration = parameterNames.elements();
         
         context.checking(new Expectations() {{
             allowing(request).getParameterNames(); will(returnValue(enumeration));
@@ -145,7 +144,7 @@ public class FormPopulatorTest {
         parameterNames.add("nested.favoritePopStars$pop");
         parameterNames.add("nested.favoritePopStars$dance");
         
-        final Enumeration enumeration = parameterNames.elements();
+        final Enumeration<String> enumeration = parameterNames.elements();
         
         context.checking(new Expectations() {{
             allowing(request).getParameterNames(); will(returnValue(enumeration));

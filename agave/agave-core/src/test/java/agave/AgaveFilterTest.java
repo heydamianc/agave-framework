@@ -25,10 +25,8 @@
  */
 package agave;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -343,7 +341,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
             allowing(response).isCommitted(); will(returnValue(false));
             
             one(servletContext).getContextPath(); will(returnValue("/app"));
-            one(response).sendRedirect("/say.jsp?said=hello");
+            one(response).sendRedirect("/app/say.jsp?said=hello");
         }});
 
         filter.init(filterConfig);
@@ -353,9 +351,6 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
     @Test
     public void testReturnDestinationWithExplicitRedirect() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-        
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
             specialize(this, new HashMap<String, String[]>());
@@ -367,7 +362,7 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
             allowing(response).isCommitted(); will(returnValue(false));
             
             one(servletContext).getContextPath(); will(returnValue("/app"));
-            one(response).sendRedirect("/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
+            one(response).sendRedirect("/app/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
         }});
 
         filter.init(filterConfig);
@@ -377,9 +372,6 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
     @Test
     public void testReturnURI() throws Exception {
         AgaveFilter filter = new AgaveFilter();
-        
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
             specialize(this, new HashMap<String, String[]>());
