@@ -37,7 +37,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RequestParameterFormPopulator extends AbstractFormPopulator {
 
-    public RequestParameterFormPopulator(HttpServletRequest request) {
+    @SuppressWarnings("unchecked")
+	public RequestParameterFormPopulator(HttpServletRequest request) {
 		super();
 
         Enumeration<String> parameterNames = request.getParameterNames();
