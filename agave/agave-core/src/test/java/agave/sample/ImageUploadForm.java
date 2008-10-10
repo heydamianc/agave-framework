@@ -26,10 +26,10 @@
 package agave.sample;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 import agave.BindsInput;
 import agave.ConvertWith;
+import agave.Part;
 import agave.conversion.BufferedImageConverter;
 
 /**
@@ -38,15 +38,15 @@ import agave.conversion.BufferedImageConverter;
 public class ImageUploadForm {
 
 	// matches the parameters in the test file
-	private File file1;
+	private Part file1;
 	private BufferedImage file2;
 
-	public File getFile1() {
+	public Part getFile1() {
 		return file1;
 	}
 
 	@BindsInput
-	public void setFile1(File file1) {
+	public void setFile1(Part file1) {
 		this.file1 = file1;
 	}
 
