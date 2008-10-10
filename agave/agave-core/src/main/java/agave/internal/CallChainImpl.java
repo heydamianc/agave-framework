@@ -41,7 +41,8 @@ public class CallChainImpl implements CallChain {
     private String key;
     private Integer index;
     
-    public CallChainImpl(String parameterName, boolean unique) {
+    @SuppressWarnings("unchecked")
+	public CallChainImpl(String parameterName, boolean unique) {
         this.parameterName = parameterName;
         LinkedList<String> callChain = new LinkedList(Arrays.asList(parameterName.split("\\.")));
 

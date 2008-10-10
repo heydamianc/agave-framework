@@ -263,25 +263,25 @@ public class AgaveFilter implements Filter {
             if (formInstance != null) {
                 
                 lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, request, response, servletContext);
-             	
-				try {
-	                FormPopulator formPopulator = new RequestParameterFormPopulator(request);
-   	                formPopulator.populate(formInstance);
-					if (MultipartRequestImpl.isMultipart(request)) {
-						formPopulator = new RequestPartFormPopulator((MultipartRequest)request);
-						formPopulator.populate(formInstance);
-                	}
-					formPopulator = new URIParameterFormPopulator(request, descriptor);
-					formPopulator.populate(formInstance);
-				} catch (NoSuchMethodException ex) {
-					throw new FormException(ex);
-				} catch (IllegalAccessException ex) {
-					throw new FormException(ex);
-				} catch (InvocationTargetException ex) {
-					throw new FormException(ex.getCause());
-				} catch (InstantiationException ex) {
-					throw new FormException(ex);
-				}
+                
+                try {
+                    FormPopulator formPopulator = new RequestParameterFormPopulator(request);
+                    formPopulator.populate(formInstance);
+                    if (MultipartRequestImpl.isMultipart(request)) {
+                        formPopulator = new RequestPartFormPopulator((MultipartRequest)request);
+                        formPopulator.populate(formInstance);
+                    }
+                    formPopulator = new URIParameterFormPopulator(request, descriptor);
+                    formPopulator.populate(formInstance);
+                } catch (NoSuchMethodException ex) {
+                    throw new FormException(ex);
+                } catch (IllegalAccessException ex) {
+                    throw new FormException(ex);
+                } catch (InvocationTargetException ex) {
+                    throw new FormException(ex.getCause());
+                } catch (InstantiationException ex) {
+                    throw new FormException(ex);
+                }
                 
                 lifecycleHooks.afterInitializingForm(descriptor, formInstance, request, response, servletContext);
             }
@@ -394,7 +394,11 @@ public class AgaveFilter implements Filter {
                 }
                 
                 if (redirect) {
-                    response.sendRedirect(uri.toASCIIString());
+                    String location = uri.toASCIIString();
+                    if (location.startsWith("/")) {
+                        location = request.getContextPath() + location;
+                    }
+                    response.sendRedirect(location);
                 } else {
                     request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
