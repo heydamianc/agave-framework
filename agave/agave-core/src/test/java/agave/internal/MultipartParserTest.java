@@ -27,61 +27,104 @@ package agave.internal;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Collection;
 
-import org.junit.Assert;
+import javax.servlet.DelegatingServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+
+import junit.framework.Assert;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ */
 public class MultipartParserTest {
-    
-    @Test
-    public void testMultipartScannerWithJettySample() throws Exception {
 
-        InputStream sampleStream = 
-            getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"); 
-        Assert.assertNotNull(sampleStream);
-
-        MultipartParser parser = new MultipartParserImpl();
-        parser.parseInput(sampleStream);
+	Mockery context = new Mockery();
+	HttpServletRequest request;
+	
+	@Before
+	public void setup() throws Exception {
+		request = context.mock(HttpServletRequest.class);
+	}
+	
+	@Test
+	public void testConstructor() throws Exception {
+		final String contentType = "multipart/form-data; boundary=----WebKitFormBoundary4O7BAy0axyQ5Kkpu";
+        final InputStream sampleStream = 
+        	new DelegatingServletInputStream(
+        			getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty")); 
         
-        Assert.assertNotNull(parser.getParameters());
-        Assert.assertNotNull(parser.getParts());
-        Assert.assertEquals(2, parser.getParameters().size());
-        Assert.assertEquals(2, parser.getParts().size());
+		context.checking(new Expectations() {{
+			allowing(request).getContentType(); will(returnValue(contentType));
+			allowing(request).getInputStream(); will(returnValue(sampleStream));
+		}});
+		
+		MultipartParserImpl parser = new MultipartParserImpl(request);
+		Assert.assertEquals("------WebKitFormBoundary4O7BAy0axyQ5Kkpu", parser.getBoundary());
+	}
 
-        for (String paramName : parser.getParameters().keySet()) {
-            if ("text1".equals(paramName)) {
-                Collection<String> paramValues = parser.getParameters().get(paramName);
-                Assert.assertTrue(paramValues.contains("test 1"));
-            } else if ("text2".equals(paramName)) {
-                Collection<String> paramValues = parser.getParameters().get(paramName);
-                Assert.assertTrue(paramValues.contains("test 2"));
-
-            }
-        }
-    }
-
-    public void testMultipartScannerWithJettyImg() throws Exception {
-
-        InputStream sampleStream = 
-           getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"); 
-        MultipartParser parser = new MultipartParserImpl();
-        parser.parseInput(sampleStream);
-
-        InputStream basis =
-            getClass().getClassLoader().getResourceAsStream("vim.gif");
-
-        Assert.assertNotNull(sampleStream);
-        InputStream imgStream = new FileInputStream(parser.getParts().get("file1").getContents());
-       
-        int bb = -1; 
-        int i = 0;
-        while ((bb = basis.read()) != -1) {
-            int pb = imgStream.read();
-            Assert.assertEquals(bb, pb);
-            i++;
-        }
-        Assert.assertTrue(i > 0);
-    }
-    
+	@Test
+	public void testParseParameters() throws Exception {
+		final String contentType = 
+			"multipart/form-data; boundary=---------------------------2746393686911676941624173958";
+		
+        final InputStream sampleStream = 
+        	new DelegatingServletInputStream(
+        			getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty")); 
+        
+		context.checking(new Expectations() {{
+			allowing(request).getContentType(); will(returnValue(contentType));
+			allowing(request).getInputStream(); will(returnValue(sampleStream));
+		}});
+		
+		MultipartParser parser = new MultipartParserImpl(request);
+		parser.parseInput();
+		
+		Assert.assertNotNull(parser.getParameters());
+		Assert.assertTrue(!parser.getParameters().isEmpty());
+		Assert.assertEquals(1, parser.getParameters().get("text1").size());
+		Assert.assertTrue(parser.getParameters().get("text1").contains("test 1"));
+		Assert.assertEquals(1, parser.getParameters().get("text2").size());
+		Assert.assertTrue(parser.getParameters().get("text2").contains("test 2"));
+		
+		Assert.assertEquals(2, parser.getParameters().size());
+	}
+	
+	@Test
+	public void testParsePart() throws Exception {
+		final String contentType = 
+			"multipart/form-data; boundary=---------------------------2746393686911676941624173958";
+		
+        final InputStream sampleStream = 
+        	new DelegatingServletInputStream(
+        			getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
+        context.checking(new Expectations() {{
+			allowing(request).getContentType(); will(returnValue(contentType));
+			allowing(request).getInputStream(); will(returnValue(sampleStream));
+		}});
+		
+		MultipartParser parser = new MultipartParserImpl(request);
+		parser.parseInput();
+		
+		Assert.assertNotNull(parser.getParts());
+		Assert.assertEquals(2, parser.getParts().size());
+		Assert.assertNotNull(parser.getParts().get("file1"));
+		Assert.assertNotNull(parser.getParts().get("file2"));
+		
+		InputStream imgStream = getClass().getClassLoader().getResourceAsStream("vim.gif");
+		InputStream file1Stream = new FileInputStream(parser.getParts().get("file1").getContents());
+		InputStream file2Stream = new FileInputStream(parser.getParts().get("file2").getContents());
+		
+		int b = -1;
+		while ((b = imgStream.read()) != -1) {
+			Assert.assertEquals(file1Stream.read(), b);
+			Assert.assertEquals(file2Stream.read(), b);
+		}
+		
+	}
+	
 }

@@ -25,7 +25,6 @@
  */
 package agave.internal;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -38,7 +37,7 @@ import agave.Part;
  */
 public interface MultipartParser {
 
-    public void parseInput(InputStream in) throws IOException;
+    public void parseInput() throws IOException;
     public Map<String, Collection<String>> getParameters();
     public Map<String, Part> getParts();
 
