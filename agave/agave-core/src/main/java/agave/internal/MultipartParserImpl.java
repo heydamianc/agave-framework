@@ -32,10 +32,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
 
 import agave.Part;
 
@@ -43,135 +46,203 @@ import agave.Part;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class MultipartParserImpl implements MultipartParser {
-    
-    private static class CoupledLine {
-        List<Integer> bytes = new ArrayList<Integer>();
-        StringBuilder text = new StringBuilder();
-    }
 
-    private static final String contentDisposition = "Content-Disposition:\\s*form-data;\\s*name=\"(.*)\"";
-    private static final Pattern partPattern = Pattern.compile(contentDisposition + ";\\s*filename=\"(.+)\"");
-    private static final Pattern filenamePattern = Pattern.compile("(.*)\\.(.*)");
-    private static final Pattern parameterPattern = Pattern.compile(contentDisposition);
-    private static final Pattern contentTypePattern = Pattern.compile("Content-Type:\\s*(.+)");
-    private static final Pattern otherHeaderPattern = Pattern.compile("(\\S+):\\s*(.+?)");
+	private static class CoupledLine {
+		private StringBuilder characters = new StringBuilder();
+		private List<Byte> bytes = new LinkedList<Byte>();
+		
+		public void append(int i) {
+			characters.append((char)i);
+			bytes.add((byte)i);
+		}
+	}
+	
+	
+	private static final String DEFAULT_SUFFIX = ".tmp";
+	private static final Pattern BOUNDARY_PATTERN = Pattern.compile("multipart/form-data;\\s*boundary=(.*)");
+    private static final String CONTENT_DISPOSIITON = "Content-Disposition:\\s*form-data;\\s*name=\"(.*)\"";
+    private static final Pattern PART_PATTERN = Pattern.compile(CONTENT_DISPOSIITON + ";\\s*filename=\"(.+)\"");
+    private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)\\.(.*)");
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile(CONTENT_DISPOSIITON);
+    private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("Content-Type:\\s*(.+)");
+    private static final Pattern OTHER_HEADER_PATTERN = Pattern.compile("(\\S+):\\s*(.+?)");
+	
+	private Map<String, Collection<String>> parameters;
+	private Map<String, Part> parts;
+	private String boundary;
+	private String eos;
+	private InputStream in;
+	
+	public MultipartParserImpl(HttpServletRequest request) throws IOException {
+		parameters = new HashMap<String, Collection<String>>();
+		parts = new HashMap<String, Part>();
+		Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
+		if (boundaryMatcher.matches() && boundaryMatcher.groupCount() >= 1) {
+			boundary = "--" + boundaryMatcher.group(1);
+		}
+		eos = boundary + "--";
+		in = request.getInputStream();
+		readLine(in);
+	}
+	
+	public Map<String, Collection<String>> getParameters() {
+		return parameters;
+	}
 
-    private Pattern boundaryPattern;
-    private Pattern eosPattern;
-    
-    private boolean deleteTemporaryFilesOnExit;
-    private String defaultSuffix;
+	public Map<String, Part> getParts() {
+		return parts;
+	}
+	
+	public String getBoundary() {
+		return boundary;
+	}
 
-    private Map<String, Collection<String>> parameters = new HashMap<String, Collection<String>>();
-    private Map<String, Part> parts = new HashMap<String, Part>();
-    
-    public MultipartParserImpl() {
-        this(true, "tmp");
-    }
-    
-    public MultipartParserImpl(boolean deleteTemporaryFilesOnExit, String defaultSuffix) {
-        this.deleteTemporaryFilesOnExit = deleteTemporaryFilesOnExit;
-        this.defaultSuffix = defaultSuffix;
-    }
-
-    public void parseInput(InputStream in) throws IOException {
-        if (in == null) {
-            throw new NullPointerException("Supplied InputStream was not null");
-        }
-
-        String boundary = readLine(in).text.toString().trim();
-        boundaryPattern = Pattern.compile(boundary);
-        eosPattern = Pattern.compile(boundary + "--");
-
-        while (true) {
-            Part part = new PartImpl();
-            readHeaders(in, part);
+	public void parseInput() throws IOException {
+		while (true) {
+			Part part = new PartImpl();
+			readHeaders(part);
             if (part.getFilename() != null) {
-                if (readPart(in, part)) {
+                if (readPart(part)) {
                     break;
                 }
             } else {
-                if (readParameter(in, part)) {
+                if (readParameter(part)) {
                     break;
                 }
             }
-        }
-    }
-    
-    public void readHeaders(InputStream in, Part part) throws IOException {
-        CoupledLine line = null;
-        while ((line = readLine(in)) != null) {
-            String text = line.text.toString().trim();
-            
-            if ("".equals(text)) {
-                break;
-            }
-            
-            Matcher matcher = partPattern.matcher(text);
+		}
+		in.close();
+	}
+	
+	public void readHeaders(Part part) throws IOException {
+		String line = null;
+		while ((line = readLine(in)) != null) {
+			line = line.trim();
+			
+			if ("".equals(line)) {
+				break;
+			}
+			
+            Matcher matcher = PART_PATTERN.matcher(line);
             if (matcher.matches() && matcher.groupCount() >= 2) {
                 part.setName(matcher.group(1));
                 part.setFilename(matcher.group(2));
                 continue;
             }
             
-            matcher = parameterPattern.matcher(text);
+            matcher = PARAMETER_PATTERN.matcher(line);
             if (matcher.matches() && matcher.groupCount() >= 1) {
                 part.setName(matcher.group(1));
                 continue;
             }
             
-            matcher = contentTypePattern.matcher(text);
+            matcher = CONTENT_TYPE_PATTERN.matcher(line);
             if (matcher.matches() && matcher.groupCount() >= 1) {
                 part.setContentType(matcher.group(1));
                 continue;
             }
             
-            matcher = otherHeaderPattern.matcher(text);
+            matcher = OTHER_HEADER_PATTERN.matcher(line);
             if (matcher.matches() && matcher.groupCount() >= 2) {
                 part.addHeader(matcher.group(1), matcher.group(2));
                 continue;
             }
+		}
+ 	}
+	
+	private String readLine(InputStream in) throws IOException {
+		StringBuilder text = new StringBuilder();
+		
+		int i = -1;
+        while ((i = in.read()) != -1) {
+            text.append((char) i);
+            
+            if ((char) i == '\n') {
+                break;
+            }
         }
-    }
-    
-    public boolean readPart(InputStream in, Part part) throws IOException {
-        boolean eos = false;
         
+        return text.toString();
+	}
+	
+	private CoupledLine readCoupledLine(InputStream in) throws IOException {
+		CoupledLine line = new CoupledLine();
+		
+		int i = -1;
+		while ((i = in.read()) != -1) { 
+			line.append(i);
+			
+			if ((char) i == '\n') {
+				break;
+			}
+		}
+		
+		return line;
+	}
+	
+	public boolean readParameter(Part part) throws IOException {
+		boolean end = false;
+
+		StringBuilder parameterValue = new StringBuilder();
+		String line = null;
+		
+		while ((line = readLine(in)) != null) {
+			line = line.trim();
+			
+			if (eos.equals(line)) {
+				end = true;
+				break;
+			}
+			
+			if (boundary.equals(line)) {
+				break;
+			}
+			
+			parameterValue.append(line);
+		}
+		
+		if (!parameters.containsKey(part.getName())) {
+			parameters.put(part.getName(), new ArrayList<String>());
+		}
+		parameters.get(part.getName()).add(parameterValue.toString());
+		
+        return end;
+	}
+	
+	public boolean readPart(Part part) throws IOException {
+		boolean end = false;
+
         String prefix = null;
         String suffix = null;
         
-        Matcher matcher = filenamePattern.matcher(part.getFilename());
+        Matcher matcher = FILENAME_PATTERN.matcher(part.getFilename());
         if (matcher.matches() && matcher.groupCount() >= 2) {
             prefix = matcher.group(1);
-            suffix = matcher.group(2);
+            suffix = (matcher.group(2).startsWith(".")) ? matcher.group(2) : '.' + matcher.group(2);
         } else {
             prefix = part.getName();
-            suffix = defaultSuffix;
+            suffix = DEFAULT_SUFFIX;
         }
         
         File temporaryFile = File.createTempFile(prefix, suffix);
-        if (deleteTemporaryFilesOnExit) {
-            temporaryFile.deleteOnExit();
-        }
+        temporaryFile.deleteOnExit();
         
         FileOutputStream out = new FileOutputStream(temporaryFile);
         
         CoupledLine line = null;
-        while ((line = readLine(in)) != null) {
-            String text = line.text.toString().trim();
+        while ((line = readCoupledLine(in)) != null) {
+            String text = line.characters.toString().trim();
             
-            matcher = eosPattern.matcher(text);
-            if (matcher.matches()) {
-                eos = true;
-                break;
+            if (eos.equals(text)) {
+            	end = true;
+            	break;
             }
             
-            matcher = boundaryPattern.matcher(text);
-            if (matcher.matches()) {
-                break;
+            if (boundary.equals(text)) {
+            	break;
             }
             
-            for (Integer b : line.bytes) {
+            for (Byte b : line.bytes) {
                 out.write(b);
             }
         }
@@ -179,62 +250,7 @@ public class MultipartParserImpl implements MultipartParser {
         out.close();
         part.setContents(temporaryFile);
         parts.put(part.getName(), part);
-        return eos;
-    }
-    
-    public boolean readParameter(InputStream in, Part part) throws IOException {
-        boolean eos = false;
-        StringBuilder parameterValue = new StringBuilder();
-        
-        CoupledLine line = null;
-        while((line = readLine(in)) != null) {
-            String text = line.text.toString().trim();
-            
-            Matcher matcher = eosPattern.matcher(text);
-            if (matcher.matches()) {
-                eos = true;
-                break;
-            }
-            
-            matcher = boundaryPattern.matcher(text);
-            if (matcher.matches()) {
-                break;
-            }
-            
-            parameterValue.append(line.text);
-        }
-        
-        if (parameterValue != null && !"".equals(parameterValue)) {
-            if (parameters.get(part.getName()) == null) {
-                parameters.put(part.getName(), new ArrayList<String>());
-            }
-            parameters.get(part.getName()).add(parameterValue.toString().trim());
-        }
-        
-        return eos;
-    }
+        return end;
+	}
 
-    private CoupledLine readLine(InputStream in) throws IOException {
-        CoupledLine line = new CoupledLine();
-        int b = -1;
-
-        while ((b = in.read()) != -1) {
-            line.bytes.add(b);
-            line.text.append((char) b);
-
-            if ((char) b == '\n') {
-                break;
-            }
-        }
-        
-        return ((line.bytes.isEmpty()) ? null : line);
-    }
-
-    public Map<String, Collection<String>> getParameters() {
-        return parameters;
-    }
-
-    public Map<String, Part> getParts() {
-        return parts;
-    }
 }

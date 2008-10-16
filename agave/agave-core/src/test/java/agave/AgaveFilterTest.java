@@ -270,9 +270,12 @@ public class AgaveFilterTest extends MockedEnvironmentTest {
     public void testMultipartRequest() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         final InputStream in = getClass().getClassLoader().getResourceAsStream("multipart-sample-tomcat");
+        final String contentType = 
+        	"multipart/form-data; boundary=---------------------------979094395854168939825384612";
 
         context.checking(new Expectations() {{
             specialize(this, new HashMap<String, String[]> ());
+            allowing(request).getContentType(); will(returnValue(contentType));
             allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
             allowing(request).getRequestURI(); will(returnValue("/app/upload/file"));
             allowing(request).getContextPath(); will(returnValue("/app"));

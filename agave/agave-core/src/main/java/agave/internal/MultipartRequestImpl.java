@@ -51,8 +51,9 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
 
     public MultipartRequestImpl(HttpServletRequest request) throws IOException {
         super(request);
-        parser = new MultipartParserImpl();
-        parser.parseInput(request.getInputStream());
+        parser = new MultipartParserImpl(request);
+        parser.parseInput();
+        request.getInputStream().close();
     }
 
     /**

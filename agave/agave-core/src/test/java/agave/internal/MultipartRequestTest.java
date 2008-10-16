@@ -47,6 +47,8 @@ import agave.MultipartRequest;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class MultipartRequestTest {
+	final static String CONTENT_TYPE = 
+		"multipart/form-data; boundary=---------------------------2746393686911676941624173958";
     final InputStream testStream = getClass().getClassLoader().getResourceAsStream("multipart-parameter-test");
     final ServletInputStream delegatingStream = new DelegatingServletInputStream(testStream);
 
@@ -61,6 +63,7 @@ public class MultipartRequestTest {
     @Test
     public void testGetParameter() throws Exception {
         context.checking(new Expectations() {{
+        	allowing(request).getContentType(); will(returnValue(CONTENT_TYPE));
             allowing(request).getInputStream(); will(returnValue(delegatingStream));
             allowing(request).getParameter("where"); will(returnValue("over there"));
         }});
@@ -78,7 +81,9 @@ public class MultipartRequestTest {
         final Map<String, String[]> spm = new HashMap<String, String[]>(); // like the one in servlet request
         spm.put("a", new String[] {"a", "b"});
         spm.put("b", new String[] {"1", "2"});
+        
         context.checking(new Expectations() {{
+        	allowing(request).getContentType(); will(returnValue(CONTENT_TYPE));
             allowing(request).getInputStream(); will(returnValue(delegatingStream));
             allowing(request).getParameterMap(); will(returnValue(spm));
         }});
@@ -108,6 +113,7 @@ public class MultipartRequestTest {
         spm.put("b", new String[] {"1", "2"});
 
         context.checking(new Expectations() {{
+        	allowing(request).getContentType(); will(returnValue(CONTENT_TYPE));
             allowing(request).getInputStream(); will(returnValue(delegatingStream));
             allowing(request).getParameterMap(); will(returnValue(spm));
         }});
@@ -128,6 +134,7 @@ public class MultipartRequestTest {
         spm.put("b", new String[] {"1", "2"}); 
 
         context.checking(new Expectations() {{
+        	allowing(request).getContentType(); will(returnValue(CONTENT_TYPE));
             allowing(request).getInputStream(); will(returnValue(delegatingStream));
             allowing(request).getParameterMap(); will(returnValue(spm));
         }});
