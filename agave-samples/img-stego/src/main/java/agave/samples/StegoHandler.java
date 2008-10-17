@@ -47,43 +47,41 @@ public class StegoHandler extends AbstractHandler {
     @HandlesRequestsTo("/obscure")
     public Destination obscure(StegoForm form) throws Exception {
     	Part carrierPart = form.getCarrier();
-    	
-    	String filename = generateRandomizedFilename(carrierPart);
-        File carrier = new File(servletContext.getRealPath(USER_SUBMITTED_IMAGE_DIR + filename));
-        carrierPart.getContents().renameTo(carrier);
-        
-	    request.getSession(true).setAttribute("filename", 
-	    		request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + filename);
+    	movePartContentsIntoAccessibleLocation(carrierPart);
+	    request.setAttribute("filename", 
+	    		request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + carrierPart.getContents().getName());
 	    
-	    ImageStegoService stegoService = ImageStegoServiceFactory.createImageStegoService();
-	    File encodedCarrier = stegoService.encode(carrier, form.getPayload(), ENCODED_FILENAME_PREFIX);
-	    encodedCarrier.renameTo(new File(USER_SUBMITTED_IMAGE_DIR + encodedCarrier.getName()));
+	    StegoService stegoService = StegoServiceFactory.createImageStegoService();
+	    File encodedCarrier = stegoService.encode(carrierPart, form.getPayload(), ENCODED_FILENAME_PREFIX);
 	    
-	    request.getSession().setAttribute("encodedFilename", 
-	    		request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + encodedCarrier.getName());
-        
-	    request.getSession().removeAttribute("extractedPayload");
+	    request.setAttribute("encodedFilename", 
+	    	request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + encodedCarrier.getName());
 	    
-        return new Destination("/", true);
+        return new Destination("/WEB-INF/jsp/obscured.jsp", false);
     }
     
-    private String generateRandomizedFilename(Part carrierPart) {
-        String[] filenameParts = carrierPart.getFilename().split("\\.");
-        String filename = carrierPart.getName() + "-" + RandomStringUtils.randomAlphanumeric(4) +
-        	"." + filenameParts[filenameParts.length - 1];
-        return filename;
-    }
     
     @HandlesRequestsTo("/extract")
     public Destination extract(StegoForm form) throws Exception {
-    	ImageStegoService stegoService = ImageStegoServiceFactory.createImageStegoService();
+    	Part carrierPart = form.getCarrier();
+    	movePartContentsIntoAccessibleLocation(carrierPart);
+	    request.setAttribute("encodedFilename", 
+	    		request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + carrierPart.getContents().getName());
+    	
+    	StegoService stegoService = StegoServiceFactory.createImageStegoService();
     	String extractedPayload = stegoService.decode(form.getCarrier().getContents());
-    	request.getSession(true).setAttribute("extractedPayload", extractedPayload);
+    	request.setAttribute("extractedPayload", extractedPayload);
     	
-    	request.getSession().removeAttribute("filename");
-    	request.getSession().removeAttribute("encodedFilename");
-    	
-        return new Destination("/", true);
+    	return new Destination("/WEB-INF/jsp/extracted.jsp", false);
+    }
+
+    private void movePartContentsIntoAccessibleLocation(Part carrierPart) {
+    	String[] filenameParts = carrierPart.getFilename().split("\\.");
+        String filename = carrierPart.getName() + "-" + RandomStringUtils.randomAlphanumeric(4) +
+        	"." + filenameParts[filenameParts.length - 1];
+        File carrier = new File(servletContext.getRealPath(USER_SUBMITTED_IMAGE_DIR + filename));
+        carrierPart.getContents().renameTo(carrier);
+        carrierPart.setContents(carrier);
     }
     
 }

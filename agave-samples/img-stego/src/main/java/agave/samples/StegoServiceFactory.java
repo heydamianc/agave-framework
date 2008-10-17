@@ -25,10 +25,10 @@
  */
 package agave.samples;
 
-public class ImageStegoServiceFactory {
+public class StegoServiceFactory {
 
-	public static ImageStegoService createImageStegoService() {
-		return new ImageStegoServiceImpl();
+	public static StegoService createImageStegoService() {
+		return new StegoServiceImpl();
 	}
 	
 }
