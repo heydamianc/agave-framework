@@ -25,11 +25,13 @@
  */
 package agave.samples;
 
-import javax.imageio.ImageIO;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import agave.Part;
 
 /**
  * An implementation of a service that can encode text in an image and decode
@@ -38,7 +40,7 @@ import java.io.IOException;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ImageStegoServiceImpl implements ImageStegoService {
+public class StegoServiceImpl implements StegoService {
 
 	/**
 	 * The number of pixels that a code point can possibly span.
@@ -57,12 +59,12 @@ public class ImageStegoServiceImpl implements ImageStegoService {
 	 * @throws java.io.IOException
 	 * @return the encoded image file
 	 */
-	public File encode(File imageFile, String msg, String encodedFilenamePrefix) throws IOException {
-		BufferedImage original = ImageIO.read(imageFile);
-		int width = original.getWidth();
-		int height = original.getHeight();
-		int[] pixels = original.getRGB(0, 0, width, height, null, 0, width);
-		File encodedImage = null;
+	public File encode(Part part, String msg, String encodedFilenamePrefix) throws IOException {
+		BufferedImage originalImage = ImageIO.read(part.getContents());
+		int width = originalImage.getWidth();
+		int height = originalImage.getHeight();
+		int[] pixels = originalImage.getRGB(0, 0, width, height, null, 0, width);
+		File encodedImageFile = null;
 		if (pixels.length >= (msg.length() * PIXEL_SPAN)) {
 			for (int i = 0, pos = 0; (pos + PIXEL_SPAN) < pixels.length; i++, pos += PIXEL_SPAN) {
 				int codePoint = 0;
@@ -71,35 +73,56 @@ public class ImageStegoServiceImpl implements ImageStegoService {
 				}
 				interpolate(codePoint, pixels, pos);
 			}
-			BufferedImage encoded = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			encoded.setRGB(0, 0, width, height, pixels, 0, width);
-			encodedImage = new File(imageFile.getParentFile(), encodedFilenamePrefix + imageFile.getName());
-			encodedImage.createNewFile();
-			ImageIO.write(encoded, "PNG", encodedImage);
+			BufferedImage encodedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			encodedImage.setRGB(0, 0, width, height, pixels, 0, width);
+			encodedImageFile = 
+				new File(part.getContents().getParentFile(), encodedFilenamePrefix + part.getContents().getName());
+			encodedImageFile.createNewFile();
+			
+//			TODO figure out why this is screwy with JPEGs
+//			Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(part.getContentType());
+//			
+//			while (writers.hasNext()) {
+//				ImageWriter writer = writers.next();
+//				ImageOutputStream out = ImageIO.createImageOutputStream(encodedImageFile);
+//				writer.setOutput(out);
+//				writer.write(encodedImage);
+//				out.close();
+//				break;
+//			}
+			
+			// just use png encoding for now
+			ImageIO.write(encodedImage, "PNG", encodedImageFile);
+		} else {
+			throw new RuntimeException("Could not fit text in image");
 		}
-		return encodedImage;
+		return encodedImageFile;
 	}
 
     /**
      * Interpolates a UTF-16 character (possibly 5 nibbles) into the image by following this algorithm:
-     *   1. Break the code point up into 5 nibbles.  Some nibbles may be 0 if the code point is not a
-     *      higher character in UTF-16.  ASCII characters will still use only 7 bits and can be
-     *      represented with 2 nibbles.
-     *   2. Once the code point has been broken into nibbles, each bit of the nibble will be ANDed into 
-     *      the least significant bits of each color channel in the pixel.  There is one alpha channel
-     *      to represent transparency and 3 color channels, red, green, and blue.  They are all packed
-     *      into an integer type and each byte represents the color channel.  It looks like this:
-     *      
+     * <ol>
+     *   <li>Break the code point up into 5 nibbles.  Some nibbles may be 0 if the code point is not a
+     *       higher character in UTF-16.  ASCII characters will still use only 7 bits and can be
+     *       represented with 2 nibbles.</li>
+     *   <li>Once the code point has been broken into nibbles, each bit of the nibble will be ANDed into 
+     *       the least significant bits of each color channel in the pixel.  There is one alpha channel
+     *       to represent transparency and 3 color channels, red, green, and blue.  They are all packed
+     *       into an integer type and each byte represents the color channel.  It looks like this:
+     *   <pre>
      *       Alpha     Red     Green     Blue
      *      11111111 11111111 11111111 11111111  =  0xffffffff (in hexadecimal)
      *      11111110 11111110 11111110 11111110  =  0xfefefefe (drop least significant bit of each color)
      *             ^        ^        ^        ^
-     *             '--------+--------+--------+--- 0 \    Most sgnificant nibble bit
+     *             '--------+--------+--------+--- 0 \    Most significant nibble bit
      *                      '--------+--------+--- 1  \__ a nibble
      *                               '--------+--- 0  /   
      *                                        '----1 /    Least significant nibble bit
      *      11111110 11111111 11111110 11111111  =  Result
-     *      
+     *    </pre>
+     *    </li>
+     * </ol>
+     * 
      * @param codePoint The UTF-16 character (or code point) to interpolate into the image
      * @param pixels The linear array of pixels represented as packed ARGB pixels
      * @param position The position int the pixels to begin interpolation

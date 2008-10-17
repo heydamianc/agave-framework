@@ -28,12 +28,14 @@ package agave.samples;
 import java.io.File;
 import java.io.IOException;
 
+import agave.Part;
+
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface ImageStegoService {
+public interface StegoService {
 
-	public File encode(File imageFile, String message, String encodedFilenamePrefix) throws IOException;
+	public File encode(Part part, String message, String encodedFilenamePrefix) throws IOException;
 
 	public String decode(File imageFile) throws IOException;
 }

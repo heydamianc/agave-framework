@@ -5,14 +5,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    <title>Image Stegonagraphy</title>
+    <title>Image Steganography</title>
     <style type="text/css">
       @import "${pageContext.request.contextPath}/css/structure.css";
       @import "${pageContext.request.contextPath}/css/theme.css";
     </style>
   </head>
   <body>
-    <h1>Image Stegonagraphy</h1>
+    <h1>Image Steganography</h1>
     <fieldset>
       <legend>Obscure Text in an Image</legend>
       <form 
@@ -22,29 +22,18 @@
         <table>
           <tbody>
             <tr>
-              <td><label for="payload">Payload:</label></td>
+              <td><label for="payload">Textual Payload:</label></td>
               <td><textarea id="payload" name="payload" cols="80" rows="5"/></td>
             </tr>
             <tr>
-              <td><label for="carrier">Carrier:</label></td>
-              <td><input id="carrier" type="file" name="carrier" /></td>
+              <td><label for="carrier">Carrier Image:</label></td>
+              <td><input id="encodeCarrier" type="file" name="carrier" /></td>
             </tr>
           </tbody>
         </table>
-        <br />
-        <input type="submit" value="Obscure the Payload!" />
+        <input class="submissionButton" type="submit" value="Obscure the Payload!" />
       </form>
     </fieldset>
-    <c:if test="${!empty sessionScope.filename}">
-      <div id="imageSection">
-        <img 
-          src="${sessionScope.filename}" 
-          alt="Original image" />
-        <img 
-          src="${sessionScope.encodedFilename}" 
-          alt="Image carrying the payload" />
-      </div>
-    </c:if>
     <fieldset>
       <legend>Extract Obscured Text from an Image</legend>
       <form 
@@ -54,19 +43,16 @@
         <table>
           <tbody>
             <tr>
-              <td><label for="carrier">Carrier:</label></td>
-              <td><input id="carrier" type="file" name="carrier" /></td>
+              <td><label for="carrier">Carrier Image:</label></td>
+              <td><input id="extractCarrier" type="file" name="carrier" /></td>
             </tr>
           </tbody>
         </table>
-        <br />
-        <input type="submit" value="Extract the Payload!" />
+        <input class="submissionButton" type="submit" value="Extract the Payload!" />
       </form>
     </fieldset>
-    <c:if test="${!empty sessionScope.extractedPayload}">
-      <div id="imageSection">
-        <c:out value="${sessionScope.extractedPayload}" />
-      </div>
-    </c:if>
+    <div id="footer">
+      Copyright &copy; 2007-2008 Damian Carrillo. All rights reserved.
+    </div>
   </body>
 </html>
