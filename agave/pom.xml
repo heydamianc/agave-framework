@@ -9,13 +9,37 @@
   <artifactId>agave</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>Agave Parent</name>
+  <name>Agave</name>
   <url>http://agave-web-framework.googlecode.com</url>
+  <description>
+      The Agave Web Framework is a simple and lightweight web framework that enables you to develop quickly and efficiently, 
+      with maximum flexibility if you are a Java Web developer. The benefits of using Agave are:
+      There is little initial ramp-up time so you can start solving actual problems quicker
+      The framework does not impede progress on your project so you can focus on the problem at hand.
+      Agave boasts zero-configuration. Metadata is stored in-class as annotations.
+      Agave is the web framework to use if your focus is on modeling a domain, you appreciate flexibility 
+      in design, or you don't want to have a huge down payment on writing a web application. 
+      Agave is simple, but it will handle the tedium for you in the simplest way possible. 
+  </description>
+  <inceptionYear>2008</inceptionYear>
   <modules>
     <module>agave-archetype</module>
     <module>agave-core</module>
     <module>agave-samples</module>
   </modules>
+  <distributionManagement>
+    <repository>
+      <id>local.repo</id>
+      <name>Agave Maven Repository</name>
+      <url>file://${basedir}/../../maven/repo</url>
+    </repository>
+  </distributionManagement>
+  <repositories>
+    <repository>
+        <id>agave</id>
+      <url>http://agave-web-framework.googlecode.com/svn/maven/repo/</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -29,6 +53,15 @@
       <version>2.4.0</version>
     </dependency>
   </dependencies>
+  <scm>
+    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/trunk/agave</connection>
+    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/trunk/agave</developerConnection>
+    <url>http://agave-web-framework.googlecode.com/svn/trunk/agave</url>
+  </scm>
+  <issueManagement>
+    <system>Google Code Issue Tracking</system>
+    <url>http://code.google.com/p/agave-web-framework/issues/list</url>
+  </issueManagement>
   <build>
     <plugins>
       <plugin>
@@ -46,12 +79,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.4.2</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.1</version>
      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -63,17 +94,14 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.2</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <targetJdk>1.5</targetJdk>
           <linkXref>true</linkXref>
@@ -82,8 +110,18 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <configuration>
+          <tags>
+            <tag>TODO</tag>
+            <tag>@todo</tag>
+            <tag>FIXME</tag>
+          </tags>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>dashboard-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
       </plugin>
     </plugins>
   </reporting>
@@ -97,4 +135,20 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+  <licenses>
+    <license>
+      <name>BSD License</name>
+        <url>http://agave-web-framework.googlecode.com/svn/trunk/agave/license.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>damiancarrillo</id>
+      <name>Damian Carrillo</name>
+      <email>damiancarrillo@gmail.com</email>
+      <url>http://dcarrillo.org</url>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
 </project>
