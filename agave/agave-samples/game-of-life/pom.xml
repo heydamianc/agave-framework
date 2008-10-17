@@ -2,14 +2,14 @@
 	<parent>
 		<groupId>agave</groupId>
 		<artifactId>agave-samples</artifactId>
-		<version>1.0-snapshot</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>agave.samples</groupId>
 	<artifactId>game-of-life</artifactId>
 	<packaging>war</packaging>
 	<name>Conway's Game of Life</name>
-	<version>1.0</version>
+	<version>1.0-SNAPSHOT</version>
 	<description>Conway's Game of Life</description>
 	<dependencies>
 		<dependency>
