@@ -1,0 +1,13 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>agave</artifactId>
+    <groupId>agave</groupId>
+    <version>1.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>agave</groupId>
+  <artifactId>agave-archetype</artifactId>
+  <version>1.0</version>
+  <name>Agave Web Application</name>
+  <url>http://agave-web-framework.googlecode.com/</url>
+</project>
