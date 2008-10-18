@@ -49,8 +49,8 @@
     </dependency>
   </dependencies>
   <scm>
-    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/trunk</connection>
-    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/trunk</developerConnection>
+    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/</connection>
+    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/</developerConnection>
     <url>http://code.google.com/p/agave-web-framework/source/browse/</url>
   </scm>
   <issueManagement>
