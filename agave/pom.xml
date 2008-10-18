@@ -3,7 +3,7 @@
   <groupId>agave</groupId>
   <artifactId>agave</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Agave</name>
   <url>http://agave-web-framework.googlecode.com</url>
   <description>
@@ -49,9 +49,9 @@
     </dependency>
   </dependencies>
   <scm>
-    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/trunk/agave-1.0-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/trunk/agave-1.0-SNAPSHOT</developerConnection>
-    <url>http://agave-web-framework.googlecode.com/svn/tags/agave-1.0-SNAPSHOT</url>
+    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/tags/agave-1.0</connection>
+    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/tags/agave-1.0</developerConnection>
+    <url>http://agave-web-framework.googlecode.com/svn/tags/agave-1.0</url>
   </scm>
   <issueManagement>
     <system>Google Code Issue Tracking</system>
