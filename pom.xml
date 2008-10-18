@@ -1,15 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                      http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>agave</groupId>
   <artifactId>agave</artifactId>
   <packaging>pom</packaging>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Agave</name>
   <url>http://agave-web-framework.googlecode.com</url>
   <description>
-      The Agave Web Framework is a simple and lightweight web framework that enables you to develop quickly and efficiently, 
-      with maximum flexibility if you are a Java Web developer. The benefits of using Agave are:
-      There is little initial ramp-up time so you can start solving actual problems quicker
+      The Agave Web Framework is a simple and lightweight web framework that enables you to develop quickly 
+      and efficiently, with maximum flexibility if you are a Java Web developer. The benefits of using Agave 
+      are: There is little initial ramp-up time so you can start solving actual problems quicker
       The framework does not impede progress on your project so you can focus on the problem at hand.
       Agave boasts zero-configuration. Metadata is stored in-class as annotations.
       Agave is the web framework to use if your focus is on modeling a domain, you appreciate flexibility 
@@ -25,14 +30,14 @@
   <distributionManagement>
     <repository>
       <id>local.repo</id>
-      <name>Agave Maven Repository</name>
-      <url>file://${basedir}/../../maven/repo</url>
+      <name>Local Repository</name>
+      <url>file://${basedir}/../maven-repo</url>
     </repository>
   </distributionManagement>
   <repositories>
     <repository>
-        <id>agave</id>
-      <url>http://agave-web-framework.googlecode.com/svn/maven/repo/</url>
+      <id>agave</id>
+      <url>http://agave-web-framework.googlecode.com/svn/maven-repo/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -89,9 +94,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <stylesheet>java</stylesheet>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
