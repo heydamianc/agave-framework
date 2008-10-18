@@ -49,9 +49,9 @@
     </dependency>
   </dependencies>
   <scm>
-    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/tags/agave-1.0</connection>
-    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/tags/agave-1.0</developerConnection>
-    <url>http://agave-web-framework.googlecode.com/svn/tags/agave-1.0</url>
+    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/trunk/agave-1.0-SNAPSHOT</connection>
+    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/trunk/agave-1.0-SNAPSHOT</developerConnection>
+    <url>http://agave-web-framework.googlecode.com/svn/tags/agave-1.0-SNAPSHOT</url>
   </scm>
   <issueManagement>
     <system>Google Code Issue Tracking</system>
