@@ -2,12 +2,12 @@
   <parent>
     <artifactId>agave</artifactId>
     <groupId>agave</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>agave</groupId>
   <artifactId>agave-archetype</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Agave Web Application</name>
   <url>http://agave-web-framework.googlecode.com/</url>
 </project>
