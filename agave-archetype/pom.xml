@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>agave</groupId>
+  <artifactId>agave-archetype</artifactId>
+  <version>1.0</version>
+  <name>Agave Web Application</name>
+  <description>
+    Maven archetype that provides the groundwork for building a webapp on top of Agave.
+  </description>
+  <url>http://agave-web-framework.googlecode.com/</url>
+  <repositories>
+    <repository>
+      <id>agave</id>
+      <url>http://agave-web-framework.googlecode.com/svn/maven-repo/</url>
+    </repository>
+  </repositories>
+  <licenses>
+    <license>
+      <name>BSD License</name>
+        <url>http://agave-web-framework.googlecode.com/svn/trunk/agave-archetype/license.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <developers>
+    <developer>
+      <id>damiancarrillo</id>
+      <name>Damian Carrillo</name>
+      <email>damiancarrillo@gmail.com</email>
+      <url>http://dcarrillo.org</url>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
+  <distributionManagement>
+    <repository>
+      <id>local.repo</id>
+      <name>Local Repository</name>
+      <url>file://${basedir}/../maven-repo</url>
+    </repository>
+  </distributionManagement>
+</project>
