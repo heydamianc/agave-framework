@@ -4,8 +4,6 @@ import agave.AbstractHandler;
 import agave.Destination;
 import agave.HandlesRequestsTo;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class WelcomeHandler extends AbstractHandler {
 
     @HandlesRequestsTo("/")
