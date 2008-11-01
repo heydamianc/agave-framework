@@ -26,9 +26,6 @@
 package agave.internal;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-
-import agave.conversion.Converter;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -70,12 +67,6 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier);
     
     /**
-     * Locates annotated form methods to set parameters with.
-     * @param identifier
-     */
-    public void locateAnnotatedFormMethods(HandlerIdentifier identifier);
-    
-    /**
      * Gets the {@link agave.internal.URIPattern URIPattern} that this {@code HandlerDescriptor} describes.
      */
     public URIPattern getPattern();
@@ -94,32 +85,6 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
      * Gets the method object that this {@code HandlerDescriptor} describes.
      */
     public Method getHandlerMethod();
-
-    /**
-     * Gets the request setter method that this {@code HandlerDescriptor} describes.
-     */
-    public Method getRequestSetter();
-
-    /**
-     * Gets the response setter method that this {@code HandlerDescriptor} describes.
-     */
-    public Method getResponseSetter();
-    
-    /**
-     * Gets the servlet context setter method that this {@code HandlerDescriptor} descripts.
-     */
-    public Method getServletContextSetter();
-
-    /**
-     * Gets the collection of setters on the form class that this {@code HandlerDescriptor} describes.
-     */
-    public Map<String, Method> getMutators();
-
-    /**
-     * Gets the collection of converters for the setters on the form class that this
-     * {@code HandlerDescriptor} describes.
-     */
-    public Map<String, Class<? extends Converter<?,?>>> getConverters();
 
     /**
      * Whether or not this {@code HandlerDescriptor} matches the URI string supplied.  The URI string 

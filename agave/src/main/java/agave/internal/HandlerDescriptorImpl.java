@@ -25,45 +25,24 @@
  */
 package agave.internal;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
-import agave.BindsInput;
-import agave.BindsRequest;
-import agave.BindsResponse;
-import agave.BindsServletContext;
-import agave.ConvertWith;
-import agave.conversion.Converter;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers and routing requests 
  * into them.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerDescriptorImpl implements HandlerDescriptor {
+ public class HandlerDescriptorImpl implements HandlerDescriptor {
     
     private URIPattern pattern;
     private Class<?> handlerClass;
     private Class<?> formClass;
     private Method handlerMethod;
-    private Method requestSetter;
-    private Method responseSetter;
-    private Method servletContextSetter;
-    private Map<String, Method> mutators = new HashMap<String, Method>();
-    private Map<String, Class<? extends Converter<?,?>>> converters = 
-        new HashMap<String, Class<? extends Converter<?,?>>>();
 
     public HandlerDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException {
-        this.pattern = new URIPatternImpl(identifier.getUri());
-        this.handlerClass = Class.forName(identifier.getClassName());
-
+        pattern = new URIPatternImpl(identifier.getUri());
+        handlerClass = Class.forName(identifier.getClassName());
         locateAnnotatedHandlerMethods(identifier);
-
-        if (this.formClass != null) {
-            locateAnnotatedFormMethods(identifier);
-        }
     }
 
     /**
@@ -74,48 +53,11 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
      * @param identifier the {@code HandlerIdentifier} that was created while scanning for a handler method
      */
     public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
-        for (Method method : this.handlerClass.getMethods()) {
+        for (Method method : handlerClass.getMethods()) {
             if (identifier.getMethodName().equals(method.getName())) {
-                this.handlerMethod = method;
-                for (Class<?> parameterType : method.getParameterTypes()) {
-                    this.formClass = parameterType;
-                }
-            } else if (method.getAnnotation(BindsRequest.class) != null) {
-                this.requestSetter = method;    
-            } else if (method.getAnnotation(BindsResponse.class) != null) {
-                this.responseSetter = method;
-            } else if (method.getAnnotation(BindsServletContext.class) != null) {
-                this.servletContextSetter = method;
-            }
-        }
-    }
-
-    /**
-     * Locates annotated methods on a form class.  This method will find the annotated methods on a form 
-     * class to be used when binding parameters.  Once an annotated method is identified, this method
-     * will check if the parameter needs a converter.  The annotations this method targets are 
-     * {@code BindsParameter} and {@code ConvertWith}.
-     * 
-     * @param identifer the {@code HandlerIdentifier} that was created while scanning for a handler method
-     */
-    public void locateAnnotatedFormMethods(HandlerIdentifier identifier) {
-        for (Method method : this.formClass.getMethods()) {
-            BindsInput annotation = method.getAnnotation(BindsInput.class);
-            if (annotation != null) {
-                String paramName = null;
-                if (annotation.name() != null && "".equals(annotation.name().trim())) {
-                    paramName = method.getName();
-                    if (paramName.startsWith("set")) {
-                        paramName = paramName.substring(3, 4).toLowerCase() + paramName.substring(4);
-                    }
-                } else {
-                    paramName = annotation.name();
-                }
-                mutators.put(paramName, method);
-                for (Annotation paramAnnotation : method.getParameterAnnotations()[0]) {
-                    if (paramAnnotation instanceof ConvertWith) {
-                        converters.put(paramName, ((ConvertWith)paramAnnotation).value());        
-                    }
+                handlerMethod = method;
+                if (handlerMethod.getParameterTypes().length > 1) {
+                    formClass = handlerMethod.getParameterTypes()[1];
                 }
             }
         }
@@ -135,26 +77,6 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     
     public Method getHandlerMethod() {
         return handlerMethod;
-    }
-
-    public Method getRequestSetter() {
-        return requestSetter;
-    }
-
-    public Method getResponseSetter() {
-        return responseSetter;
-    }
-    
-    public Method getServletContextSetter() {
-        return servletContextSetter;
-    }
-
-    public Map<String, Method> getMutators() {
-        return mutators;
-    }
-
-    public Map<String, Class<? extends Converter<?,?>>> getConverters() {
-        return converters;
     }
 
     public int compareTo(HandlerDescriptor that) {

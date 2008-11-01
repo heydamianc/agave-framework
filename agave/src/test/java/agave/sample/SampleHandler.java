@@ -25,66 +25,47 @@
  */
 package agave.sample;
 
-import agave.BindsRequest;
-import agave.BindsResponse;
-import agave.HandlesRequestsTo;
-
+import agave.HandlerContext;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import agave.HandlesRequestsTo;
 
 public class SampleHandler {
-    
-    private HttpServletRequest request;
-	private HttpServletResponse response;
-
-    
     @HandlesRequestsTo("/login")
-    public void login(LoginForm loginForm) throws ServletException, IOException {
+    public void login(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         if ("damian".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {
-            request.setAttribute("loggedIn", Boolean.TRUE);
+            context.getRequest().setAttribute("loggedIn", Boolean.TRUE);
         } else {
-            request.setAttribute("loggedIn", Boolean.FALSE);
+            context.getRequest().setAttribute("loggedIn", Boolean.FALSE);
         }
-        response.setStatus(400);
+        context.getResponse().setStatus(400);
     }
 
     @HandlesRequestsTo("/aliased")
-    public void aliased(AliasedForm aliasedForm) throws ServletException, IOException {
+    public void aliased(HandlerContext context, AliasedForm aliasedForm) throws ServletException, IOException {
     }
 
     @HandlesRequestsTo("/uri-params/${username}/${password}/")
-    public void uriParams(LoginForm loginForm) throws ServletException, IOException {
-        request.setAttribute("username", loginForm.getUsername());
-        request.setAttribute("password", loginForm.getPassword());
+    public void uriParams(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+        context.getRequest().setAttribute("username", loginForm.getUsername());
+        context.getRequest().setAttribute("password", loginForm.getPassword());
     }
 
     @HandlesRequestsTo("/throws/nullPointerException")
-    public void throwsNullPointerException(LoginForm loginForm) throws ServletException, IOException {
+    public void throwsNullPointerException(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         throw new NullPointerException();
     }
 
     @HandlesRequestsTo("/throws/ioException")
-    public void throwsIOException(LoginForm loginForm) throws ServletException, IOException {
+    public void throwsIOException(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         throw new IOException();
     }
-
-
+    
     @HandlesRequestsTo("/lacks/form")
-    public void lacksForm() throws ServletException, IOException {
-        request.setAttribute("noErrors", Boolean.TRUE);
-    }
-    
-    @BindsRequest
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-    
-    @BindsResponse
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
+    public void lacksForm(HandlerContext context) throws ServletException, IOException {
+        context.getRequest().setAttribute("noErrors", Boolean.TRUE);
     }
 
 }

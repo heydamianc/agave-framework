@@ -26,6 +26,7 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * Converts an input {@code String} into a {@code Boolean} object.
@@ -42,6 +43,8 @@ public class BooleanConverter implements StringConverter<Boolean> {
      *      <li>true</li>
      *      <li>t</li>
      *      <li>1</li>
+     *      <li>yes</li>
+     *      <li>y</li>
      *    </ul>
      *  </p>
      *  <p>
@@ -50,18 +53,30 @@ public class BooleanConverter implements StringConverter<Boolean> {
      *      <li>false</li>
      *      <li>f</li>
      *      <li>0</li>
+     *      <li>no</li>
+     *      <li>n</li>
      *    </ul>
      *  </p>
      * @return a {@code Boolean} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
-    public Boolean convert(String input) throws ConversionException {
+    public Boolean convert(String input, Locale locale) throws ConversionException {
         Boolean value = null;
         if (input != null && !"".equals(input)) {
             String parameter = input.toLowerCase();
-            if ("true".equals(parameter) || "t".equals(parameter) || "1".equals(parameter) || "on".equals(parameter)) {
+            if ("true".equals(parameter)
+                || "t".equals(parameter)
+                || "1".equals(parameter)
+                || "on".equals(parameter)
+                || "yes".equals(parameter)
+                || "y".equals(parameter)) {
                 value = Boolean.TRUE;
-            } else if ("false".equals(parameter) || "f".equals(parameter) || "0".equals(parameter) || "off".equals(parameter)) {
+            } else if ("false".equals(parameter)
+                || "f".equals(parameter)
+                || "0".equals(parameter)
+                || "off".equals(parameter)
+                || "no".equals(parameter)
+                || "n".endsWith(parameter)) {
                 value = Boolean.FALSE;
             } else {
                 throw new ConversionException("Could not convert " + input + " into a boolean object");

@@ -23,21 +23,26 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave;
+package agave.conversion;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import agave.exception.ConversionException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
 
 /**
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface BindsServletContext {
+public class DateConverter implements StringConverter<Date> {
+
+    public Date convert(String input, Locale locale) throws ConversionException {
+        try {
+            DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            return format.parse(input);
+        } catch (ParseException ex) {
+            throw new ConversionException("Could not convert " + input + " to a Date object", ex);
+        }
+    }
+
 }

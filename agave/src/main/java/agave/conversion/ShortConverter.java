@@ -26,6 +26,7 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * Converts a {@code String} input into a {@code Short} object.
@@ -39,7 +40,7 @@ public class ShortConverter implements StringConverter<Short> {
      * @return a {@code Short} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
-    public Short convert(String input) throws ConversionException {
+    public Short convert(String input, Locale locale) throws ConversionException {
         Short value = null;
         if (input != null && !"".equals(input)) {
             try {

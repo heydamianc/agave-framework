@@ -26,6 +26,7 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * Converts an object from the input type to the output type.
@@ -33,6 +34,6 @@ import agave.exception.ConversionException;
  */
 public interface StringConverter<OutputT> extends Converter<String, OutputT> {
     
-    public OutputT convert(String input) throws ConversionException;
+    public OutputT convert(String input, Locale locale) throws ConversionException;
     
 }

@@ -25,39 +25,23 @@
  */
 package agave.sample;
 
-import agave.BindsRequest;
-import agave.BindsResponse;
-import agave.HandlesRequestsTo;
-
+import agave.HandlerContext;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import agave.HandlesRequestsTo;
 
 public class MultipleHandler {
     
-	private HttpServletRequest request;
-	private HttpServletResponse response;
-    
     @HandlesRequestsTo("/test1")
-    public void test1(LoginForm loginForm) throws ServletException, IOException {
-    	request.setAttribute("x", "x");
-    	response.setStatus(400);
+    public void test1(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+    	context.getRequest().setAttribute("x", "x");
+    	context.getResponse().setStatus(400);
     }
     
     @HandlesRequestsTo("/test2")
     public void test2(LoginForm loginForm) throws ServletException, IOException {
-    }
-    
-    @BindsRequest
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-    
-    @BindsResponse
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
     }
     
 }

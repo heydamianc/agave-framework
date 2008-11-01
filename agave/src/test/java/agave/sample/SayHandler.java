@@ -30,26 +30,24 @@ import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import agave.BindsResponse;
 import agave.Destination;
+import agave.HandlerContext;
 import agave.HandlesRequestsTo;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class SayHandler {
-    
-    private HttpServletResponse response;
 
     @HandlesRequestsTo("/say/${phrase}")
-    public Destination say(SayForm form) {
+    public Destination say(HandlerContext context, SayForm form) {
         Destination dest = new Destination("/say.jsp");
         dest.addParameter("said", form.getPhrase());
         return dest;
     }
     
     @HandlesRequestsTo("/whisper/${phrase}")
-    public Destination whisper(SayForm form) {
+    public Destination whisper(HandlerContext context, SayForm form) {
         Destination dest = new Destination("/whisper.jsp", true);
         dest.addParameter("said", form.getPhrase());
         dest.addParameter("how", "very softly & sweetly");
@@ -57,18 +55,13 @@ public class SayHandler {
     }
     
     @HandlesRequestsTo("/proclaim/${phrase}")
-    public URI proclaim() throws URISyntaxException {
+    public URI proclaim(HandlerContext context) throws URISyntaxException {
         return new URI("http", "//www.utexas.edu/", null);
     }
     
     @HandlesRequestsTo("/shout/${phrase}")
-    public void shout() {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    }
-
-    @BindsResponse
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
+    public void shout(HandlerContext context) {
+        context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
     
 }

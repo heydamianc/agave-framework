@@ -34,6 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -46,6 +47,11 @@ public abstract class AbstractFormPopulator implements FormPopulator {
 		"Mutator {0}#{1}(...) is expecting argument of type {2} and recieved {3}";
 
     protected SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
+    protected Locale locale;
+
+    protected AbstractFormPopulator(Locale locale) {
+        this.locale = locale;
+    }
 
     public SortedMap<String, List<Object>> getParameters() {
         return parameters;
@@ -200,7 +206,7 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             }
             
             if (converter != null) {
-                return converter.convert(parameterValue);
+                return converter.convert(parameterValue, locale);
             }
         }
         
