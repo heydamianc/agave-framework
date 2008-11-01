@@ -25,6 +25,7 @@
  */
 package agave.conversion;
 
+import java.util.Locale;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,10 +44,10 @@ public class CharacterConverterTest {
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(new Character('a'), converter.convert("a"));
-        Assert.assertEquals(new Character('z'), converter.convert("za"));
-        Assert.assertEquals(null, converter.convert(null));
-        Assert.assertEquals(null, converter.convert(""));
+        Assert.assertEquals(new Character('a'), converter.convert("a", Locale.getDefault()));
+        Assert.assertEquals(new Character('z'), converter.convert("za", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
     
 }

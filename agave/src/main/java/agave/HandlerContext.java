@@ -28,26 +28,66 @@ package agave;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-public abstract class AbstractHandler {
+
+/**
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ */
+public class HandlerContext {
+
+    public ServletContext servletContext;
+    public HttpServletRequest request;
+    public HttpServletResponse response;
+    public HttpSession session;
     
-    protected ServletContext servletContext;
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
-
-    @BindsServletContext
+    /**
+     * @param servletContext
+     * @param request
+     * @param response
+     * @param session
+     */
+    public HandlerContext(ServletContext servletContext, HttpServletRequest request,
+            HttpServletResponse response, HttpSession session) {
+        super();
+        this.servletContext = servletContext;
+        this.request = request;
+        this.response = response;
+        this.session = session;
+    }
+    
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+    
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
-
-    @BindsRequest
+    
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+    
     public void setRequest(HttpServletRequest request) {
         this.request = request;
     }
-
-    @BindsResponse
+    
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+    
     public void setResponse(HttpServletResponse response) {
         this.response = response;
     }
+    
+    public HttpSession getSession() {
+        return session;
+    }
+    
+    public void setSession(HttpSession session) {
+        this.session = session;
+    }
+    
+    
     
 }

@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -45,15 +46,15 @@ public class IntegerConverterTest {
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(new Integer("10"), converter.convert("10"));
-        Assert.assertEquals(new Integer("-4"), converter.convert("-4"));
-        Assert.assertEquals(null, converter.convert(null));
-        Assert.assertEquals(null, converter.convert(""));
+        Assert.assertEquals(new Integer("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Integer("-4"), converter.convert("-4", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
     
     @Test(expected = ConversionException.class)
     public void testConvertWithException() throws Exception {
-        converter.convert("some bad input");
+        converter.convert("some bad input", Locale.getDefault());
     }
     
 }

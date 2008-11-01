@@ -23,48 +23,26 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.exception;
+package agave.conversion;
 
-import java.lang.reflect.InvocationTargetException;
-
-import agave.internal.HandlerDescriptor;
+import agave.exception.ConversionException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
 
 /**
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class RequestBindingException extends BindingException {
+public class DateTimeConverter implements StringConverter<Date> {
 
-    private static final long serialVersionUID = 1L;
-
-    public RequestBindingException() {
-        super();
-    }
-
-    public RequestBindingException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
-
-    public RequestBindingException(String message) {
-        super(message);
+    public Date convert(String input, Locale locale) throws ConversionException {
+        try {
+            DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
+            return format.parse(input);
+        } catch (ParseException ex) {
+            throw new ConversionException("Could not convert " + input + " to a Date object (with time)", ex);
+        }
     }
 
-    public RequestBindingException(Throwable rootCause) {
-        super(rootCause);
-    }
-    
-    public RequestBindingException(HandlerDescriptor descriptor, IllegalAccessException ex) {
-        this(getErrorMessage(descriptor), ex);
-    }
-
-    public RequestBindingException(HandlerDescriptor descriptor, InvocationTargetException ex) {
-        this(getErrorMessage(descriptor), ex);
-    }
-    
-    // TODO syncronize this
-    public synchronized static String getErrorMessage(HandlerDescriptor descriptor) {
-        return "Unable to bind the request object with " 
-            + descriptor.getHandlerClass().getName() + "#" + descriptor.getRequestSetter();
-    }
-    
-    
 }

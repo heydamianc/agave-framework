@@ -27,7 +27,6 @@ package agave.sample;
 
 import java.awt.image.BufferedImage;
 
-import agave.BindsInput;
 import agave.ConvertWith;
 import agave.Part;
 import agave.conversion.BufferedImageConverter;
@@ -45,7 +44,6 @@ public class ImageUploadForm {
 		return file1;
 	}
 
-	@BindsInput
 	public void setFile1(Part file1) {
 		this.file1 = file1;
 	}
@@ -54,7 +52,6 @@ public class ImageUploadForm {
 		return file2;
 	}
 
-	@BindsInput
 	public void setFile2(@ConvertWith(BufferedImageConverter.class) BufferedImage file2) {
 		this.file2 = file2;
 	}

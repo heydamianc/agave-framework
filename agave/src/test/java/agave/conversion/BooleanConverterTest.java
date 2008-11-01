@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -45,25 +46,33 @@ public class BooleanConverterTest {
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(Boolean.TRUE, converter.convert("true"));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("TRUE"));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("t"));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("T"));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("1"));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("false"));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("FALSE"));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("f"));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("F"));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("0"));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("on"));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("off"));
-        Assert.assertEquals(null, converter.convert(null));
-        Assert.assertEquals(null, converter.convert(""));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("true", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("TRUE", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("t", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("T", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("yes", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("YES", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("y", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("Y", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("1", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("false", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("FALSE", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("f", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("F", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("no", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("NO", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("n", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("N", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("0", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("on", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("off", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
     
     @Test(expected = ConversionException.class)
     public void testConvertWithException() throws Exception {
-        converter.convert("some bad input");
+        converter.convert("some bad input", Locale.getDefault());
     }
     
 }

@@ -25,11 +25,8 @@
  */
 package agave.sample;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import agave.BindsRequest;
-import agave.BindsResponse;
+import agave.HandlerContext;
 import agave.HandlesRequestsTo;
 
 /**
@@ -37,29 +34,16 @@ import agave.HandlesRequestsTo;
  */
 public class ImageUploadHandler {
 
-    private HttpServletRequest request;
-	private HttpServletResponse response;
-	
 	@HandlesRequestsTo("/upload/file")
-	public void uploadFile(ImageUploadForm form) {
-		request.setAttribute("file", form.getFile1() == null);
-		response.setStatus(400);
+	public void uploadFile(HandlerContext context, ImageUploadForm form) {
+		context.getRequest().setAttribute("file", form.getFile1() == null);
+		context.getResponse().setStatus(400);
 	}
 	
 	@HandlesRequestsTo("/upload/image")
-	public void uploadImage(ImageUploadForm form) {
-		request.setAttribute("image", form.getFile2() == null);
-		response.setStatus(400);
-	}
-
-	@BindsRequest
-	public void setRequest(HttpServletRequest request) {
-		this.request = request;
-	}
-
-	@BindsResponse
-	public void setResponse(HttpServletResponse response) {
-		this.response = response;
+	public void uploadImage(HandlerContext context, ImageUploadForm form) {
+		context.getRequest().setAttribute("image", form.getFile2() == null);
+		context.getResponse().setStatus(400);
 	}
 	
 }

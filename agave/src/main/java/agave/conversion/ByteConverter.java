@@ -26,6 +26,7 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * Converts an input {@code String} into a signed decimal {@code Byte} object.
@@ -39,7 +40,7 @@ public class ByteConverter implements StringConverter<Byte> {
      * @return a {@code Byte} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
-    public Byte convert(String input) throws ConversionException {
+    public Byte convert(String input, Locale locale) throws ConversionException {
         Byte value = null;
         if (input != null && !"".equals(input)) {
             try {

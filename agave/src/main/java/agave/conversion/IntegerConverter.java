@@ -26,6 +26,7 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * Converts a {@code String} input into a {@code Integer} object.
@@ -39,7 +40,7 @@ public class IntegerConverter implements StringConverter<Integer> {
      * @return a {@code Integer} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
-    public Integer convert(String input) throws ConversionException {
+    public Integer convert(String input, Locale locale) throws ConversionException {
         Integer value = null;
         if (input != null && !"".equals(input)) {
             try {

@@ -29,8 +29,6 @@ import agave.internal.HandlerDescriptor;
 import java.io.File;
 import java.net.URI;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
@@ -53,83 +51,70 @@ public class SampleLifecycleHooks extends DefaultLifecycleHooks {
     // from doFilter
     
     @Override
-    public void beforeFilteringRequest(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("beforeFilteringRequest", Boolean.TRUE);
+    public void beforeFilteringRequest(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("beforeFilteringRequest", Boolean.TRUE);
+    }
+
+    @Override
+    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
+        context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
     }
 
     @Override
     public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("afterHandlingRequest", Boolean.TRUE);
+        Destination destination, HandlerContext context) {
+        context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
     }
 
     @Override
     public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, 
-        Destination destination, HttpServletRequest request, HttpServletResponse response, 
-        ServletContext servletContext) {
-        servletContext.setAttribute("afterHandlingRequest", Boolean.TRUE);        
+        URI destination, HandlerContext context) {
+        context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
     }
 
     @Override
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, 
-        URI destination, HttpServletRequest request, HttpServletResponse response, 
-        ServletContext servletContext) {
-        servletContext.setAttribute("afterHandlingRequest", Boolean.TRUE);
+    public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
+        context.getServletContext().setAttribute("afterInitializingForm", Boolean.TRUE);
     }
 
     @Override
-    public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("afterInitializingForm", Boolean.TRUE);
+    public void afterSettingRequest(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("afterSettingRequest", Boolean.TRUE);
     }
 
     @Override
-    public void afterSettingRequest(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("afterSettingRequest", Boolean.TRUE);
+    public void afterSettingResponse(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("afterSettingResponse", Boolean.TRUE);
     }
 
     @Override
-    public void afterSettingResponse(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("afterSettingResponse", Boolean.TRUE);
+    public void afterSettingServletContext(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("afterSettingServletContext", Boolean.TRUE);
     }
 
     @Override
-    public void afterSettingServletContext(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("afterSettingServletContext", Boolean.TRUE);
+    public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
+        context.getServletContext().setAttribute("beforeHandlingRequest", Boolean.TRUE);
     }
 
     @Override
-    public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("beforeHandlingRequest", Boolean.TRUE);
+    public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
+        context.getServletContext().setAttribute("beforeInitializingForm", Boolean.TRUE);
     }
 
     @Override
-    public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("beforeInitializingForm", Boolean.TRUE);
+    public void beforeSettingRequest(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("beforeSettingRequest", Boolean.TRUE);
     }
 
     @Override
-    public void beforeSettingRequest(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("beforeSettingRequest", Boolean.TRUE);
+    public void beforeSettingResponse(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("beforeSettingResponse", Boolean.TRUE);
     }
 
     @Override
-    public void beforeSettingResponse(HandlerDescriptor descriptor, HttpServletRequest request,
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("beforeSettingResponse", Boolean.TRUE);
-    }
-
-    @Override
-    public void beforeSettingServletContext(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext) {
-        servletContext.setAttribute("beforeSettingServletContext", Boolean.TRUE);
+    public void beforeSettingServletContext(HandlerDescriptor descriptor, HandlerContext context) {
+        context.getServletContext().setAttribute("beforeSettingServletContext", Boolean.TRUE);
     }
 
 }

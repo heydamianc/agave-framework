@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import agave.sample.ObjectGraph;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -78,6 +79,7 @@ public class FormPopulatorTest {
             allowing(request).getParameterValues("three.a.c$glee"); will(returnValue(new String[]{"n"}));
             allowing(request).getParameterValues("three.a.d!0"); will(returnValue(new String[] {"m"}));
             allowing(request).getParameterValues("three.a.d!1"); will(returnValue(new String[] {"n"}));
+            allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
         }});
         
         FormPopulator populator = new RequestParameterFormPopulator(request);
@@ -170,6 +172,7 @@ public class FormPopulatorTest {
             allowing(request).getParameterValues("numbers!1"); will(returnValue(new String [] {"1"}));
             allowing(request).getParameterValues("nested.favoritePopStars$pop"); will(returnValue(new String [] {"Prince"}));
             allowing(request).getParameterValues("nested.favoritePopStars$dance"); will(returnValue(new String [] {"Tatu"}));
+            allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
         }});
         
         FormPopulator populator = new RequestParameterFormPopulator(request);

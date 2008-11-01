@@ -25,12 +25,8 @@
  */
 package agave;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import org.jmock.Expectations;
 import org.junit.Test;
 
@@ -38,42 +34,16 @@ import org.junit.Test;
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  * @version $Rev$ $Date$
  */
-public class LifecycleHooksTest extends MockedEnvironmentTest {
-
-    @Override
-    protected void specialize(Expectations expectations, final Map<String, String[]> parameterMap) throws URISyntaxException {
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        String realPath = new File(rootUrl.toURI()).getAbsolutePath();
-        
-        expectations.allowing(servletContext).getRealPath("/WEB-INF/classes"); 
-        expectations.will(Expectations.returnValue(realPath));
-        
-        expectations.allowing(filterConfig).getServletContext(); 
-        expectations.will(Expectations.returnValue(servletContext));
-        
-        expectations.allowing(filterConfig).getInitParameter("lifecycleHooks"); 
-        expectations.will(Expectations.returnValue("agave.SampleLifecycleHooks"));
-        
-        expectations.allowing(filterConfig).getInitParameter("classesDirectory"); 
-        expectations.will(Expectations.returnValue(null));
-        
-        expectations.allowing(filterConfig).getInitParameter("instanceFactory"); 
-        expectations.will(Expectations.returnValue(null));
-
-        expectations.allowing(request).getParameterMap();
-        expectations.will(Expectations.returnValue(parameterMap));
-
-        expectations.allowing(request).getParameterNames();
-        expectations.will(Expectations.returnValue(new Vector<String>(parameterMap.keySet()).elements()));
-    }
+public class LifecycleHooksFunctionalTest extends AbstractFunctionalTest {
     
     @Test
     public void testInit() throws Exception {
         AgaveFilter filter = createSilentAgaveFilter();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
+        emulateServletContainer(parameterMap);
+
         context.checking(new Expectations() {{
-            specialize(this, parameterMap);
             allowing(servletContext).setAttribute("beforeHandlerIsDiscovered", Boolean.TRUE);
             allowing(servletContext).setAttribute("afterHandlerIsDiscovered", Boolean.TRUE);
         }});
@@ -86,8 +56,9 @@ public class LifecycleHooksTest extends MockedEnvironmentTest {
         AgaveFilter filter = createSilentAgaveFilter();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
+        emulateServletContainer(parameterMap);
+
         context.checking(new Expectations() {{
-            specialize(this, parameterMap);
             allowing(request).getRequestURI(); will(returnValue("/app/login"));
             allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));

@@ -32,13 +32,14 @@ import javax.imageio.ImageIO;
 
 import agave.Part;
 import agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class BufferedImageConverter implements PartConverter<BufferedImage> {
 
-	public BufferedImage convert(Part input) throws ConversionException {
+	public BufferedImage convert(Part input, Locale locale) throws ConversionException {
 		BufferedImage image = null;
 		if (input != null) {
 			try {

@@ -25,7 +25,6 @@
  */
 package agave.sample;
 
-import agave.BindsInput;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -37,8 +36,7 @@ public class SayForm {
     public String getPhrase() {
         return phrase;
     }
-
-    @BindsInput
+    
     public void setPhrase(String phrase) {
         this.phrase = phrase;
     }

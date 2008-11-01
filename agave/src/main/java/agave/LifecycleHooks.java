@@ -25,12 +25,12 @@
  */
 package agave;
 
-import agave.internal.HandlerDescriptor;
 import java.io.File;
 import java.net.URI;
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import agave.internal.HandlerDescriptor;
 
 /**
  *
@@ -42,43 +42,32 @@ public interface LifecycleHooks {
     
     public void afterHandlerIsDiscovered(HandlerDescriptor descriptor, ServletContext servletContext);
     
-    public void beforeFilteringRequest(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void beforeFilteringRequest(HandlerDescriptor descriptor, HandlerContext context);
     
-    public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext);
+    public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context);
     
-    public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext);
+    public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context);
     
-    public void beforeSettingRequest(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void beforeSettingRequest(HandlerDescriptor descriptor, HandlerContext context);
     
-    public void afterSettingRequest(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void afterSettingRequest(HandlerDescriptor descriptor, HandlerContext context);
 
-    public void beforeSettingResponse(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void beforeSettingResponse(HandlerDescriptor descriptor, HandlerContext context);
     
-    public void afterSettingResponse(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void afterSettingResponse(HandlerDescriptor descriptor, HandlerContext context);
 
-    public void beforeSettingServletContext(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void beforeSettingServletContext(HandlerDescriptor descriptor, HandlerContext context);
     
-    public void afterSettingServletContext(HandlerDescriptor descriptor, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void afterSettingServletContext(HandlerDescriptor descriptor, HandlerContext context);
 
-    public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HttpServletRequest request, 
-        HttpServletResponse response, ServletContext servletContext);
+    public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context);
     
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance,
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext);
+    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context);
     
     public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, Destination destination, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext);
+            HandlerContext context);
 
     public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, URI destination, 
-        HttpServletRequest request, HttpServletResponse response, ServletContext servletContext);
+            HandlerContext context);
     
 }

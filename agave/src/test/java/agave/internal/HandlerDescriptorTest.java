@@ -43,15 +43,6 @@ public class HandlerDescriptorTest {
         Assert.assertNotNull(a.getHandlerClass());
         Assert.assertNotNull(a.getFormClass());
         Assert.assertNotNull(a.getHandlerMethod());
-        Assert.assertNotNull(a.getRequestSetter());
-        Assert.assertNotNull(a.getResponseSetter());
-        Assert.assertNotNull(a.getMutators());
-        Assert.assertEquals(3, a.getMutators().size());
-        Assert.assertTrue(a.getMutators().containsKey("username"));
-        Assert.assertTrue(a.getMutators().containsKey("password"));
-        Assert.assertTrue(a.getMutators().containsKey("remembered"));
-        Assert.assertEquals(1, a.getConverters().size());
-        Assert.assertTrue(a.getConverters().containsKey("remembered"));
     }
 
     @Test

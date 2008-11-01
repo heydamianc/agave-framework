@@ -25,27 +25,6 @@
  */
 package agave;
 
-import agave.exception.AgaveException;
-import agave.exception.FormException;
-import agave.exception.DestinationException;
-import agave.exception.HandlerException;
-import agave.exception.RequestBindingException;
-import agave.exception.ResponseBindingException;
-import agave.internal.FormPopulator;
-import agave.internal.HandlerDescriptor;
-import agave.internal.HandlerDescriptorImpl;
-import agave.internal.HandlerIdentifier;
-import agave.internal.HandlerRegistry;
-import agave.internal.HandlerRegistryImpl;
-import agave.internal.HandlerScanner;
-import agave.internal.MultipartRequestImpl;
-import agave.internal.ReflectionInstanceFactory;
-import agave.internal.RequestParameterFormPopulator;
-import agave.internal.RequestPartFormPopulator;
-import agave.internal.URIParameterFormPopulator;
-
-import javax.servlet.ServletContext;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -60,6 +39,7 @@ import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -67,6 +47,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.objectweb.asm.ClassReader;
+
+import agave.exception.AgaveException;
+import agave.exception.DestinationException;
+import agave.exception.FormException;
+import agave.exception.HandlerException;
+import agave.internal.FormPopulator;
+import agave.internal.HandlerDescriptor;
+import agave.internal.HandlerDescriptorImpl;
+import agave.internal.HandlerIdentifier;
+import agave.internal.HandlerRegistry;
+import agave.internal.HandlerRegistryImpl;
+import agave.internal.HandlerScanner;
+import agave.internal.MultipartRequestImpl;
+import agave.internal.ReflectionInstanceFactory;
+import agave.internal.RequestParameterFormPopulator;
+import agave.internal.RequestPartFormPopulator;
+import agave.internal.URIParameterFormPopulator;
 
 
 /**
@@ -249,8 +246,10 @@ public class AgaveFilter implements Filter {
 
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
         if (descriptor != null) {
-            
-            lifecycleHooks.beforeFilteringRequest(descriptor, request, response, servletContext);
+            HandlerContext handlerContext =
+                new HandlerContext(servletContext, request, response, request.getSession(true));
+
+            lifecycleHooks.beforeFilteringRequest(descriptor, handlerContext);
             
             LOGGER.fine(request.getRequestURI() + " -> " + descriptor.getHandlerClass().getName() + "#" + 
                     descriptor.getHandlerMethod() + "()");
@@ -262,7 +261,7 @@ public class AgaveFilter implements Filter {
             Object formInstance = instanceFactory.createFormInstance(descriptor);
             if (formInstance != null) {
                 
-                lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, request, response, servletContext);
+                lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, handlerContext);
                 
                 try {
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
@@ -283,67 +282,26 @@ public class AgaveFilter implements Filter {
                     throw new FormException(ex);
                 }
                 
-                lifecycleHooks.afterInitializingForm(descriptor, formInstance, request, response, servletContext);
+                lifecycleHooks.afterInitializingForm(descriptor, formInstance, handlerContext);
             }
 
             Object handlerInstance = instanceFactory.createHandlerInstance(descriptor);
 
-            if (descriptor.getServletContextSetter() != null) {
-                lifecycleHooks.beforeSettingServletContext(descriptor, request, response, servletContext);
-                
-                try {
-                    descriptor.getServletContextSetter().invoke(handlerInstance, config.getServletContext());
-                } catch (IllegalAccessException ex) {
-                    throw new ResponseBindingException(descriptor, ex);
-                } catch (InvocationTargetException ex) {
-                    throw new ResponseBindingException(descriptor, ex);
-                }
-                
-                lifecycleHooks.afterSettingServletContext(descriptor, request, response, servletContext);
-            }
-            
-            if (descriptor.getRequestSetter() != null) {
-                lifecycleHooks.beforeSettingRequest(descriptor, request, response, servletContext);
-                try {
-                    descriptor.getRequestSetter().invoke(handlerInstance, request);
-                } catch (IllegalAccessException ex) {
-                    throw new RequestBindingException(descriptor, ex);
-                } catch (InvocationTargetException ex) {
-                    throw new RequestBindingException(descriptor, ex);
-                }
-
-                lifecycleHooks.afterSettingRequest(descriptor, request, response, servletContext);
-            }
-
-            if (descriptor.getResponseSetter() != null) {
-                lifecycleHooks.beforeSettingResponse(descriptor, request, response, servletContext);
-                
-                try {
-                    descriptor.getResponseSetter().invoke(handlerInstance, response);
-                } catch (IllegalAccessException ex) {
-                    throw new ResponseBindingException(descriptor, ex);
-                } catch (InvocationTargetException ex) {
-                    throw new ResponseBindingException(descriptor, ex);
-                }
-                
-                lifecycleHooks.afterSettingResponse(descriptor, request, response, servletContext);
-            }
-
-            lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, request, response, servletContext);
+            lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, handlerContext);
             Object result = null;
             
             try {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance, formInstance);
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, formInstance);
+                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
                     }
                 } else {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance);
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance);
+                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
                     }
                 }
             } catch (InvocationTargetException ex) {
@@ -367,8 +325,7 @@ public class AgaveFilter implements Filter {
                 if (result instanceof Destination) {
                     Destination destination = (Destination)result;
                     
-                    lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, request, 
-                        response, servletContext);
+                    lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, handlerContext);
                     
                     try {
                         uri = new URI(null, destination.encode(config.getServletContext()), null);
@@ -385,8 +342,7 @@ public class AgaveFilter implements Filter {
                 } else if (result instanceof URI) {
                     uri = (URI)result;
                     
-                    lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, request, 
-                        response, servletContext);
+                    lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, handlerContext);
                     
                     redirect = true;
                 } else {
@@ -403,7 +359,7 @@ public class AgaveFilter implements Filter {
                     request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
             } else {
-                lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, request, response, servletContext);
+                lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, handlerContext);
             }
         } else {
             chain.doFilter(req, resp);
@@ -435,9 +391,6 @@ public class AgaveFilter implements Filter {
                     for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
                         HandlerDescriptor descriptor = new HandlerDescriptorImpl(handlerIdentifier);
                         descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
-                        if (descriptor.getFormClass() != null) {
-                            descriptor.locateAnnotatedFormMethods(handlerIdentifier);
-                        }
                         handlerRegistry.addDescriptor(descriptor);
                         
                         lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext());

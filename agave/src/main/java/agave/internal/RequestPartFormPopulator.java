@@ -36,7 +36,7 @@ import java.util.List;
 public class RequestPartFormPopulator extends AbstractFormPopulator {
 
     public RequestPartFormPopulator(MultipartRequest request) {
-		super();
+		super(request.getLocale());
 
 		for (String partName : request.getParts().keySet()) {
 			List<Object> partContents = new ArrayList<Object>(1);

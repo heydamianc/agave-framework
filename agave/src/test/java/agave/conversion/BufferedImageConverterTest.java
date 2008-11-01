@@ -35,6 +35,7 @@ import org.junit.Test;
 
 import agave.Part;
 import agave.internal.PartImpl;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -56,7 +57,7 @@ public class BufferedImageConverterTest {
 		part.setContents(imageFile);
 		part.setName("sampleImg");
 		part.setFilename("vim.gif");
-		Image image = converter.convert(part);
+		Image image = converter.convert(part, Locale.getDefault());
 		
 		Assert.assertNotNull(image);
 		Assert.assertEquals(32, image.getHeight(null));

@@ -32,6 +32,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -44,6 +45,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.servlet.http.HttpSession;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
@@ -53,7 +55,7 @@ import org.junit.Before;
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  * @version $Rev$ $Date$
  */
-public abstract class MockedEnvironmentTest {
+public abstract class AbstractFunctionalTest {
 
     Mockery context = new Mockery();
     FilterChain filterChain;
@@ -62,6 +64,7 @@ public abstract class MockedEnvironmentTest {
     HttpServletResponse response;
     ServletContext servletContext;
     RequestDispatcher requestDispatcher;
+    HttpSession session;
 
     @Before
     public void setup() throws Exception {
@@ -71,38 +74,29 @@ public abstract class MockedEnvironmentTest {
         response = context.mock(HttpServletResponse.class);
         servletContext = context.mock(ServletContext.class);
         requestDispatcher = context.mock(RequestDispatcher.class);
+        session = context.mock(HttpSession.class);
     }
     
-    protected void specialize(Expectations expectations, final Map<String, String[]> parameters) throws URISyntaxException {
-        URL rootUrl = getClass().getClassLoader().getResource("agave");
-        String realPath = new File(rootUrl.toURI()).getAbsolutePath();
-        
-        expectations.allowing(servletContext).getRealPath("/WEB-INF/classes"); 
-        expectations.will(Expectations.returnValue(realPath));
-        
-        expectations.allowing(filterConfig).getServletContext(); 
-        expectations.will(Expectations.returnValue(servletContext));
-        
-        expectations.allowing(filterConfig).getInitParameter("lifecycleHooks"); 
-        expectations.will(Expectations.returnValue(null));
-        
-        expectations.allowing(filterConfig).getInitParameter("classesDirectory"); 
-        expectations.will(Expectations.returnValue(null));
-        
-        expectations.allowing(filterConfig).getInitParameter("instanceFactory"); 
-        expectations.will(Expectations.returnValue(null));
+    protected void emulateServletContainer(final Map<String, String[]> parameters)
+        throws URISyntaxException {
 
-        expectations.allowing(request).getParameterMap();
-        expectations.will(Expectations.returnValue(parameters));
+        final URL rootUrl = getClass().getClassLoader().getResource("agave");
+        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
-        expectations.allowing(request).getParameterNames();
-        expectations.will(Expectations.returnValue(new Vector<String>(parameters.keySet()).elements()));
-
-        for (String parameter : parameters.keySet()) {
-            expectations.allowing(request).getParameterValues(parameter); 
-            expectations.will(Expectations.returnValue(parameters.get(parameter)));
-        }
-
+        context.checking(new Expectations() {{
+            allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
+            allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
+            allowing(filterConfig).getInitParameter("lifecycleHooks"); will(returnValue(null));
+            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
+            allowing(filterConfig).getInitParameter("instanceFactory"); will(returnValue(null));
+            allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
+            allowing(request).getSession(true); will(returnValue(session));
+            allowing(request).getParameterMap(); will(returnValue(parameters));
+            allowing(request).getParameterNames(); will(returnValue(new Vector<String>(parameters.keySet()).elements()));
+            for (String parameter : parameters.keySet()) {
+                allowing(request).getParameterValues(parameter); will(returnValue(parameters.get(parameter)));
+            }
+        }});
     }
     
     protected AgaveFilter scanRoot() throws Exception {
@@ -118,9 +112,7 @@ public abstract class MockedEnvironmentTest {
             agaveFilterLogger.setLevel(Level.OFF);
         }
         
-        context.checking(new Expectations() {{
-            specialize(this, new HashMap<String, String[]>());
-        }});
+        emulateServletContainer(new HashMap<String, String[]>());
         
         filter.init(filterConfig);
         filter.setHandlerRegistry(new HandlerRegistryImpl());
