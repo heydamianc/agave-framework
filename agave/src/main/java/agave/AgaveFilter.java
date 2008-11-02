@@ -45,6 +45,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.objectweb.asm.ClassReader;
 
@@ -75,6 +76,8 @@ import agave.internal.URIParameterFormPopulator;
 public class AgaveFilter implements Filter {
 
     private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
+    private static final String WORKFLOW_HANDLER_SUFFIX = "-handler";
+    private static final String WORKFLOW_FORM_SUFFIX = "-form";
     
     private FilterConfig config;
     private LifecycleHooks lifecycleHooks;
@@ -246,8 +249,9 @@ public class AgaveFilter implements Filter {
 
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
         if (descriptor != null) {
+            HttpSession session = request.getSession(true);
             HandlerContext handlerContext =
-                new HandlerContext(servletContext, request, response, request.getSession(true));
+                new HandlerContext(servletContext, request, response, session);
 
             lifecycleHooks.beforeFilteringRequest(descriptor, handlerContext);
             
@@ -258,8 +262,20 @@ public class AgaveFilter implements Filter {
                 request = new MultipartRequestImpl(request);
             }
 
-            Object formInstance = instanceFactory.createFormInstance(descriptor);
+            Object formInstance = null;
+            
+            if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
+                formInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
+            }
+            
+            if (formInstance == null) {
+                formInstance = instanceFactory.createFormInstance(descriptor);
+            }
+            
             if (formInstance != null) {
+                if (descriptor.initiatesWorkflow()) {
+                    session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX, formInstance);
+                }
                 
                 lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, handlerContext);
                 
@@ -285,8 +301,20 @@ public class AgaveFilter implements Filter {
                 lifecycleHooks.afterInitializingForm(descriptor, formInstance, handlerContext);
             }
 
-            Object handlerInstance = instanceFactory.createHandlerInstance(descriptor);
-
+            Object handlerInstance = null;
+            
+            if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
+                handlerInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
+            }
+            
+            if (handlerInstance == null) {
+                handlerInstance = instanceFactory.createHandlerInstance(descriptor);
+            }
+            
+            if (descriptor.initiatesWorkflow()) {
+                session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
+            }
+            
             lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, handlerContext);
             Object result = null;
             
@@ -318,6 +346,11 @@ public class AgaveFilter implements Filter {
                 throw new HandlerException(descriptor, ex);
             }
 
+            if (descriptor.completesWorkflow()) {
+                session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
+                session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
+            }
+            
             if (result != null && !response.isCommitted()) {
                 URI uri = null;
                 boolean redirect = false;

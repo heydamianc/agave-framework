@@ -45,6 +45,7 @@ public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
         this.handlerIdentifiers = handlerIdentifiers;
     }
 
+    @Override
     public void visit(int version, int access, String name, String signature, String superName, 
         String[] interfaces) {
         if ((access & Opcodes.ACC_PUBLIC) > 0) {
@@ -52,6 +53,7 @@ public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
         }
     }
 
+    @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, 
         String[] interfaces) {
         MethodVisitor methodScanner = null;

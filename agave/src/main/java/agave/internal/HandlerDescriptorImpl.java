@@ -27,6 +27,10 @@ package agave.internal;
 
 import java.lang.reflect.Method;
 
+import agave.CompletesWorkflow;
+import agave.InitiatesWorkflow;
+import agave.ResumesWorkflow;
+
 /**
  * A descriptor that serves as the configuration for the building of handlers and routing requests 
  * into them.
@@ -38,6 +42,9 @@ import java.lang.reflect.Method;
     private Class<?> handlerClass;
     private Class<?> formClass;
     private Method handlerMethod;
+    private boolean initiatesWorkflow;
+    private boolean completesWorkflow;
+    private String workflowName;
 
     public HandlerDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException {
         pattern = new URIPatternImpl(identifier.getUri());
@@ -47,9 +54,9 @@ import java.lang.reflect.Method;
 
     /**
      * Locates annotated methods on a handler class.  This method will find the annotated method
-     * that is identified by the supplied {@code HandlerIdentifier} and then proceed to find the 
-     * request and response binders. The specific annotations this method targets are {@code BindsRequest} 
-     * and {@code BindsResponse}.
+     * that is identified by the supplied {@code HandlerIdentifier} and then proceed to find any 
+     * workflow-related annotations ({@code InitiatesWorkflow}, {@code ResumesWorkflow},
+     * {@code CompletesWorkflow}.
      * @param identifier the {@code HandlerIdentifier} that was created while scanning for a handler method
      */
     public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
@@ -58,6 +65,20 @@ import java.lang.reflect.Method;
                 handlerMethod = method;
                 if (handlerMethod.getParameterTypes().length > 1) {
                     formClass = handlerMethod.getParameterTypes()[1];
+                }
+                
+                if (method.getAnnotation(InitiatesWorkflow.class) != null) {
+                    initiatesWorkflow = true;
+                    completesWorkflow = false;
+                    workflowName = method.getAnnotation(InitiatesWorkflow.class).value();
+                } else if (method.getAnnotation(CompletesWorkflow.class) != null) {
+                    initiatesWorkflow = false;
+                    completesWorkflow = true;
+                    workflowName = method.getAnnotation(CompletesWorkflow.class).value();
+                } else if (method.getAnnotation(ResumesWorkflow.class) != null) {
+                    initiatesWorkflow = false;
+                    completesWorkflow = false;
+                    workflowName = method.getAnnotation(ResumesWorkflow.class).value();
                 }
             }
         }
@@ -77,6 +98,18 @@ import java.lang.reflect.Method;
     
     public Method getHandlerMethod() {
         return handlerMethod;
+    }
+
+    public boolean initiatesWorkflow() {
+        return initiatesWorkflow;
+    }
+
+    public boolean completesWorkflow() {
+        return completesWorkflow;
+    }
+
+    public String getWorkflowName() {
+        return workflowName;
     }
 
     public int compareTo(HandlerDescriptor that) {
