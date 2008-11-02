@@ -26,32 +26,37 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateTimeConverter implements StringConverter<Date> {
+public class DateConverterTest {
 
-    private static final Pattern timePattern = Pattern.compile("(.*)([AaPp][Mm]?)(.*)");
+    private DateConverter dateConverter;
 
-    public Date convert(String input, Locale locale) throws ConversionException {
-        try {
-            String formattedInput = input;
-            Matcher timeMatcher = timePattern.matcher(input);
-            if (timeMatcher.matches() && timeMatcher.groupCount() >= 2) {
-                formattedInput = timeMatcher.group(1).trim() + " " + timeMatcher.group(2);
-            }
-            DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
-            return format.parse(formattedInput);
-        } catch (ParseException ex) {
-            throw new ConversionException("Could not convert " + input + " to a Date object (with time)", ex);
-        }
+    @Before
+    public void setup() throws Exception {
+        dateConverter = new DateConverter();
     }
+
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new GregorianCalendar(2008, Calendar.OCTOBER, 31).getTime(),
+            dateConverter.convert("10/31/2008", Locale.US));
+        Assert.assertEquals(new GregorianCalendar(1982, Calendar.MAY, 7).getTime(),
+            dateConverter.convert("7/5/82", Locale.UK));
+    }
+
+    @Test(expected = ConversionException.class)
+    public void testConvertWithError() throws Exception {
+        dateConverter.convert("this isn't a valid date", Locale.getDefault());
+    }
+
 
 }
