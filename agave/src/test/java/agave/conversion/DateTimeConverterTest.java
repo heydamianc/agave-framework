@@ -26,32 +26,38 @@
 package agave.conversion;
 
 import agave.exception.ConversionException;
-import java.text.DateFormat;
-import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateTimeConverter implements StringConverter<Date> {
+public class DateTimeConverterTest {
 
-    private static final Pattern timePattern = Pattern.compile("(.*)([AaPp][Mm]?)(.*)");
+    private DateTimeConverter converter;
 
-    public Date convert(String input, Locale locale) throws ConversionException {
-        try {
-            String formattedInput = input;
-            Matcher timeMatcher = timePattern.matcher(input);
-            if (timeMatcher.matches() && timeMatcher.groupCount() >= 2) {
-                formattedInput = timeMatcher.group(1).trim() + " " + timeMatcher.group(2);
-            }
-            DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
-            return format.parse(formattedInput);
-        } catch (ParseException ex) {
-            throw new ConversionException("Could not convert " + input + " to a Date object (with time)", ex);
-        }
+    @Before
+    public void setup() throws Exception {
+        converter = new DateTimeConverter();
+    }
+
+    @Test
+    public void testConvert() throws Exception {
+        Date halloween = new GregorianCalendar(2008, Calendar.OCTOBER, 31, 8, 32).getTime();
+        Assert.assertEquals(halloween, converter.convert("10/31/2008 8:32 am", Locale.US));
+        Assert.assertEquals(halloween, converter.convert("10/31/2008 8:32am", Locale.US));
+        Assert.assertEquals(halloween, converter.convert("10/31/2008     8:32AM    ", Locale.US));
+        Assert.assertEquals(halloween, converter.convert("31/10/2008 8:32am", Locale.UK));
+    }
+
+    @Test(expected = ConversionException.class)
+    public void testConvertWithInvalidDate() throws Exception {
+        converter.convert("this is not a valid date", Locale.getDefault());
     }
 
 }
