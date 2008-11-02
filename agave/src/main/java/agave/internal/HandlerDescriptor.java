@@ -87,6 +87,21 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public Method getHandlerMethod();
 
     /**
+     * Indicates whether the handler method this {@code HandlerDescriptor} describes initiates the named workflow.
+     */
+    public boolean initiatesWorkflow();
+
+    /**
+     * Indicates whether the handler method this {@code HandlerDescriptor} describes completes the named workflow.
+     */
+    public boolean completesWorkflow();
+
+    /**
+     * Returns the workflow name.
+     */
+    public String getWorkflowName();
+
+    /**
      * Whether or not this {@code HandlerDescriptor} matches the URI string supplied.  The URI string 
      * should be the result of calling {@code HttpServletRequest.getRequestURI()}.
      */

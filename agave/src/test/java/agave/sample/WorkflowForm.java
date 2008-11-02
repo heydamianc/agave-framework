@@ -23,49 +23,53 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave.sample;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.EmptyVisitor;
-
-import agave.HandlesRequestsTo;
 
 /**
- * Scans classes for methods which are possible candidates to be handler methods.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class MethodScanner extends EmptyVisitor {
+public class WorkflowForm {
 
-    private static final Collection<String> desirableAnnotations = new ArrayList<String>();
-    static {
-        desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
-    };
-
-    private Collection<HandlerIdentifier> handlerIdentifiers;
-    private String handlerClassName;
-    private String handlerMethodName;
-    private String handlerMethodDescriptor;
-     
-    public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers, String handlerClassName, 
-        String handlerMethodName, String handlerMethodDescriptor) {
-        this.handlerIdentifiers = handlerIdentifiers;
-        this.handlerClassName = handlerClassName;
-        this.handlerMethodName = handlerMethodName;
-        this.handlerMethodDescriptor = handlerMethodDescriptor;
+    private String step1Result;
+    private String step2Result;
+    private String step3Result;
+    
+    public String getStep1Result() {
+        return step1Result;
+    }
+    
+    public void setStep1Result(String step1Result) {
+        this.step1Result = step1Result;
+    }
+    
+    public String getStep2Result() {
+        return step2Result;
+    }
+    
+    public void setStep2Result(String step2Result) {
+        this.step2Result = step2Result;
+    }
+    
+    public String getStep3Result() {
+        return step3Result;
+    }
+    
+    public void setStep3Result(String step3Result) {
+        this.step3Result = step3Result;
+    }
+    
+    // this is used for testing to determine whether the AgaveFilter stores a form in the session
+    // of the desirable type
+    
+    @Override
+    public boolean equals(Object that) {
+        return this.getClass().equals(that.getClass());
     }
     
     @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationVisitor annotationVisitor = null;
-        if (visible && desirableAnnotations.contains(desc)) {
-            annotationVisitor = new AnnotationScanner(handlerIdentifiers, handlerClassName, 
-                handlerMethodName, handlerMethodDescriptor, desc);
-        }
-        return annotationVisitor;
+    public int hashCode() {
+        return this.getClass().hashCode();
     }
-
+    
 }

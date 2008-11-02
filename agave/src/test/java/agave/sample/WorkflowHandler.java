@@ -23,49 +23,62 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.internal;
+package agave.sample;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.EmptyVisitor;
+import javax.servlet.ServletException;
 
+import agave.CompletesWorkflow;
+import agave.HandlerContext;
 import agave.HandlesRequestsTo;
+import agave.InitiatesWorkflow;
+import agave.ResumesWorkflow;
+
 
 /**
- * Scans classes for methods which are possible candidates to be handler methods.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class MethodScanner extends EmptyVisitor {
+public class WorkflowHandler {
 
-    private static final Collection<String> desirableAnnotations = new ArrayList<String>();
-    static {
-        desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
-    };
-
-    private Collection<HandlerIdentifier> handlerIdentifiers;
-    private String handlerClassName;
-    private String handlerMethodName;
-    private String handlerMethodDescriptor;
-     
-    public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers, String handlerClassName, 
-        String handlerMethodName, String handlerMethodDescriptor) {
-        this.handlerIdentifiers = handlerIdentifiers;
-        this.handlerClassName = handlerClassName;
-        this.handlerMethodName = handlerMethodName;
-        this.handlerMethodDescriptor = handlerMethodDescriptor;
+    private int step = 0;
+    
+    @InitiatesWorkflow("wizard")
+    @HandlesRequestsTo("/wizard/step1")
+    public void step1(HandlerContext context, WorkflowForm form) throws IOException, ServletException {
+        form.setStep1Result("one");
+        step++;
+    }
+    
+    @ResumesWorkflow("wizard")
+    @HandlesRequestsTo("/wizard/step2")
+    public void step2(HandlerContext context, WorkflowForm form) throws IOException, ServletException {
+        form.setStep2Result("two");
+        step++;
+    }
+    
+    @CompletesWorkflow("wizard")
+    @HandlesRequestsTo("/wizard/step3")
+    public void step3(HandlerContext context, WorkflowForm form) throws IOException, ServletException {
+        form.setStep3Result("three");
+        step++;
+    }
+    
+    public int getStep() {
+        return step;
+    }
+    
+    // this is used for testing to determine whether the AgaveFilter stores a handler in the session
+    // of the desirable type
+    
+    @Override
+    public boolean equals(Object that) {
+        return this.getClass().equals(that.getClass());
     }
     
     @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationVisitor annotationVisitor = null;
-        if (visible && desirableAnnotations.contains(desc)) {
-            annotationVisitor = new AnnotationScanner(handlerIdentifiers, handlerClassName, 
-                handlerMethodName, handlerMethodDescriptor, desc);
-        }
-        return annotationVisitor;
+    public int hashCode() {
+        return this.getClass().hashCode();
     }
-
+    
 }

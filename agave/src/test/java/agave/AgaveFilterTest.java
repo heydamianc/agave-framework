@@ -25,20 +25,11 @@
  */
 package agave;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.DelegatingServletInputStream;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
 import agave.internal.HandlerDescriptor;
-import agave.internal.ReflectionInstanceFactory;
 import agave.sample.AliasedForm;
 import agave.sample.LoginForm;
 import agave.sample.MultipleHandler;

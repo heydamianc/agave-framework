@@ -1,11 +1,11 @@
 package agave.sample;
 
-import agave.ConvertWith;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import agave.ConvertWith;
 
 public class NestedObject {
 
@@ -43,7 +43,7 @@ public class NestedObject {
         return weight;
     }
     
-    public void setConvertMe(@ConvertWith(BooyakaConverter.class) String convertMe) {
+    public void setConvertMe(@ConvertWith(HelloConverter.class) String convertMe) {
         this.convertMe = convertMe;
     }
 

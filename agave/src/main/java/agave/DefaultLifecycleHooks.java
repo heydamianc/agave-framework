@@ -25,12 +25,12 @@
  */
 package agave;
 
-import agave.internal.HandlerDescriptor;
 import java.io.File;
 import java.net.URI;
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import agave.internal.HandlerDescriptor;
 
 /**
  * Stub implementations of all the lifecycle hooks.
