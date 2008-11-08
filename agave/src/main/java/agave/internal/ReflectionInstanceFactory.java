@@ -25,7 +25,7 @@
  */
 package agave.internal;
 
-import agave.InstanceFactory;
+import agave.InstanceCreator;
 import agave.exception.FormException;
 import agave.exception.HandlerException;
 
@@ -33,7 +33,7 @@ import agave.exception.HandlerException;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ReflectionInstanceFactory implements InstanceFactory {
+public class ReflectionInstanceFactory implements InstanceCreator {
 
     /**
      * Creates a new instance of a form object for the form class specified in the supplied descriptor.

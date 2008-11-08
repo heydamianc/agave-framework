@@ -29,11 +29,10 @@ import agave.exception.FormException;
 import agave.exception.HandlerException;
 import agave.internal.HandlerDescriptor;
 
-
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface InstanceFactory {
+public interface InstanceCreator {
 
     public Object createFormInstance(HandlerDescriptor descriptor) throws FormException;
 

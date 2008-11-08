@@ -53,6 +53,7 @@ import agave.exception.AgaveException;
 import agave.exception.DestinationException;
 import agave.exception.FormException;
 import agave.exception.HandlerException;
+import agave.internal.DestinationImpl;
 import agave.internal.FormPopulator;
 import agave.internal.HandlerDescriptor;
 import agave.internal.HandlerDescriptorImpl;
@@ -81,7 +82,7 @@ public class AgaveFilter implements Filter {
     
     private FilterConfig config;
     private LifecycleHooks lifecycleHooks;
-    private InstanceFactory instanceFactory;
+    private InstanceCreator instanceFactory;
     private HandlerRegistry handlerRegistry;
 
     protected LifecycleHooks provideLifecycleHooks(FilterConfig config) 
@@ -100,20 +101,20 @@ public class AgaveFilter implements Filter {
         return hooks;
     }
     
-    protected InstanceFactory provideInstanceFactory(FilterConfig config) 
+    protected InstanceCreator provideInstanceCreator(FilterConfig config) 
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        InstanceFactory factory = null;
+        InstanceCreator creator = null;
         
         String instanceFactoryParameter = config.getInitParameter("instanceFactory");
         if (instanceFactoryParameter != null) {
-            factory = 
-                (InstanceFactory)Class.forName(instanceFactoryParameter).newInstance();
-            LOGGER.info("Using instance factory: " + factory.getClass().getName());
+            creator = 
+                (InstanceCreator)Class.forName(instanceFactoryParameter).newInstance();
+            LOGGER.info("Using instance factory: " + creator.getClass().getName());
         } else {
-            factory = new ReflectionInstanceFactory();
+            creator = new ReflectionInstanceFactory();
         }
         
-        return factory;
+        return creator;
     }
     
     /**
@@ -143,7 +144,7 @@ public class AgaveFilter implements Filter {
      * Initializes the {@code AgaveFilter} by scanning for handler classes and
      * populating a {@link agave.internal.HandlerRegistry HandlerRegistry} with
      * them. Then, this initializes the dependency injection container (if any)
-     * by instantiation a {@link agave.InstanceFactory}.
+     * by instantiation a {@link agave.InstanceCreator}.
      * 
      * @param config  the supplied filter configuration object
      * @throws ServletException
@@ -156,7 +157,7 @@ public class AgaveFilter implements Filter {
             setHandlerRegistry(new HandlerRegistryImpl());
             File classesDirectory = provideClassesDirectory(config);
             scanClassesDirForHandlers(classesDirectory);
-            instanceFactory = provideInstanceFactory(config);
+            instanceFactory = provideInstanceCreator(config);
             instanceFactory.initialize();
         } catch (Exception ex) {
             throw new ServletException(ex);
@@ -169,7 +170,7 @@ public class AgaveFilter implements Filter {
                         + descriptor.getPattern());
             }
         } else {
-            LOGGER.fine("No handlers registered");
+        	throw new IllegalStateException("No handlers have been registered.");
         }
         LOGGER.info("AgaveFilter successfully initialized");
     }
@@ -188,7 +189,7 @@ public class AgaveFilter implements Filter {
      * 
      * <ol>
      *   <li>
-     *     {@link agave.InstanceFactory#createFormInstance Instantiate a
+     *     {@link agave.InstanceCreator#createFormInstance Instantiate a
      *     form if necessary}
      *     <ol>
      *       <li>
@@ -201,7 +202,7 @@ public class AgaveFilter implements Filter {
      *     </ol>
      *   </li>
      *   <li>
-     *     {@link agave.InstanceFactory#createHandlerInstance
+     *     {@link agave.InstanceCreator#createHandlerInstance
      *      Instantiate a handler}
      *   </li>
      *   <li>Bind the request to the handler if necessary</li>
@@ -355,7 +356,7 @@ public class AgaveFilter implements Filter {
                 URI uri = null;
                 boolean redirect = false;
                 
-                if (result instanceof Destination) {
+                if (result instanceof DestinationImpl) {
                     Destination destination = (Destination)result;
                     
                     lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, handlerContext);
@@ -450,7 +451,7 @@ public class AgaveFilter implements Filter {
         return handlerRegistry;
     }
 
-    public InstanceFactory getInstanceFactory() {
+    public InstanceCreator getInstanceFactory() {
         return instanceFactory;
     }
     

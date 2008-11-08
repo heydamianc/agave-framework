@@ -47,18 +47,6 @@ public interface LifecycleHooks {
     public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context);
     
     public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context);
-    
-    public void beforeSettingRequest(HandlerDescriptor descriptor, HandlerContext context);
-    
-    public void afterSettingRequest(HandlerDescriptor descriptor, HandlerContext context);
-
-    public void beforeSettingResponse(HandlerDescriptor descriptor, HandlerContext context);
-    
-    public void afterSettingResponse(HandlerDescriptor descriptor, HandlerContext context);
-
-    public void beforeSettingServletContext(HandlerDescriptor descriptor, HandlerContext context);
-    
-    public void afterSettingServletContext(HandlerDescriptor descriptor, HandlerContext context);
 
     public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context);
     
