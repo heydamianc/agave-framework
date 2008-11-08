@@ -25,6 +25,8 @@
  */
 package agave.samples.pastebin.web;
 
+import java.util.Locale;
+
 import agave.conversion.StringConverter;
 import agave.exception.ConversionException;
 import agave.samples.pastebin.snippet.Timeframe;
@@ -34,7 +36,7 @@ import agave.samples.pastebin.snippet.Timeframe;
  */
 public class TimeframeConverter implements StringConverter<Timeframe> {
 
-    public Timeframe convert(String input) throws ConversionException {
+    public Timeframe convert(String input, Locale locale) throws ConversionException {
         Timeframe timeframe = null;
         for (Timeframe possibility : Timeframe.values()) {
             if (possibility.name().equalsIgnoreCase(input)) {

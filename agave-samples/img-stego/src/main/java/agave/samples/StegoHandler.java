@@ -29,57 +29,61 @@ import java.io.File;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import agave.AbstractHandler;
 import agave.Destination;
+import agave.Destinations;
+import agave.HandlerContext;
 import agave.HandlesRequestsTo;
 import agave.Part;
 
-public class StegoHandler extends AbstractHandler {
+public class StegoHandler {
 
 	public static final String ENCODED_FILENAME_PREFIX = "enc.";
 	public static final String USER_SUBMITTED_IMAGE_DIR = "/img/submitted/";
 	
     @HandlesRequestsTo("/")
-    public Destination welcome() throws Exception {
-        return new Destination("/WEB-INF/jsp/index.jsp");
+    public Destination welcome(HandlerContext handlerContext) throws Exception {
+        return Destinations.create("/WEB-INF/jsp/index.jsp");
     }
     
     @HandlesRequestsTo("/obscure")
-    public Destination obscure(StegoForm form) throws Exception {
+    public Destination obscure(HandlerContext handlerContext, StegoForm form) throws Exception {
     	Part carrierPart = form.getCarrier();
-    	movePartContentsIntoAccessibleLocation(carrierPart);
-	    request.setAttribute("filename", 
-	    		request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + carrierPart.getContents().getName());
+    	movePartContentsIntoAccessibleLocation(handlerContext, carrierPart);
+	    handlerContext.getRequest().setAttribute("filename", handlerContext.getRequest().getContextPath() 
+	    		+ USER_SUBMITTED_IMAGE_DIR + carrierPart.getContents().getName());
 	    
 	    StegoService stegoService = StegoServiceFactory.createImageStegoService();
 	    File encodedCarrier = stegoService.encode(carrierPart, form.getPayload(), ENCODED_FILENAME_PREFIX);
 	    
-	    request.setAttribute("encodedFilename", 
-	    	request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + encodedCarrier.getName());
+	    handlerContext.getRequest().setAttribute("encodedFilename", 
+	    		handlerContext.getRequest().getContextPath() + USER_SUBMITTED_IMAGE_DIR 
+	    		+ encodedCarrier.getName());
 	    
-        return new Destination("/WEB-INF/jsp/obscured.jsp", false);
+        return Destinations.forward("/WEB-INF/jsp/obscured.jsp");
     }
     
     
     @HandlesRequestsTo("/extract")
-    public Destination extract(StegoForm form) throws Exception {
+    public Destination extract(HandlerContext handlerContext, StegoForm form) throws Exception {
     	Part carrierPart = form.getCarrier();
-    	movePartContentsIntoAccessibleLocation(carrierPart);
-	    request.setAttribute("encodedFilename", 
-	    		request.getContextPath() + USER_SUBMITTED_IMAGE_DIR + carrierPart.getContents().getName());
+    	movePartContentsIntoAccessibleLocation(handlerContext, carrierPart);
+	    handlerContext.getRequest().setAttribute("encodedFilename", 
+	    		handlerContext.getRequest().getContextPath() + USER_SUBMITTED_IMAGE_DIR 
+	    		+ carrierPart.getContents().getName());
     	
     	StegoService stegoService = StegoServiceFactory.createImageStegoService();
     	String extractedPayload = stegoService.decode(form.getCarrier().getContents());
-    	request.setAttribute("extractedPayload", extractedPayload);
+    	handlerContext.getRequest().setAttribute("extractedPayload", extractedPayload);
     	
-    	return new Destination("/WEB-INF/jsp/extracted.jsp", false);
+    	return Destinations.forward("/WEB-INF/jsp/extracted.jsp");
     }
 
-    private void movePartContentsIntoAccessibleLocation(Part carrierPart) {
+    private void movePartContentsIntoAccessibleLocation(HandlerContext handlerContext, Part carrierPart) {
     	String[] filenameParts = carrierPart.getFilename().split("\\.");
         String filename = carrierPart.getName() + "-" + RandomStringUtils.randomAlphanumeric(4) +
         	"." + filenameParts[filenameParts.length - 1];
-        File carrier = new File(servletContext.getRealPath(USER_SUBMITTED_IMAGE_DIR + filename));
+        File carrier = 
+        	new File(handlerContext.getServletContext().getRealPath(USER_SUBMITTED_IMAGE_DIR + filename));
         carrierPart.getContents().renameTo(carrier);
         carrierPart.setContents(carrier);
     }

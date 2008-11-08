@@ -25,7 +25,6 @@
  */
 package agave.samples.gameOfLife.web;
 
-import agave.BindsInput;
 import agave.ConvertWith;
 import agave.conversion.IntegerConverter;
 
@@ -44,7 +43,6 @@ public class GameOfLifeForm {
         return columns;
     }
     
-    @BindsInput
     public void setColumns(@ConvertWith(IntegerConverter.class) Integer columns) {
         this.columns = columns;
     }
@@ -53,7 +51,6 @@ public class GameOfLifeForm {
         return rows;
     }
     
-    @BindsInput
     public void setRows(@ConvertWith(IntegerConverter.class) Integer rows) {
         this.rows = rows;
     }
@@ -62,7 +59,6 @@ public class GameOfLifeForm {
         return x;
     }
 
-    @BindsInput
     public void setX(@ConvertWith(IntegerConverter.class) int x) {
         this.x = x;
     }
@@ -71,12 +67,10 @@ public class GameOfLifeForm {
         return y;
     }
 
-    @BindsInput
     public void setY(@ConvertWith(IntegerConverter.class) int y) {
         this.y = y;
     }
 
-    @BindsInput
     public void setConfiguration(@ConvertWith(ConfigurationConverter.class) Configuration configuration) {
         this.configuration = configuration;
     }

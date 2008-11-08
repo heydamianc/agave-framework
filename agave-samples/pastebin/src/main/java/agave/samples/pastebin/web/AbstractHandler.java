@@ -25,40 +25,15 @@
  */
 package agave.samples.pastebin.web;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import agave.BindsRequest;
-import agave.BindsResponse;
-import agave.BindsServletContext;
+import agave.HandlerContext;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public abstract class AbstractHandler {
 
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
-    protected ServletContext servletContext;
-
-    @BindsRequest
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-
-    @BindsResponse
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
-    }
-
-    @BindsServletContext
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-    
-    protected void prepareModel(PastebinViewModel model) {
-       model.setContextPath(request.getContextPath());
+    protected void prepareModel(HandlerContext handlerContext, PastebinViewModel model) {
+       model.setContextPath(handlerContext.getRequest().getContextPath());
     }
 
 }

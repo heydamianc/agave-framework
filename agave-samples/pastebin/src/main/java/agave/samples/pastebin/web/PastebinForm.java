@@ -27,7 +27,6 @@ package agave.samples.pastebin.web;
 
 import org.apache.commons.lang.StringUtils;
 
-import agave.BindsInput;
 import agave.ConvertWith;
 import agave.conversion.BooleanConverter;
 import agave.conversion.LongConverter;
@@ -51,7 +50,6 @@ public class PastebinForm implements Extractable<Snippet> {
         return contents;
     }
 
-    @BindsInput
     public void setContents(String contents) {
         this.contents = contents;
     }
@@ -60,7 +58,6 @@ public class PastebinForm implements Extractable<Snippet> {
         return uniqueId;
     }
 
-    @BindsInput
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
@@ -69,7 +66,6 @@ public class PastebinForm implements Extractable<Snippet> {
         return revision;
     }
 
-    @BindsInput
     public void setRevision(@ConvertWith(LongConverter.class) Long revision) {
         this.revision = revision;
     }
@@ -77,8 +73,7 @@ public class PastebinForm implements Extractable<Snippet> {
     public Timeframe getExpiration() {
         return expiration;
     }
-
-    @BindsInput
+    
     public void setExpiration(@ConvertWith(TimeframeConverter.class) Timeframe expiration) {
         this.expiration = expiration;
     }
@@ -87,7 +82,6 @@ public class PastebinForm implements Extractable<Snippet> {
         return owner;
     }
 
-    @BindsInput
     public void setOwner(String owner) {
         this.owner = owner;
     }
@@ -96,7 +90,6 @@ public class PastebinForm implements Extractable<Snippet> {
         return privateSnippet;
     }
 
-    @BindsInput
     public void setPrivateSnippet(@ConvertWith(BooleanConverter.class) Boolean privateSnippet) {
         this.privateSnippet = privateSnippet;
     }
@@ -105,7 +98,6 @@ public class PastebinForm implements Extractable<Snippet> {
         return syntaxLanguage;
     }
 
-    @BindsInput
     public void setSyntaxLanguage(String syntaxLanguage) {
         this.syntaxLanguage = syntaxLanguage;
     }
