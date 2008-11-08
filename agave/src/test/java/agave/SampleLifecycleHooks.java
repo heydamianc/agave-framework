@@ -78,21 +78,6 @@ public class SampleLifecycleHooks extends DefaultLifecycleHooks {
     }
 
     @Override
-    public void afterSettingRequest(HandlerDescriptor descriptor, HandlerContext context) {
-        context.getServletContext().setAttribute("afterSettingRequest", Boolean.TRUE);
-    }
-
-    @Override
-    public void afterSettingResponse(HandlerDescriptor descriptor, HandlerContext context) {
-        context.getServletContext().setAttribute("afterSettingResponse", Boolean.TRUE);
-    }
-
-    @Override
-    public void afterSettingServletContext(HandlerDescriptor descriptor, HandlerContext context) {
-        context.getServletContext().setAttribute("afterSettingServletContext", Boolean.TRUE);
-    }
-
-    @Override
     public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
         context.getServletContext().setAttribute("beforeHandlingRequest", Boolean.TRUE);
     }
@@ -100,21 +85,6 @@ public class SampleLifecycleHooks extends DefaultLifecycleHooks {
     @Override
     public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
         context.getServletContext().setAttribute("beforeInitializingForm", Boolean.TRUE);
-    }
-
-    @Override
-    public void beforeSettingRequest(HandlerDescriptor descriptor, HandlerContext context) {
-        context.getServletContext().setAttribute("beforeSettingRequest", Boolean.TRUE);
-    }
-
-    @Override
-    public void beforeSettingResponse(HandlerDescriptor descriptor, HandlerContext context) {
-        context.getServletContext().setAttribute("beforeSettingResponse", Boolean.TRUE);
-    }
-
-    @Override
-    public void beforeSettingServletContext(HandlerDescriptor descriptor, HandlerContext context) {
-        context.getServletContext().setAttribute("beforeSettingServletContext", Boolean.TRUE);
     }
 
 }

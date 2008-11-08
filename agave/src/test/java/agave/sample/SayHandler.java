@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletResponse;
 
 import agave.Destination;
+import agave.Destinations;
 import agave.HandlerContext;
 import agave.HandlesRequestsTo;
 
@@ -41,14 +42,14 @@ public class SayHandler {
 
     @HandlesRequestsTo("/say/${phrase}")
     public Destination say(HandlerContext context, SayForm form) {
-        Destination dest = new Destination("/say.jsp");
+        Destination dest = Destinations.create("/say.jsp");
         dest.addParameter("said", form.getPhrase());
         return dest;
     }
     
     @HandlesRequestsTo("/whisper/${phrase}")
     public Destination whisper(HandlerContext context, SayForm form) {
-        Destination dest = new Destination("/whisper.jsp", true);
+        Destination dest = Destinations.redirect("/whisper.jsp");
         dest.addParameter("said", form.getPhrase());
         dest.addParameter("how", "very softly & sweetly");
         return dest;

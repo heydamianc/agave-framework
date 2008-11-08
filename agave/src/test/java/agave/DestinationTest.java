@@ -48,14 +48,14 @@ public class DestinationTest {
 
     @Test
     public void testConstructorWithOnlyPathArgument() throws Exception {
-        Destination dest = new Destination("/some/resource");
+        Destination dest = Destinations.create("/some/resource");
         Assert.assertNotNull(dest);
         Assert.assertNull(dest.getRedirect());
     }
     
     @Test
     public void testConstructorWithPathAndRedirectArguments() throws Exception {
-        Destination dest = new Destination("/some/resource", true);
+        Destination dest = Destinations.redirect("/some/resource");
         Assert.assertNotNull(dest);
         Assert.assertNotNull(dest.getRedirect());
         Assert.assertTrue(dest.getRedirect());
@@ -63,13 +63,13 @@ public class DestinationTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithInvalidPath() throws Exception {
-        Destination dest = new Destination("some/resource");
+        Destination dest = Destinations.create("some/resource");
         Assert.assertNotNull(dest);
     }
     
     @Test
     public void testAddingParameters() throws Exception {
-        Destination dest = new Destination("/some/resource");
+        Destination dest = Destinations.create("/some/resource");
         dest.addParameter("dog", "woof");
         dest.addParameter("dog", "bark");
         dest.addParameter("cat", "meow");
@@ -86,7 +86,7 @@ public class DestinationTest {
     
     @Test
     public void testEncode() throws Exception { 
-        Destination dest = new Destination("/some/resource");
+        Destination dest = Destinations.create("/some/resource");
         dest.addParameter("dog", "woof");
         dest.addParameter("dog", "bark");
         dest.addParameter("cat", "meow");
