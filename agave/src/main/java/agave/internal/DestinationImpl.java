@@ -87,23 +87,14 @@ public class DestinationImpl implements Destination {
         this.parameters = parameters;
     }
 
-    /* (non-Javadoc)
-	 * @see agave.DestinationIfc#getRedirect()
-	 */
     public Boolean getRedirect() {
         return redirect;
     }
-
-    /* (non-Javadoc)
-	 * @see agave.DestinationIfc#setRedirect(java.lang.Boolean)
-	 */
+    
     public void setRedirect(Boolean redirect) {
         this.redirect = redirect;
     }
     
-    /* (non-Javadoc)
-	 * @see agave.DestinationIfc#encode(javax.servlet.ServletContext)
-	 */
     public String encode(ServletContext context) {
         StringBuilder path = new StringBuilder();
         if (getPath() != null) {
