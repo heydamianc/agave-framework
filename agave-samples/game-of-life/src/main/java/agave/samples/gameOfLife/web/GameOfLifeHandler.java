@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import agave.Destination;
+import agave.Destinations;
+import agave.HandlerContext;
 import agave.HandlesRequestsTo;
 import agave.exception.HandlerException;
 import agave.samples.gameOfLife.simulation.Board;
@@ -52,58 +54,62 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     public static final String BOARD_KEY = "board";
     
     @HandlesRequestsTo("/")
-    public void root(GameOfLifeForm form) throws HandlerException, IOException, TemplateException {
+    public void root(HandlerContext handlerContext, GameOfLifeForm form) 
+    throws HandlerException, IOException, TemplateException {
         form.setConfiguration(Configuration.Blinker);
-        init(form);
+        init(handlerContext, form);
     }
     
     @HandlesRequestsTo("/init/${configuration}")
-    public void init(GameOfLifeForm form) throws HandlerException, IOException, TemplateException {
+    public void init(HandlerContext handlerContext, GameOfLifeForm form) 
+    throws HandlerException, IOException, TemplateException {
         Board board = new Board(form.getRows(), form.getColumns());
         Configuration configuration = form.getConfiguration();
         configuration.initialize(board);
-        Map<String, Object> templateModel = buildTemplateModel(board);
-        request.getSession().setAttribute(BOARD_KEY, board);
-        displayTemplate(templateModel, response.getWriter());
+        Map<String, Object> templateModel = buildTemplateModel(handlerContext, board);
+        handlerContext.getSession().setAttribute(BOARD_KEY, board);
+        displayTemplate(handlerContext, templateModel);
     }
     
     @HandlesRequestsTo("/advance")
-    public Destination advance(GameOfLifeForm form) throws HandlerException, IOException, TemplateException {
+    public Destination advance(HandlerContext handlerContext, GameOfLifeForm form) 
+    throws HandlerException, IOException, TemplateException {
         Destination destination = null;
-        Board board = (Board)request.getSession().getAttribute(BOARD_KEY);
+        Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
         if (board != null) {
             board.advance();
-            Map<String, Object> templateModel = buildTemplateModel(board);
-            request.getSession().setAttribute(BOARD_KEY, board);
-            displayTemplate(templateModel, response.getWriter());
+            Map<String, Object> templateModel = buildTemplateModel(handlerContext, board);
+            handlerContext.getSession().setAttribute(BOARD_KEY, board);
+            displayTemplate(handlerContext, templateModel);
         } else {
-            destination = new Destination("/", true);
+            destination = Destinations.redirect("/");
         }
         return destination;
     }
     
     @HandlesRequestsTo("/play")
-    public Destination play(GameOfLifeForm form) throws HandlerException, IOException, TemplateException {
+    public Destination play(HandlerContext handlerContext, GameOfLifeForm form) 
+    throws HandlerException, IOException, TemplateException {
         Destination destination = null;
-        Board board = (Board)request.getSession().getAttribute(BOARD_KEY);
+        Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
         if (board != null) {
             Tick tick = board.advance();
-            request.getSession().setAttribute(BOARD_KEY, board);
-            response.setContentType("application/json");
+            handlerContext.getSession().setAttribute(BOARD_KEY, board);
+            handlerContext.getResponse().setContentType("application/json");
             Gson serializer = new Gson();
             Type typeOfSrc = new TypeToken<Tick>(){}.getType();
-            PrintWriter out = response.getWriter();
+            PrintWriter out = handlerContext.getResponse().getWriter();
             out.print(serializer.toJson(tick, typeOfSrc));
             out.close();
         } else {
-            destination = new Destination("/", true);
+            destination = Destinations.redirect("/");
         }
         return destination;
     }
     
     @HandlesRequestsTo("/toggleState")
-    public void makeAlive(GameOfLifeForm form) {
-        Board board = (Board)request.getSession().getAttribute(BOARD_KEY);
+    public void makeAlive(HandlerContext handlerContext, GameOfLifeForm form) {
+        Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
         Cell clickedCell = board.getGrid().get(form.getY()).get(form.getX());
         if (clickedCell.getState() == State.ALIVE) {
             clickedCell.setState(State.DEAD);
@@ -111,12 +117,12 @@ public class GameOfLifeHandler extends FreemarkerHandler {
             clickedCell.setState(State.ALIVE);
         }
         board.associateNeighbors();
-        request.getSession().setAttribute(BOARD_KEY, board);
+        handlerContext.getSession().setAttribute(BOARD_KEY, board);
     }
     
-    private Map<String, Object> buildTemplateModel(Board board) {
+    private Map<String, Object> buildTemplateModel(HandlerContext handlerContext, Board board) {
         Map<String, Object> templateModel = new HashMap<String, Object>();
-        templateModel.put("contextPath", request.getContextPath());
+        templateModel.put("contextPath", handlerContext.getRequest().getContextPath());
         templateModel.put("board", board);
         templateModel.put("play", false);
         return templateModel;

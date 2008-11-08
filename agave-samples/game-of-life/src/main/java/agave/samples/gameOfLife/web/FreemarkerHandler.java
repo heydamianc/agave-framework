@@ -29,13 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import agave.BindsRequest;
-import agave.BindsResponse;
-import agave.BindsServletContext;
+import agave.HandlerContext;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -44,31 +38,14 @@ import freemarker.template.TemplateException;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public abstract class FreemarkerHandler {
-
-    protected ServletContext servletContext;
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
-
-    @BindsRequest
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-
-    @BindsResponse
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
-    }
-
-    @BindsServletContext
-    public void setServletContext(ServletContext servletContext) { 
-        this.servletContext = servletContext;
-    }
-    
-    protected void displayTemplate(Map<String, Object> model, PrintWriter out) throws IOException, TemplateException {
-        Configuration config = 
-            (Configuration)servletContext.getAttribute(FreemarkerContextListener.FREEMARKER_CONFIG_KEY);
+	
+    protected void displayTemplate(HandlerContext handlerContext, Map<String, Object> model) 
+    throws IOException, TemplateException {
+        Configuration config = (Configuration)handlerContext.getServletContext()
+        	.getAttribute(FreemarkerContextListener.FREEMARKER_CONFIG_KEY);
+        PrintWriter out = handlerContext.getResponse().getWriter();
         Template template = config.getTemplate("gameOfLife.ftl");
-        response.setContentType("text/html");
+        handlerContext.getResponse().setContentType("text/html");
         template.process(model, out);
         out.flush();
         out.close();

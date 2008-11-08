@@ -25,6 +25,8 @@
  */
 package agave.samples.gameOfLife.web;
 
+import java.util.Locale;
+
 import agave.conversion.StringConverter;
 import agave.exception.ConversionException;
 
@@ -33,7 +35,7 @@ import agave.exception.ConversionException;
  */
 public class ConfigurationConverter implements StringConverter<Configuration> {
 
-    public Configuration convert(String input) throws ConversionException {
+    public Configuration convert(String input, Locale locale) throws ConversionException {
         Configuration selectedConfiguration = null;
         if (input != null) {
             for (Configuration configuration : Configuration.values()) {
