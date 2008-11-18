@@ -43,7 +43,6 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
     public void setup() throws Exception {
         super.setup();
         context.checking(new Expectations() {{
-            allowing(request).getContextPath(); will(returnValue("/app"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
         }}); 
     }
@@ -55,7 +54,7 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getRequestURI(); will(returnValue("/app/wizard/step1/"));
+            allowing(request).getServletPath(); will(returnValue("/wizard/step1/"));
             
             one(session).setAttribute("wizard-handler", new WorkflowHandler());
             one(session).setAttribute("wizard-form", new WorkflowForm());
@@ -75,7 +74,7 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getRequestURI(); will(returnValue("/app/wizard/step2/"));
+            allowing(request).getServletPath(); will(returnValue("/wizard/step2/"));
             
             one(session).getAttribute("wizard-handler"); will(returnValue(handler));
             one(session).getAttribute("wizard-form"); will(returnValue(form));
@@ -95,7 +94,7 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getRequestURI(); will(returnValue("/app/wizard/step3/"));
+            allowing(request).getServletPath(); will(returnValue("/wizard/step3/"));
             
             one(session).getAttribute("wizard-handler"); will(returnValue(handler));
             one(session).getAttribute("wizard-form"); will(returnValue(form));

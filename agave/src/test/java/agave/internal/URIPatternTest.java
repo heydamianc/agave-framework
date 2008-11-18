@@ -180,8 +180,7 @@ public class URIPatternTest {
     public void testGetParameterMap() throws Exception {
         
         context.checking(new Expectations() {{
-            allowing(request).getRequestURI(); will(returnValue("/app/one/two/buckle/my/shoe/"));
-            allowing(request).getContextPath(); will(returnValue("/app"));
+            allowing(request).getServletPath(); will(returnValue("/one/two/buckle/my/shoe/"));
         }});
         
         URIPattern u = new URIPatternImpl("/one/two/${three}/${four}/${five}");

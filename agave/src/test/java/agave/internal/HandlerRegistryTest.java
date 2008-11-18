@@ -69,8 +69,7 @@ public class HandlerRegistryTest {
             new HandlerDescriptorImpl(new HandlerIdentifierImpl("/other/path", "agave.sample.SampleHandler", "login")));
         
         context.checking(new Expectations() {{
-            allowing(request).getContextPath(); will(returnValue("/app"));
-            allowing(request).getRequestURI(); will(returnValue("/app/some/path"));
+            allowing(request).getServletPath(); will(returnValue("/some/path"));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);

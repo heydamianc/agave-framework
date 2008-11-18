@@ -91,8 +91,7 @@ public class AgaveFilter implements Filter {
         
         String lifecycleHooksParameter = config.getInitParameter("lifecycleHooks");
         if (lifecycleHooksParameter != null) {
-            hooks = 
-                (LifecycleHooks)Class.forName(lifecycleHooksParameter).newInstance();
+            hooks = (LifecycleHooks)Class.forName(lifecycleHooksParameter).newInstance();
             LOGGER.info("Using lifecycle hooks: " + hooks.getClass().getName());
         } else {
             hooks = new DefaultLifecycleHooks();
@@ -256,7 +255,7 @@ public class AgaveFilter implements Filter {
 
             lifecycleHooks.beforeFilteringRequest(descriptor, handlerContext);
             
-            LOGGER.fine(request.getRequestURI() + " -> " + descriptor.getHandlerClass().getName() + "#" + 
+            LOGGER.fine(request.getServletPath() + " -> " + descriptor.getHandlerClass().getName() + "#" + 
                     descriptor.getHandlerMethod() + "()");
 
             if (MultipartRequestImpl.isMultipart(request)) {

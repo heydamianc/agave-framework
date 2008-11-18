@@ -59,8 +59,7 @@ public class LifecycleHooksFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getRequestURI(); will(returnValue("/app/login"));
-            allowing(request).getContextPath(); will(returnValue("/app"));
+            allowing(request).getServletPath(); will(returnValue("/login"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             
             // from init
