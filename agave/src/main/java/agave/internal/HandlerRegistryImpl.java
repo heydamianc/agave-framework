@@ -79,10 +79,7 @@ public class HandlerRegistryImpl implements HandlerRegistry {
     }
     
     public HandlerDescriptor findMatch(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        if (uri.startsWith(request.getContextPath())) {
-            uri = uri.substring(request.getContextPath().length());
-        }
+        String uri = request.getServletPath();
         for (HandlerDescriptor descriptor : descriptors) {
             if (descriptor.matches(uri)) {
                 return descriptor;

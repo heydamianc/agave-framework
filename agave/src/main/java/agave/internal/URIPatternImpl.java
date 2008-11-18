@@ -283,10 +283,7 @@ public class URIPatternImpl implements URIPattern {
     }
 
     public Map<String, String> getParameterMap(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        if (request.getContextPath() != null) {
-            uri = uri.substring(request.getContextPath().length());
-        }
+        String uri = request.getServletPath();
         Map<String, String> parameterMap = new HashMap<String, String>();
         if (parts != null && uri != null && uri.length() > 1) {
             String[] requestedParts = uri.substring(1).split("/");
