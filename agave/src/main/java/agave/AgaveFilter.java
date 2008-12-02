@@ -104,11 +104,11 @@ public class AgaveFilter implements Filter {
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         InstanceCreator creator = null;
         
-        String instanceFactoryParameter = config.getInitParameter("instanceFactory");
+        String instanceFactoryParameter = config.getInitParameter("instanceCreator");
         if (instanceFactoryParameter != null) {
             creator = 
                 (InstanceCreator)Class.forName(instanceFactoryParameter).newInstance();
-            LOGGER.info("Using instance factory: " + creator.getClass().getName());
+            LOGGER.info("Using instance creator: " + creator.getClass().getName());
         } else {
             creator = new ReflectionInstanceFactory();
         }
