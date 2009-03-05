@@ -169,7 +169,12 @@ public class AgaveFilter implements Filter {
                         + descriptor.getPattern());
             }
         } else {
-        	throw new IllegalStateException("No handlers have been registered.");
+            StringBuilder message = new StringBuilder("No handlers have been registered.");
+            if (config.getServletContext().getServerInfo().toLowerCase().contains("jetty")) {
+                message.append("  If you are running this webapp with 'mvn jetty:run', no" +
+                    " handlers will ever be found.  Try 'mvn jetty:run-war' instead.");
+            }
+        	  throw new IllegalStateException(message.toString());
         }
         LOGGER.info("AgaveFilter successfully initialized");
     }
