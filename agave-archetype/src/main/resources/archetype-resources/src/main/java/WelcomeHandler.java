@@ -1,4 +1,4 @@
-package org.dcarrillo;
+package $package;
 
 import agave.Destination;
 import agave.Destinations;
