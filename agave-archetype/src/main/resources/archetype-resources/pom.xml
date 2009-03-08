@@ -56,8 +56,8 @@
   </build>
 	<repositories>
 		<repository>
-			<id>agave</id>
-			<url>http://agave-web-framework.googlecode.com/svn/maven-repo</url>
+			<id>Agave Maven 2 Repository</id>
+			<url>http://agave-web-framework.googlecode.com/svn/maven2</url>
 		</repository>
 	</repositories>
 </project>
