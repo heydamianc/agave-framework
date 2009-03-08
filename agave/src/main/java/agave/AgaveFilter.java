@@ -84,6 +84,7 @@ public class AgaveFilter implements Filter {
     private LifecycleHooks lifecycleHooks;
     private InstanceCreator instanceFactory;
     private HandlerRegistry handlerRegistry;
+    private boolean classesDirectoryProvided;
 
     protected LifecycleHooks provideLifecycleHooks(FilterConfig config) 
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -132,6 +133,7 @@ public class AgaveFilter implements Filter {
         
         if (config.getInitParameter("classesDirectory") != null) {
             classesDirectory = new File(config.getInitParameter("classesDirectory"));
+            classesDirectoryProvided = true;
         } else {
             classesDirectory = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
         }
@@ -170,7 +172,9 @@ public class AgaveFilter implements Filter {
             }
         } else {
             StringBuilder message = new StringBuilder("No handlers have been registered.");
-            if (config.getServletContext().getServerInfo().toLowerCase().contains("jetty")) {
+            if (classesDirectoryProvided) {
+
+            } else if (config.getServletContext().getServerInfo().toLowerCase().contains("jetty")) {
                 message.append("  If you are running this webapp with 'mvn jetty:run', no" +
                     " handlers will ever be found.  Try 'mvn jetty:run-war' instead.");
             }

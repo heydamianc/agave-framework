@@ -15,12 +15,6 @@
   </description>
   <inceptionYear>2008</inceptionYear>
   <url>http://agave-web-framework.googlecode.com</url>
-  <repositories>
-    <repository>
-      <id>agave</id>
-      <url>http://agave-web-framework.googlecode.com/svn/maven-repo/</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -78,6 +72,20 @@
         </configuration>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-scm</artifactId>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-manager-plexus</artifactId>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-provider-svnexe</artifactId>
+      </extension>
+    </extensions>
   </build>
   <reporting>
     <plugins>
@@ -88,7 +96,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-     </plugin>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -101,46 +109,12 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <targetJdk>1.5</targetJdk>
-          <linkXref>true</linkXref>
-          <sourceEncoding>utf-8</sourceEncoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-        <configuration>
-          <tags>
-            <tag>TODO</tag>
-            <tag>@todo</tag>
-            <tag>FIXME</tag>
-          </tags>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>dashboard-maven-plugin</artifactId>
-      </plugin>
     </plugins>
   </reporting>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus.snapshots</id>
-      <name>Codehaus Maven Snapshot Repository</name>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
   <licenses>
     <license>
       <name>BSD License</name>
-        <url>http://agave-web-framework.googlecode.com/svn/trunk/agave/license.txt</url>
+      <url>http://agave-web-framework.googlecode.com/svn/trunk/agave/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -149,14 +123,13 @@
       <id>damiancarrillo</id>
       <name>Damian Carrillo</name>
       <email>damiancarrillo@gmail.com</email>
-      <timezone>-5</timezone>
+      <timezone>-6</timezone>
     </developer>
   </developers>
-  <distributionManagement>
-    <repository>
-      <id>local.repo</id>
-      <name>Local Repository</name>
-      <url>file://${basedir}/../maven-repo</url>
-    </repository>
+    <distributionManagement>
+    <site>
+      <id>Google Code SVN Server</id>
+      <url>scm:svn:https://damiancarrillo@http://agave-web-framework.googlecode.com/svn/trunk/site</url>
+    </site>
   </distributionManagement>
 </project>
