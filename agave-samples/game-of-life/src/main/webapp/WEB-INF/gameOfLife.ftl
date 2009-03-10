@@ -4,13 +4,15 @@
 		<title>Conway's Game of Life</title>
 		<style type="text/css">
 			body {font: 0.8em; font-family: Georgia, serif;}
-			div#content {float: left;}
+      em {color: #808080;}
+			div#content {float: left; display: block; width: 50%;}
 			div#container {float: right; text-align: center;}
 			table#board {border: 1px solid #c0c0c0;}
 			table#board td {background: #f8f8f8; height: 8px; width: 5px;}
 			table#board img {border: none;}
 			table#board tbody tr td.highlight {background: #ff0000;}
 			table#board tbody tr td.alive {background: black}
+      div#footer {clear:both;}
 		</style>
 		<script type="text/javascript" src="${contextPath}/js/prototype-1.6.0.2.js"></script>
 		<script type="text/javascript">
@@ -67,7 +69,23 @@
 	<body>
 		<div id="content">
 			<h1>Conway's Game of Life</h1>
-			<p>Load the grid with an initial configuration:</p>
+      <p>
+        This is an interactive version of John Conway's Game of Life.  
+        Basically, this is a cellular automaton which is intended to 
+        simulate a universe with a specific ruleset.  The rules for this
+        game are that:
+      </p>
+      <ul>
+        <li>Any live cell with fewer than two live neighbours dies, as if by loneliness.</li>
+        <li>Any live cell with more than three live neighbours dies, as if by overcrowding.</li>
+        <li>Any dead cell with three live neighbors comes to life.</li>
+        <li>Any live cell with two or three live neighbors lives on.</li>
+      </ul>
+			<p>
+        Click on individual cells to bring them to life, or load the grid with an initial configuration.  Then,
+        click <em>Play</em> under the board to perform the simulation, or <em>Advance</em> to advance one 
+        step in the evolutionary process.
+      </p>
 			<ul>
 				<li><a href="${contextPath}/init/blinker">Blinker</a></li>
 				<li><a href="${contextPath}/init/toad">Toad</a></li>
@@ -93,5 +111,11 @@
 			<a href="${contextPath}/advance">Advance</a> | 
 			Tick: <span id="tick">${board.tick.count}</span>
 		</div>
+    <div id="footer">
+      View the source: 
+        <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/web/GameOfLifeHandler.java">Handler</a> | 
+        <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/webapp/WEB-INF/gameOfLife.ftl">Freemarker Template</a> | 
+        <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/simulation/Board.java">Simulation Board</a>
+    </div>
 	</body>
 </html>
