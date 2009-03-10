@@ -12,7 +12,7 @@
       table#board img {border: none;}
       table#board tbody tr td.highlight {background: #ff0000;}
       table#board tbody tr td.alive {background: black}
-      div#footer {clear:both;}
+      div#footer {clear:both; border-top: 1px solid #c0c0c0; padding: 5px;}
     </style>
     <script type="text/javascript" src="${contextPath}/js/prototype-1.6.0.2.js"></script>
     <script type="text/javascript">
@@ -112,7 +112,7 @@
       Tick: <span id="tick">${board.tick.count}</span>
     </div>
     <div id="footer">
-      View the source: 
+      <strong>View the source</strong>: 
         <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/web/GameOfLifeHandler.java">Handler</a> | 
         <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/webapp/WEB-INF/gameOfLife.ftl">Freemarker Template</a> | 
         <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/simulation/">Simulation</a>
