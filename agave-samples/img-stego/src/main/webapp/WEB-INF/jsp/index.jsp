@@ -13,6 +13,23 @@
   </head>
   <body>
     <h1>Image Steganography</h1>
+    <h2>Background</h2>
+    <p>
+      Steganography is a method of obscuring a message 
+      in plain sight.  A primitive form of this was the shrinking of text in the days of 
+      lore, and that eventually evolved into the microdot in the WWI/WWII days. Since then, 
+      computers have opened the doors to a wider range of steganographic techniques that completely 
+      obscure the payload.  Common examples include hiding text in audio, images, and
+      videos in such a way that the quality of the targeted multimedia is slightly 
+      decreased so that text can be inserted and later extracted.
+    </p>
+    <h2>Application</h2>
+    <p>
+      Now, to test this out, you need two things.  One is a messsage, called the 
+      <em>payload</em>.  The second is the <em>carrier</em>, and in this case the 
+      <em>carrier</em> is an image.  So, after you have uploaded an image and supplied a
+      <em>payload</em>, you will be provided a resultant image that is hiding the message.
+    </p>    
     <fieldset>
       <legend>Obscure Text in an Image</legend>
       <form 
@@ -51,6 +68,12 @@
         <input class="submissionButton" type="submit" value="Extract the Payload!" />
       </form>
     </fieldset>
+    <div>
+      <strong>View the source:</strong>
+      <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/img-stego/src/main/java/agave/samples/StegoHandler.java">Handler</a> |
+      <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/img-stego/src/main/webapp/WEB-INF/jsp/index.jsp">JSP</a> | 
+      <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/img-stego/src/main/java/agave/samples/StegoServiceImpl.java">Stego Service</a>
+    </div>
     <div id="footer">
       Copyright &copy; 2007-2008 Damian Carrillo. All rights reserved.
     </div>
