@@ -42,43 +42,43 @@ import agave.Part;
  */
 public class StegoServiceImpl implements StegoService {
 
-	/**
-	 * The number of pixels that a code point can possibly span.
-	 */
-	private static final int PIXEL_SPAN = 5;
+    /**
+     * The number of pixels that a code point can possibly span.
+     */
+    private static final int PIXEL_SPAN = 5;
 
-	/**
-	 * Encodes message text in an image. Note that this supports UTF-16
-	 * characters so you won't be able to fit as much text as only supporting
-	 * ASCII. As a general rule, take the image height and multiply it by the
-	 * image width and then divide the result by five to get the number of
-	 * characters you can store.
-	 * 
-	 * @param imageFile the original image file
-	 * @param message the message to hide
-	 * @throws java.io.IOException
-	 * @return the encoded image file
-	 */
-	public File encode(Part part, String msg, String encodedFilenamePrefix) throws IOException {
-		BufferedImage originalImage = ImageIO.read(part.getContents());
-		int width = originalImage.getWidth();
-		int height = originalImage.getHeight();
-		int[] pixels = originalImage.getRGB(0, 0, width, height, null, 0, width);
-		File encodedImageFile = null;
-		if (pixels.length >= (msg.length() * PIXEL_SPAN)) {
-			for (int i = 0, pos = 0; (pos + PIXEL_SPAN) < pixels.length; i++, pos += PIXEL_SPAN) {
-				int codePoint = 0;
-				if (i < msg.length()) {
-					codePoint = msg.codePointAt(i);
-				}
-				interpolate(codePoint, pixels, pos);
-			}
-			BufferedImage encodedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			encodedImage.setRGB(0, 0, width, height, pixels, 0, width);
-			encodedImageFile = 
-				new File(part.getContents().getParentFile(), encodedFilenamePrefix + part.getContents().getName());
-			encodedImageFile.createNewFile();
-			
+    /**
+     * Encodes message text in an image. Note that this supports UTF-16
+     * characters so you won't be able to fit as much text as only supporting
+     * ASCII. As a general rule, take the image height and multiply it by the
+     * image width and then divide the result by five to get the number of
+     * characters you can store.
+     *
+     * @param imageFile the original image file
+     * @param message the message to hide
+     * @throws java.io.IOException
+     * @return the encoded image file
+     */
+    public File encode(Part part, String msg, String encodedFilenamePrefix) throws IOException {
+        BufferedImage originalImage = ImageIO.read(part.getContents());
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        int[] pixels = originalImage.getRGB(0, 0, width, height, null, 0, width);
+        File encodedImageFile = null;
+        if (pixels.length >= (msg.length() * PIXEL_SPAN)) {
+            for (int i = 0, pos = 0; (pos + PIXEL_SPAN) < pixels.length; i++, pos += PIXEL_SPAN) {
+                int codePoint = 0;
+                if (i < msg.length()) {
+                    codePoint = msg.codePointAt(i);
+                }
+                interpolate(codePoint, pixels, pos);
+            }
+            BufferedImage encodedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            encodedImage.setRGB(0, 0, width, height, pixels, 0, width);
+            encodedImageFile =
+                new File(part.getContents().getParentFile(), encodedFilenamePrefix + part.getContents().getName());
+            encodedImageFile.createNewFile();
+
 //			TODO figure out why this is screwy with JPEGs
 //			Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(part.getContentType());
 //			
@@ -90,14 +90,14 @@ public class StegoServiceImpl implements StegoService {
 //				out.close();
 //				break;
 //			}
-			
-			// just use png encoding for now
-			ImageIO.write(encodedImage, "PNG", encodedImageFile);
-		} else {
-			throw new RuntimeException("Could not fit text in image");
-		}
-		return encodedImageFile;
-	}
+
+            // just use png encoding for now
+            ImageIO.write(encodedImage, "PNG", encodedImageFile);
+        } else {
+            throw new RuntimeException("Could not fit text in image");
+        }
+        return encodedImageFile;
+    }
 
     /**
      * Interpolates a UTF-16 character (possibly 5 nibbles) into the image by following this algorithm:
@@ -128,60 +128,60 @@ public class StegoServiceImpl implements StegoService {
      * @param position The position int the pixels to begin interpolation
      * @return the position that the is the result of adding the initial position and PIXEL span
      */
-	protected int interpolate(int codePoint, int[] pixels, int position) {
-		for (int i = 0; i < PIXEL_SPAN && (i + position) < pixels.length; i++) {
-			int nibble = (codePoint >> (i * 4)) & 0xf;
-			pixels[i + position] = 
-				(pixels[i + position] & 0xfefefefe) | // drop the least significant bit of each channel
-					((nibble & 0x8) << 21) | // shift the highest nibble bit into the alpha channel
-					((nibble & 0x4) << 14) | // shift the next highest bit into the red channel
-					((nibble & 0x2) << 7) |  // shift the next highest bit into the green channel
-					(nibble & 0x1);          // or least significant nibble bit into the blue channel
-		}
-		return position + PIXEL_SPAN;
-	}
+    protected int interpolate(int codePoint, int[] pixels, int position) {
+        for (int i = 0; i < PIXEL_SPAN && (i + position) < pixels.length; i++) {
+            int nibble = (codePoint >> (i * 4)) & 0xf;
+            pixels[i + position] =
+                (pixels[i + position] & 0xfefefefe) | // drop the least significant bit of each channel
+                ((nibble & 0x8) << 21) | // shift the highest nibble bit into the alpha channel
+                ((nibble & 0x4) << 14) | // shift the next highest bit into the red channel
+                ((nibble & 0x2) << 7) | // shift the next highest bit into the green channel
+                (nibble & 0x1);          // or least significant nibble bit into the blue channel
+        }
+        return position + PIXEL_SPAN;
+    }
 
-	/**
-	 * Decodes a message hidden within an image file.
-	 * 
-	 * @param imageFile the image file with encoded data
-	 * @return the decoded string
-	 */
-	public String decode(File imageFile) throws IOException {
-		BufferedImage encoded = ImageIO.read(imageFile);
-		int width = encoded.getWidth();
-		int height = encoded.getHeight();
-		int[] pixels = encoded.getRGB(0, 0, width, height, null, 0, width);
-		int[] codePoints = new int[pixels.length / PIXEL_SPAN];
-		int codePointPtr = 0;
-		for (int i = 0; i < pixels.length; i += PIXEL_SPAN, codePointPtr++) {
-			codePoints[codePointPtr] = extract(pixels, i);
-			if (codePoints[codePointPtr] == 0) {
-				break;
-			}
-		}
-		return new String(codePoints, 0, codePoints.length).trim();
-	}
+    /**
+     * Decodes a message hidden within an image file.
+     *
+     * @param imageFile the image file with encoded data
+     * @return the decoded string
+     */
+    public String decode(File imageFile) throws IOException {
+        BufferedImage encoded = ImageIO.read(imageFile);
+        int width = encoded.getWidth();
+        int height = encoded.getHeight();
+        int[] pixels = encoded.getRGB(0, 0, width, height, null, 0, width);
+        int[] codePoints = new int[pixels.length / PIXEL_SPAN];
+        int codePointPtr = 0;
+        for (int i = 0; i < pixels.length; i += PIXEL_SPAN, codePointPtr++) {
+            codePoints[codePointPtr] = extract(pixels, i);
+            if (codePoints[codePointPtr] == 0) {
+                break;
+            }
+        }
+        return new String(codePoints, 0, codePoints.length).trim();
+    }
 
-	/**
-	 * Reverses the process outlined in the comments to the interpolate method
-	 * in order to extract a UTF-16 code point that is embedded within a 5 pixel
-	 * span.
-	 * 
-	 * @param pixels The pixel array
-	 * @param position The position in the pixel array
-	 * @return the codePoint embedded in the image that has been read in
-	 */
-	protected int extract(int[] pixels, int position) {
-		int codePoint = 0;
-		for (int i = 0; i < PIXEL_SPAN && i < pixels.length; i++) {
-			int tmp = 0;
-			tmp |= ((pixels[i + position] & 0x1000000) >> 21);
-			tmp |= ((pixels[i + position] & 0x0010000) >> 14);
-			tmp |= ((pixels[i + position] & 0x0000100) >> 7);
-			tmp |= (pixels[i + position] & 0x0000001);
-			codePoint |= tmp << (i * 4);
-		}
-		return codePoint;
-	}
+    /**
+     * Reverses the process outlined in the comments to the interpolate method
+     * in order to extract a UTF-16 code point that is embedded within a 5 pixel
+     * span.
+     *
+     * @param pixels The pixel array
+     * @param position The position in the pixel array
+     * @return the codePoint embedded in the image that has been read in
+     */
+    protected int extract(int[] pixels, int position) {
+        int codePoint = 0;
+        for (int i = 0; i < PIXEL_SPAN && i < pixels.length; i++) {
+            int tmp = 0;
+            tmp |= ((pixels[i + position] & 0x1000000) >> 21);
+            tmp |= ((pixels[i + position] & 0x0010000) >> 14);
+            tmp |= ((pixels[i + position] & 0x0000100) >> 7);
+            tmp |= (pixels[i + position] & 0x0000001);
+            codePoint |= tmp << (i * 4);
+        }
+        return codePoint;
+    }
 }
