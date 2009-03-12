@@ -46,33 +46,27 @@ import freemarker.template.TemplateException;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class PastebinHandler extends AbstractHandler {
-    
+
     @HandlesRequestsTo("/")
     public void init(HandlerContext handlerContext, PastebinForm form)
-    throws AgaveException, IOException, TemplateException, CloneNotSupportedException, ClassNotFoundException {
+        throws AgaveException, IOException, TemplateException, CloneNotSupportedException, ClassNotFoundException {
         PastebinViewModel model = new PastebinViewModel();
         model.setContextPath(handlerContext.getRequest().getContextPath());
-        
-        OverviewService overviewService = 
-        	OverviewServiceFactory.createOverviewService(handlerContext.getServletContext());
+
+        OverviewService overviewService =
+            OverviewServiceFactory.createOverviewService(handlerContext.getServletContext());
         Overview overview = overviewService.retrieveOverview();
         model.setOverview(overview);
-        
-        PrintWriter out = handlerContext.getResponse().getWriter();
-        Configuration config = 
-        	(Configuration)handlerContext.getRequest().getAttribute(FreemarkerFilter.FREEMARKER_CONFIG_KEY);
-        Template template = config.getTemplate("pastebin.ftl");
-        template.process(model, out);
-        out.flush();
-        out.close();
+
+        render(handlerContext, model, "pastebin.ftl");
     }
-    
+
     @HandlesRequestsTo("/create")
     public Destination create(HandlerContext handlerContext, PastebinForm form)
-    throws AgaveException, IOException, TemplateException, ClassNotFoundException {
-        SnippetRepository repo = 
-        	SnippetRepositoryFactory.createFilesystemRepository(handlerContext.getServletContext());
-        
+        throws AgaveException, IOException, TemplateException, ClassNotFoundException {
+        SnippetRepository repo =
+            SnippetRepositoryFactory.createFilesystemRepository(handlerContext.getServletContext());
+
         String uniqueId = repo.determineUniqueId(form.getExpiration());
         Snippet snippet = new Snippet();
         snippet.setUniqueId(uniqueId);
@@ -80,8 +74,8 @@ public class PastebinHandler extends AbstractHandler {
         repo.storeSnippet(snippet);
 
         if (!snippet.isPrivateSnippet()) {
-            OverviewService overviewService = 
-            	OverviewServiceFactory.createOverviewService(handlerContext.getServletContext());
+            OverviewService overviewService =
+                OverviewServiceFactory.createOverviewService(handlerContext.getServletContext());
             Overview overview = overviewService.retrieveOverview();
             if (overview.getRecentEntries().size() >= 10) {
                 overview.getRecentEntries().removeLast();
@@ -89,33 +83,38 @@ public class PastebinHandler extends AbstractHandler {
             overview.getRecentEntries().addFirst(new RecentEntry(snippet));
             overviewService.storeOverview(overview);
         }
-        
+
         return Destinations.redirect("/" + uniqueId);
     }
-    
+
     @HandlesRequestsTo("/${uniqueId}")
     public void snippet(HandlerContext handlerContext, PastebinForm form)
-    throws AgaveException, IOException, TemplateException, CloneNotSupportedException, ClassNotFoundException {
-        SnippetRepository repo = 
-        	SnippetRepositoryFactory.createFilesystemRepository(handlerContext.getServletContext());
+        throws AgaveException, IOException, TemplateException, CloneNotSupportedException, ClassNotFoundException {
+        SnippetRepository repo =
+            SnippetRepositoryFactory.createFilesystemRepository(handlerContext.getServletContext());
         Snippet snippet = repo.retrieveSnippet(form.getUniqueId());
-        
+
         PastebinViewModel model = new PastebinViewModel();
         model.setContextPath(handlerContext.getRequest().getContextPath());
         model.setSnippet(snippet);
-        
-        OverviewService overviewService = 
-        	OverviewServiceFactory.createOverviewService(handlerContext.getServletContext());
+
+        OverviewService overviewService =
+            OverviewServiceFactory.createOverviewService(handlerContext.getServletContext());
         Overview overview = overviewService.retrieveOverview();
         model.setOverview(overview);
-        
+
+        render(handlerContext, model, "snippet.ftl");
+    }
+
+    private void render(HandlerContext handlerContext, PastebinViewModel model, String templateName)
+        throws IOException, TemplateException {
+        handlerContext.getResponse().setContentType("text/html");
         PrintWriter out = handlerContext.getResponse().getWriter();
-        Configuration config = 
-        	(Configuration)handlerContext.getRequest().getAttribute(FreemarkerFilter.FREEMARKER_CONFIG_KEY);
-        Template template = config.getTemplate("snippet.ftl");
+        Configuration config =
+            (Configuration) handlerContext.getRequest().getAttribute(FreemarkerFilter.FREEMARKER_CONFIG_KEY);
+        Template template = config.getTemplate(templateName);
         template.process(model, out);
         out.flush();
         out.close();
     }
-    
 }
