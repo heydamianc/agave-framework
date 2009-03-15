@@ -30,15 +30,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * A {@code URIPattern} is the object that indicates which handler should be
- * invoked according to the requested URI. A {@code URIPattern} is similar in
- * nature to the string part of the URI except for having wildcards and
- * replacement variables.
- * 
- * Replacement variables look like {@code ${var}} and are supplied to handler
- * methods as arguments to the method if annotated. From this point of view,
- * though, consider replacement variables as a single wildcard match.
- * 
+ * The {@code URIPattern} is an object constructed around the the argument 
+ * to the {@code @HandlesRequestsTo} annotation, and it indicates which 
+ * URL the handler method will field, based on the URL constructed by 
+ * combining the protocol, port, context, and URI.
+ *
+ * @see http://code.google.com/p/agave-web-framework/wiki/UserDocumentation#URI_Pattern_Specifics 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface URIPattern extends Comparable<URIPattern> {
@@ -56,19 +53,24 @@ public interface URIPattern extends Comparable<URIPattern> {
      * match where the supplied token matches automatically as well. A double
      * asterisk matches multiple tokens until the next token in the pattern is
      * matched against the URI.
-     * @param uri the uri string
-     * @return true if the uri matches this pattern
+     *
+     * @param uri the URI string
+     * @return true if the URI matches this pattern
      */
     public boolean matches(String uri);
 
     /**
      * Normalizes the URI string so that .. and . are properly handled and condensed.
+     *
      * @param uriStr the URI string to normalize
      * @return the normalized URI string
      */
     public String normalizeURI(String uriStr);
 
-
+    /**
+     * Indicates whether this {@code URIPattern}'s normalized internal
+     * pattern matches that of the supplied object's.
+     */
     public boolean equals(Object obj);
     public int hashCode();
 

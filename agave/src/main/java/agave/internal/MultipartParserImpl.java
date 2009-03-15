@@ -47,15 +47,15 @@ import agave.Part;
  */
 public class MultipartParserImpl implements MultipartParser {
 
-	private static class CoupledLine {
-		private StringBuilder characters = new StringBuilder();
-		private List<Byte> bytes = new LinkedList<Byte>();
-		
-		public void append(int i) {
-			characters.append((char)i);
-			bytes.add((byte)i);
-		}
-	}
+    private static class CoupledLine {
+        private StringBuilder characters = new StringBuilder();
+        private List<Byte> bytes = new LinkedList<Byte>();
+
+        public void append(int i) {
+	        characters.append((char)i);
+	        bytes.add((byte)i);
+        }
+    }
 	
 	
 	private static final String DEFAULT_SUFFIX = ".tmp";

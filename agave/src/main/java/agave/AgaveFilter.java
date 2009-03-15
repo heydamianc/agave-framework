@@ -69,8 +69,9 @@ import agave.internal.URIParameterFormPopulator;
 
 
 /**
- * Scans the classes directory of a deployed context for any configured handlers
- * and forwards HTTP requests to the handlers if they match the requested URI.
+ * Scans the classes directory of a deployed context for any configured handlers,
+ * builds an internal representation of all handler methods , and then 
+ * forwards HTTP requests to the handlers if they match the requested URI.
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -245,10 +246,7 @@ public class AgaveFilter implements Filter {
      * 
      * @see <a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4">W3C Form Encoding Types</a>
      * @see agave.HandlesRequestsTo
-     * @see agave.BindsInput
      * @see agave.ConvertWith
-     * @see agave.BindsRequest
-     * @see agave.BindsResponse
      */
     public final void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
