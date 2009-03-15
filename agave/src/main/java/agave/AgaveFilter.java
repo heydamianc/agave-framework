@@ -69,8 +69,8 @@ import agave.internal.URIParameterFormPopulator;
 
 
 /**
- * Scans the classes directory of a deployed context for any configured handlers,
- * builds an internal representation of all handler methods , and then 
+ * Scans the {@code classes} directory of a deployed context for any configured 
+ * handlers, builds an internal representation of all handler methods , and then 
  * forwards HTTP requests to the handlers if they match the requested URI.
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
