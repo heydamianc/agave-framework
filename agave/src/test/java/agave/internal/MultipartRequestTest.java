@@ -47,6 +47,7 @@ import agave.MultipartRequest;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class MultipartRequestTest {
+
 	final static String CONTENT_TYPE = 
 		"multipart/form-data; boundary=---------------------------2746393686911676941624173958";
     final InputStream testStream = getClass().getClassLoader().getResourceAsStream("multipart-parameter-test");
@@ -144,6 +145,11 @@ public class MultipartRequestTest {
         Assert.assertArrayEquals(new String[] {"1", "2"}, multipartRequest.getParameterValues("b"));
         Assert.assertArrayEquals(new String[] {"because"}, multipartRequest.getParameterValues("why"));
         Assert.assertArrayEquals(new String[] {"forever"}, multipartRequest.getParameterValues("when"));
+    }
+
+    protected void finalize() throws Exception {
+        testStream.close();
+        delegatingStream.close();
     }
 
 }

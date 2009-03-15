@@ -55,18 +55,23 @@ public class HandlerScannerTest {
 
     @Test
     public void testLocateSampleScanner() throws Exception {
-        InputStream sampleStream = getClass().getClassLoader().getResourceAsStream("agave/sample/SampleHandler.class");
-        ClassReader classReader = new ClassReader(sampleStream);
-        handlerIdentifiers = new ArrayList<HandlerIdentifier>();
-        classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE );
-        HandlerIdentifier hi = null;
-        for (HandlerIdentifier identifier : handlerIdentifiers) {
-            if (identifier.getUri().equals("/login")) {
-                hi = identifier;
+        InputStream sampleStream = 
+            getClass().getClassLoader().getResourceAsStream("agave/sample/SampleHandler.class");
+        try {
+            ClassReader classReader = new ClassReader(sampleStream);
+            handlerIdentifiers = new ArrayList<HandlerIdentifier>();
+            classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE );
+            HandlerIdentifier hi = null;
+            for (HandlerIdentifier identifier : handlerIdentifiers) {
+                if (identifier.getUri().equals("/login")) {
+                    hi = identifier;
+                }
             }
+            Assert.assertNotNull(hi);
+            Assert.assertEquals("agave.sample.SampleHandler", hi.getClassName());
+        } finally {
+            sampleStream.close();
         }
-        Assert.assertNotNull(hi);
-        Assert.assertEquals("agave.sample.SampleHandler", hi.getClassName());
     }
     
 }

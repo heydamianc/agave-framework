@@ -41,7 +41,7 @@ import org.junit.Test;
  */
 public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
 
-       @Test
+    @Test
     public void testInit() throws Exception {
         AgaveFilter filter = createSilentAgaveFilter();
 
@@ -189,24 +189,28 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
     public void testMultipartRequest() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         final InputStream in = getClass().getClassLoader().getResourceAsStream("multipart-sample-tomcat");
-        final String contentType =
-        	"multipart/form-data; boundary=---------------------------979094395854168939825384612";
+        try {
+            final String contentType =
+                "multipart/form-data; boundary=---------------------------979094395854168939825384612";
 
-        emulateServletContainer(new HashMap<String, String[]>());
+            emulateServletContainer(new HashMap<String, String[]>());
 
-        context.checking(new Expectations() {{
-            allowing(request).getContentType(); will(returnValue(contentType));
-            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
-            allowing(request).getServletPath(); will(returnValue("/upload/file"));
-            allowing(request).getContentType(); will(returnValue("multipart/form-data"));
-            allowing(request).getInputStream(); will(returnValue(new DelegatingServletInputStream(in)));
+            context.checking(new Expectations() {{
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+                allowing(request).getServletPath(); will(returnValue("/upload/file"));
+                allowing(request).getContentType(); will(returnValue("multipart/form-data"));
+                allowing(request).getInputStream(); will(returnValue(new DelegatingServletInputStream(in)));
 
-            one(request).setAttribute("file", false);
-            one(response).setStatus(400);
-        }});
+                one(request).setAttribute("file", false);
+                one(response).setStatus(400);
+            }});
 
-        filter.init(filterConfig);
-        filter.doFilter(request, response, filterChain);
+            filter.init(filterConfig);
+            filter.doFilter(request, response, filterChain);
+        } finally {
+            in.close();
+        } 
     }
 
     @Test

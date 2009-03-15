@@ -57,14 +57,17 @@ public class MultipartParserTest {
         final InputStream sampleStream = 
         	new DelegatingServletInputStream(
         			getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty")); 
-        
-		context.checking(new Expectations() {{
-			allowing(request).getContentType(); will(returnValue(contentType));
-			allowing(request).getInputStream(); will(returnValue(sampleStream));
-		}});
-		
-		MultipartParserImpl parser = new MultipartParserImpl(request);
-		Assert.assertEquals("------WebKitFormBoundary4O7BAy0axyQ5Kkpu", parser.getBoundary());
+        try {       
+            context.checking(new Expectations() {{
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getInputStream(); will(returnValue(sampleStream));
+            }});
+            
+            MultipartParserImpl parser = new MultipartParserImpl(request);
+            Assert.assertEquals("------WebKitFormBoundary4O7BAy0axyQ5Kkpu", parser.getBoundary());
+        } finally {
+            sampleStream.close();
+        }
 	}
 
 	@Test
@@ -75,23 +78,26 @@ public class MultipartParserTest {
         final InputStream sampleStream = 
         	new DelegatingServletInputStream(
         			getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty")); 
-        
-		context.checking(new Expectations() {{
-			allowing(request).getContentType(); will(returnValue(contentType));
-			allowing(request).getInputStream(); will(returnValue(sampleStream));
-		}});
-		
-		MultipartParser parser = new MultipartParserImpl(request);
-		parser.parseInput();
-		
-		Assert.assertNotNull(parser.getParameters());
-		Assert.assertTrue(!parser.getParameters().isEmpty());
-		Assert.assertEquals(1, parser.getParameters().get("text1").size());
-		Assert.assertTrue(parser.getParameters().get("text1").contains("test 1"));
-		Assert.assertEquals(1, parser.getParameters().get("text2").size());
-		Assert.assertTrue(parser.getParameters().get("text2").contains("test 2"));
-		
-		Assert.assertEquals(2, parser.getParameters().size());
+        try { 
+            context.checking(new Expectations() {{
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getInputStream(); will(returnValue(sampleStream));
+            }});
+            
+            MultipartParser parser = new MultipartParserImpl(request);
+            parser.parseInput();
+            
+            Assert.assertNotNull(parser.getParameters());
+            Assert.assertTrue(!parser.getParameters().isEmpty());
+            Assert.assertEquals(1, parser.getParameters().get("text1").size());
+            Assert.assertTrue(parser.getParameters().get("text1").contains("test 1"));
+            Assert.assertEquals(1, parser.getParameters().get("text2").size());
+            Assert.assertTrue(parser.getParameters().get("text2").contains("test 2"));
+            
+            Assert.assertEquals(2, parser.getParameters().size());
+        } finally {
+            sampleStream.close();
+        }
 	}
 	
 	@Test
@@ -102,29 +108,32 @@ public class MultipartParserTest {
         final InputStream sampleStream = 
         	new DelegatingServletInputStream(
         			getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
-        context.checking(new Expectations() {{
-			allowing(request).getContentType(); will(returnValue(contentType));
-			allowing(request).getInputStream(); will(returnValue(sampleStream));
-		}});
-		
-		MultipartParser parser = new MultipartParserImpl(request);
-		parser.parseInput();
-		
-		Assert.assertNotNull(parser.getParts());
-		Assert.assertEquals(2, parser.getParts().size());
-		Assert.assertNotNull(parser.getParts().get("file1"));
-		Assert.assertNotNull(parser.getParts().get("file2"));
-		
-		InputStream imgStream = getClass().getClassLoader().getResourceAsStream("vim.gif");
-		InputStream file1Stream = new FileInputStream(parser.getParts().get("file1").getContents());
-		InputStream file2Stream = new FileInputStream(parser.getParts().get("file2").getContents());
-		
-		int b = -1;
-		while ((b = imgStream.read()) != -1) {
-			Assert.assertEquals(file1Stream.read(), b);
-			Assert.assertEquals(file2Stream.read(), b);
-		}
-		
+        try {
+            context.checking(new Expectations() {{
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getInputStream(); will(returnValue(sampleStream));
+            }});
+            
+            MultipartParser parser = new MultipartParserImpl(request);
+            parser.parseInput();
+            
+            Assert.assertNotNull(parser.getParts());
+            Assert.assertEquals(2, parser.getParts().size());
+            Assert.assertNotNull(parser.getParts().get("file1"));
+            Assert.assertNotNull(parser.getParts().get("file2"));
+            
+            InputStream imgStream = getClass().getClassLoader().getResourceAsStream("vim.gif");
+            InputStream file1Stream = new FileInputStream(parser.getParts().get("file1").getContents());
+            InputStream file2Stream = new FileInputStream(parser.getParts().get("file2").getContents());
+            
+            int b = -1;
+            while ((b = imgStream.read()) != -1) {
+                Assert.assertEquals(file1Stream.read(), b);
+                Assert.assertEquals(file2Stream.read(), b);
+            }
+	    } finally {
+            sampleStream.close();
+        }
 	}
 	
 }

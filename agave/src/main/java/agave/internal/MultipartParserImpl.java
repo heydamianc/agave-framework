@@ -52,77 +52,80 @@ public class MultipartParserImpl implements MultipartParser {
         private List<Byte> bytes = new LinkedList<Byte>();
 
         public void append(int i) {
-	        characters.append((char)i);
-	        bytes.add((byte)i);
+            characters.append((char)i);
+            bytes.add((byte)i);
         }
     }
-	
-	
-	private static final String DEFAULT_SUFFIX = ".tmp";
-	private static final Pattern BOUNDARY_PATTERN = Pattern.compile("multipart/form-data;\\s*boundary=(.*)");
+    
+    private static final String DEFAULT_SUFFIX = ".tmp";
+    private static final Pattern BOUNDARY_PATTERN = Pattern.compile("multipart/form-data;\\s*boundary=(.*)");
     private static final String CONTENT_DISPOSIITON = "Content-Disposition:\\s*form-data;\\s*name=\"(.*)\"";
     private static final Pattern PART_PATTERN = Pattern.compile(CONTENT_DISPOSIITON + ";\\s*filename=\"(.+)\"");
     private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)\\.(.*)");
     private static final Pattern PARAMETER_PATTERN = Pattern.compile(CONTENT_DISPOSIITON);
     private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("Content-Type:\\s*(.+)");
     private static final Pattern OTHER_HEADER_PATTERN = Pattern.compile("(\\S+):\\s*(.+?)");
-	
-	private Map<String, Collection<String>> parameters;
-	private Map<String, Part> parts;
-	private String boundary;
-	private String eos;
-	private InputStream in;
-	
-	public MultipartParserImpl(HttpServletRequest request) throws IOException {
-		parameters = new HashMap<String, Collection<String>>();
-		parts = new HashMap<String, Part>();
-		Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
-		if (boundaryMatcher.matches() && boundaryMatcher.groupCount() >= 1) {
-			boundary = "--" + boundaryMatcher.group(1);
-		}
-		eos = boundary + "--";
-		in = request.getInputStream();
-		readLine(in);
-	}
-	
-	public Map<String, Collection<String>> getParameters() {
-		return parameters;
-	}
+    
+    private Map<String, Collection<String>> parameters;
+    private Map<String, Part> parts;
+    private String boundary;
+    private String eos;
+    private InputStream in;
+    
+    public MultipartParserImpl(HttpServletRequest request) throws IOException {
+        parameters = new HashMap<String, Collection<String>>();
+        parts = new HashMap<String, Part>();
+        Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
+        if (boundaryMatcher.matches() && boundaryMatcher.groupCount() >= 1) {
+            boundary = "--" + boundaryMatcher.group(1);
+        }
+        eos = boundary + "--";
+        in = request.getInputStream();
+        readLine(in);
+    }
+    
+    public Map<String, Collection<String>> getParameters() {
+        return parameters;
+    }
 
-	public Map<String, Part> getParts() {
-		return parts;
-	}
-	
-	public String getBoundary() {
-		return boundary;
-	}
+    public Map<String, Part> getParts() {
+        return parts;
+    }
+    
+    public String getBoundary() {
+        return boundary;
+    }
 
-	public void parseInput() throws IOException {
-		while (true) {
-			Part part = new PartImpl();
-			readHeaders(part);
-            if (part.getFilename() != null) {
-                if (readPart(part)) {
-                    break;
-                }
-            } else {
-                if (readParameter(part)) {
-                    break;
+    public void parseInput() throws IOException {
+        try {
+            while (true) {
+                Part part = new PartImpl();
+                readHeaders(part);
+                if (part.getFilename() != null) {
+                    if (readPart(part)) {
+                        break;
+                    }
+                } else {
+                    if (readParameter(part)) {
+                        break;
+                    }
                 }
             }
-		}
-		in.close();
-	}
-	
-	public void readHeaders(Part part) throws IOException {
-		String line = null;
-		while ((line = readLine(in)) != null) {
-			line = line.trim();
-			
-			if ("".equals(line)) {
-				break;
-			}
-			
+        } finally {
+            in.close();
+            in = null;
+        }
+    }
+    
+    public void readHeaders(Part part) throws IOException {
+        String line = null;
+        while ((line = readLine(in)) != null) {
+            line = line.trim();
+            
+            if ("".equals(line)) {
+                break;
+            }
+            
             Matcher matcher = PART_PATTERN.matcher(line);
             if (matcher.matches() && matcher.groupCount() >= 2) {
                 part.setName(matcher.group(1));
@@ -147,13 +150,13 @@ public class MultipartParserImpl implements MultipartParser {
                 part.addHeader(matcher.group(1), matcher.group(2));
                 continue;
             }
-		}
- 	}
-	
-	private String readLine(InputStream in) throws IOException {
-		StringBuilder text = new StringBuilder();
-		
-		int i = -1;
+        }
+    }
+    
+    private String readLine(InputStream in) throws IOException {
+        StringBuilder text = new StringBuilder();
+        
+        int i = -1;
         while ((i = in.read()) != -1) {
             text.append((char) i);
             
@@ -163,54 +166,54 @@ public class MultipartParserImpl implements MultipartParser {
         }
         
         return text.toString();
-	}
-	
-	private CoupledLine readCoupledLine(InputStream in) throws IOException {
-		CoupledLine line = new CoupledLine();
-		
-		int i = -1;
-		while ((i = in.read()) != -1) { 
-			line.append(i);
-			
-			if ((char) i == '\n') {
-				break;
-			}
-		}
-		
-		return line;
-	}
-	
-	public boolean readParameter(Part part) throws IOException {
-		boolean end = false;
+    }
+    
+    private CoupledLine readCoupledLine(InputStream in) throws IOException {
+        CoupledLine line = new CoupledLine();
+        
+        int i = -1;
+        while ((i = in.read()) != -1) { 
+            line.append(i);
+            
+            if ((char) i == '\n') {
+                break;
+            }
+        }
+        
+        return line;
+    }
+    
+    public boolean readParameter(Part part) throws IOException {
+        boolean end = false;
 
-		StringBuilder parameterValue = new StringBuilder();
-		String line = null;
-		
-		while ((line = readLine(in)) != null) {
-			line = line.trim();
-			
-			if (eos.equals(line)) {
-				end = true;
-				break;
-			}
-			
-			if (boundary.equals(line)) {
-				break;
-			}
-			
-			parameterValue.append(line);
-		}
-		
-		if (!parameters.containsKey(part.getName())) {
-			parameters.put(part.getName(), new ArrayList<String>());
-		}
-		parameters.get(part.getName()).add(parameterValue.toString());
-		
+        StringBuilder parameterValue = new StringBuilder();
+        String line = null;
+        
+        while ((line = readLine(in)) != null) {
+            line = line.trim();
+            
+            if (eos.equals(line)) {
+                end = true;
+                break;
+            }
+            
+            if (boundary.equals(line)) {
+                break;
+            }
+            
+            parameterValue.append(line);
+        }
+        
+        if (!parameters.containsKey(part.getName())) {
+            parameters.put(part.getName(), new ArrayList<String>());
+        }
+        parameters.get(part.getName()).add(parameterValue.toString());
+        
         return end;
-	}
-	
-	public boolean readPart(Part part) throws IOException {
-		boolean end = false;
+    }
+    
+    public boolean readPart(Part part) throws IOException {
+        boolean end = false;
 
         String prefix = null;
         String suffix = null;
@@ -234,12 +237,12 @@ public class MultipartParserImpl implements MultipartParser {
             String text = line.characters.toString().trim();
             
             if (eos.equals(text)) {
-            	end = true;
-            	break;
+                end = true;
+                break;
             }
             
             if (boundary.equals(text)) {
-            	break;
+                break;
             }
             
             for (Byte b : line.bytes) {
@@ -247,10 +250,16 @@ public class MultipartParserImpl implements MultipartParser {
             }
         }
         
+    	out.flush();
         out.close();
         part.setContents(temporaryFile);
         parts.put(part.getName(), part);
         return end;
-	}
+    }
 
+    protected void finalize() throws Exception {
+        if (in != null) {
+            in.close();
+        }
+    }
 }

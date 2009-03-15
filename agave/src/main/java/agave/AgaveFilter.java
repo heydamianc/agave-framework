@@ -83,6 +83,7 @@ public class AgaveFilter implements Filter {
     
     private FilterConfig config;
     private LifecycleHooks lifecycleHooks;
+    private File classesDirectory;
     private InstanceCreator instanceFactory;
     private HandlerRegistry handlerRegistry;
     private boolean classesDirectoryProvided;
@@ -157,7 +158,7 @@ public class AgaveFilter implements Filter {
         try {
             lifecycleHooks = provideLifecycleHooks(config);
             setHandlerRegistry(new HandlerRegistryImpl());
-            File classesDirectory = provideClassesDirectory(config);
+            classesDirectory = provideClassesDirectory(config);
             scanClassesDirForHandlers(classesDirectory);
             instanceFactory = provideInstanceCreator(config);
             instanceFactory.initialize();
@@ -186,6 +187,7 @@ public class AgaveFilter implements Filter {
 
     public void destroy() {
         config = null;
+        classesDirectory = null;
         handlerRegistry = null;
         instanceFactory = null;
     }
@@ -415,27 +417,31 @@ public class AgaveFilter implements Filter {
      * 
      * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
      */
-    protected void scanClassesDirForHandlers(File root) throws FileNotFoundException, IOException,
-            ClassNotFoundException, AgaveException {
+    protected void scanClassesDirForHandlers(File root) 
+    throws FileNotFoundException, IOException, ClassNotFoundException, AgaveException {
         if (root != null && root.canRead()) {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {
                     scanClassesDirForHandlers(node);
                 } else if (node.isFile() && node.getName().endsWith(".class")) {
                     lifecycleHooks.beforeHandlerIsDiscovered(node);
-                    
-                    ClassReader classReader = new ClassReader(new FileInputStream(node));
-                    Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
-                    classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);
-                    
-                    for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
-                        HandlerDescriptor descriptor = new HandlerDescriptorImpl(handlerIdentifier);
-                        descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
-                        handlerRegistry.addDescriptor(descriptor);
+                   
+                    FileInputStream nodeIn = new FileInputStream(node); 
+                    try {
+                        ClassReader classReader = new ClassReader(nodeIn);
+                        Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
+                        classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);
                         
-                        lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext());
+                        for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
+                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(handlerIdentifier);
+                            descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
+                            handlerRegistry.addDescriptor(descriptor);
+                            
+                            lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext());
+                        }
+                    } finally {
+                        nodeIn.close();
                     }
-                    
                 }
             }
         }
