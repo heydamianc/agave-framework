@@ -138,6 +138,8 @@ public class URIPatternTest {
         Assert.assertTrue(new URIPatternImpl("/one/two/").matches("/ONE/tWo"));
         Assert.assertTrue(new URIPatternImpl("/One/Two").matches("/one/TWO"));
         Assert.assertFalse(new URIPatternImpl("/one/${two}").matches("/"));
+        Assert.assertFalse(new URIPatternImpl("/one/").matches("/one/two"));
+        Assert.assertFalse(new URIPatternImpl("/one/two").matches("/one"));
     }
     
     @Test

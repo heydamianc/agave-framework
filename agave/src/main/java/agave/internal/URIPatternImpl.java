@@ -190,7 +190,8 @@ public class URIPatternImpl implements URIPattern {
         }
 
         if ((pi >= patternTokens.length && ui < uriTokens.length)
-            || (ui < uriTokens.length && !"**".equals(patternTokens[pi]))) {
+            || (ui < uriTokens.length && !"**".equals(patternTokens[pi]))
+            || (pi < patternTokens.length && !"**".equals(patternTokens[pi]))) {
             return false;
         }
 
