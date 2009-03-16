@@ -5,13 +5,16 @@ body {
 }
 
 fieldset {
-    background-color: #F5F5DC;
-    border-top: 0;
-    border-right: 1px solid #4682B4;
+    background-color: #F0FFFF;
+    border: 1px solid #4682B4;
     border-left: 3px solid #4682B4;
-    border-bottom: 0;
 }
 
 legend, th {
     background-color: #DCDCDC;
+    border: 1px solid #808080;
+}
+
+source {
+  border-top: 1px solid #c0c0c0;
 }
