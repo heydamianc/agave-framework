@@ -73,20 +73,6 @@
         </configuration>
       </plugin>
     </plugins>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-scm</artifactId>
-      </extension>
-      <extension>
-        <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-manager-plexus</artifactId>
-      </extension>
-      <extension>
-        <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-provider-svnexe</artifactId>
-      </extension>
-    </extensions>
   </build>
   <reporting>
     <plugins>
