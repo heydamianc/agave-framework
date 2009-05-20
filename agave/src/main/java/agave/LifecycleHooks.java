@@ -29,33 +29,47 @@ import java.io.File;
 import java.net.URI;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 import agave.internal.HandlerDescriptor;
 
 /**
- *
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface LifecycleHooks {
 
-    public void beforeHandlerIsDiscovered(File potentalHandlerClassFile);
-    
-    public void afterHandlerIsDiscovered(HandlerDescriptor descriptor, ServletContext servletContext);
-    
-    public void beforeFilteringRequest(HandlerDescriptor descriptor, HandlerContext context);
-    
-    public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context);
-    
-    public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context);
+	public void beforeHandlerIsDiscovered(File potentalHandlerClassFile)
+			throws ServletException;
 
-    public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context);
-    
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context);
-    
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, Destination destination, 
-            HandlerContext context);
+	public void afterHandlerIsDiscovered(HandlerDescriptor descriptor,
+			ServletContext servletContext) throws ServletException;
 
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, URI destination, 
-            HandlerContext context);
-    
+	public void beforeFilteringRequest(HandlerDescriptor descriptor,
+			HandlerContext context) throws ServletException;
+
+	public void beforeInitializingForm(HandlerDescriptor descriptor,
+			Object formInstance, HandlerContext context)
+			throws ServletException;
+
+	public void afterInitializingForm(HandlerDescriptor descriptor,
+			Object formInstance, HandlerContext context)
+			throws ServletException;
+
+	public void beforeHandlingRequest(HandlerDescriptor descriptor,
+			Object handlerInstance, HandlerContext context)
+			throws ServletException;
+
+	public void afterHandlingRequest(HandlerDescriptor descriptor,
+			Object handlerInstance, HandlerContext context)
+			throws ServletException;
+
+	public void afterHandlingRequest(HandlerDescriptor descriptor,
+			Object handlerInstance, Destination destination,
+			HandlerContext context) throws ServletException;
+
+	public void afterHandlingRequest(HandlerDescriptor descriptor,
+			Object handlerInstance, URI destination, HandlerContext context)
+			throws ServletException;
+
 }
