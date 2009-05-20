@@ -418,7 +418,7 @@ public class AgaveFilter implements Filter {
      * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
      */
     protected void scanClassesDirForHandlers(File root) 
-    throws FileNotFoundException, IOException, ClassNotFoundException, AgaveException {
+    throws FileNotFoundException, IOException, ClassNotFoundException, ServletException {
         if (root != null && root.canRead()) {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {
