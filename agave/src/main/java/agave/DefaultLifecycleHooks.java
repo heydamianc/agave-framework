@@ -26,6 +26,7 @@
 package agave;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.ServletContext;
@@ -41,44 +42,44 @@ import agave.internal.HandlerDescriptor;
 public class DefaultLifecycleHooks implements LifecycleHooks {
 
 	public void beforeHandlerIsDiscovered(File potentalHandlerClassFile)
-			throws ServletException {
+			throws ServletException, IOException {
 	}
 
 	public void afterHandlerIsDiscovered(HandlerDescriptor descriptor,
-			ServletContext servletContext) throws ServletException {
+			ServletContext servletContext) throws ServletException, IOException {
 	}
 
 	public void beforeFilteringRequest(HandlerDescriptor descriptor,
-			HandlerContext context) throws ServletException {
+			HandlerContext context) throws ServletException, IOException {
 	}
 
 	public void beforeInitializingForm(HandlerDescriptor descriptor,
 			Object formInstance, HandlerContext context)
-			throws ServletException {
+			throws ServletException, IOException {
 	}
 
 	public void afterInitializingForm(HandlerDescriptor descriptor,
 			Object formInstance, HandlerContext context)
-			throws ServletException {
+			throws ServletException, IOException {
 	}
 
 	public void beforeHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, HandlerContext context)
-			throws ServletException {
+			throws ServletException, IOException {
 	}
 
 	public void afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, HandlerContext context)
-			throws ServletException {
+			throws ServletException, IOException {
 	}
 
 	public void afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, Destination destination,
-			HandlerContext context) throws ServletException {
+			HandlerContext context) throws ServletException, IOException {
 	}
 
 	public void afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, URI destination, HandlerContext context)
-			throws ServletException {
+			throws ServletException, IOException {
 	}
 }
