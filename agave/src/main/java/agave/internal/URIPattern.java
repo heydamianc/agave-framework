@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
  * URL the handler method will field, based on the URL constructed by 
  * combining the protocol, port, context, and URI.
  *
- * @see http://code.google.com/p/agave-web-framework/wiki/UserDocumentation#URI_Pattern_Specifics 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface URIPattern extends Comparable<URIPattern> {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -35,7 +35,20 @@ import java.lang.annotation.Target;
 import agave.conversion.Converter;
 
 /**
- * Indicates which {@code Converter} to use.
+ * Indicates which {@link Converter} to use.  An example of using this annotation is:
+ * 
+ * <pre>public class SomeForm {
+ *     
+ *     private SomeType someParameter;
+ *     
+ *     public void setSomeParameter(ConvertWith(com.domain.package.SomeTypeConverter) SomeType someParameter) {
+ *         this.someParameter = someParameter;
+ *     }
+ * }</pre>
+ * 
+ * The value supplied to the named converter is a String value coming from a form input, a request parameter, or a 
+ * URI's positional parameter.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 @Documented

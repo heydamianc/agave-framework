@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -35,6 +35,8 @@ import agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
+ * Converts an uploaded file directly into a manipulatable {@code BufferedImage}.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class BufferedImageConverter implements PartConverter<BufferedImage> {

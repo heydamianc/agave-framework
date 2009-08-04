@@ -33,6 +33,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Indicates that the annotated handler method will resume a workflow.  Workflows can be named by supplying 
+ * a value to this annotation.  Resuming a workflow means that the handler and form will be pulled
+ * from the {@code javax.servlet.http.HttpSession} instead of having to instantiate new ones.
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -41,5 +44,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResumesWorkflow {
+	
+	/** 
+	 * @return an optional workflow name
+	 */
     String value();
+    
 }

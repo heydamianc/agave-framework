@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,7 +25,6 @@
  */
 package agave.conversion;
 
-import agave.exception.ConversionException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -33,7 +32,23 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import agave.exception.ConversionException;
+
 /**
+ * Converts a supplied date string into a {@code java.util.Date} and time by leveraging
+ * {@code DateFormat.format()}'s short locale-specific implementation. 
+ * 
+ * <p>An example of its usage can be seen in this class's unit test:
+ * 
+ * <pre>@Test
+ *public void testConvert() throws Exception {
+ *    Date halloween = new GregorianCalendar(2008, Calendar.OCTOBER, 31, 8, 32).getTime();
+ *    Assert.assertEquals(halloween, converter.convert("10/31/2008 8:32 am", Locale.US));
+ *    Assert.assertEquals(halloween, converter.convert("10/31/2008 8:32am", Locale.US));
+ *    Assert.assertEquals(halloween, converter.convert("10/31/2008     8:32AM    ", Locale.US));
+ *    Assert.assertEquals(halloween, converter.convert("31/10/2008 8:32am", Locale.UK));
+ *}</pre>
+ * 
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
 public class DateTimeConverter implements StringConverter<Date> {

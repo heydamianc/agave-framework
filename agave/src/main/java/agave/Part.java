@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -28,7 +28,7 @@ package agave;
 import java.io.File;
 
 /**
- * A part in a mulitpart/form-data HTTP post which either encapsulates a {@code File} upload or a 
+ * A part in a multipart/form-data HTTP post which either encapsulates a {@code File} upload or a 
  * {@code String} parameter.  In the case of a {@code String} parameter this can have the name and 
  * the parameter value set.  In the case of a {@code File} part, the name, filename, content type,
  * and contents will be set.

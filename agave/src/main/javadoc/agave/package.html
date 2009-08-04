@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
  <head>
-   <title>Agave package</title>
+   <title>Documentation for the &quot;agave&quot; package</title>
  </head>
  <body>
    <p>
@@ -13,13 +13,12 @@
    </p>
    <div style="text-align: center;">
      <img 
-        src="http://agave-web-framework.googlecode.com/svn/trunk/agave/agave-core/src/main/javadoc/front-controller.png" 
+        src="http://agave-web-framework.googlecode.com/svn/trunk/agave/src/main/javadoc/front-controller.png" 
         alt="Front Controller MVC Diagram" 
         title="Front Controller MVC Diagram" />
    </div>
-   <p>An example of a handler method:</p>
+   <p id="handlerMethod">An example of a handler method:</p>
    <pre>public class FunHandler {
-
     &#64;HandlesRequestsTo(&quot;/haveFun&quot;)
     public void haveSomeFun(FunForm funForm) throws ServletException, IOException {
         // wheeee!

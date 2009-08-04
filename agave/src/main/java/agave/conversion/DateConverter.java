@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,13 +25,28 @@
  */
 package agave.conversion;
 
-import agave.exception.ConversionException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 
+import agave.exception.ConversionException;
+
 /**
+ * Converts a supplied date string into a {@code java.util.Date} by leveraging
+ * {@code DateFormat.format()}'s short locale-specific implementation. 
+ * 
+ * <p>An example of its usage can be seen in this class's unit test:
+ * 
+ * <pre>@Test
+ *public void testConvert() throws Exception {
+ *    Assert.assertEquals(new GregorianCalendar(2008, Calendar.OCTOBER, 31).getTime(),
+ *        dateConverter.convert("10/31/2008", Locale.US));
+ *    Assert.assertEquals(new GregorianCalendar(1982, Calendar.MAY, 7).getTime(),
+ *        dateConverter.convert("7/5/82", Locale.UK));
+ *}</pre>
+ *</p>
+ *
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
 public class DateConverter implements StringConverter<Date> {

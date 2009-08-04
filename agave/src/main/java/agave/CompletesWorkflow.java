@@ -33,7 +33,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
+ * Indicates that the annotated handler method will complete a workflow.  Workflows can be named by supplying 
+ * a value to this annotation.  Completing a workflow consists of removing the handler and the form
+ * from the {@code javax.servlet.http.HttpSession}. 
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 @Documented
@@ -41,5 +44,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CompletesWorkflow {
+	
+	/** 
+	 * @return an optional workflow name
+	 */
     String value();
 }

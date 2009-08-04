@@ -33,6 +33,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Indicates that the annotated handler method will initiate a workflow.  Workflows can be named by supplying 
+ * a value to this annotation.  Initiating a workflow consists of adding the handler and the form
+ * to the {@code javax.servlet.http.HttpSession}. 
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -41,5 +44,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InitiatesWorkflow {
+	
+	/** 
+	 * @return an optional workflow name
+	 */
     String value();
+    
 }
