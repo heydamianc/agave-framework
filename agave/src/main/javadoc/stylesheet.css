@@ -1,64 +1,20 @@
-/*
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
+body                  {background-color: #FFFFFF; color:#000000; font-size: 10pt;}
+h1, h2, h3            {color: #3d4c4c;}
+a:link                {color: #cc7a3d;}
+a:visited             {color: #7f6640;}
+a:hover               {color: #3d4c4c;}
+code, pre             {color: #3d4c4c; font-size: 9pt;}
+a:link code           {color: #cc7a3d;}
+a:visited code        {color: #7f6640;}
+a:hover code          {color: #3d4c4c;}
+hr                    {border: none; border-top: 1px solid #000;} 
+table[border="1"]     {border: 1px solid #000; border-collapse: collapse;}
+table[border="1"] td  {padding: 5px;}
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
-*/
-
-/* Javadoc style sheet */
-
-/* Define colors, fonts and other style attributes here to override the defaults  */
-
-/* Page background color */
-body { background-color: #FF0000; }
-
-a:link, a:visited {
- color: blue;
- }
-
-a:active, a:hover, #leftcol a:active, #leftcol a:hover {
- color: #f30 !important;
- }
-
-a:link.selfref, a:visited.selfref {
- color: #555 !important;
- }
-
-.a td {
- background: #ddd;
- color: #000;
- }
-
-/* Table colors */
-.TableHeadingColor     { background: #036; color:#FFFFFF } /* Dark blue */
-.TableSubHeadingColor  { background: #bbb; color:#fff } /* Dark grey */
-.TableRowColor         { background: #efefef } /* White */
-
-/* Font used in left-hand frame lists */
-.FrameTitleFont   { font-size: medium; font-family: normal; color:#000000 }
-.FrameHeadingFont { font-size: medium; font-family: normal; color:#000000 }
-.FrameItemFont    { font-size: medium; font-family: normal; color:#000000 }
-
-/* Example of smaller, sans-serif font in frames */
-/* .FrameItemFont  { font-size: 10pt; font-family: Helvetica, Arial, sans-serif } */
-
-/* Navigation bar fonts and colors */
-.NavBarCell1    { background-color:#ddd;}/* Light mauve */
-.NavBarCell1Rev { background-color:#888;}/* Dark Blue */
-.NavBarFont1    { font-family: Arial, Helvetica, sans-serif; color:#000000;}
-.NavBarFont1Rev { font-family: Arial, Helvetica, sans-serif; color:#FFFFFF;}
-
-.NavBarCell2    { font-family: Arial, Helvetica, sans-serif; background-color:#FFFFFF;}
-.NavBarCell3    { font-family: Arial, Helvetica, sans-serif; background-color:#FFFFFF;}
+.TableHeadingColor    {background-color: #d1c566;}
+.TableSubHeadingColor {background-color: #f2ffb2;}
+.FrameTitleFont       {font-size: 100%; font-weight: bold; margin-top: 10px;}
+.FrameHeadingFont     {font-size: 100%; font-weight: bold; margin-top: 10px;}
+.FrameItemFont        {font-size: 100%;}
+.NavBarCell1          {background-color: #f2ffb2;}
+.NavBarCell1Rev       {border: 1px solid #d1c566;}

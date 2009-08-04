@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -33,10 +33,11 @@ import agave.exception.HandlerException;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ReflectionInstanceFactory implements InstanceCreator {
+public class ReflectionInstanceCreator implements InstanceCreator {
 
     /**
-     * Creates a new instance of a form object for the form class specified in the supplied descriptor.
+     * Creates a new instance of a form object for the form class specified in the supplied descriptor by
+     * calling its default constructor.
      * @param descriptor the handler descriptor that describes which form to instantiate
      * @throws IllegalAccessException 
      * @throws InstantiationException 
@@ -58,7 +59,8 @@ public class ReflectionInstanceFactory implements InstanceCreator {
 
 
     /**
-     * Creates a new instance of a handler object for the handler class specified in the supplied descriptor.
+     * Creates a new instance of a handler object for the handler class specified in the supplied descriptor 
+     * by calling its default constructor.
      * @param descriptor the handler descriptor that describes which form to instantiate.
      * @throws FormError when a handler instance failed to be instantiated
      */

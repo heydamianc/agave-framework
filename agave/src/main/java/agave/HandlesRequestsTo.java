@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -33,7 +33,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated method is a handler method.
+ * Indicates that the annotated method is a handler method and fields requests to the URI named by the supplied value,
+ * relative to the context path.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 @Documented

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -62,18 +62,35 @@ import agave.internal.HandlerRegistry;
 import agave.internal.HandlerRegistryImpl;
 import agave.internal.HandlerScanner;
 import agave.internal.MultipartRequestImpl;
-import agave.internal.ReflectionInstanceFactory;
+import agave.internal.ReflectionInstanceCreator;
 import agave.internal.RequestParameterFormPopulator;
 import agave.internal.RequestPartFormPopulator;
 import agave.internal.URIParameterFormPopulator;
 
 
 /**
- * Scans the {@code classes} directory of a deployed context for any configured 
- * handlers, builds an internal representation of all handler methods , and then 
- * forwards HTTP requests to the handlers if they match the requested URI.
+ * <p>
+ * Scans the {@code /WEB-INF/classes} directory of a deployed context for any configured 
+ * handlers, builds an internal representation of all handler methods, and then 
+ * forwards HTTP requests to the handlers if they match the requested URI.  See the
+ * {@link #doFilter(ServletRequest, ServletResponse, FilterChain)} method for a 
+ * description of the primary function of this filter.
+ * </p>
+ * 
+ * <p>
+ * This filter supports three {@code init-param}s:
+ * 
+ * <ul>
+ *   <li id="classesDirectory">{@code classesDirectory} - A directory created by calling {@code new File()} on the value of this parameter.
+ *   The default value that is used when this parameter is not present is {@code /WEB-INF/classes}.</li>
+ *   <li id="lifecycleHooks">{@code lifecycleHooks} - See {@link LifecycleHooks} for more information.</li>
+ *   <li id="instanceCreator">{@code instanceCreator} - See {@link InstanceCreator} for more information.</li>
+ * </ul>
+ * </p>
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @see <a href="#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)"><code>AgaveFilter.doFilter()</code></a>
+ * @see HandlerDescriptor
  */
 public class AgaveFilter implements Filter {
 
@@ -88,6 +105,19 @@ public class AgaveFilter implements Filter {
     private HandlerRegistry handlerRegistry;
     private boolean classesDirectoryProvided;
 
+    /**
+     * An alternate way of providing the {@link LifecycleHooks} implementation is to override this method.  
+     * The default behavior is to read the <a href="#lifecycleHooks">lifecycleHooks</a> {@code init-param} and use the supplied 
+     * value to instantiate a {@link LifecycleHooks} instance, or use a stub implementation if this parameter
+     * is not supplied.
+     * 
+     * @param config the configuration delivered to this filter
+     * @return a {@link LifecycleHooks} instance
+     * 
+     * @throws ClassNotFoundException if the class named by the {@code lifecycleHooks} initialization parameter can not be found
+     * @throws InstantiationException if the class named by the {@code lifecycleHooks} initialization parameter can not be instantiated
+     * @throws IllegalAccessException if this filter is denied access to the class named by the {@code lifecycleHooks} initialization parameter value
+     */
     protected LifecycleHooks provideLifecycleHooks(FilterConfig config) 
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         LifecycleHooks hooks = null;
@@ -103,6 +133,19 @@ public class AgaveFilter implements Filter {
         return hooks;
     }
     
+    /**
+     * An alternate way of providing an {@link InstanceCreator} implementation is to override this method.
+     * The default behavior is to read the <a href="#instanceCreator">instanceCreator</a> {@code init-param} and use the supplied
+     * value to instantiate a {@link InstanceCreator} instance, or use a {@link ReflectionInstanceCreator} instance
+     * if this parameter is not supplied.
+     * 
+     * @param config the configuration delivered to this filter
+     * @return a {@link ReflectionInstanceCreator} instance
+     * 
+     * @throws ClassNotFoundException if the class named by the {@code instanceCreator} initialization parameter can not be found
+     * @throws InstantiationException if the class named by the {@code instanceCreator} initialization parameter can not be instantiated
+     * @throws IllegalAccessException if this filter is denied access to the class named by the {@code classesDirectory} initialization parameter value
+     */
     protected InstanceCreator provideInstanceCreator(FilterConfig config) 
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         InstanceCreator creator = null;
@@ -113,21 +156,25 @@ public class AgaveFilter implements Filter {
                 (InstanceCreator)Class.forName(instanceFactoryParameter).newInstance();
             LOGGER.info("Using instance creator: " + creator.getClass().getName());
         } else {
-            creator = new ReflectionInstanceFactory();
+            creator = new ReflectionInstanceCreator();
         }
         
         return creator;
     }
     
     /**
-     * This is really only here for testing situations (esp. when running mvn jetty:run)
+     * An alternate way of providing a class directory to scan for handlers is to override this method.  This is primarily here for testing 
+     * situations (especially when running mvn jetty:run).  The default behavior is to read the 
+     * <a href="#classesDirectory">classesDirectory</a> {@code init-param} and use the value supplied to create a 
+     * directory {@code File} that will be scanned for handlers.  If this parameter is absent, the default value
+     * will be {@code /WEB-INF/classes}.
      * 
-     * @param config
-     * @return
+     * @param config the configuration delivered to this filter
+     * @return a {@code File} representing the named class directory
      * 
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InstantiationException
-     * @throws java.lang.IllegalAccessException
+     * @throws ClassNotFoundException if the class named by the {@code classesDirectory} initialization parameter can not be found
+     * @throws InstantiationException if the class named by the {@code classesDirectory} initialization parameter can not be instantiated
+     * @throws IllegalAccessException if this filter is denied access to the class named by the {@code instanceCreator} initialization parameter value
      */
     protected File provideClassesDirectory(FilterConfig config)
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -147,7 +194,7 @@ public class AgaveFilter implements Filter {
      * Initializes the {@code AgaveFilter} by scanning for handler classes and
      * populating a {@link agave.internal.HandlerRegistry HandlerRegistry} with
      * them. Then, this initializes the dependency injection container (if any)
-     * by instantiation a {@link agave.InstanceCreator}.
+     * by instantiating a {@link agave.InstanceCreator}.
      * 
      * @param config  the supplied filter configuration object
      * @throws ServletException
@@ -185,6 +232,9 @@ public class AgaveFilter implements Filter {
         LOGGER.info("AgaveFilter successfully initialized");
     }
 
+    /**
+     * Destroys this filter.
+     */
     public void destroy() {
         config = null;
         classesDirectory = null;
@@ -200,27 +250,33 @@ public class AgaveFilter implements Filter {
      * 
      * <ol>
      *   <li>
-     *     {@link agave.InstanceCreator#createFormInstance Instantiate a
-     *     form if necessary}
+     *     {@link agave.InstanceCreator#createFormInstance Instantiates a
+     *     form if necessary}.
      *     <ol>
      *       <li>
-     *         {@link agave.internal.ParameterBinder#bindRequestParameters Bind
-     *         request parameters if necessary}
+     *         {@link RequestParameterFormPopulator Populates 
+     *         request parameters} if necessary, leveraging any {@link agave.conversion.Converter}s named
+     *         with the {@link ConvertWith} annotation on mutator arguments.  Note that URI parameters
+     *         will override request parameters if they are similarly named. 
      *       </li>
      *       <li>
-     *         {@link agave.internal.ParameterBinder#bindURIParameters Bind URI
-     *         parameters if necessary}</li>
+     *         {@link URIParameterFormPopulator Populates 
+     *         URI parameters} if necessary, leveraging any {@link agave.conversion.Converter}s named
+     *         with the {@link ConvertWith} annotation on mutator arguments.
+     *       </li>
      *     </ol>
      *   </li>
      *   <li>
      *     {@link agave.InstanceCreator#createHandlerInstance
-     *      Instantiate a handler}
+     *      Instantiates a handler}.
      *   </li>
-     *   <li>Bind the request to the handler if necessary</li>
-     *   <li>Bind the response to the handler if necessary</li>
      *   <li>
-     *     Invoke the handler method with the instantiated form as the only
-     *     argument
+     *     Populates a new {@link HandlerContext}, or look up a previously created
+     *     one if this handler method participates in a workflow.
+     *   </li>
+     *   <li>
+     *     Invokes the handler method with the populated {@link HandlerContext} and the 
+     *     form instance (if applicable).
      *   </li>
      * </ol>
      * 
@@ -447,23 +503,46 @@ public class AgaveFilter implements Filter {
         }
     }
 
+    /**
+     * Sets the configuration object for this filter.
+     * 
+     * @param config the configuration object
+     */
     protected void setConfig(FilterConfig config) {
         this.config = config;
     }
 
+    /**
+     * Gets the configuration object that was supplied to this filter.
+     * 
+     * @return the configuration object
+     */
     protected FilterConfig getConfig() {
         return config;
     }
 
+    /**
+     * Sets the {@link HandlerRegistry} that this filter will use for mapping requests to handlers.
+     * 
+     * @param handlerRegistry the registry
+     */
     protected void setHandlerRegistry(HandlerRegistry handlerRegistry) {
         this.handlerRegistry = handlerRegistry;
     }
 
+    /**
+     * Gets the {@link HandlerRegistry} that houses the generated {@link HandlerDescriptor}s.
+     * @return the {@link HandlerRegistry}
+     */
     protected HandlerRegistry getHandlerRegistry() {
         return handlerRegistry;
     }
 
-    public InstanceCreator getInstanceFactory() {
+    /**
+     * Gets the {@link InstanceCreator} that is used to create form and handler instances.
+     * @return the hanler instance
+     */
+    public InstanceCreator getInstanceCreator() {
         return instanceFactory;
     }
     

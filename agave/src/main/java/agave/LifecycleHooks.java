@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -35,6 +35,26 @@ import javax.servlet.ServletException;
 import agave.internal.HandlerDescriptor;
 
 /**
+ * Hooks into Agave's lifecycle.  The default implementation of this is 
+ * {@link DefaultLifecycleHooks}, but you can override it by specifying an
+ * initialization param to the {@link AgaveFilter}.  An example of this is:
+ * 
+ * <pre>&lt;web-app&gt;
+ * ...
+ * &lt;filter&gt;
+ *   &lt;filter-name>AgaveFilter&lt;/filter-name&gt;
+ *   &lt;filter-class>agave.AgaveFilter&lt;/filter-class&gt;
+ *   &lt;init-param&gt;
+ *     &lt;param-name&gt;lifecycleHooks&lt;/param-name&gt;
+ *     &lt;param-value&gt;com.domain.package.LifecycleHooks&lt;/param-value&gt;
+ *   &lt;/init-param&gt;
+ * &lt;/filter&gt;
+ * ...
+ * &lt;/web-app&gt;</pre>
+ * 
+ * Note that only a single value is supported, so there is no way to have multiple {@code InstanceCreator}s, unless
+ * the value named by the parameter fronts multiple others.  This is intentional, and was designed to be this way so
+ * that the conceptual overhead of using Agave is shallow.
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */

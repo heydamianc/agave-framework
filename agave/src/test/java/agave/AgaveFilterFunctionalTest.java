@@ -25,7 +25,7 @@
  */
 package agave;
 
-import agave.internal.ReflectionInstanceFactory;
+import agave.internal.ReflectionInstanceCreator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -319,7 +319,7 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         AgaveFilter filter = new AgaveFilter();
         emulateServletContainer(new HashMap<String, String[]>());
         filter.init(filterConfig);
-        Assert.assertTrue(filter.getInstanceFactory() instanceof ReflectionInstanceFactory);
+        Assert.assertTrue(filter.getInstanceCreator() instanceof ReflectionInstanceCreator);
     }
 
 }
