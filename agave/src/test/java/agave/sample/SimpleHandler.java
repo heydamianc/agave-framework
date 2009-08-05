@@ -32,16 +32,27 @@ import javax.servlet.ServletException;
 
 import agave.HandlesRequestsTo;
 
-public class MultipleHandler {
-    
+/**
+ * A simple example of a handler class that fields requests to a single URL.  This class is 
+ * instantiated whenever the AgaveFilter determines that it will be fielding a request, so 
+ * multiple requests will create multiple handler instances.  It does nothing useful, and is only 
+ * used to illustrate the way that handler methods are invoked whenever their designated URL 
+ * is matched.
+ */
+public class SimpleHandler {
+
+    /**
+     * Handles requests to the URL http://localhost:8080/webapp/test1. Note that it takes an optional
+     * form as an argument, but never uses it.
+     *
+     * @param context the context that the handler runs under; contains the request, response, 
+     *                servlet context, and session objects
+     * @param loginForm an unused form object
+     */        
     @HandlesRequestsTo("/test1")
     public void test1(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
     	context.getRequest().setAttribute("x", "x");
     	context.getResponse().setStatus(400);
     }
-    
-    @HandlesRequestsTo("/test2")
-    public void test2(LoginForm loginForm) throws ServletException, IOException {
-    }
-    
+   
 }

@@ -32,7 +32,7 @@ import org.junit.Test;
 import agave.internal.HandlerDescriptor;
 import agave.sample.AliasedForm;
 import agave.sample.LoginForm;
-import agave.sample.MultipleHandler;
+import agave.sample.SimpleHandler;
 import agave.sample.SampleHandler;
 
 
@@ -56,7 +56,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
     }
     
     @Test
-    public void testScanClassesDirForMultipleHandler() throws Exception {
+    public void testScanClassesDirForSimpleHandler() throws Exception {
         AgaveFilter filter = scanRoot();
         
         context.checking(new Expectations() {{
@@ -64,7 +64,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         }});
         
         HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
-        Assert.assertEquals(MultipleHandler.class, desc.getHandlerClass());
+        Assert.assertEquals(SimpleHandler.class, desc.getHandlerClass());
     }
 
     @Test
