@@ -8,6 +8,7 @@
     <module>game-of-life</module>
     <module>pastebin</module>
     <module>img-stego</module>
+    <module>xml-tools</module>
   </modules>
   <modelVersion>4.0.0</modelVersion>
   <groupId>agave</groupId>
