@@ -40,12 +40,18 @@ public class CallChainImpl implements CallChain {
     private String mutatorName;
     private String key;
     private Integer index;
-    
-    @SuppressWarnings("unchecked")
-	public CallChainImpl(String parameterName, boolean unique) {
-        this.parameterName = parameterName;
-        LinkedList<String> callChain = new LinkedList(Arrays.asList(parameterName.split("\\.")));
 
+	/**
+	 * 
+	 * @param parameterName
+	 * @param unique
+	 *
+	 * @see http://www.w3.org/TR/html4/types.html#type-id
+	 * @see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.8
+	 */
+	public CallChainImpl(String parameterName, boolean unique) {
+        this.parameterName = parameterName;		
+        LinkedList<String> callChain = new LinkedList<String>(Arrays.asList(parameterName.split("[-.:]")));
         String mutator = null;
         
         if (callChain != null && !callChain.isEmpty()) {

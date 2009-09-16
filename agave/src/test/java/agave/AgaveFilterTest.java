@@ -34,6 +34,7 @@ import agave.sample.AliasedForm;
 import agave.sample.LoginForm;
 import agave.sample.SimpleHandler;
 import agave.sample.SampleHandler;
+import java.io.File;
 
 
 /**
@@ -96,5 +97,16 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
         Assert.assertEquals(AliasedForm.class, desc.getFormClass());
     }
+
+	@Test
+	public void testOverrideClassesDirectory() throws Exception {
+		File targetDir = new File(getClass().getResource("/").toURI());
+		AgaveFilter filter = scanRoot();
+		Assert.assertFalse(targetDir.getAbsolutePath().equals(filter.getClassesDirectory().getAbsolutePath()));
+
+		System.setProperty("classesDirectory", targetDir.getAbsolutePath());
+		filter = scanRoot();
+		Assert.assertEquals(targetDir.getAbsolutePath(), filter.getClassesDirectory().getAbsolutePath());
+	}
     
 }
