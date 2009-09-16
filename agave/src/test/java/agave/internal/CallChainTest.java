@@ -45,7 +45,12 @@ public class CallChainTest {
 
 	@Test
 	public void testMutatorWithAccessors() throws Exception {
-		CallChain callChain = new CallChainImpl("drum.kick", true);
+		assertDrumKick(new CallChainImpl("drum.kick", true));
+		assertDrumKick(new CallChainImpl("drum-kick", true));
+		assertDrumKick(new CallChainImpl("drum:kick", true));
+	}
+
+	private void assertDrumKick(CallChain callChain) {
         Assert.assertEquals("setKick", callChain.getMutatorName());
 		Assert.assertEquals(1, callChain.getAccessorNames().size());
 		Assert.assertEquals("getDrum", callChain.getAccessorNames().get(0));

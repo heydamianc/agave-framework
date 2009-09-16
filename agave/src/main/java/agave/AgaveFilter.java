@@ -76,15 +76,24 @@ import agave.internal.URIParameterFormPopulator;
  * {@link #doFilter(ServletRequest, ServletResponse, FilterChain)} method for a 
  * description of the primary function of this filter.
  * </p>
- * 
+ *
  * <p>
- * This filter supports three {@code init-param}s:
+ * This filter supports two {@code init-param}s:
  * 
  * <ul>
- *   <li id="classesDirectory">{@code classesDirectory} - A directory created by calling {@code new File()} on the value of this parameter.
- *   The default value that is used when this parameter is not present is {@code /WEB-INF/classes}.</li>
  *   <li id="lifecycleHooks">{@code lifecycleHooks} - See {@link LifecycleHooks} for more information.</li>
  *   <li id="instanceCreator">{@code instanceCreator} - See {@link InstanceCreator} for more information.</li>
+ * </ul>
+ * </p>
+ *
+ *
+ * <p>
+ * This filter supports a single system property (supplied via a -Dproperty):
+ * <ul>
+ *	 <li id="classesDirectory">{@code classesDirectory} - The directory to use when scanning for handler
+ *		classes.  Typically this is {@code /WEB-INF/classes} when running within a Servlet container,
+ *		but it is desirable to override this in testing situations, so that classes can be automatically
+ *		loaded and scanned without having to redeploy the whole Web application.</li>
  * </ul>
  * </p>
  * 
@@ -144,7 +153,7 @@ public class AgaveFilter implements Filter {
      * 
      * @throws ClassNotFoundException if the class named by the {@code instanceCreator} initialization parameter can not be found
      * @throws InstantiationException if the class named by the {@code instanceCreator} initialization parameter can not be instantiated
-     * @throws IllegalAccessException if this filter is denied access to the class named by the {@code classesDirectory} initialization parameter value
+     * @throws IllegalAccessException if this filter is denied access to the class named by the {@code classesDir} initialization parameter value
      */
     protected InstanceCreator provideInstanceCreator(FilterConfig config) 
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -163,31 +172,35 @@ public class AgaveFilter implements Filter {
     }
     
     /**
-     * An alternate way of providing a class directory to scan for handlers is to override this method.  This is primarily here for testing 
-     * situations (especially when running mvn jetty:run).  The default behavior is to read the 
-     * <a href="#classesDirectory">classesDirectory</a> {@code init-param} and use the value supplied to create a 
-     * directory {@code File} that will be scanned for handlers.  If this parameter is absent, the default value
-     * will be {@code /WEB-INF/classes}.
+     * An alternate way of providing a class directory to scan for handlers is to override this method.
+	 * This is primarily here for testing situations (especially when running mvn jetty:run).  The default
+	 * behavior is to read the <a href="#classesDirectory">classesDirectory</a> system property 
+	 * (-DclassesDirectory=xxx) and use the value supplied to create a directory {@code File} that will
+	 * be scanned for handlers.  If this system property is absent, the default value will be
+	 * {@code /WEB-INF/classes}.
      * 
      * @param config the configuration delivered to this filter
      * @return a {@code File} representing the named class directory
      * 
-     * @throws ClassNotFoundException if the class named by the {@code classesDirectory} initialization parameter can not be found
-     * @throws InstantiationException if the class named by the {@code classesDirectory} initialization parameter can not be instantiated
-     * @throws IllegalAccessException if this filter is denied access to the class named by the {@code instanceCreator} initialization parameter value
+     * @throws ClassNotFoundException if the class named by the {@code classesDir} initialization
+	 *							      parameter can not be found
+     * @throws InstantiationException if the class named by the {@code classesDir} initialization
+	 *                                parameter can not be instantiated
+     * @throws IllegalAccessException if this filter is denied access to the class named by the
+	 *                                {@code instanceCreator} initialization parameter value
      */
     protected File provideClassesDirectory(FilterConfig config)
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        File classesDirectory = null;
-        
-        if (config.getInitParameter("classesDirectory") != null) {
-            classesDirectory = new File(config.getInitParameter("classesDirectory"));
+        File classesDir = null;
+
+		if (System.getProperty("classesDirectory") != null) {
+            classesDir = new File(System.getProperty("classesDirectory"));
             classesDirectoryProvided = true;
         } else {
-            classesDirectory = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
+            classesDir = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
         }
         
-        return classesDirectory;
+        return classesDir;
     }
     
     /**
@@ -471,7 +484,11 @@ public class AgaveFilter implements Filter {
      * {@link agave.internal.HandlerRegistry HandlerRegistry} as handlers are
      * found.
      * 
-     * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
+	 * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws ServletException
      */
     protected void scanClassesDirForHandlers(File root) 
     throws FileNotFoundException, IOException, ClassNotFoundException, ServletException {
@@ -545,5 +562,13 @@ public class AgaveFilter implements Filter {
     public InstanceCreator getInstanceCreator() {
         return instanceFactory;
     }
+
+	/**
+	 * Gets the directory that will be scanned for any handler classes.
+	 * @return
+	 */
+	public File getClassesDirectory() {
+		return classesDirectory;
+	}
     
 }
