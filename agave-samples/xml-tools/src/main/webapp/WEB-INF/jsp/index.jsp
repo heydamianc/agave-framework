@@ -9,6 +9,16 @@
       @import "${pageContext.request.contextPath}/css/structure.css";
       @import "${pageContext.request.contextPath}/css/theme.css";
     </style>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-10687198-1");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
   </head>
   <body>
     <h1>XML Tools</h1>
