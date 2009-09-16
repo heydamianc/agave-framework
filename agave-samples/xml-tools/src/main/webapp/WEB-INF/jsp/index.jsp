@@ -45,7 +45,7 @@
             <td>Insert Newlines:</td>
             <td>
               <select id="newlines" name="newlines">
-                <option value="true" seleected="selected">Yes</option>
+                <option value="true" selected="selected">Yes</option>
                 <option value="false">No</option>
               </select>
             </td>
@@ -58,6 +58,10 @@
     </form>
     <div id="footer">
       <p>&copy; 2009 <a href="http://damiancarrillo.org">Damian Carrillo</a>.  All rights reserved.</p>
+      <p><a href="http://code.google.com/p/agave-web-framework/"><img
+              src="http://code.google.com/p/agave-web-framework/logo?logo_id=1253032226"
+              alt="The Web on Agave"
+              title="The Web on Agave" /></a></p>
     </div>
   </body>
 </html>

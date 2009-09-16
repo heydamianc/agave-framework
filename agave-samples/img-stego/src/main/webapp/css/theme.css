@@ -1,7 +1,7 @@
 /* Theme */
 
 body {
-    font-family: Futura, sans-serif; 
+    font-family: "Trebuchet MS", Futura, sans-serif;
 }
 
 fieldset {
@@ -15,6 +15,7 @@ legend, th {
     border: 1px solid #808080;
 }
 
-source {
-  border-top: 1px solid #c0c0c0;
+#source {
+  padding-top: 3px;
+  border-top: 1px solid #ccc;
 }

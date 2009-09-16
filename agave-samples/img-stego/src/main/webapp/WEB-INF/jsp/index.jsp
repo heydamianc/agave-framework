@@ -48,7 +48,9 @@
             </tr>
           </tbody>
         </table>
-        <input class="submissionButton" type="submit" value="Obscure the Payload!" />
+        <div>
+          <input class="submissionButton" type="submit" value="Obscure the Payload!" />
+        </div>
       </form>
     </fieldset>
     <fieldset>
@@ -65,17 +67,23 @@
             </tr>
           </tbody>
         </table>
-        <input class="submissionButton" type="submit" value="Extract the Payload!" />
+        <div>
+          <input class="submissionButton" type="submit" value="Extract the Payload!" />
+        </div>
       </form>
     </fieldset>
-    <div>
+    <div id="source">
       <strong>View the source:</strong>
       <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/img-stego/src/main/java/agave/samples/StegoHandler.java">Handler</a> |
       <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/img-stego/src/main/webapp/WEB-INF/jsp/index.jsp">JSP</a> | 
       <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/img-stego/src/main/java/agave/samples/StegoServiceImpl.java">Stego Service</a>
     </div>
     <div id="footer">
-      Copyright &copy; 2007-2008 Damian Carrillo. All rights reserved.
+      <p>&copy; 2007-2009 <a href="http://damiancarrillo.org">Damian Carrillo</a>.  All rights reserved.</p>
+      <p><a href="http://code.google.com/p/agave-web-framework/"><img
+              src="http://code.google.com/p/agave-web-framework/logo?logo_id=1253032226"
+              alt="The Web on Agave"
+              title="The Web on Agave" /></a></p>
     </div>
   </body>
 </html>

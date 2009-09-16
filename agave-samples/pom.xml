@@ -15,7 +15,7 @@
   <artifactId>agave-samples</artifactId>
   <packaging>pom</packaging>
   <name>Agave Sample Applications</name>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <description>
     Maven archetype that provides the groundwork for building a webapp on top of Agave.
   </description>
