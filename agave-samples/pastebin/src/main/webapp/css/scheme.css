@@ -1,6 +1,7 @@
-body {font-family: Verdana, sans-serif; background: #C1CDCD;}
+body {font-family: "Trebuchet MS", Verdana, sans-serif;}
 h1 h2 h3 h4 h5 h6 {font-family: 'Avant Garde', sans-serif;}
-#contentwrap {background: #f5f5f5;}
-#top {background: #C1CDCD; border-bottom: 2px solid #000; color: #000;}
-#right {background: #bebebe; border-left: #000 2px solid;}
-#foot {color: #000; border-top: 2px solid #000;}
+#contentwrap {}
+#top {border-bottom: 2px solid #000; color: #000;}
+#right {background: #eee; border-left: #000 2px solid;}
+#foot {color: #000; border-top: 2px solid #000; text-align: center;}
+#foot img {border: none;}

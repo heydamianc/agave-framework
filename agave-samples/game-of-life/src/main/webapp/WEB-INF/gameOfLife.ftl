@@ -3,7 +3,7 @@
   <head>
     <title>Conway's Game of Life</title>
     <style type="text/css">
-      body {font: 0.8em; font-family: Georgia, serif;}
+      body {font: 0.8em; font-family: "Trebuchet MS", "Verdana", "Geneva", sans-serif;}
       em {color: #808080;}
       div#content {float: left; display: block; width: 50%;}
       div#container {float: right; text-align: center;}
@@ -12,7 +12,9 @@
       table#board img {border: none;}
       table#board tbody tr td.highlight {background: #ff0000;}
       table#board tbody tr td.alive {background: black}
-      div#footer {clear:both; border-top: 1px solid #c0c0c0; padding: 5px;}
+      div#source {clear:both; border-top: 1px solid #c0c0c0; padding: 5px;}
+      div#footer {text-align: center; border-top: 1px solid #ccc; font-size: 90%;}
+      div#footer img {border: none;}
     </style>
     <script type="text/javascript" src="${contextPath}/js/prototype-1.6.0.2.js"></script>
     <script type="text/javascript">
@@ -111,11 +113,18 @@
       <a href="${contextPath}/advance">Advance</a> | 
       Tick: <span id="tick">${board.tick.count}</span>
     </div>
-    <div id="footer">
+    <div id="source">
       <strong>View the source</strong>: 
         <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/web/GameOfLifeHandler.java">Handler</a> | 
         <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/webapp/WEB-INF/gameOfLife.ftl">Freemarker Template</a> | 
         <a href="http://code.google.com/p/agave-web-framework/source/browse/trunk/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/simulation/">Simulation</a>
+    </div>
+    <div id="footer">
+      <p>&copy; 2009 <a href="http://damiancarrillo.org">Damian Carrillo</a>.  All rights reserved.</p>
+      <p><a href="http://code.google.com/p/agave-web-framework/"><img
+              src="http://code.google.com/p/agave-web-framework/logo?logo_id=1253032226"
+              alt="The Web on Agave"
+              title="The Web on Agave" /></a></p>
     </div>
   </body>
 </html>
