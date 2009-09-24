@@ -35,51 +35,61 @@ import javax.servlet.ServletException;
 import agave.internal.HandlerDescriptor;
 
 /**
- * Stub implementations of all the lifecycle hooks.
+ * Stub implementations of all the lifecycle hooks.  All methods return false, indicating that
+ * execution of the {@link AgaveFilter} should continue.
  * 
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
 public class DefaultLifecycleHooks implements LifecycleHooks {
 
-	public void beforeHandlerIsDiscovered(File potentalHandlerClassFile)
+	public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile)
 			throws ServletException, IOException {
+		return false;
 	}
 
-	public void afterHandlerIsDiscovered(HandlerDescriptor descriptor,
+	public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
 			ServletContext servletContext) throws ServletException, IOException {
+		return false;
 	}
 
-	public void beforeFilteringRequest(HandlerDescriptor descriptor,
+	public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
 			HandlerContext context) throws ServletException, IOException {
+		return false;
 	}
 
-	public void beforeInitializingForm(HandlerDescriptor descriptor,
+	public boolean beforeInitializingForm(HandlerDescriptor descriptor,
 			Object formInstance, HandlerContext context)
 			throws ServletException, IOException {
+		return false;
 	}
 
-	public void afterInitializingForm(HandlerDescriptor descriptor,
+	public boolean afterInitializingForm(HandlerDescriptor descriptor,
 			Object formInstance, HandlerContext context)
 			throws ServletException, IOException {
+		return false;
 	}
 
-	public void beforeHandlingRequest(HandlerDescriptor descriptor,
+	public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, HandlerContext context)
 			throws ServletException, IOException {
+		return false;
 	}
 
-	public void afterHandlingRequest(HandlerDescriptor descriptor,
+	public boolean afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, HandlerContext context)
 			throws ServletException, IOException {
+		return false;
 	}
 
-	public void afterHandlingRequest(HandlerDescriptor descriptor,
+	public boolean afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, Destination destination,
 			HandlerContext context) throws ServletException, IOException {
+		return false;
 	}
 
-	public void afterHandlingRequest(HandlerDescriptor descriptor,
+	public boolean afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, URI destination, HandlerContext context)
 			throws ServletException, IOException {
+		return false;
 	}
 }
