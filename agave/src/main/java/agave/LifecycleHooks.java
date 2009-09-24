@@ -35,9 +35,16 @@ import javax.servlet.ServletException;
 import agave.internal.HandlerDescriptor;
 
 /**
- * Hooks into Agave's lifecycle.  The default implementation of this is 
- * {@link DefaultLifecycleHooks}, but you can override it by specifying an
- * initialization param to the {@link AgaveFilter}.  An example of this is:
+ * <p>
+ * Hooks into Agave's lifecycle.  Each method is executed by the {@link AgaveFilter} prior to
+ * doing some task.  If the return value of the hook is true, then execution of the
+ * {@link AgaveFilter} is halted and execution returns.
+ * </p>
+ *
+ * <p>
+ * The default implementation of this is {@link DefaultLifecycleHooks}, but you can override it
+ * by specifying an initialization param to the {@link AgaveFilter}.  An example of this is:
+ * </p>
  * 
  * <pre>&lt;web-app&gt;
  * ...
@@ -51,45 +58,153 @@ import agave.internal.HandlerDescriptor;
  * &lt;/filter&gt;
  * ...
  * &lt;/web-app&gt;</pre>
- * 
- * Note that only a single value is supported, so there is no way to have multiple {@code InstanceCreator}s, unless
- * the value named by the parameter fronts multiple others.  This is intentional, and was designed to be this way so
- * that the conceptual overhead of using Agave is shallow.
+ *
+ * <p>
+ * Note that only a single init-param value is supported, so there is no way to have multiple
+ * {@code InstanceCreator}s, unless the value named by the parameter fronts multiple others.
+ * This is intentional, and was designed to be this way so that the conceptual overhead of using
+ * Agave is shallow.
+ * </p>
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface LifecycleHooks {
 
-	public void beforeHandlerIsDiscovered(File potentalHandlerClassFile)
+	/**
+	 * Executed by the {@link AgaveFilter} prior to each potential handler is discovered.
+	 *
+	 * @param potentalHandlerClassFile The actual {@code File} object that a potential handler
+	 *		  class is stored in.  It is potentially a handler class because at this point, it
+	 *		  has not been inspected and could just be a regular file (or even a random resource).
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile)
 			throws ServletException, IOException;
 
-	public void afterHandlerIsDiscovered(HandlerDescriptor descriptor,
+	/**
+	 * Executed by {@link AgaveFilter} after a handler has been discovered.
+	 *
+	 * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param servletContext the {@code ServletContext}
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
 			ServletContext servletContext) throws ServletException, IOException;
 
-	public void beforeFilteringRequest(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} before actually performing the work of filtering the
+	 * request.
+	 *
+	 * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param context the handler context
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
 			HandlerContext context) throws ServletException, IOException;
 
-	public void beforeInitializingForm(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} before reading request parameters and URI parameters
+	 * and initializing form values.
+	 *
+	 * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param formInstance the instance of the form object
+	 * @param context the handler context
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean beforeInitializingForm(HandlerDescriptor descriptor,
 			Object formInstance, HandlerContext context)
 			throws ServletException, IOException;
 
-	public void afterInitializingForm(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} after initializing the form with request and URI
+	 * parameters
+	 *
+	 * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param formInstance the instance of the form object
+	 * @param context the handler context
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean afterInitializingForm(HandlerDescriptor descriptor,
 			Object formInstance, HandlerContext context)
 			throws ServletException, IOException;
 
-	public void beforeHandlingRequest(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} prior to routing execution to the handler method.
+	 *
+     * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param handlerInstance The instance of the handler class
+	 * @param context the handler context
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, HandlerContext context)
 			throws ServletException, IOException;
 
-	public void afterHandlingRequest(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} after execution has been routed through the handler
+	 * method, and when a destination was not requested.
+	 *
+     * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param handlerInstance The instance of the handler class
+	 * @param context the handler context
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, HandlerContext context)
 			throws ServletException, IOException;
 
-	public void afterHandlingRequest(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} after execution has been routed through the handler
+	 * method, and when a destination was requested.
+	 *
+     * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param handlerInstance The instance of the handler class
+	 * @param context the handler context
+	 * @param destination The destination that the handler method requested
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, Destination destination,
 			HandlerContext context) throws ServletException, IOException;
 
-	public void afterHandlingRequest(HandlerDescriptor descriptor,
+	/**
+	 * Executed by the {@link AgaveFilter} after execution has been routed through the handler
+	 * method, and when a resultant URL was requested.
+	 *
+     * @param descriptor the generated {@link HandlerDescriptor}
+	 * @param handlerInstance The instance of the handler class
+	 * @param destination the destination (redirect or forward) to end up at
+	 * @param context the handler context
+	 * @return a truth value that indicates whether execution should halt.  See the class-level
+	 *         description for more information.
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public boolean afterHandlingRequest(HandlerDescriptor descriptor,
 			Object handlerInstance, URI destination, HandlerContext context)
 			throws ServletException, IOException;
 
