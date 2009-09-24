@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg5169"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="agave-icon.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs5171">
+    <filter
+       inkscape:collect="always"
+       id="filter4499"
+       x="-0.49994049"
+       width="1.999881"
+       y="-1.4605996"
+       height="3.9211993">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="43.482"
+         id="feGaussianBlur4501" />
+    </filter>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective5177" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#ffffff"
+     borderopacity="0.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="0"
+     inkscape:zoom="1"
+     inkscape:cx="284.61189"
+     inkscape:cy="840"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="977"
+     inkscape:window-x="0"
+     inkscape:window-y="25" />
+  <metadata
+     id="metadata5174">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       style="display:inline;"
+       id="g5161"
+       transform="matrix(0.711794,0,0,0.711794,97.367954,22.34843)">
+      <path
+         transform="matrix(0.7304945,0,0,0.3951621,71.108783,285.86386)"
+         d="M 349.51279,463.44324 A 102.53049,32.324883 0 1 1 144.45181,463.44324 A 102.53049,32.324883 0 1 1 349.51279,463.44324 z"
+         sodipodi:ry="32.324883"
+         sodipodi:rx="102.53049"
+         sodipodi:cy="463.44324"
+         sodipodi:cx="246.9823"
+         id="path3501"
+         style="opacity:1;fill:#000902;fill-opacity:1;stroke:#000000;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline;filter:url(#filter4499)"
+         sodipodi:type="arc" />
+      <g
+         id="g2398"
+         transform="translate(-1.4049008,4.2146993)">
+        <path
+           style="fill:#30c397;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 331.74969,381.57933 C 331.74969,381.57933 348.89255,368.72219 363.89255,340.86505 C 378.89255,313.00791 378.89255,298.00791 378.89255,298.00791 C 378.89255,298.00791 376.74289,379.67275 349.60683,418.72219 C 320.32111,460.86505 299.19238,463.69041 298.89255,463.00791 C 293.65916,451.09505 280.32112,428.72219 280.32112,428.72219 L 331.74969,381.57933 z"
+           id="path3483"
+           sodipodi:nodetypes="cscsscc" />
+        <path
+           style="fill:#30c39e;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 188.06583,380.97517 C 188.06583,380.97517 170.33269,367.05171 155.95611,337.90283 C 141.57949,308.75393 142.6091,293.42993 142.6091,293.42993 C 142.6091,293.42993 139.33802,376.95767 166.12508,418.09889 C 195.03416,462.49924 217.78417,466.35757 218.15661,465.67412 C 224.6573,453.74467 240.67689,431.50211 240.67689,431.50211 L 188.06583,380.97517 z"
+           id="path3485"
+           sodipodi:nodetypes="cscsscc" />
+        <path
+           style="fill:#38cb47;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 275.77666,380.17205 C 275.77666,380.17205 310.77665,370.88633 334.34808,318.0292 C 358.06983,264.83498 352.91951,233.0292 352.91951,233.0292 C 352.91951,233.0292 370.79406,388.72606 312.20522,447.31491 C 263.63379,495.88634 252.20522,458.0292 252.20522,458.0292 L 275.77666,380.17205 z"
+           id="path3487"
+           sodipodi:nodetypes="cscscc" />
+        <path
+           style="fill:#38cb50;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 255.11155,374.5381 C 255.11155,374.5381 219.22856,352.29023 213.73457,289.48013 C 208.20555,226.26943 226.77655,195.50027 226.77655,195.50027 C 226.77655,195.50027 144.16962,348.78898 186.99026,430.20599 C 222.48951,497.70246 250.58905,463.00449 250.58905,463.00449 L 255.11155,374.5381 z"
+           id="path3489"
+           sodipodi:nodetypes="cscscc" />
+        <path
+           style="fill:#98eb4d;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="M 223.15467,467.0403 C 220.25106,463.43659 176.77722,429.01725 250.49241,284.37011 C 324.20759,139.72298 309.4402,114.59978 309.4402,114.59978 C 309.4402,114.59978 336.82875,285.9644 317.80534,373.85864 C 307.51638,421.39694 297.25683,448.58595 273.09,466.15918 C 242.97795,488.05556 225.76292,470.27739 223.15467,467.0403 z"
+           id="path3491"
+           sodipodi:nodetypes="cscssc" />
+      </g>
+    </g>
+  </g>
+</svg>
