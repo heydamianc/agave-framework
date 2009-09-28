@@ -39,52 +39,60 @@ public class SampleLifecycleHooks extends DefaultLifecycleHooks {
     // from init
     
     @Override
-    public void beforeHandlerIsDiscovered(File potentalHandlerClassFile) {
-        // do nothing
+    public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile) {
+        return false;
     }
     
     @Override
-    public void afterHandlerIsDiscovered(HandlerDescriptor descriptor, ServletContext servletContext) {
+    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor, ServletContext servletContext) {
         servletContext.setAttribute("afterHandlerIsDiscovered", Boolean.TRUE);
+        return false;
     }
     
     // from doFilter
     
     @Override
-    public void beforeFilteringRequest(HandlerDescriptor descriptor, HandlerContext context) {
+    public boolean beforeFilteringRequest(HandlerDescriptor descriptor, HandlerContext context) {
         context.getServletContext().setAttribute("beforeFilteringRequest", Boolean.TRUE);
+        return false;
     }
 
     @Override
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
         context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
+        return false;
     }
 
     @Override
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, 
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance,
         Destination destination, HandlerContext context) {
         context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
+        return false;
     }
 
     @Override
-    public void afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, 
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance,
         URI destination, HandlerContext context) {
         context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
+        return false;
     }
 
     @Override
-    public void afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
+    public boolean afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
         context.getServletContext().setAttribute("afterInitializingForm", Boolean.TRUE);
+        return false;
     }
 
     @Override
-    public void beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
+    public boolean beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, HandlerContext context) {
         context.getServletContext().setAttribute("beforeHandlingRequest", Boolean.TRUE);
+        return false;
     }
 
     @Override
-    public void beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
+    public boolean beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, HandlerContext context) {
         context.getServletContext().setAttribute("beforeInitializingForm", Boolean.TRUE);
+        return false;
     }
 
 }
