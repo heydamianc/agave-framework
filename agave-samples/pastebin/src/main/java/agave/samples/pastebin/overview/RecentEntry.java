@@ -66,6 +66,10 @@ public class RecentEntry implements Serializable, Cloneable {
         this.owner = owner;
     }
 
+    public boolean isRelatedTo(Snippet snippet) {
+        return uniqueId.equals(snippet.getUniqueId());
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         RecentEntry clone = new RecentEntry();

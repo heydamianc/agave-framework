@@ -35,9 +35,11 @@ import agave.HandlesRequestsTo;
 import agave.exception.AgaveException;
 import agave.samples.pastebin.overview.Overview;
 import agave.samples.pastebin.overview.OverviewService;
+import agave.samples.pastebin.overview.OverviewServiceFactory;
 import agave.samples.pastebin.overview.RecentEntry;
 import agave.samples.pastebin.snippet.Snippet;
 import agave.samples.pastebin.snippet.SnippetRepository;
+import agave.samples.pastebin.snippet.SnippetRepositoryFactory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -64,6 +66,7 @@ public class PastebinHandler extends AbstractHandler {
     @HandlesRequestsTo("/create")
     public Destination create(HandlerContext handlerContext, PastebinForm form)
         throws AgaveException, IOException, TemplateException, ClassNotFoundException {
+        
         SnippetRepository repo =
             SnippetRepositoryFactory.createFilesystemRepository(handlerContext.getServletContext());
 

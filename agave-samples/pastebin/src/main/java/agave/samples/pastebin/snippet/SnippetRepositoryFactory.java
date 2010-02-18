@@ -23,35 +23,24 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.web;
+package agave.samples.pastebin.snippet;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 import javax.servlet.ServletContext;
 
-import agave.samples.pastebin.overview.FilesystemOverviewService;
-import agave.samples.pastebin.overview.Overview;
-import agave.samples.pastebin.overview.OverviewService;
+import agave.samples.pastebin.overview.OverviewServiceFactory;
+import agave.samples.pastebin.snippet.FilesystemSnippetRepository;
+import agave.samples.pastebin.snippet.SnippetRepository;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class OverviewServiceFactory {
+public class SnippetRepositoryFactory {
 
-    public static final OverviewService createOverviewService(ServletContext servletContext) 
-    throws IOException {
-        File webInfDir = new File(servletContext.getRealPath("/WEB-INF"));
-        File overviewFile = new File(webInfDir, "overview");
-        if (!overviewFile.exists()) {
-            overviewFile.createNewFile();
-            Overview overview = new Overview();
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(overviewFile));
-            out.writeObject(overview);
-        }
-        return new FilesystemOverviewService(overviewFile);
+    public static final SnippetRepository createFilesystemRepository(ServletContext context) throws IOException {
+        return new FilesystemSnippetRepository(new File(context.getRealPath("/WEB-INF/repository")));
     }
     
 }

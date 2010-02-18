@@ -26,6 +26,7 @@
 package agave.samples.pastebin.snippet;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -35,6 +36,10 @@ public interface SnippetRepository {
     public String determineUniqueId(Timeframe expiration);
 
     public void storeSnippet(Snippet snippet) throws IOException;
+
+    public void discardSnippets(Set<Snippet> snippets);
+
+    public Set<Snippet> retrieveAllSnippets() throws IOException, ClassNotFoundException;
     
     public Snippet retrieveSnippet(String snippetId) throws IOException, ClassNotFoundException;
     

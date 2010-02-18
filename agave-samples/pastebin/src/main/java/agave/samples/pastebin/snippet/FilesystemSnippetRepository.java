@@ -32,7 +32,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
+import agave.samples.pastebin.overview.OverviewService;
 import org.apache.commons.lang.RandomStringUtils;
 
 /**
@@ -96,13 +99,40 @@ public class FilesystemSnippetRepository implements SnippetRepository {
     }
     
     private long getCurrentRevision(File snippetDir) {
-        Long currentRevision = 0l;
+        long currentRevision = 0l;
         for (String entry : snippetDir.list()) {
             if (Long.parseLong(entry) > currentRevision) {
                 currentRevision = Long.parseLong(entry);
             }
         }
         return currentRevision;
+    }
+
+    public void discardSnippets(Set<Snippet> snippets) {
+        for (Snippet snippet : snippets) {
+            File snippetDir = new File(repositoryDir, snippet.getUniqueId());
+            if (snippetDir.exists()) {
+                deleteRecursively(snippetDir);
+            }
+        }
+    }
+
+    private void deleteRecursively(File node) {
+        if (node.isFile()) {
+            node.delete();
+        } else if (node.isDirectory()) {
+            for (File child : node.listFiles()) {
+                deleteRecursively(child);
+            }
+        }
+    }
+
+    public Set<Snippet> retrieveAllSnippets() throws IOException, ClassNotFoundException {
+        Set<Snippet> snippets = new HashSet<Snippet>();
+        for (String snippetId : repositoryDir.list()) {
+            snippets.add(retrieveSnippet(snippetId));
+        }
+        return snippets;
     }
 
     public Snippet retrieveSnippet(String snippetId) throws IOException, ClassNotFoundException {
