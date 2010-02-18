@@ -75,10 +75,6 @@
 						<#include "./overview.ftl">
 					</div>
 				</div>
-				<div id="foot">
-					Copyright &copy; 2008 Damian Carrillo - 
-					<a href="http://agave-web-framework.googlecode.com/">Agave Web Framework</a>
-				</div>
 			</div>
 		</div>
       <div id="foot">
