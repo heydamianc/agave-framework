@@ -26,12 +26,13 @@
 package agave.samples.pastebin.snippet;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class Snippet implements Serializable, Cloneable {
+public class Snippet implements Serializable, Cloneable, Comparable<Snippet> {
 
     private static final long serialVersionUID = 4L;
     
@@ -72,6 +73,28 @@ public class Snippet implements Serializable, Cloneable {
 
     public void setExpiration(Timeframe expiration) {
         this.expiration = expiration;
+    }
+
+    public boolean isExpired(Date referenceDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(created);
+        
+        switch (expiration) {
+            case Hour:
+                cal.add(Calendar.HOUR, 1);
+                break;
+            case Day:
+                cal.add(Calendar.DAY_OF_YEAR, 1);
+                break;
+            case Week:
+                cal.add(Calendar.WEEK_OF_YEAR, 1);
+                break;
+            case Month:
+                cal.add(Calendar.MONTH, 1);
+                break;
+        }
+
+        return cal.getTime().after(referenceDate);
     }
 
     public String getOwner() {
@@ -128,4 +151,24 @@ public class Snippet implements Serializable, Cloneable {
         return clone;
     }
 
+    public int compareTo(Snippet that) {
+        return uniqueId.compareTo(that.uniqueId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Snippet snippet = (Snippet) o;
+
+        if (uniqueId != null ? !uniqueId.equals(snippet.uniqueId) : snippet.uniqueId != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return uniqueId != null ? uniqueId.hashCode() : 0;
+    }
 }

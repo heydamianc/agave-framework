@@ -25,6 +25,8 @@
  */
 package agave.samples.pastebin.overview;
 
+import agave.samples.pastebin.snippet.Snippet;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 
@@ -43,6 +45,16 @@ public class Overview implements Serializable, Cloneable {
 
     public void setRecentEntries(LinkedList<RecentEntry> recentEntries) {
         this.recentEntries = recentEntries;
+    }
+
+    public boolean removeRelatedEntry(Snippet snippet) {
+        for (RecentEntry recentEntry : recentEntries) {
+            if (recentEntry.isRelatedTo(snippet)) {
+                recentEntries.remove(recentEntry);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
