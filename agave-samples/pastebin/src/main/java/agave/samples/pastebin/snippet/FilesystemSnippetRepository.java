@@ -25,6 +25,8 @@
  */
 package agave.samples.pastebin.snippet;
 
+import agave.samples.pastebin.repository.RetrievalException;
+import agave.samples.pastebin.repository.StorageException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,70 +37,70 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import agave.samples.pastebin.overview.OverviewService;
-import org.apache.commons.lang.RandomStringUtils;
-
 /**
+ * Provides repository support for snippets which is backed by the filesystem.
+ *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class FilesystemSnippetRepository implements SnippetRepository {
 
-    private static final int ID_LENGTH = 7;
-    private File repositoryDir;
+    public static final String SNIPPET_DIR_NAME = "snippets";
 
-    public FilesystemSnippetRepository(File repositoryDir) {
-        if (!repositoryDir.exists()) {
-            repositoryDir.mkdirs();
-        }
-        
-        if (!repositoryDir.canRead()) {
-            throw new IllegalArgumentException("Can not read from repository directory: "
-                    + repositoryDir.getPath());
-        }
-        if (!repositoryDir.canWrite()) {
-            throw new IllegalArgumentException("Can not write to repository directory: "
-                    + repositoryDir.getPath());
-        }
-        if (!repositoryDir.isDirectory()) {
-            throw new IllegalArgumentException("Repository directory, " + repositoryDir.getPath()
-                    + " is not an actual directory");
-        }
+    private static final int ID_LENGTH = 8;
+    private static final String[] domain = new String[] {
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", "-"
+    };
+    
+    private final File rootDir;
 
-        this.repositoryDir = repositoryDir;
+    public FilesystemSnippetRepository(final File repositoryDir) {
+        this.rootDir = new File(repositoryDir, SNIPPET_DIR_NAME);
+        rootDir.mkdirs();
     }
 
-    public String generateUniqueId(Timeframe expiration) {
-        String attempt = null;
-        synchronized (repositoryDir) {
-            do {
-                attempt = RandomStringUtils.randomAlphanumeric(ID_LENGTH);
-            } while (Arrays.asList(repositoryDir.list()).contains(attempt));
-        }
-        return attempt;
+    public synchronized String generateUniqueId(final Timeframe expiration) {
+        StringBuilder attempt = new StringBuilder();
+        do {
+            for (int i = 0; i < ID_LENGTH; i++) {
+                attempt.append(domain[(int) (Math.random() * domain.length)]);
+            }
+        } while (Arrays.asList(rootDir.list()).contains(attempt.toString()));
+        return attempt.toString();
     }
 
     public String determineUniqueId(Timeframe expiration) {
         String uniqueId = null;
         uniqueId = generateUniqueId(expiration);
-        File snippetDir = new File(repositoryDir, uniqueId);
+        File snippetDir = new File(rootDir, uniqueId);
         snippetDir.mkdirs();
         return uniqueId;
     }
 
-    public void storeSnippet(Snippet snippet) throws IOException {
-        File snippetDir = new File(repositoryDir, snippet.getUniqueId());
+    public void storeSnippet(Snippet snippet) throws StorageException {
+        File snippetDir = new File(rootDir, snippet.getUniqueId());
         
         long currentRevision = getCurrentRevision(snippetDir);
         currentRevision++;
         
         File snippetFile = new File(snippetDir, String.valueOf(currentRevision));
-        snippetFile.createNewFile();
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(snippetFile));
-        out.writeObject(snippet);
-        out.close();
+        
+        try {
+            snippetFile.createNewFile();
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(snippetFile));
+            out.writeObject(snippet);
+            out.close();
+        } catch (IOException ex) {
+            String errorMsg = String.format("Unable to store version %d of snippet %s",
+                    currentRevision, snippet.getUniqueId());
+            throw new StorageException(errorMsg, ex);
+        }
     }
     
-    private long getCurrentRevision(File snippetDir) {
+    private long getCurrentRevision(final File snippetDir) {
         long currentRevision = 0l;
         for (String entry : snippetDir.list()) {
             if (Long.parseLong(entry) > currentRevision) {
@@ -107,45 +109,65 @@ public class FilesystemSnippetRepository implements SnippetRepository {
         }
         return currentRevision;
     }
-
-    public void discardSnippets(Set<Snippet> snippets) {
-        for (Snippet snippet : snippets) {
-            File snippetDir = new File(repositoryDir, snippet.getUniqueId());
-            if (snippetDir.exists()) {
-                deleteRecursively(snippetDir);
-            }
+    
+    public void discardSnippet(final Snippet snippet) {
+        File snippetDir = new File(rootDir, snippet.getUniqueId());
+        if (snippetDir.exists()) {
+            deleteRecursively(snippetDir);
         }
     }
 
-    private void deleteRecursively(File node) {
-        if (node.isFile()) {
+    private void deleteRecursively(final File node) {
+        if (node.isFile() && node.canWrite()) {
             node.delete();
         } else if (node.isDirectory()) {
             for (File child : node.listFiles()) {
                 deleteRecursively(child);
             }
+            node.delete();
         }
     }
 
-    public Set<Snippet> retrieveAllSnippets() throws IOException, ClassNotFoundException {
+    public Set<Snippet> retrieveAllSnippets() throws RetrievalException {
         Set<Snippet> snippets = new HashSet<Snippet>();
-        for (String snippetId : repositoryDir.list()) {
+
+        for (String snippetId : rootDir.list()) {
             snippets.add(retrieveSnippet(snippetId));
         }
+        
         return snippets;
     }
 
-    public Snippet retrieveSnippet(String snippetId) throws IOException, ClassNotFoundException {
-        File snippetDir = new File(repositoryDir, snippetId);
-        long currentRevision = getCurrentRevision(snippetDir);
-        return retrieveSnippet(snippetId, currentRevision);
+    public Snippet retrieveSnippet(String snippetId) throws RetrievalException {
+        Snippet snippet = null;
+
+        File snippetDir = new File(rootDir, snippetId);
+        if (snippetDir.exists() && snippetDir.canRead()) {
+            long currentRevision = getCurrentRevision(snippetDir);
+            snippet = retrieveSnippet(snippetId, currentRevision);
+        }
+
+        return snippet;
     }
     
-    public Snippet retrieveSnippet(String snippetId, long revision) throws IOException, ClassNotFoundException {
-        File snippetDir = new File(repositoryDir, snippetId);
-        File snippetFile = new File(snippetDir, String.valueOf(revision));
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(snippetFile));
-        Snippet snippet = (Snippet)in.readObject();
+    public Snippet retrieveSnippet(String snippetId, long revision) throws RetrievalException {
+        Snippet snippet = null;
+
+        File snippetDir = new File(rootDir, snippetId);
+        if (snippetDir.exists() && snippetDir.canRead()) {
+            File snippetFile = new File(snippetDir, String.valueOf(revision));
+            if (snippetFile.exists() && snippetFile.canRead()) {
+                try {
+                    ObjectInputStream in = new ObjectInputStream(new FileInputStream(snippetFile));
+                    snippet = (Snippet)in.readObject();
+                } catch (IOException ex) {
+                    throw new RetrievalException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RetrievalException(ex);
+                }
+            }
+        }
+        
         return snippet;
     }
 

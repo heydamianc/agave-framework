@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010, Damian Carrillo
+ * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -23,21 +23,40 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
+package agave.samples.util;
 
-import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
- *
+ * A simple single line log formatter that prints the timestamp, log level, simple class name, and log message.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public class SingleLineLogFormatter extends Formatter {
 
-    Overview getOverview() throws ServiceException;
+    public static void apply() {
+        Logger rootLogger = Logger.getLogger("");
+        for (Handler handler : rootLogger.getHandlers()) {
+            handler.setFormatter(new SingleLineLogFormatter());
+        }
+    }
 
-    void onSnippetAdded(Snippet snippet);
-
-    void onSnippetRemoved(Snippet snippet);
-
+    @Override
+    public String format(final LogRecord record) {
+        Date timestamp = new Date(record.getMillis());
+        String simpleClassName = null;
+        String[] classParts = record.getSourceClassName().split("\\.");
+        if (classParts != null && classParts.length > 1) {
+            simpleClassName = classParts[classParts.length - 1];
+        }
+        return String.format("%s\t%s\t[%s]\t%s\n",
+                timestamp,
+                record.getLevel().toString().toLowerCase(),
+                simpleClassName, 
+                record.getMessage());
+    }
 }

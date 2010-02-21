@@ -28,42 +28,74 @@ package agave.samples.pastebin.overview;
 import agave.samples.pastebin.snippet.Snippet;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class Overview implements Serializable, Cloneable {
+public class Overview implements Serializable {
+
+    public static final int MAX_ENTRIES = 10;
 
     public static final long serialVersionUID = 1l;
     
-    public LinkedList<RecentEntry> recentEntries = new LinkedList<RecentEntry>();
+    public final LinkedList<RecentEntry> recentEntries;
+    public final LinkedList<RecentEntry> olderEntries;
 
-    public LinkedList<RecentEntry> getRecentEntries() {
-        return recentEntries;
+    public Overview() {
+        recentEntries = new LinkedList<RecentEntry>();
+        olderEntries = new LinkedList<RecentEntry>();
     }
 
-    public void setRecentEntries(LinkedList<RecentEntry> recentEntries) {
-        this.recentEntries = recentEntries;
+    public Overview(final Overview overview) {
+        this();
+        if (overview != null) {
+            for (RecentEntry recentEntry : recentEntries) {
+                recentEntries.add(new RecentEntry(recentEntry));
+            }
+            for (RecentEntry olderEntry : olderEntries) {
+                olderEntries.add(new RecentEntry(olderEntry));
+            }
+        }
     }
 
-    public boolean removeRelatedEntry(Snippet snippet) {
+    public List<RecentEntry> getRecentEntries() {
+        return Collections.unmodifiableList(recentEntries);
+    }
+
+    public void setRecentEntries(final List<RecentEntry> recentEntries) {
+        this.recentEntries.clear();
+        if (recentEntries != null) {
+            this.recentEntries.addAll(recentEntries);
+        }
+    }
+
+    public boolean removeRelatedEntry(final Snippet snippet) {
         for (RecentEntry recentEntry : recentEntries) {
             if (recentEntry.isRelatedTo(snippet)) {
                 recentEntries.remove(recentEntry);
+
+                // moving an entry from the older entries to fill the spot of the removed one
+                if (!olderEntries.isEmpty()) {
+                    recentEntries.addLast(olderEntries.getFirst());
+                }
+                
                 return true;
             }
         }
         return false;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Overview clone = new Overview();
-        for (RecentEntry recentEntry : getRecentEntries()) {
-            clone.getRecentEntries().add((RecentEntry)recentEntry.clone());
+    public void addRelatedEntry(final Snippet snippet) {
+        recentEntries.addFirst(new RecentEntry(snippet));
+        while (recentEntries.size() > MAX_ENTRIES) {
+            olderEntries.addFirst(recentEntries.removeLast());
         }
-        return clone;
+        while (olderEntries.size() > MAX_ENTRIES) {
+            olderEntries.removeLast();
+        }
     }
     
 }

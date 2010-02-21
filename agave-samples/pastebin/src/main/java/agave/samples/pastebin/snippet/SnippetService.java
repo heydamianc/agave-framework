@@ -23,21 +23,21 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
+package agave.samples.pastebin.snippet;
 
 import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+import java.util.Date;
 
 /**
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public interface SnippetService {
 
-    Overview getOverview() throws ServiceException;
+    void removeRetiredSnippets(Date date) throws ServiceException;
 
-    void onSnippetAdded(Snippet snippet);
+    Snippet getSnippet(String uniqueId) throws ServiceException;
 
-    void onSnippetRemoved(Snippet snippet);
+    String saveSnippet(Snippet snippet) throws ServiceException;
 
 }

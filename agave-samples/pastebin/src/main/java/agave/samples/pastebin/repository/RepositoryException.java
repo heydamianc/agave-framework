@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010, Damian Carrillo
+ * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -23,21 +23,26 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
-
-import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+package agave.samples.pastebin.repository;
 
 /**
+ * A standard repository exception that indicates something unexpected happened while working
+ * with the repository.
  *
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public class RepositoryException extends Exception {
 
-    Overview getOverview() throws ServiceException;
+    public RepositoryException(Throwable cause) {
+    }
 
-    void onSnippetAdded(Snippet snippet);
+    public RepositoryException(String message, Throwable cause) {
+    }
 
-    void onSnippetRemoved(Snippet snippet);
+    public RepositoryException(String message) {
+    }
+
+    public RepositoryException() {
+    }
 
 }

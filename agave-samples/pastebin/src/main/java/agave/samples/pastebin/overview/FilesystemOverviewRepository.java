@@ -25,33 +25,57 @@
  */
 package agave.samples.pastebin.overview;
 
+import agave.samples.pastebin.repository.RepositoryException;
+import agave.samples.pastebin.repository.RetrievalException;
+import agave.samples.pastebin.repository.StorageException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import javax.servlet.ServletContext;
-
-import agave.samples.pastebin.overview.FilesystemOverviewService;
-import agave.samples.pastebin.overview.Overview;
-import agave.samples.pastebin.overview.OverviewService;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class OverviewServiceFactory {
+public class FilesystemOverviewRepository implements OverviewRepository {
 
-    public static final OverviewService createOverviewService(ServletContext servletContext) 
-    throws IOException {
-        File webInfDir = new File(servletContext.getRealPath("/WEB-INF"));
-        File overviewFile = new File(webInfDir, "overview");
+    public static final String OVERVIEW_FILENAME = "overview";
+
+    private final File overviewFile;
+    
+    public FilesystemOverviewRepository(final File repositoryDir) throws RepositoryException {
+        this.overviewFile = new File(repositoryDir, OVERVIEW_FILENAME);
         if (!overviewFile.exists()) {
-            overviewFile.createNewFile();
-            Overview overview = new Overview();
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(overviewFile));
-            out.writeObject(overview);
+            try {
+                overviewFile.createNewFile();
+                Overview overview = new Overview();
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(overviewFile));
+                out.writeObject(overview);
+            } catch (IOException ex) {
+                throw new RepositoryException(ex);
+            }
         }
-        return new FilesystemOverviewService(overviewFile);
     }
     
+    public synchronized Overview retrieveOverview() throws RetrievalException {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(overviewFile));
+            return (Overview)in.readObject();
+        } catch (IOException ex) {
+            throw new RetrievalException(ex);
+        } catch (ClassNotFoundException ex) {
+            throw new RetrievalException(ex);
+        }
+    }
+
+    public synchronized void storeOverview(Overview overview) throws StorageException {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(overviewFile));
+            out.writeObject(overview);
+        } catch (IOException ex) {
+            throw new StorageException(ex);
+        }
+    }
+
 }

@@ -25,10 +25,7 @@
  */
 package agave.samples.pastebin.web;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import agave.samples.pastebin.overview.Overview;
-import agave.samples.pastebin.overview.RecentEntry;
 import agave.samples.pastebin.snippet.Snippet;
 
 /**
@@ -39,7 +36,7 @@ public class PastebinViewModel {
     private String contextPath;
     private Snippet snippet;
     private Overview overview;
-
+    
     public String getContextPath() {
         return contextPath;
     }
@@ -52,24 +49,16 @@ public class PastebinViewModel {
         return snippet;
     }
 
-    public void setSnippet(Snippet snippet) throws CloneNotSupportedException {
-        Snippet clone = (Snippet) snippet.clone();
-        clone.setContents(StringEscapeUtils.escapeHtml(clone.getContents()));
-        clone.setOwner(StringEscapeUtils.escapeHtml(clone.getOwner()));
-        this.snippet = clone;
+    public void setSnippet(final Snippet snippet) {
+        this.snippet = snippet;
     }
 
     public Overview getOverview() {
         return overview;
     }
     
-    public void setOverview(Overview overview) throws CloneNotSupportedException {
-        Overview clone = (Overview)overview.clone();
-        for (RecentEntry recentEntry : clone.getRecentEntries()) {
-            recentEntry.setUniqueId(StringEscapeUtils.escapeHtml(recentEntry.getUniqueId()));
-            recentEntry.setOwner(StringEscapeUtils.escapeHtml(recentEntry.getOwner()));
-        }
-        this.overview = clone;
+    public void setOverview(final Overview overview) {
+        this.overview = overview;
     }
     
 }

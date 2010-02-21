@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
                         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <listener>
-        <listener-class>agave.samples.pastebin.snippet.SnippetReaper</listener-class>
+        <listener-class>agave.samples.pastebin.Pastebin</listener-class>
     </listener>
 	<filter>
 		<filter-name>FreemarkerFilter</filter-name>
