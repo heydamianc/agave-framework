@@ -30,6 +30,6 @@ package agave.samples.pastebin.web;
  */
 public interface Extractable<T> {
 
-    public void extract(T basis);
+    public void copyValuesTo(T basis);
     
 }

@@ -25,24 +25,60 @@
  */
 package agave.samples.pastebin.snippet;
 
-import java.io.IOException;
+import agave.samples.pastebin.repository.RetrievalException;
+import agave.samples.pastebin.repository.StorageException;
 import java.util.Set;
 
 /**
+ * Provides repository support for snippets.
+ *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface SnippetRepository {
 
+    /**
+     * Find a unique ID.  The ID does not have to be serial, just unique.
+     *
+     * @param expiration provides an optional namespace to segment across
+     * @return a unique string ID
+     */
     public String determineUniqueId(Timeframe expiration);
 
-    public void storeSnippet(Snippet snippet) throws IOException;
+    /**
+     * Stores a snippet in the repository.
+     * 
+     * @param snippet the snippet to store
+     * @throws StorageException if storage was unsuccessful 
+     */
+    public void storeSnippet(Snippet snippet) throws StorageException;
 
-    public void discardSnippets(Set<Snippet> snippets);
+    /**
+     * Retrieves all of the snippets.
+     *
+     * @return all of the snippets
+     * @throws RetrievalException if retrieval was unsuccessful
+     */
+    public Set<Snippet> retrieveAllSnippets() throws RetrievalException;
 
-    public Set<Snippet> retrieveAllSnippets() throws IOException, ClassNotFoundException;
-    
-    public Snippet retrieveSnippet(String snippetId) throws IOException, ClassNotFoundException;
-    
-    public Snippet retrieveSnippet(String snippetid, long revision) throws IOException, ClassNotFoundException;
+    /**
+     * Retrieves a specific snippet.
+     *
+     * @param snippetId the id of the snippet to retrieve
+     * @return the retrieved snippet
+     * @throws RetrievalException if retrieval was unssuccessful
+     */
+    public Snippet retrieveSnippet(String snippetId) throws RetrievalException;
+
+    /**
+     * Retrieve a specific version of a specific snippet.
+     *
+     * @param snippetId the id of the snippet to retrieve
+     * @param revision the revision of the snippet to retrieve
+     * @return the retrieved snippet
+     * @throws RetrievalException if retrieval was unsuccessful
+     */
+    public Snippet retrieveSnippet(String snippetId, long revision) throws RetrievalException;
+
+    public void discardSnippet(Snippet snippet);
     
 }

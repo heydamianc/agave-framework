@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class Snippet implements Serializable, Cloneable, Comparable<Snippet> {
+public class Snippet implements Serializable, Comparable<Snippet> {
 
     private static final long serialVersionUID = 4L;
     
@@ -46,9 +46,20 @@ public class Snippet implements Serializable, Cloneable, Comparable<Snippet> {
     private boolean privateSnippet;
     
     public Snippet() {
-        setRevision(0l);
-        setCreated(new Date());
-        setSyntaxLanguage("");
+        revision = 0L;
+        created = new Date();
+        syntaxLanguage = "";
+    }
+
+    public Snippet(final Snippet snippet) {
+        this.uniqueId = new String(snippet.getUniqueId());
+        this.revision = snippet.getRevision();
+        this.expiration = snippet.getExpiration();
+        this.owner = new String(snippet.getOwner());
+        this.created = new Date(snippet.getCreated().getTime());
+        this.syntaxLanguage = new String(snippet.getSyntaxLanguage());
+        this.contents = new String(snippet.getContents());
+        this.privateSnippet = snippet.isPrivate();
     }
 
     public String getUniqueId() {
@@ -129,28 +140,14 @@ public class Snippet implements Serializable, Cloneable, Comparable<Snippet> {
         this.contents = contents;
     }
 
-    public boolean isPrivateSnippet() {
+    public boolean isPrivate() {
         return privateSnippet;
     }
 
     public void setPrivateSnippet(boolean privateSnippet) {
         this.privateSnippet = privateSnippet;
     }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Snippet clone = new Snippet();
-        clone.setUniqueId(new String(getUniqueId()));
-        clone.setRevision(getRevision());
-        clone.setExpiration(getExpiration());
-        clone.setOwner(new String(getOwner()));
-        clone.setCreated((Date)getCreated().clone());
-        clone.setSyntaxLanguage(new String(getSyntaxLanguage()));
-        clone.setContents(new String(getContents()));
-        clone.setPrivateSnippet(new Boolean(isPrivateSnippet()));
-        return clone;
-    }
-
+    
     public int compareTo(Snippet that) {
         return uniqueId.compareTo(that.uniqueId);
     }

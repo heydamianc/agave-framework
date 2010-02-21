@@ -1,4 +1,5 @@
 /**
+
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,24 +24,18 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.snippet;
+package agave.samples.pastebin.overview;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.servlet.ServletContext;
-
-import agave.samples.pastebin.overview.OverviewServiceFactory;
-import agave.samples.pastebin.snippet.FilesystemSnippetRepository;
-import agave.samples.pastebin.snippet.SnippetRepository;
+import agave.samples.pastebin.repository.RetrievalException;
+import agave.samples.pastebin.repository.StorageException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class SnippetRepositoryFactory {
+public interface OverviewRepository {
 
-    public static final SnippetRepository createFilesystemRepository(ServletContext context) throws IOException {
-        return new FilesystemSnippetRepository(new File(context.getRealPath("/WEB-INF/repository")));
-    }
+    public Overview retrieveOverview() throws RetrievalException;
+    
+    public void storeOverview(Overview overview) throws StorageException;
     
 }

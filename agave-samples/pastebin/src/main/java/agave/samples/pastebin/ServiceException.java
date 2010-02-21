@@ -23,21 +23,27 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
-
-import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+package agave.samples.pastebin;
 
 /**
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public class ServiceException extends Exception {
 
-    Overview getOverview() throws ServiceException;
+    public ServiceException(Throwable cause) {
+        super(cause);
+    }
 
-    void onSnippetAdded(Snippet snippet);
+    public ServiceException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    void onSnippetRemoved(Snippet snippet);
+    public ServiceException(String message) {
+        super(message);
+    }
+
+    public ServiceException() {
+    }
 
 }

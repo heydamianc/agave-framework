@@ -23,21 +23,25 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
-
-import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+package agave.samples.pastebin.repository;
 
 /**
+ * Indicates an error occurred during retrieval from the repository.
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public class RetrievalException extends RepositoryException {
 
-    Overview getOverview() throws ServiceException;
+    public RetrievalException() {
+    }
 
-    void onSnippetAdded(Snippet snippet);
+    public RetrievalException(String message) {
+    }
 
-    void onSnippetRemoved(Snippet snippet);
+    public RetrievalException(String message, Throwable cause) {
+    }
+
+    public RetrievalException(Throwable cause) {
+    }
 
 }

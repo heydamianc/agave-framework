@@ -23,21 +23,28 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
-
-import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+package agave.samples.pastebin.repository;
 
 /**
+ * An exception that indicates something went wrong with storing into the repository.
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public class StorageException extends RepositoryException {
 
-    Overview getOverview() throws ServiceException;
+    public StorageException(Throwable cause) {
+        super(cause);
+    }
 
-    void onSnippetAdded(Snippet snippet);
+    public StorageException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    void onSnippetRemoved(Snippet snippet);
+    public StorageException(String message) {
+        super(message);
+    }
+
+    public StorageException() {
+    }
 
 }

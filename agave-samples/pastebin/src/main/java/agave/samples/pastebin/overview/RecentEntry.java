@@ -27,27 +27,31 @@ package agave.samples.pastebin.overview;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
-
 import agave.samples.pastebin.snippet.Snippet;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class RecentEntry implements Serializable, Cloneable {
+public class RecentEntry implements Serializable {
 
     public static final long serialVersionUID = 1l;
-    
     private String uniqueId;
     private String owner;
 
     public RecentEntry() {
-        super();
     }
-    
+
+    public RecentEntry(final RecentEntry recentEntry) {
+        this();
+        if (recentEntry != null) {
+            this.uniqueId = new String(recentEntry.uniqueId);
+            this.owner = new String(recentEntry.owner);
+        }
+    }
+
     public RecentEntry(Snippet snippet) {
-        setUniqueId(snippet.getUniqueId());
-        setOwner(snippet.getOwner());
+        this.uniqueId = snippet.getUniqueId();
+        this.owner = snippet.getOwner();
     }
 
     public String getUniqueId() {
@@ -69,17 +73,5 @@ public class RecentEntry implements Serializable, Cloneable {
     public boolean isRelatedTo(Snippet snippet) {
         return uniqueId.equals(snippet.getUniqueId());
     }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        RecentEntry clone = new RecentEntry();
-        if (StringUtils.isNotBlank(uniqueId)) {
-            clone.setUniqueId(new String(uniqueId));
-        }
-        if (StringUtils.isNotBlank(owner)) {
-            clone.setOwner(new String(owner));
-        }
-        return clone;
-    }
-
+    
 }

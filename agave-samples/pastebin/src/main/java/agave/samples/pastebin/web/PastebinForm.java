@@ -102,7 +102,7 @@ public class PastebinForm implements Extractable<Snippet> {
         this.syntaxLanguage = syntaxLanguage;
     }
 
-    public void extract(Snippet snippet) {
+    public void copyValuesTo(Snippet snippet) {
         if (StringUtils.isNotBlank(contents)) {
             snippet.setContents(contents);
         }
