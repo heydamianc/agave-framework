@@ -25,8 +25,6 @@
  */
 package agave.samples.pastebin.web;
 
-import org.apache.commons.lang.StringUtils;
-
 import agave.ConvertWith;
 import agave.conversion.BooleanConverter;
 import agave.conversion.LongConverter;
@@ -36,7 +34,7 @@ import agave.samples.pastebin.snippet.Timeframe;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class PastebinForm implements Extractable<Snippet> {
+public class PastebinForm {
 
     private String uniqueId;
     private Long revision;
@@ -103,18 +101,10 @@ public class PastebinForm implements Extractable<Snippet> {
     }
 
     public void copyValuesTo(Snippet snippet) {
-        if (StringUtils.isNotBlank(contents)) {
-            snippet.setContents(contents);
-        }
-        if (StringUtils.isNotBlank(uniqueId)) {
-            snippet.setUniqueId(uniqueId);
-        }
-        if (StringUtils.isNotBlank(owner)) {
-            snippet.setOwner(owner);
-        }
-        if (StringUtils.isNotBlank(syntaxLanguage)) {
-            snippet.setSyntaxLanguage(syntaxLanguage);
-        }
+        snippet.setContents(contents);
+        snippet.setUniqueId(uniqueId);
+        snippet.setOwner(owner);
+        snippet.setSyntaxLanguage(syntaxLanguage);
         snippet.setPrivateSnippet(privateSnippet);
         snippet.setExpiration(expiration);
     }

@@ -25,32 +25,22 @@
  */
 package agave.samples.pastebin.web;
 
-import agave.HandlerContext;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import agave.samples.pastebin.Pastebin;
+import agave.samples.pastebin.overview.OverviewService;
+import agave.samples.pastebin.snippet.SnippetService;
+import javax.servlet.ServletContext;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public abstract class AbstractHandler {
 
-    protected void prepareModel(HandlerContext handlerContext, PastebinViewModel model) {
-       model.setContextPath(handlerContext.getRequest().getContextPath());
+    protected OverviewService getOverviewService(final ServletContext servletContext) {
+        return (OverviewService) servletContext.getAttribute(Pastebin.OVERVIEW_SVC_KEY);
     }
 
-    protected void renderTemplate(HandlerContext handlerContext, PastebinViewModel model, String templateName)
-        throws IOException, TemplateException {
-        handlerContext.getResponse().setContentType("text/html");
-        PrintWriter out = handlerContext.getResponse().getWriter();
-        Configuration config =
-            (Configuration) handlerContext.getRequest().getAttribute(FreemarkerFilter.FREEMARKER_CONFIG_KEY);
-        Template template = config.getTemplate(templateName);
-        template.process(model, out);
-        out.flush();
-        out.close();
+    protected SnippetService getSnippetService(final ServletContext servletContext) {
+        return (SnippetService) servletContext.getAttribute(Pastebin.SNIPPET_SVC_KEY);
     }
 
 }

@@ -59,7 +59,7 @@ public class Snippet implements Serializable, Comparable<Snippet> {
         this.created = new Date(snippet.getCreated().getTime());
         this.syntaxLanguage = new String(snippet.getSyntaxLanguage());
         this.contents = new String(snippet.getContents());
-        this.privateSnippet = snippet.isPrivate();
+        this.privateSnippet = snippet.isPrivateSnippet();
     }
 
     public String getUniqueId() {
@@ -140,7 +140,7 @@ public class Snippet implements Serializable, Comparable<Snippet> {
         this.contents = contents;
     }
 
-    public boolean isPrivate() {
+    public boolean isPrivateSnippet() {
         return privateSnippet;
     }
 
