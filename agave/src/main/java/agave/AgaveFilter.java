@@ -173,21 +173,21 @@ public class AgaveFilter implements Filter {
     
     /**
      * An alternate way of providing a class directory to scan for handlers is to override this method.
-	 * This is primarily here for testing situations (especially when running mvn jetty:run).  The default
-	 * behavior is to read the <a href="#classesDirectory">classesDirectory</a> system property 
-	 * (-DclassesDirectory=xxx) and use the value supplied to create a directory {@code File} that will
-	 * be scanned for handlers.  If this system property is absent, the default value will be
-	 * {@code /WEB-INF/classes}.
+     * This is primarily here for testing situations (especially when running mvn jetty:run).  The default
+     * behavior is to read the <a href="#classesDirectory">classesDirectory</a> system property
+     * (-DclassesDirectory=xxx) and use the value supplied to create a directory {@code File} that will
+     * be scanned for handlers.  If this system property is absent, the default value will be
+     * {@code /WEB-INF/classes}.
      * 
      * @param config the configuration delivered to this filter
      * @return a {@code File} representing the named class directory
      * 
      * @throws ClassNotFoundException if the class named by the {@code classesDir} initialization
-	 *							      parameter can not be found
+     *							      parameter can not be found
      * @throws InstantiationException if the class named by the {@code classesDir} initialization
-	 *                                parameter can not be instantiated
+     *                                parameter can not be instantiated
      * @throws IllegalAccessException if this filter is denied access to the class named by the
-	 *                                {@code instanceCreator} initialization parameter value
+     *                                {@code instanceCreator} initialization parameter value
      */
     protected File provideClassesDirectory(FilterConfig config)
         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -517,11 +517,11 @@ public class AgaveFilter implements Filter {
      * {@link agave.internal.HandlerRegistry HandlerRegistry} as handlers are
      * found.
      * 
-	 * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 * @throws ServletException
+     * @param root the root directory to scan files for, typically {@code /WEB-INF/classes}
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws ServletException
      */
     protected void scanClassesDirForHandlers(File root) 
     throws FileNotFoundException, IOException, ClassNotFoundException, ServletException {
@@ -600,12 +600,12 @@ public class AgaveFilter implements Filter {
         return instanceFactory;
     }
 
-	/**
-	 * Gets the directory that will be scanned for any handler classes.
-	 * @return
-	 */
-	public File getClassesDirectory() {
-		return classesDirectory;
-	}
+    /**
+     * Gets the directory that will be scanned for any handler classes.
+     * @return
+     */
+    public File getClassesDirectory() {
+            return classesDirectory;
+    }
     
 }

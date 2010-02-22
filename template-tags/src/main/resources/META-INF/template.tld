@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="2.1">
+  <description>A simple template library</description>
+  <tlib-version>1.0</tlib-version>
+  <short-name>template</short-name>
+  <uri>http://agave-web-framework.googlecode.com/template</uri>
+  <tag>
+    <name>apply</name>
+    <tag-class>agave.template.ApplyTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+      <name>path</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <example><![CDATA[
+      <template:apply path="/WEB-INF/templates/main.xhtml">
+        <template:supplyFragment name="contentA">
+          <p>Some content</p>
+        </template:supplyFragment>
+        <template:supplyFragment name="contentB">
+          <p>Some other content</p>
+        </template:supplyFragment>
+      </template:apply>
+    ]]></example>
+  </tag>
+  <tag>
+    <name>supplyFragment</name>
+    <tag-class>agave.template.SupplyFragmentTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>additive</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <example><![CDATA[
+      <template:apply path="/WEB-INF/templates/main.xhtml">
+        <template:supplyFragment name="contentA">
+          <p>Some content</p>
+        </template:supplyFragment>
+        <template:supplyFragment name="contentB">
+          <p>Some other content</p>
+        </template:supplyFragment>
+      </template:apply>
+    ]]></example>
+  </tag>
+  <tag>
+    <name>useFragment</name>
+    <tag-class>agave.template.UseFragmentTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>required</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>indent</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <example><![CDATA[
+      <template:useFragment name="contentB">
+        <p>
+          This content will be replaced by the contents of the supplyFragment's
+          content of the same name.
+        </p>
+      </template:useFragment>
+    ]]></example>
+  </tag>
+</taglib>

@@ -61,16 +61,18 @@ public class DefaultOverviewService implements OverviewService {
     }
     
     public synchronized void onSnippetAdded(final Snippet snippet) {
-        try {
-            if (cachedOverview == null) {
-                cachedOverview = getOverview();
+        if (!snippet.isPrivateSnippet()) {
+            try {
+                if (cachedOverview == null) {
+                    cachedOverview = getOverview();
+                }
+                cachedOverview.addRelatedEntry(snippet);
+                overviewRepository.storeOverview(cachedOverview);
+            } catch (StorageException ex) {
+                logger.log(Level.SEVERE, "Unable to store overview", ex);
+            } catch (ServiceException ex) {
+                logger.log(Level.SEVERE, "Unable to get overview", ex);
             }
-            cachedOverview.addRelatedEntry(snippet);
-            overviewRepository.storeOverview(cachedOverview);
-        } catch (StorageException ex) {
-            logger.log(Level.SEVERE, "Unable to store overview", ex);
-        } catch (ServiceException ex) {
-            logger.log(Level.SEVERE, "Unable to get overview", ex);
         }
     }
 

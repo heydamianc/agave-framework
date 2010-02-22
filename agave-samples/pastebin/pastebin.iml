@@ -12,7 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Maven: org.freemarker:freemarker:2.3.13" level="project" />
-    <orderEntry type="library" exported="" name="Maven: commons-lang:commons-lang:2.4" level="project" />
     <orderEntry type="library" exported="" name="Maven: agave:agave:1.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: asm:asm:3.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: asm:asm-commons:3.1" level="project" />
