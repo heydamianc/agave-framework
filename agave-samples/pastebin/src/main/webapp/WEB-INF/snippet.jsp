@@ -22,7 +22,7 @@
   </template:supplyFragment>
   <template:supplyFragment name="css">
     <c:if test="${!empty snippet.syntaxLanguage}">
-    @import "${contextPath}/css/syn-themes/sh_typical.min.css";
+    @import "${contextPath}/css/syn-themes/sh_kwrite.min.css";
     </c:if>
   </template:supplyFragment>
   <template:supplyFragment name="js">

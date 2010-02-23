@@ -60,7 +60,7 @@ public class DefaultOverviewService implements OverviewService {
         }
     }
     
-    public synchronized void onSnippetAdded(final Snippet snippet) {
+    public synchronized void respondToSnippetAdded(final Snippet snippet) {
         if (!snippet.isPrivateSnippet()) {
             try {
                 if (cachedOverview == null) {
@@ -76,7 +76,7 @@ public class DefaultOverviewService implements OverviewService {
         }
     }
 
-    public synchronized void onSnippetRemoved(final Snippet snippet) {
+    public synchronized void respondToSnippetRemoved(final Snippet snippet) {
         try {
             if (cachedOverview == null) {
                 cachedOverview = getOverview();
