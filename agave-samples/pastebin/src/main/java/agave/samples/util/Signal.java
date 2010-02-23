@@ -23,21 +23,27 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave.samples.pastebin.overview;
+package agave.samples.util;
 
-import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.snippet.Snippet;
+import java.util.Observable;
 
 /**
+ * A simple synchronous signal class that pumps events into an observer.  This basically extends
+ * the Java {@code Observable} class and marks the observable as changed every time the
+ * observers are notified.
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface OverviewService {
+public class Signal extends Observable {
 
-    Overview getOverview() throws ServiceException;
+    public void raise() {
+        setChanged();
+        notifyObservers();
+    }
 
-    void respondToSnippetAdded(Snippet snippet);
-
-    void respondToSnippetRemoved(Snippet snippet);
+    public void raiseWith(final Object arg) {
+        setChanged();
+        notifyObservers(arg);
+    }
 
 }

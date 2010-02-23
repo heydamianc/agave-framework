@@ -32,11 +32,14 @@ import agave.samples.pastebin.overview.OverviewService;
 import agave.samples.pastebin.repository.RepositoryException;
 import agave.samples.pastebin.snippet.DefaultSnippetService;
 import agave.samples.pastebin.snippet.FilesystemSnippetRepository;
+import agave.samples.pastebin.snippet.Snippet;
 import agave.samples.pastebin.snippet.SnippetRepository;
 import agave.samples.pastebin.snippet.SnippetService;
 import agave.samples.util.SingleLineLogFormatter;
 import java.io.File;
 import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -89,12 +92,14 @@ public class Pastebin implements ServletContextListener {
         createRepositoryDir(event.getServletContext());
         createRepositories();
         createServices();
+        connectServices();
         addServicesToServletContext(event.getServletContext());
         scheduleReaper(event.getServletContext());
     }
 
     public void contextDestroyed(final ServletContextEvent event) {
         stopReaper();
+        disconnectServices();
     }
 
     private void createRepositoryDir(final ServletContext servletContext) {
@@ -129,8 +134,21 @@ public class Pastebin implements ServletContextListener {
     }
 
     private void createServices() {
+        snippetService = new DefaultSnippetService(snippetRepository);
         overviewService = new DefaultOverviewService(overviewRepository);
-        snippetService = new DefaultSnippetService(overviewService, snippetRepository);
+    }
+
+    private void connectServices() {
+        snippetService.onSnippetAdded().addObserver(new Observer() {
+            public void update(Observable source, Object arg) {
+                overviewService.respondToSnippetAdded((Snippet) arg);
+            }
+        });
+        snippetService.onSnippetRemoved().addObserver(new Observer() {
+            public void update(Observable source, Object arg) {
+                overviewService.respondToSnippetRemoved((Snippet) arg);
+            }
+        });
     }
 
     private void addServicesToServletContext(final ServletContext servletContext) {
@@ -153,6 +171,11 @@ public class Pastebin implements ServletContextListener {
     private void stopReaper() {
         reaper.cancel(true);
         scheduledExecutor.shutdownNow();
+    }
+
+    private void disconnectServices() {
+        snippetService.onSnippetAdded().deleteObservers();
+        snippetService.onSnippetRemoved().deleteObservers();
     }
 
     private final class Reaper implements Runnable {

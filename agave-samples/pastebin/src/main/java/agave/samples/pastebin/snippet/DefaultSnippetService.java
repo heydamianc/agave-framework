@@ -26,9 +26,9 @@
 package agave.samples.pastebin.snippet;
 
 import agave.samples.pastebin.ServiceException;
-import agave.samples.pastebin.overview.OverviewService;
 import agave.samples.pastebin.repository.RetrievalException;
 import agave.samples.pastebin.repository.StorageException;
+import agave.samples.util.Signal;
 import java.util.Date;
 
 /**
@@ -37,12 +37,14 @@ import java.util.Date;
  */
 public class DefaultSnippetService implements SnippetService {
 
-    private final OverviewService overviewService;
     private final SnippetRepository snippetRepository;
+    private final Signal snippetAdded;
+    private final Signal snippetRemoved;
 
-    public DefaultSnippetService(final OverviewService overviewService, final SnippetRepository snippetRepository) {
-        this.overviewService = overviewService;
+    public DefaultSnippetService(final SnippetRepository snippetRepository) {
         this.snippetRepository = snippetRepository;
+        this.snippetAdded = new Signal();
+        this.snippetRemoved = new Signal();
     }
 
     public void removeRetiredSnippets(final Date referenceDate) throws ServiceException {
@@ -50,7 +52,7 @@ public class DefaultSnippetService implements SnippetService {
             for (Snippet snippet : snippetRepository.retrieveAllSnippets()) {
                 if (snippet.isExpired(referenceDate)) {
                     snippetRepository.discardSnippet(snippet);
-                    overviewService.onSnippetRemoved(snippet);
+                    snippetRemoved.raiseWith(snippet);
                 }
             }
         } catch (RetrievalException ex) {
@@ -81,13 +83,21 @@ public class DefaultSnippetService implements SnippetService {
             snippetRepository.storeSnippet(snippet);
 
             if (added) {
-                overviewService.onSnippetAdded(snippet);
+                snippetAdded.raiseWith(snippet);
             }
         } catch (StorageException ex) {
             throw new ServiceException("Unable to store snippet", ex);
         }
         
         return snippet.getUniqueId();
+    }
+
+    public Signal onSnippetAdded() {
+        return snippetAdded;
+    }
+
+    public Signal onSnippetRemoved() {
+        return snippetRemoved;
     }
 
 }

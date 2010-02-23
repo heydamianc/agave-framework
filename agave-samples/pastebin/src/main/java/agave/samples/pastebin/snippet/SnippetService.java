@@ -26,6 +26,7 @@
 package agave.samples.pastebin.snippet;
 
 import agave.samples.pastebin.ServiceException;
+import agave.samples.util.Signal;
 import java.util.Date;
 
 /**
@@ -39,5 +40,9 @@ public interface SnippetService {
     Snippet getSnippet(String uniqueId) throws ServiceException;
 
     String saveSnippet(Snippet snippet) throws ServiceException;
+
+    Signal onSnippetAdded();
+
+    Signal onSnippetRemoved();
 
 }
