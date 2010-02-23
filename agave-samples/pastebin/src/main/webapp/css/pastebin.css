@@ -6,12 +6,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #B65500;
+  color: #324A59;
   font-family: Geneva, Arial, Helvetica, sans-serif;
-}
-
-label {
-  color: #693100;
 }
 
 pre {
@@ -25,8 +21,8 @@ div#sidebar {
   left: 30px;
   width: 220px;
   padding: 10px;
-  background-color: #B5AF00;
-  border: 2px solid #696500;
+  background-color: #F9B332;
+  border: 2px solid #324A59;
   border-top: 0;
   -moz-border-radius-bottomleft: 15px;
   -moz-border-radius-bottomright: 15px;
@@ -35,18 +31,18 @@ div#sidebar {
 }
 
 div#sidebar h3 {
-  color: #696500;
+  color: #324A59;
 }
 
-div#sidebar a {
-  color: #4A4A4A;
+a {
+  color: #D97904;
 }
 
-div#sidebar a:visited {
-  color: #B5B5B5;
+a:visited {
+  color: #F9B332;
 }
 
-div#sidebar div#header {
+div#header {
   text-align: center;
 }
 
@@ -55,7 +51,7 @@ div#sidebar div#header h1 {
   font-weight: normal;
   font-size: 250%;
   font-family: "Impact", Geneva, Arial, Helvetica, sans-serif;
-  color: #4A4A4A;
+  color: #324A59;
 }
 
 div#content {
