@@ -26,7 +26,7 @@
             <td><label for="syntaxLanguage"><fmt:message key="languageLabel" /></label></td>
             <td>
               <select id="syntaxLanguage" name="syntaxLanguage">
-                <option value="" />
+                <option value=""><fmt:message key="none" /></option>
                 <option value="sh_bison">Bison</option>
                 <option value="sh_c">C</option>
                 <option value="sh_cpp">C++</option>
