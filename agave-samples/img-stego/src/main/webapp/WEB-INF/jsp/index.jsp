@@ -35,7 +35,7 @@
     </p>
     <h2>Application</h2>
     <p>
-      Now, to test this out, you need two things.  One is a messsage, called the 
+      Now, to test this out, you need two things.  One is a message, called the 
       <em>payload</em>.  The second is the <em>carrier</em>, and in this case the 
       <em>carrier</em> is an image.  So, after you have uploaded an image and supplied a
       <em>payload</em>, you will be provided a resultant image that is hiding the message.
