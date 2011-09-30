@@ -168,7 +168,7 @@ public abstract class AbstractFormPopulator implements FormPopulator {
     }
 	
     @SuppressWarnings("unchecked")
-    private Object convertIfNecessary(Method mutator, Object parameterValue) 
+	private Object convertIfNecessary(Method mutator, Object parameterValue) 
     throws ConversionException, 
            InstantiationException,
            IllegalAccessException {
@@ -177,7 +177,9 @@ public abstract class AbstractFormPopulator implements FormPopulator {
         if (parameterTypes != null) {
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
             Class<?> parameterType = parameterTypes[parameterOffset];
-            Converter converter = null; // keep this vague 
+            
+            @SuppressWarnings("rawtypes")
+			Converter converter = null; // keep this vague 
             // first look for a ConvertWith annotation
             for (Annotation annotation : mutator.getParameterAnnotations()[parameterOffset]) {
                 if (annotation instanceof ConvertWith) {

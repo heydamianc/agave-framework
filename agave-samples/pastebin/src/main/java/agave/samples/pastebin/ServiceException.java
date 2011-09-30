@@ -31,7 +31,9 @@ package agave.samples.pastebin;
  */
 public class ServiceException extends Exception {
 
-    public ServiceException(Throwable cause) {
+	private static final long serialVersionUID = 1L;
+
+	public ServiceException(Throwable cause) {
         super(cause);
     }
 

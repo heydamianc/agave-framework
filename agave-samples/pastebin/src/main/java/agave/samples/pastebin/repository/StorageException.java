@@ -32,7 +32,9 @@ package agave.samples.pastebin.repository;
  */
 public class StorageException extends RepositoryException {
 
-    public StorageException(Throwable cause) {
+	private static final long serialVersionUID = 1L;
+
+	public StorageException(Throwable cause) {
         super(cause);
     }
 

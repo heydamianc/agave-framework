@@ -52,8 +52,8 @@ public class ConversionException extends AgaveException {
         super(rootCause);
     }
     
-    @SuppressWarnings("unchecked")
-    public ConversionException(Method method, Class<? extends Converter> converterClass) {
+    @SuppressWarnings("rawtypes")
+	public ConversionException(Method method, Class<? extends Converter> converterClass) {
         this(converterClass.getName() + " is an unsupported converter for " 
                 + method.getDeclaringClass() + "#" + method.getName() + "()");
     }

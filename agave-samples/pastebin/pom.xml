@@ -14,7 +14,6 @@
   <artifactId>pastebin</artifactId>
   <packaging>war</packaging>
   <name>Pastebin</name>
-  <version>1.1-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>agave</groupId>

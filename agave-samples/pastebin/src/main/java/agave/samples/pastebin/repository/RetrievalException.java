@@ -32,7 +32,9 @@ package agave.samples.pastebin.repository;
  */
 public class RetrievalException extends RepositoryException {
 
-    public RetrievalException() {
+	private static final long serialVersionUID = 1L;
+
+	public RetrievalException() {
     }
 
     public RetrievalException(String message) {

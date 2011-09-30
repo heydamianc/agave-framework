@@ -16,11 +16,9 @@
     <module>xml-tools</module>
   </modules>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>agave</groupId>
   <artifactId>agave-samples</artifactId>
   <packaging>pom</packaging>
   <name>Agave Samples</name>
-  <version>1.1-SNAPSHOT</version>
   <description>
     Maven archetype that provides the groundwork for building a webapp on top of Agave.
   </description>
