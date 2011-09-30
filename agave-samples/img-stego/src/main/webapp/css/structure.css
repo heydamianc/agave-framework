@@ -1,40 +1,38 @@
 /* Structural CSS */
-
 body {
-    font-size: .9em;
-    padding: 10px;
-    padding-top: 0;
+	font-size: .9em;
+	padding: 10px;
+	padding-top: 0;
 }
 
 fieldset {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 img {
-    vertical-align: middle;
+	vertical-align: middle;
 }
 
 .submissionButton {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 
-legend {
-    margin 5px 0;
-    padding: 5px;
+legend {margin 5px 0;
+	padding: 5px;
 }
 
 #imgTable {
-    float: left;
+	float: left;
 }
 
 #footer {
-    margin-top: 5px;
-    border-top: 1px solid #ccc;
-    clear: both;
-    text-align: center;
-    font-size: 90%;
+	margin-top: 5px;
+	border-top: 1px solid #ccc;
+	clear: both;
+	text-align: center;
+	font-size: 90%;
 }
 
 #footer img {
-  border: none;
+	border: none;
 }

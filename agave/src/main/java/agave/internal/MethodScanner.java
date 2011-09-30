@@ -32,40 +32,55 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
-import agave.HandlesRequestsTo;
+import agave.Delete;
+import agave.Get;
+import agave.Head;
+import agave.Options;
+import agave.Post;
+import agave.Put;
 
 /**
- * Scans classes for methods which are possible candidates to be handler methods.
+ * Scans classes for methods which are possible candidates to be handler
+ * methods.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class MethodScanner extends EmptyVisitor {
 
-    private static final Collection<String> desirableAnnotations = new ArrayList<String>();
-    static {
-        desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
-    };
+	private static final Collection<String> desirableAnnotations = new ArrayList<String>();
+	static {
+		// desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
+		desirableAnnotations.add(Type.getDescriptor(Delete.class));
+		desirableAnnotations.add(Type.getDescriptor(Get.class));
+		desirableAnnotations.add(Type.getDescriptor(Head.class));
+		desirableAnnotations.add(Type.getDescriptor(Options.class));
+		desirableAnnotations.add(Type.getDescriptor(Post.class));
+		desirableAnnotations.add(Type.getDescriptor(Put.class));
+	};
 
-    private Collection<HandlerIdentifier> handlerIdentifiers;
-    private String handlerClassName;
-    private String handlerMethodName;
-    private String handlerMethodDescriptor;
-     
-    public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers, String handlerClassName, 
-        String handlerMethodName, String handlerMethodDescriptor) {
-        this.handlerIdentifiers = handlerIdentifiers;
-        this.handlerClassName = handlerClassName;
-        this.handlerMethodName = handlerMethodName;
-        this.handlerMethodDescriptor = handlerMethodDescriptor;
-    }
-    
-    @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationVisitor annotationVisitor = null;
-        if (visible && desirableAnnotations.contains(desc)) {
-            annotationVisitor = new AnnotationScanner(handlerIdentifiers, handlerClassName, 
-                handlerMethodName, handlerMethodDescriptor, desc);
-        }
-        return annotationVisitor;
-    }
+	private Collection<HandlerIdentifier> handlerIdentifiers;
+	private String handlerClassName;
+	private String handlerMethodName;
+	private String handlerMethodDescriptor;
+
+	public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers,
+			String handlerClassName, String handlerMethodName,
+			String handlerMethodDescriptor) {
+		this.handlerIdentifiers = handlerIdentifiers;
+		this.handlerClassName = handlerClassName;
+		this.handlerMethodName = handlerMethodName;
+		this.handlerMethodDescriptor = handlerMethodDescriptor;
+	}
+
+	@Override
+	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+		AnnotationVisitor annotationVisitor = null;
+		if (visible && desirableAnnotations.contains(desc)) {
+			annotationVisitor = new AnnotationScanner(handlerIdentifiers,
+					handlerClassName, handlerMethodName,
+					handlerMethodDescriptor, desc);
+		}
+		return annotationVisitor;
+	}
 
 }

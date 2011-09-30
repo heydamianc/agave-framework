@@ -1,21 +1,20 @@
 /* Theme */
-
 body {
-    font-family: "Trebuchet MS", Futura, sans-serif;
+	font-family: "Trebuchet MS", Futura, sans-serif;
 }
 
 fieldset {
-    background-color: #F0FFFF;
-    border: 1px solid #4682B4;
-    border-left: 3px solid #4682B4;
+	background-color: #F0FFFF;
+	border: 1px solid #4682B4;
+	border-left: 3px solid #4682B4;
 }
 
-legend, th {
-    background-color: #DCDCDC;
-    border: 1px solid #808080;
+legend,th {
+	background-color: #DCDCDC;
+	border: 1px solid #808080;
 }
 
 #source {
-  padding-top: 3px;
-  border-top: 1px solid #ccc;
+	padding-top: 3px;
+	border-top: 1px solid #ccc;
 }
