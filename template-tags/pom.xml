@@ -7,9 +7,8 @@
     <groupId>agave</groupId>
     <version>1.1-SNAPSHOT</version>
   </parent>
-  <groupId>agave</groupId>
+ 
   <artifactId>template-tags</artifactId>
-  <version>1.1-SNAPSHOT</version>
   <name>Template JSP Tags</name>
   <url>http://maven.apache.org</url>
   <dependencies>

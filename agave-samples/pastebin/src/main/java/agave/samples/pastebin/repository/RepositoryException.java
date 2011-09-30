@@ -33,7 +33,9 @@ package agave.samples.pastebin.repository;
  */
 public class RepositoryException extends Exception {
 
-    public RepositoryException(Throwable cause) {
+	private static final long serialVersionUID = 1L;
+
+	public RepositoryException(Throwable cause) {
     }
 
     public RepositoryException(String message, Throwable cause) {

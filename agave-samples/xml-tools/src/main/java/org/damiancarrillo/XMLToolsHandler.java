@@ -70,7 +70,8 @@ public class XMLToolsHandler {
         out.close();
     }
     
-    private void sendError(HttpServletResponse response, Exception ex) {
+    @SuppressWarnings("unused")
+	private void sendError(HttpServletResponse response, Exception ex) {
         StringWriter sink = new StringWriter();
         ex.printStackTrace(new PrintWriter(sink));
         try {
