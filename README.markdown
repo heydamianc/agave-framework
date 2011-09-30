@@ -1,6 +1,6 @@
 # The Agave Web Framework
 
-Agave is a Java 1.5+ library that allows you to cleanly expose a domain model through a Web interface. Simply put, it serves as the C in the MVC approach to interface programming. It is compact with very little conceptual overhead, yet powerful enough to account for evolution in the approache to Web programming on the Servlet API and the lack of stateful transactions across requests over the HTTP protocol. It provides this functionality without a large down payment because Agave is very easy to learn if you are familiar with Web programming, in many cases it can provide the shortest path between a concept and its actualization.
+A simple and lightweight framework for created Java web applications
 
 ## Getting Started
 
