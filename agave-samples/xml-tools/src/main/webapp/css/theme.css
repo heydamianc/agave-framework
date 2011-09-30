@@ -1,15 +1,14 @@
 /* Theme */
-
 body {
-  font-family: "Trebuchet MS", "Verdana", "Geneva", sans-serif;
+	font-family: "Trebuchet MS", "Verdana", "Geneva", sans-serif;
 }
 
 #footer {
-  text-align: center;
-  border-top: 1px solid #ccc;
-  font-size: 90%;
+	text-align: center;
+	border-top: 1px solid #ccc;
+	font-size: 90%;
 }
 
 #footer img {
-  border: none;
+	border: none;
 }

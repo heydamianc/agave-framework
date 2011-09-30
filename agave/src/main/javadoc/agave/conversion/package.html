@@ -1,43 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
- <head>
-   <title>Documentation for the &quot;agave.conversion&quot; package</title>
- </head>
- <body>
-   <p>
-     A collection of default <a href="Converter.html"><code>Converter</code></a>s that Agave uses to convert from {@code String} parameters to higher level objects.
-     The {@code String} parameters can come from form inputs, request parameters, or URI pattern positional parameters, in that order 
-     where the latter provides greater specificity. 
-   </p>
-   <p>
-   	 An example of each is:
-   </p>
-   <dl>
-     <dt><strong>Form Inputs</strong></dt>
-     <dd>
-     	Form inputs come from a submitted <acronym title="HyperText Markup Language">HTML</acronym> form, where the
-     	parameter name is the name supplied with some input, eg:
-     	<pre>  &lt;form method="post" action="${contextPath}/some/uri"&gt;
+<head>
+<title>Documentation for the &quot;agave.conversion&quot;
+	package</title>
+</head>
+<body>
+	<p>
+		A collection of default <a href="Converter.html"><code>Converter</code>
+		</a>s that Agave uses to convert from {@code String} parameters to higher
+		level objects. The {@code String} parameters can come from form
+		inputs, request parameters, or URI pattern positional parameters, in
+		that order where the latter provides greater specificity.
+	</p>
+	<p>An example of each is:</p>
+	<dl>
+		<dt>
+			<strong>Form Inputs</strong>
+		</dt>
+		<dd>
+			Form inputs come from a submitted <acronym
+				title="HyperText Markup Language">HTML</acronym> form, where the
+			parameter name is the name supplied with some input, eg:
+			<pre>  &lt;form method="post" action="${contextPath}/some/uri"&gt;
     &lt;input type="text" name="parameterNameToBeConverted" /&gt;
-  &lt;/form&gt;</pre> 
-     </dd>
-     <dt><strong>Request Parameters</strong></dt>
-     <dd>
-     	Request parameters come from the HTTP request query string, eg:
-     	<pre>  http://localhost:8080/contextPath/some/resource?parameterNameToBeConverted=parameterValue</pre>
-     </dd>
-     <dt><strong>URI Pattern Positional Parameters</strong></dt>
-     <dd>
-     	URI pattern positional parameters are variables whose value are supplied with the request URL and are 
-     	embedded withing the actual URL and not the query string.  These positional params are specified by 
-     	variable delimiters in the <a href="../HandlesRequestsTo.html"><code>HandlesRequestsTo</code></a> annotation.
-     	For example, the following annotation has a positional parameter:
-     	<pre>  @HandlesRequestsTo("/profile/${username}")
+  &lt;/form&gt;</pre>
+		</dd>
+		<dt>
+			<strong>Request Parameters</strong>
+		</dt>
+		<dd>
+			Request parameters come from the HTTP request query string, eg:
+			<pre>  http://localhost:8080/contextPath/some/resource?parameterNameToBeConverted=parameterValue</pre>
+		</dd>
+		<dt>
+			<strong>URI Pattern Positional Parameters</strong>
+		</dt>
+		<dd>
+			URI pattern positional parameters are variables whose value are
+			supplied with the request URL and are embedded withing the actual URL
+			and not the query string. These positional params are specified by
+			variable delimiters in the <a href="../HandlesRequestsTo.html"><code>HandlesRequestsTo</code>
+			</a> annotation. For example, the following annotation has a positional
+			parameter:
+			<pre>  @HandlesRequestsTo("/profile/${username}")
   public Destination displayProfile(HandlerContext) {
       ...
   }</pre>
-     </dd>
-   </dl>
- </body>
+		</dd>
+	</dl>
+</body>
 </html>

@@ -399,7 +399,7 @@ public class AgaveFilter implements Filter {
 
             Object handlerInstance = null;
 
-			// attempts to pull a handler out of the session, from a previous workflow phase
+			// attempts to pull a handler from a previous workflow phase out of the session
             if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
                 handlerInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
             }
@@ -420,7 +420,7 @@ public class AgaveFilter implements Filter {
 			
             Object result = null;
 
-			// invoke the handler method, supplying a context and a form instance
+			// invokes the handler method, supplying a context and a form instance
             try {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
@@ -449,7 +449,7 @@ public class AgaveFilter implements Filter {
                 throw new HandlerException(descriptor, ex);
             }
 
-			// complets a workflow and flushes the referenced attributes from the session
+			// completes a workflow and flushes the referenced attributes from the session
             if (descriptor.completesWorkflow()) {
                 session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
                 session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
