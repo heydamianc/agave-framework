@@ -37,7 +37,7 @@ Without the `classesDirectory` initialization parameter, the classes are loaded 
 
     mvn jetty:run
 
-Once again, visit [http://localhost:8080/sampleProject http://localhost:8080/sampleProject].  Then, open `./src/main/webapp/WEB-INF/jsp/index.jsp` and add a new paragraph or some visible change to it.  Since the Jetty plugin is running over a monitored filesystem, your changes will be immediately available and visible after you have saved your file.  Also, changes made to any Java files will require a recompilation before they are available. So if you have the Maven process running Jetty in the background, issuing a `mvn compile` command will cause Jetty to reload the context.
+Once again, visit [http://localhost:8080/sampleProject](http://localhost:8080/sampleProject).  Then, open `./src/main/webapp/WEB-INF/jsp/index.jsp` and add a new paragraph or some visible change to it.  Since the Jetty plugin is running over a monitored filesystem, your changes will be immediately available and visible after you have saved your file.  Also, changes made to any Java files will require a recompilation before they are available. So if you have the Maven process running Jetty in the background, issuing a `mvn compile` command will cause Jetty to reload the context.
 
 ## Additional Information
 
