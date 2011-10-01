@@ -33,15 +33,33 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated method is a handler method and fields requests to the URI named by the supplied value,
- * relative to the context path.
+ * Indicates that the annotated method is a handler method and fields requests
+ * to the URI named by the supplied value, relative to the context path.
+ * 
+ * Usage of this annotation looks like:
+ * 
+ * <ul>
+ * <li><code>@HandlesRequestsTo("/some/uri/path")</code></li>
+ * <li><code>@HandlesRequestsTo(uri="/some/uri/path")</code></li>
+ * <li>
+ * <code>@HandlesRequestsTo(uri="/some/uri/path" method=HttpMethod.GET)</code></li>
+ * </ul>
+ * 
+ * If you do not explicitly specify the {@code uri} paramater, the supplied
+ * value is implicitly interpreted to be the URI path. Thus, in the previous
+ * list, the top two are analogous.
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 @Documented
 @Inherited
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HandlesRequestsTo {
-    String value();
+
+	String value(); // convenience for 'uri'
+
+	String uri() default "";
+
+	HttpMethod method() default HttpMethod.ANY;
 }
