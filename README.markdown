@@ -159,7 +159,7 @@ Sample usage:
 
 * Why do I get a stack overflow when "/" is configured as my welcome file?
   * You most likely have configured the welcome file in the `web.xml` to be the root of the context ("/") but have not configured a handler to handle this request.  I am often guilty of this because I like to programmatically bootstrap the framework by catching requests to the welcome file and not having to perform a redirect just to arrive in controller code.  In fact, the `WelcomeHandler` generated through the archetype is configured to work this way.
-  * Another reason might be if you are leveraging the *jetty:run* goal but have not configured the classes directory as a parameter to the `AgaveFilter`.  Either use the *jetty:run-war* goal or configure the classes directory. This is necessary because if you run *jetty:run* there will be no classes directory to scan for handlers (the default is /WEB-INF/classes), and the servlet container will keep forwarding to itself: `root -> welcome file -> root -> welcome file -> ad infinitum`.  See the [GettingStarted#Setting_the_classesDirectory_Parameter] section for a solution to this problem.
+  * Another reason might be if you are leveraging the *jetty:run* goal but have not configured the classes directory as a parameter to the `AgaveFilter`.  Either use the *jetty:run-war* goal or configure the classes directory. This is necessary because if you run *jetty:run* there will be no classes directory to scan for handlers (the default is /WEB-INF/classes), and the servlet container will keep forwarding to itself: `root → welcome file → root → welcome file → ad infinitum`.  See the [GettingStarted#Setting_the_classesDirectory_Parameter] section for a solution to this problem.
 
 ## License
 
