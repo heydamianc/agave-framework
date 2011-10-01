@@ -1,6 +1,6 @@
 # License
 
-Copyright (c) 2008, Damian Carrillo
+Copyright © 2008, Damian Carrillo
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
