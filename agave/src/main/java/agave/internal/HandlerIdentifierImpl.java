@@ -42,12 +42,16 @@ public class HandlerIdentifierImpl implements HandlerIdentifier {
     private String methodName;
 
     public HandlerIdentifierImpl() {
-    	this.method = HttpMethod.ANY;
+    	this(null, null, null);
     }
 
     public HandlerIdentifierImpl(String uri, String className, String methodName) {
-    	this();
-        setUri(uri);
+    	this(uri, HttpMethod.ANY, className, methodName);
+    }
+    
+    public HandlerIdentifierImpl(String uri, HttpMethod method, String className, String methodName) {
+    	setUri(uri);
+    	setMethod(method);
         setClassName(className);
         setMethodName(methodName);
     }
