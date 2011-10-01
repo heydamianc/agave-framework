@@ -163,4 +163,4 @@ Sample usage:
 
 ## License
 
-All content is released under the [BSD license](LICENSE.markdown).  See [this page](http://www.linfo.org/bsdlicense.html) for a plain-text description of what this means.
+All content is released under the [BSD license](./LICENSE.markdown).  See [this page](http://www.linfo.org/bsdlicense.html) for a plain-text description of what this means.
