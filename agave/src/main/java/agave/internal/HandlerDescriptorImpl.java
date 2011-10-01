@@ -27,7 +27,10 @@ package agave.internal;
 
 import java.lang.reflect.Method;
 
+import javax.servlet.http.HttpServletRequest;
+
 import agave.CompletesWorkflow;
+import agave.HttpMethod;
 import agave.InitiatesWorkflow;
 import agave.ResumesWorkflow;
 
@@ -39,6 +42,7 @@ import agave.ResumesWorkflow;
  public class HandlerDescriptorImpl implements HandlerDescriptor {
     
     private URIPattern pattern;
+    private HttpMethod method;
     private Class<?> handlerClass;
     private Class<?> formClass;
     private Method handlerMethod;
@@ -48,6 +52,7 @@ import agave.ResumesWorkflow;
 
     public HandlerDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException {
         pattern = new URIPatternImpl(identifier.getUri());
+        method = identifier.getMethod(); 
         handlerClass = Class.forName(identifier.getClassName());
         locateAnnotatedHandlerMethods(identifier);
     }
@@ -86,6 +91,10 @@ import agave.ResumesWorkflow;
     
     public URIPattern getPattern() {
         return pattern;
+    }
+    
+    public HttpMethod getMethod() {
+    	return method;
     }
     
     public Class<?> getHandlerClass() {
@@ -135,6 +144,10 @@ import agave.ResumesWorkflow;
 
     public boolean matches(String uri) {
         return pattern.matches(uri);
+    }
+    
+    public boolean matches(HttpServletRequest request) {
+    	return request != null && method.matches(request) && pattern.matches(request);
     }
 
 }

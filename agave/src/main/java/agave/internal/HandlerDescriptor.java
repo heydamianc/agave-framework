@@ -27,6 +27,10 @@ package agave.internal;
 
 import java.lang.reflect.Method;
 
+import javax.servlet.http.HttpServletRequest;
+
+import agave.HttpMethod;
+
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
  * efficiently route an HTTP request into the handler that this object describes.
@@ -72,6 +76,11 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public URIPattern getPattern();
 
     /**
+     * Gets  the {@link agave.HttpMethod HttpMethod} that this {@code HandlerDescriptor} describes.
+     */
+    public HttpMethod getMethod();
+    
+    /**
      * Gets the handler class that this {@code HandlerDescriptor} describes.
      */
     public Class<?> getHandlerClass();
@@ -102,10 +111,10 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public String getWorkflowName();
 
     /**
-     * Whether or not this {@code HandlerDescriptor} matches the URI string supplied.  The URI string 
+     * Whether or not this {@code HandlerDescriptor} matches the supplied request.  The URI string 
      * should be the result of calling {@code HttpServletRequest.getRequestURI()}.
      */
-    public boolean matches(String uri);
+    public boolean matches(HttpServletRequest request);
 
     /**
      * Whether or not this {@code HandlerDescriptor} is equivalent to the supplied object.

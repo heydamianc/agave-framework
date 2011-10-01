@@ -70,6 +70,7 @@ public class HandlerRegistryTest {
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/some/path"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
