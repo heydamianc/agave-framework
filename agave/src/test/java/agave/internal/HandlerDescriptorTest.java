@@ -25,8 +25,15 @@
  */
 package agave.internal;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+
+import agave.HttpMethod;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -35,6 +42,14 @@ public class HandlerDescriptorTest {
     private static final String cls = "agave.sample.SampleHandler";
     private static final String met = "login";
 
+    Mockery context = new Mockery();
+    HttpServletRequest request;
+    
+    @Before
+    public void setUp() {
+    	request = context.mock(HttpServletRequest.class);
+    }
+    
     @Test
     public void testConstructor() throws Exception {
         HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
@@ -65,6 +80,56 @@ public class HandlerDescriptorTest {
         Assert.assertEquals(-1, a.compareTo(b));
         Assert.assertEquals(1, b.compareTo(a));
     }
+    
+    @Test
+    public void testMatches_withNullRequest() throws Exception {
+    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+    	Assert.assertFalse(a.matches(null));
+    }
+    
+    @Test
+    public void testMatches_withAnyHttpMethodAndMatchingURI() throws Exception {
+    	context.checking(new Expectations() {{
+    		allowing(request).getMethod(); will(returnValue("GET"));
+    		allowing(request).getServletPath(); will(returnValue("/login"));
+    	}});
+    	
+    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+    	Assert.assertTrue(a.matches(request));
+    }
+    
+    @Test
+    public void testMatches_withMatchingMethodAndMatchingURI() throws Exception {
+    	context.checking(new Expectations() {{
+    		allowing(request).getMethod(); will(returnValue("GET"));
+    		allowing(request).getServletPath(); will(returnValue("/login"));
+    	}});
+    	
+    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+    	Assert.assertTrue(a.matches(request));
+    }
+    
+    @Test
+    public void testMatches_withNonMethodAndMatchingURI() throws Exception {
+    	context.checking(new Expectations() {{
+    		allowing(request).getMethod(); will(returnValue("GET"));
+    		allowing(request).getServletPath(); will(returnValue("/login"));
+    	}});
+    	
+    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
+    	Assert.assertFalse(a.matches(request));
+    }
 
+    @Test
+    public void testMatches_withMatchingMethodAndNonMatchingURI() throws Exception {
+    	context.checking(new Expectations() {{
+    		allowing(request).getMethod(); will(returnValue("GET"));
+    		allowing(request).getServletPath(); will(returnValue("/logout"));
+    	}});
+    	
+    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+    	Assert.assertFalse(a.matches(request));
+    }
+    
 }
 
