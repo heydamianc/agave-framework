@@ -47,7 +47,7 @@ public class MovieHandler {
 	private MovieRepository movieRepository;
 	
 	public MovieHandler() {
-		// repository = <some movie repository>;
+		movieRepository = new MovieRepository();
 	}
 
 	@HandlesRequestsTo(uri = "/movies", method = HttpMethod.GET)
@@ -75,23 +75,23 @@ public class MovieHandler {
 		return Destinations.forward("/WEB-INF/movies/delete.jsp");
 	}
 	
-	@HandlesRequestsTo(uri = "/movies/${movieId}", method = HttpMethod.GET)
+	@HandlesRequestsTo(uri = "/movies/${title}", method = HttpMethod.GET)
 	public Destination retrieveMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
-		context.getRequest().setAttribute("movie", movieRepository.get(movieForm.getMovieId()));
+		context.getRequest().setAttribute("movie", movieRepository.get(movieForm.getTitle()));
 		return Destinations.forward("/WEB-INF/movie/display.jsp");
 	}
 	
-	@HandlesRequestsTo(uri = "/movies/${movieId}", method = HttpMethod.PUT)
+	@HandlesRequestsTo(uri = "/movies/${title}", method = HttpMethod.PUT)
 	public Destination replaceMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
-		if (movieRepository.remove(movieForm.getMovieId())) {
-			movieRepository.add(movieForm.getMovie());
+		if (movieRepository.remove(movieForm.getTitle())) {
+			context.getRequest().setAttribute("success", movieRepository.add(movieForm.getMovie()));
 		}
-		return Destinations.forward("/WEB-INF/movie/display.jsp");
+		return Destinations.forward("/WEB-INF/movie/replace.jsp");
 	}
 	
-	@HandlesRequestsTo(uri = "/movies/${movieId}", method = HttpMethod.DELETE)
+	@HandlesRequestsTo(uri = "/movies/${title}", method = HttpMethod.DELETE)
 	public Destination deleteMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
-		movieRepository.remove(movieForm.getMovieId());
+		movieRepository.remove(movieForm.getTitle());
 		return Destinations.forward("/WEB-INF/movie/delete.jsp");
 	}
 
@@ -101,7 +101,7 @@ public class MovieHandler {
 	// typically be placed inside of their own file and have actual properties,
 	// methods, etc.
 
-	class MovieRepository {
+	public static class MovieRepository {
 		Collection<Movie> list() {
 			return Collections.emptyList();
 		}
@@ -127,39 +127,35 @@ public class MovieHandler {
 		}
 	}
 	
-	class Movie {
+	public static class Movie {
 
 	}
 
-	class Ticket {
+	public static class Ticket {
 
 	}
 
-	class Theater {
+	public static class Theater {
 
 	}
 
-	class MoviesForm {
+	public static class MoviesForm {
 		Collection<Movie> list() {
 			return null;
 		}
 	}
 	
-	class MovieForm {
+	public static class MovieForm {
 		
-		private Object movieId;
-		
-		public Object getMovieId() {
-			return movieId;
+		private String title;
+
+		public String getTitle() {
+			return title;
 		}
 
-
-
-		public void setMovieId(Object movieId) {
-			this.movieId = movieId;
+		public void setTitle(String title) {
+			this.title = title;
 		}
-
-
 
 		Movie getMovie() {
 			return new Movie();
