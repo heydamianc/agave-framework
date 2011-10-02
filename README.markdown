@@ -1,6 +1,6 @@
 # The Agave Web Framework
 
-A simple and lightweight framework for created Java web applications
+A simple and lightweight framework for creating Java web applications
 
 ## Getting Started
 
