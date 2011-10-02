@@ -107,7 +107,7 @@ patterns will work with any context deployed to any hostname running on any port
   <dd>Fields requests to the root of the context. Use this along with the welcome file element in your 
       web.xml to immediately bootstrap the framework instead of having to hit a JSP or HTML page and 
       have it redirect into an entry handler.</dd>
-  <dt><tt>@HandlesRequestsTo(url=&quot;/&quot;)</tt></dt>
+  <dt><tt>@HandlesRequestsTo(uri=&quot;/&quot;)</tt></dt>
   <dd>Same as before, except the URI pattern is explicitly specified.</dd>
   <dt><tt>@HandlesRequestsTo(uri=&quot;/&quot;, method=HttpMethod.GET)</tt></dt>
   <dd>Same as before, except the URI pattern and HTTP method are explicitly specified.</dd>
