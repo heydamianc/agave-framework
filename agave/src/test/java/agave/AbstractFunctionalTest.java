@@ -81,6 +81,9 @@ public abstract class AbstractFunctionalTest {
         throws URISyntaxException {
 
         final URL rootUrl = getClass().getClassLoader().getResource("agave");
+        
+        // When the filter scans for handlers, this will redirect it to use the test class path
+        
         final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
