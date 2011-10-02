@@ -58,24 +58,19 @@ public class HandlerRegistryImpl implements HandlerRegistry {
 	 * Adds handlers descriptors to a sorted set of descriptors. The set is
 	 * sorted according to the specificity of the URIPattern.
 	 * 
-	 * @param addedDescriptor
+	 * @param descriptor
 	 *            the HandlerDescriptor to be added.
 	 * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm
 	 *      used in determining the specificity
 	 */
-	public void addDescriptor(HandlerDescriptor addedDescriptor)
+	public void addDescriptor(HandlerDescriptor descriptor)
 			throws DuplicateDescriptorException {
-		HandlerDescriptor existing = null;
-		for (HandlerDescriptor descriptor : descriptors) {
-			if (descriptor.equals(addedDescriptor)) {
-				existing = descriptor;
-				break;
+		for (HandlerDescriptor existingDescriptor : descriptors) {
+			if (existingDescriptor.equals(descriptor)) {
+				throw new DuplicateDescriptorException(existingDescriptor, descriptor);
 			}
 		}
-		if (existing != null) {
-			throw new DuplicateDescriptorException(existing, addedDescriptor);
-		}
-		descriptors.add(addedDescriptor);
+		descriptors.add(descriptor);
 	}
 
 	public void addAllDescriptors(Collection<HandlerDescriptor> descriptors)

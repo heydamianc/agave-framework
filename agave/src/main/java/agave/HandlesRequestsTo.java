@@ -57,7 +57,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HandlesRequestsTo {
 
-	String value(); // convenience for 'uri'
+	String value() default ""; // convenience for 'uri'
 
 	String uri() default "";
 
