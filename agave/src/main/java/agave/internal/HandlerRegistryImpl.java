@@ -31,7 +31,7 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import agave.exception.DuplicateURIPatternException;
+import agave.exception.DuplicateDescriptorException;
 
 /**
  * A repository used to group all registered handlers. Handlers are registered
@@ -49,7 +49,7 @@ public class HandlerRegistryImpl implements HandlerRegistry {
 	}
 
 	public HandlerRegistryImpl(Collection<HandlerDescriptor> descriptors)
-			throws DuplicateURIPatternException {
+			throws DuplicateDescriptorException {
 		this();
 		addAllDescriptors(descriptors);
 	}
@@ -58,28 +58,28 @@ public class HandlerRegistryImpl implements HandlerRegistry {
 	 * Adds handlers descriptors to a sorted set of descriptors. The set is
 	 * sorted according to the specificity of the URIPattern.
 	 * 
-	 * @param added
+	 * @param addedDescriptor
 	 *            the HandlerDescriptor to be added.
 	 * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm
 	 *      used in determining the specificity
 	 */
-	public void addDescriptor(HandlerDescriptor added)
-			throws DuplicateURIPatternException {
+	public void addDescriptor(HandlerDescriptor addedDescriptor)
+			throws DuplicateDescriptorException {
 		HandlerDescriptor existing = null;
 		for (HandlerDescriptor descriptor : descriptors) {
-			if (descriptor.equals(added)) {
+			if (descriptor.equals(addedDescriptor)) {
 				existing = descriptor;
 				break;
 			}
 		}
 		if (existing != null) {
-			throw new DuplicateURIPatternException(existing, added);
+			throw new DuplicateDescriptorException(existing, addedDescriptor);
 		}
-		descriptors.add(added);
+		descriptors.add(addedDescriptor);
 	}
 
 	public void addAllDescriptors(Collection<HandlerDescriptor> descriptors)
-			throws DuplicateURIPatternException {
+			throws DuplicateDescriptorException {
 		for (HandlerDescriptor descriptor : descriptors) {
 			addDescriptor(descriptor);
 		}

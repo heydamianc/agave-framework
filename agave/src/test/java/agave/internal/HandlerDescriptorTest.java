@@ -65,8 +65,16 @@ public class HandlerDescriptorTest {
         HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
         HandlerDescriptor b = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
         HandlerDescriptor c = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/notLogin", cls, met));
+        HandlerDescriptor d = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+        HandlerDescriptor e = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
+        HandlerDescriptor f = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.ANY, cls, met));
+        
         Assert.assertEquals(a, b);
         Assert.assertFalse(a.equals(c));
+        Assert.assertEquals(a, d);
+        Assert.assertEquals(a, e);
+        Assert.assertFalse(d.equals(e));
+        Assert.assertEquals(a, f);
     }
 
     @Test

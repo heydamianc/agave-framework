@@ -28,17 +28,23 @@ package agave.exception;
 import agave.internal.HandlerDescriptor;
 
 /**
- * An exception that is thrown to indicate that two handlers share the same {@code URIPattern}.
+ * An exception that is thrown to indicate that two handlers share the same
+ * {@code URIPattern} and HTTP method combination.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DuplicateURIPatternException extends AgaveException {
-	
+public class DuplicateDescriptorException extends AgaveException {
+
 	private static final long serialVersionUID = 1L;
 
-	public DuplicateURIPatternException(HandlerDescriptor existing, HandlerDescriptor added) {
-        super("Failed to register a duplicate handler mapping, \"" + added.getPattern().toString() + "\"" +
-            " for " + added.getHandlerClass().getName() + ".  Handler is already mapped in " + 
-            existing.getHandlerClass().getName() + ".");
-    }
-    
+	public DuplicateDescriptorException(HandlerDescriptor existing,
+			HandlerDescriptor added) {
+		super("Failed to register a duplicate handler mapping, ("
+				+ added.getPattern().toString() + ", "
+				+ added.getMethod().toString() + ") for "
+				+ added.getHandlerClass().getName()
+				+ ".  Handler is already mapped in "
+				+ existing.getHandlerClass().getName() + ".");
+	}
+
 }
