@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-  xmlns="http://maven.apache.org/POM/4.0.0" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                       http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
@@ -41,24 +39,13 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <version>2.4.0</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
@@ -67,28 +54,12 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.12.rc2</version>
+        <version>6.1.26</version>
         <configuration>
           <scanIntervalSeconds>1</scanIntervalSeconds>
-          <contextPath>${artifactId}</contextPath>
+          <contextPath>${project.artifactId}</contextPath>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  <licenses>
-    <license>
-      <name>BSD License</name>
-        <url>http://agave-web-framework.googlecode.com/svn/trunk/agave-samples/license.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <id>damiancarrillo</id>
-      <name>Damian Carrillo</name>
-      <email>damiancarrillo@gmail.com</email>
-      <url>http://dcarrillo.org</url>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
 </project>
