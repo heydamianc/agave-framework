@@ -71,8 +71,8 @@ public class HandlerDescriptorTest {
         
         Assert.assertEquals(a, b);
         Assert.assertFalse(a.equals(c));
-        Assert.assertEquals(a, d);
-        Assert.assertEquals(a, e);
+        Assert.assertFalse(a.equals(d));
+        Assert.assertFalse(a.equals(e));
         Assert.assertFalse(d.equals(e));
         Assert.assertEquals(a, f);
     }

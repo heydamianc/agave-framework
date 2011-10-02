@@ -131,7 +131,11 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
 	}
 
 	public int compareTo(HandlerDescriptor that) {
-		return getPattern().compareTo(that.getPattern());
+		int result = pattern.compareTo(that.getPattern());
+		if (result == 0) {
+			result = method.ordinal() - that.getMethod().ordinal();
+		}
+		return result;
 	}
 
 	@Override
@@ -143,19 +147,13 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
 			return false;
 		}
 		HandlerDescriptor desc = (HandlerDescriptor) that;
-		return pattern.equals(desc.getPattern())
-				&& (method == desc.getMethod() || method == HttpMethod.ANY || desc
-						.getMethod() == HttpMethod.ANY);
+		boolean equal = pattern.equals(desc.getPattern()) && method == desc.getMethod();
+		return equal;
 	}
 
 	@Override
 	public int hashCode() {
-		return pattern.hashCode() + handlerClass.hashCode()
-				+ handlerMethod.hashCode();
-	}
-
-	public boolean matches(String uri) {
-		return pattern.matches(uri);
+		return pattern.hashCode() + method.name().hashCode();
 	}
 
 	public boolean matches(HttpServletRequest request) {

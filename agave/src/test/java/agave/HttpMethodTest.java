@@ -75,4 +75,24 @@ public class HttpMethodTest {
 		Assert.assertFalse(HttpMethod.PUT.matches(request));
 	}
 	
+	@Test
+	public void testMatches_whenThisIsAny() {
+		Assert.assertTrue(HttpMethod.ANY.matches(HttpMethod.POST));
+	}
+	
+	@Test
+	public void testMatches_whenThatIsAny() {
+		Assert.assertTrue(HttpMethod.POST.matches(HttpMethod.ANY));
+	}
+	
+	@Test
+	public void testMatches_whenThisMatchesThat() {
+		Assert.assertTrue(HttpMethod.POST.matches(HttpMethod.POST));
+	}
+	
+	@Test
+	public void testMatches_whenThisDoesNotMatchThat() {
+		Assert.assertFalse(HttpMethod.POST.matches(HttpMethod.GET));
+	}
+	
 }
