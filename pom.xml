@@ -17,7 +17,7 @@
       and efficiently, with maximum flexibility.
   </description>
   <inceptionYear>2008</inceptionYear>
-  <url>http://agave-web-framework.googlecode.com</url>
+  <url>https://github.com/damiancarrillo/agave-web-framework</url>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -32,15 +32,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <scm>
-    <connection>scm:svn:http://agave-web-framework.googlecode.com/svn/</connection>
-    <developerConnection>scm:svn:https://agave-web-framework.googlecode.com/svn/</developerConnection>
-    <url>http://code.google.com/p/agave-web-framework/source/browse/</url>
-  </scm>
-  <issueManagement>
-    <system>Google Code Issue Tracker</system>
-    <url>http://code.google.com/p/agave-web-framework/issues/list</url>
-  </issueManagement>
   <build>
     <plugins>
       <plugin>
@@ -88,7 +79,7 @@
   <licenses>
     <license>
       <name>BSD License</name>
-      <url>http://agave-web-framework.googlecode.com/svn/trunk/agave/license.txt</url>
+      <url>https://github.com/damiancarrillo/agave-web-framework/blob/master/LICENSE.markdown</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -100,11 +91,6 @@
       <timezone>-6</timezone>
     </developer>
   </developers>
-    <distributionManagement>
-    <site>
-      <id>Google Code SVN Server</id>
-      <url>scm:svn:https://damiancarrillo@http://agave-web-framework.googlecode.com/svn/trunk/site</url>
-    </site>
   </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
