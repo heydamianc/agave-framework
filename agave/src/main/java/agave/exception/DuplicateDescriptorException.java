@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2011, Damian Carrillo
+/**
+ * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,26 +23,28 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave;
+package agave.exception;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import agave.internal.HandlerDescriptor;
 
 /**
- * Indicates that the annotated method is a handler method and fields HTTP
- * GET requests to the URI named by the supplied value, relative to the
- * context path.
+ * An exception that is thrown to indicate that two handlers share the same
+ * {@code URIPattern} and HTTP method combination.
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Get {
-	String value();
+public class DuplicateDescriptorException extends AgaveException {
+
+	private static final long serialVersionUID = 1L;
+
+	public DuplicateDescriptorException(HandlerDescriptor existing,
+			HandlerDescriptor added) {
+		super("Failed to register a duplicate handler mapping, ("
+				+ added.getPattern().toString() + ", "
+				+ added.getMethod().toString() + ") for "
+				+ added.getHandlerClass().getName()
+				+ ".  Handler is already mapped in "
+				+ existing.getHandlerClass().getName() + ".");
+	}
+
 }

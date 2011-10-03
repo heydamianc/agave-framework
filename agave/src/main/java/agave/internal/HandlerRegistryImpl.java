@@ -31,65 +31,66 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import agave.exception.DuplicateURIPatternException;
+import agave.exception.DuplicateDescriptorException;
 
 /**
- * A repository used to group all registered handlers.  Handlers are registered by means of scanning
- * the classpath for classes that have methods annotated with the {@code HandlesRequestsTo} annotation.
+ * A repository used to group all registered handlers. Handlers are registered
+ * by means of scanning the classpath for classes that have methods annotated
+ * with the {@code HandlesRequestsTo} annotation.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class HandlerRegistryImpl implements HandlerRegistry {
-    
-    private Collection<HandlerDescriptor> descriptors;
-    
-    public HandlerRegistryImpl() {
-        descriptors = new TreeSet<HandlerDescriptor>();
-    }
 
-    public HandlerRegistryImpl(Collection<HandlerDescriptor> descriptors) throws DuplicateURIPatternException {
-        this();
-        addAllDescriptors(descriptors);
-    }
-   
-    /**
-     * Adds handlers descriptors to a sorted set of descriptors.  The set is sorted according to the 
-     * specificity of the URIPattern.
-     * @param added the HandlerDescriptor to be added.
-     * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm used in determining the 
-     * specificity
-     */ 
-    public void addDescriptor(HandlerDescriptor added) throws DuplicateURIPatternException {
-        HandlerDescriptor existing = null;
-        for (HandlerDescriptor descriptor : descriptors) {
-            if (descriptor.equals(added)) {
-                existing = descriptor;
-                break;
-            }
-        }
-        if (existing != null) {
-            throw new DuplicateURIPatternException(existing, added);
-        }
-        descriptors.add(added);
-    }
-    
-    public void addAllDescriptors(Collection<HandlerDescriptor> descriptors) throws DuplicateURIPatternException {
-        for (HandlerDescriptor descriptor : descriptors) {
-            addDescriptor(descriptor);
-        }
-    }
-    
-    public HandlerDescriptor findMatch(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        for (HandlerDescriptor descriptor : descriptors) {
-            if (descriptor.matches(uri)) {
-                return descriptor;
-            }
-        }
-        return null;
-    }
+	private Collection<HandlerDescriptor> descriptors;
 
-    public Collection<HandlerDescriptor> getDescriptors() {
-        return Collections.unmodifiableCollection(descriptors);
-    }
-    
+	public HandlerRegistryImpl() {
+		descriptors = new TreeSet<HandlerDescriptor>();
+	}
+
+	public HandlerRegistryImpl(Collection<HandlerDescriptor> descriptors)
+			throws DuplicateDescriptorException {
+		this();
+		addAllDescriptors(descriptors);
+	}
+
+	/**
+	 * Adds handlers descriptors to a sorted set of descriptors. The set is
+	 * sorted according to the specificity of the URIPattern.
+	 * 
+	 * @param descriptor
+	 *            the HandlerDescriptor to be added.
+	 * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm
+	 *      used in determining the specificity
+	 */
+	public void addDescriptor(HandlerDescriptor descriptor)
+			throws DuplicateDescriptorException {
+		for (HandlerDescriptor existingDescriptor : descriptors) {
+			if (existingDescriptor.equals(descriptor)) {
+				throw new DuplicateDescriptorException(existingDescriptor, descriptor);
+			}
+		}
+		descriptors.add(descriptor);
+	}
+
+	public void addAllDescriptors(Collection<HandlerDescriptor> descriptors)
+			throws DuplicateDescriptorException {
+		for (HandlerDescriptor descriptor : descriptors) {
+			addDescriptor(descriptor);
+		}
+	}
+
+	public HandlerDescriptor findMatch(HttpServletRequest request) {
+		for (HandlerDescriptor descriptor : descriptors) {
+			if (descriptor.matches(request)) {
+				return descriptor;
+			}
+		}
+		return null;
+	}
+
+	public Collection<HandlerDescriptor> getDescriptors() {
+		return Collections.unmodifiableCollection(descriptors);
+	}
+
 }

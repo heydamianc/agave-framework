@@ -25,24 +25,74 @@
  */
 package agave;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.servlet.http.HttpServletRequest;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Indicates that the annotated method is a handler method and fields HTTP
- * OPTIONS requests to the URI named by the supplied value, relative to the
- * context path.
  * 
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Post {
-	String value();
+public class HttpMethodTest {
+	
+	Mockery context = new Mockery();
+	HttpServletRequest request;
+	
+	@Before
+	public void setUp() {
+		request = context.mock(HttpServletRequest.class);
+		
+	}
+	
+	@Test
+	public void testMatches_withMatchingMethod() {
+		context.checking(new Expectations() {{
+			allowing(request).getMethod(); will(returnValue("GET"));
+		}});
+		
+		Assert.assertTrue(HttpMethod.GET.matches(request));
+	}
+	
+	@Test
+	public void testMatches_againsAnyMethod() {
+		context.checking(new Expectations() {{
+			allowing(request).getMethod(); will(returnValue("GET"));
+		}});
+		
+		Assert.assertTrue(HttpMethod.ANY.matches(request));
+	}
+	
+	@Test
+	public void testMatches_withNonMatchingMethod() {
+		context.checking(new Expectations() {{
+			allowing(request).getMethod(); will(returnValue("GET"));
+		}});
+		
+		Assert.assertFalse(HttpMethod.PUT.matches(request));
+	}
+	
+	@Test
+	public void testMatches_whenThisIsAny() {
+		Assert.assertTrue(HttpMethod.ANY.matches(HttpMethod.POST));
+	}
+	
+	@Test
+	public void testMatches_whenThatIsAny() {
+		Assert.assertTrue(HttpMethod.POST.matches(HttpMethod.ANY));
+	}
+	
+	@Test
+	public void testMatches_whenThisMatchesThat() {
+		Assert.assertTrue(HttpMethod.POST.matches(HttpMethod.POST));
+	}
+	
+	@Test
+	public void testMatches_whenThisDoesNotMatchThat() {
+		Assert.assertFalse(HttpMethod.POST.matches(HttpMethod.GET));
+	}
+	
 }

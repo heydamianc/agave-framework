@@ -23,26 +23,54 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package agave;
+package agave.internal;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.servlet.ServletContext;
+
+import agave.AgaveFilter;
+import agave.HandlerFactory;
+import agave.exception.HandlerException;
 
 /**
- * Indicates that the annotated method is a handler method and fields HTTP
- * DELETE requests to the URI named by the supplied value, relative to the
- * context path.
  * 
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Delete {
-	String value();
+public class HandlerFactoryImpl implements HandlerFactory {
+
+	/**
+	 * Initializes this {@code HandlerFactory} if necessary. This method is
+	 * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
+	 * method, so it is an effective way to set up a mechanism for providing
+	 * dependency injection or hooking into an IOC library.
+	 */
+	@Override
+	public void initialize() {
+		// do nothing
+	}
+
+	/**
+	 * Creates a new instance of a handler object for the handler class
+	 * specified in the supplied descriptor by calling its default constructor.
+	 * 
+	 * @param descriptor
+	 *            the handler descriptor that describes which handler to
+	 *            instantiate.
+	 * @throws FormError
+	 *             when a handler instance failed to be instantiated
+	 */
+	public Object createHandlerInstance(ServletContext servletContext,
+			HandlerDescriptor descriptor) throws HandlerException {
+		Object handlerInstance = null;
+		if (descriptor.getHandlerClass() != null) {
+			try {
+				handlerInstance = descriptor.getHandlerClass().newInstance();
+			} catch (InstantiationException ex) {
+				throw new HandlerException(descriptor, ex);
+			} catch (IllegalAccessException ex) {
+				throw new HandlerException(descriptor, ex);
+			}
+		}
+		return handlerInstance;
+	}
+
 }

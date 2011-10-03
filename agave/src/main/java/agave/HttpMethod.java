@@ -25,24 +25,35 @@
  */
 package agave;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * Indicates that the annotated method is a handler method and fields HTTP
- * PUT requests to the URI named by the supplied value, relative to the
- * context path.
+ * All supported values for the {@link HandlesRequestsTo} {@code method} parameter.
  * 
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ *@author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Put {
-	String value();
+public enum HttpMethod {
+	
+	GET,
+	PUT,
+	POST,
+	DELETE,
+	ANY;
+	
+	public boolean matches(HttpServletRequest request) {
+		boolean matches = false;
+		
+		if (request != null) {
+			if (request.getMethod() != null) {
+				matches = matches(HttpMethod.valueOf(request.getMethod().toUpperCase()));
+			}
+		}
+		
+		return matches;
+	}
+
+	public boolean matches(HttpMethod method) {
+		return this == ANY || method == ANY || this == method;
+	}
+	
 }
