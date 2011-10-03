@@ -13,7 +13,8 @@
   <packaging>pom</packaging>
   <version>1.2-SNAPSHOT</version>
   <name>Agave Root Module</name>
-  <description>The Agave Web Framework is a simple and lightweight web framework that enables you to develop quickly and efficiently, with maximum flexibility.</description>
+  <description>The Agave Web Framework is a simple and lightweight web framework that enables 
+    you to develop quickly and efficiently, with maximum flexibility.</description>
   <inceptionYear>2008</inceptionYear>
   <url>https://github.com/damiancarrillo/agave-web-framework</url>
   <dependencies>
