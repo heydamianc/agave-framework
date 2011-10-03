@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Damian Carrillo
+ * Copyright (c) 2011, ddc
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -25,25 +25,41 @@
  */
 package agave.internal;
 
-import agave.InstanceCreator;
-import agave.exception.FormException;
-import agave.exception.HandlerException;
+import javax.servlet.ServletContext;
 
+import agave.AgaveFilter;
+import agave.FormFactory;
+import agave.exception.FormException;
 
 /**
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * 
+ * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ReflectionInstanceCreator implements InstanceCreator {
+public class FormFactoryImpl implements FormFactory {
 
-    /**
-     * Creates a new instance of a form object for the form class specified in the supplied descriptor by
-     * calling its default constructor.
-     * @param descriptor the handler descriptor that describes which form to instantiate
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws FormError when a form instance failed to be instantiated
-     */
-    public Object createFormInstance(HandlerDescriptor descriptor) throws FormException {
+	/**
+	 * Initializes this {@code HandlerFactory} if necessary. This method is
+	 * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
+	 * method, so it is an effective way to set up a mechanism for providing
+	 * dependency injection or hooking into an IOC library.
+	 */
+	@Override
+	public void initialize() {
+		// do nothing
+	}
+
+	/**
+	 * Creates a new instance of a form object for the handler class
+	 * specified in the supplied descriptor by calling its default constructor.
+	 * 
+	 * @param descriptor
+	 *            the handler descriptor that describes which form to
+	 *            instantiate.
+	 * @throws FormError
+	 *             when a form instance failed to be instantiated
+	 */
+	public Object createFormInstance(ServletContext servletContext,
+			HandlerDescriptor descriptor) throws FormException {
         Object formInstance = null;
         if (descriptor.getFormClass() != null) {
             try {
@@ -55,31 +71,6 @@ public class ReflectionInstanceCreator implements InstanceCreator {
             }
         }
         return formInstance;
-    }
-
-
-    /**
-     * Creates a new instance of a handler object for the handler class specified in the supplied descriptor 
-     * by calling its default constructor.
-     * @param descriptor the handler descriptor that describes which form to instantiate.
-     * @throws FormError when a handler instance failed to be instantiated
-     */
-    public Object createHandlerInstance(HandlerDescriptor descriptor) throws HandlerException {
-        Object handlerInstance = null;
-        if (descriptor.getHandlerClass() != null) {
-            try {
-                handlerInstance = descriptor.getHandlerClass().newInstance();
-            } catch (InstantiationException ex) {
-                throw new HandlerException(descriptor, ex);
-            } catch (IllegalAccessException ex) {
-                throw new HandlerException(descriptor, ex);
-            }
-        }
-        return handlerInstance;
-    }
-
-
-    public void initialize() {
-    }
+	}
 
 }
