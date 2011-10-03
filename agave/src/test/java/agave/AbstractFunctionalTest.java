@@ -81,6 +81,9 @@ public abstract class AbstractFunctionalTest {
         throws URISyntaxException {
 
         final URL rootUrl = getClass().getClassLoader().getResource("agave");
+        
+        // When the filter scans for handlers, this will redirect it to use the test class path
+        
         final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
@@ -88,7 +91,8 @@ public abstract class AbstractFunctionalTest {
             allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
             allowing(filterConfig).getInitParameter("lifecycleHooks"); will(returnValue(null));
             allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
-            allowing(filterConfig).getInitParameter("instanceCreator"); will(returnValue(null));
+            allowing(filterConfig).getInitParameter("handlerFactory"); will(returnValue(null));
+            allowing(filterConfig).getInitParameter("formFactory"); will(returnValue(null));
             allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
             allowing(request).getSession(true); will(returnValue(session));
             allowing(request).getParameterMap(); will(returnValue(parameters));

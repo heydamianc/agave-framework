@@ -55,6 +55,7 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/wizard/step1/"));
+            allowing(request).getMethod(); will(returnValue("GET"));
             
             one(session).setAttribute("wizard-handler", new WorkflowHandler());
             one(session).setAttribute("wizard-form", new WorkflowForm());
@@ -75,6 +76,7 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/wizard/step2/"));
+            allowing(request).getMethod(); will(returnValue("GET"));
             
             one(session).getAttribute("wizard-handler"); will(returnValue(handler));
             one(session).getAttribute("wizard-form"); will(returnValue(form));
@@ -95,6 +97,7 @@ public class WorkflowFunctionalTest extends AbstractFunctionalTest {
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/wizard/step3/"));
+            allowing(request).getMethod(); will(returnValue("GET"));
             
             one(session).getAttribute("wizard-handler"); will(returnValue(handler));
             one(session).getAttribute("wizard-form"); will(returnValue(form));

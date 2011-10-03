@@ -60,6 +60,7 @@ public class LifecycleHooksFunctionalTest extends AbstractFunctionalTest {
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             
             // from init

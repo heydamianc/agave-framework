@@ -33,48 +33,71 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import agave.exception.DuplicateURIPatternException;
+import agave.HttpMethod;
+import agave.exception.DuplicateDescriptorException;
 
 public class HandlerRegistryTest {
 
-    private Mockery context = new Mockery();
-    private HandlerRegistry registry;
-    private HttpServletRequest request;
+	private Mockery context = new Mockery();
+	private HandlerRegistry registry;
+	private HttpServletRequest request;
 
-    @Before
-    public void setup() {
-        registry = new HandlerRegistryImpl();
-        request = context.mock(HttpServletRequest.class);
-    }
+	@Before
+	public void setup() {
+		registry = new HandlerRegistryImpl();
+		request = context.mock(HttpServletRequest.class);
+	}
 
-    @Test(expected = DuplicateURIPatternException.class)
-    public void testAddDescriptor() throws Exception {
-        registry.addDescriptor(
-            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", "agave.sample.SampleHandler", "login")));
-        registry.addDescriptor(
-            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", "agave.sample.SampleHandler", "login")));
-    }
+	@Test(expected = DuplicateDescriptorException.class)
+	public void testAddDescriptor() throws Exception {
+		registry.addDescriptor(new HandlerDescriptorImpl(
+				new HandlerIdentifierImpl("/pattern",
+						"agave.sample.SampleHandler", "login")));
+		registry.addDescriptor(new HandlerDescriptorImpl(
+				new HandlerIdentifierImpl("/pattern",
+						"agave.sample.SampleHandler", "login")));
+	}
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testAddToUnmodifiable() throws Exception {
-        registry.getDescriptors().add(
-            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", "agave.sample.SampleHandler", "login")));
-    }
-    
-    @Test
-    public void testMatches() throws Exception {
-        registry.addDescriptor(
-            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/some/path", "agave.sample.SampleHandler", "login")));
-        registry.addDescriptor(
-            new HandlerDescriptorImpl(new HandlerIdentifierImpl("/other/path", "agave.sample.SampleHandler", "login")));
-        
-        context.checking(new Expectations() {{
-            allowing(request).getServletPath(); will(returnValue("/some/path"));
-        }});
-        
-        HandlerDescriptor descriptor = registry.findMatch(request);
-        Assert.assertNotNull(descriptor);
-        Assert.assertEquals("/some/path", descriptor.getPattern().toString());
-    }
-   
+	@Test
+	public void testAddDescriptor_withUniqueDescriptors() throws Exception {
+		registry.addDescriptor(new HandlerDescriptorImpl(
+				new HandlerIdentifierImpl("/pattern", HttpMethod.GET,
+						"agave.sample.SampleHandler", "login")));
+		registry.addDescriptor(new HandlerDescriptorImpl(
+				new HandlerIdentifierImpl("/pattern", HttpMethod.POST,
+						"agave.sample.SampleHandler", "login")));
+		
+		Assert.assertEquals(2, registry.getDescriptors().size());
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void testAddToUnmodifiable() throws Exception {
+		registry.getDescriptors().add(
+				new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern",
+						"agave.sample.SampleHandler", "login")));
+	}
+
+	@Test
+	public void testMatches() throws Exception {
+		registry.addDescriptor(new HandlerDescriptorImpl(
+				new HandlerIdentifierImpl("/some/path",
+						"agave.sample.SampleHandler", "login")));
+		registry.addDescriptor(new HandlerDescriptorImpl(
+				new HandlerIdentifierImpl("/other/path",
+						"agave.sample.SampleHandler", "login")));
+
+		context.checking(new Expectations() {
+			{
+				allowing(request).getServletPath();
+				will(returnValue("/some/path"));
+				allowing(request).getMethod();
+				will(returnValue("GET"));
+			}
+		});
+
+		HandlerDescriptor descriptor = registry.findMatch(request);
+		Assert.assertNotNull(descriptor);
+		Assert.assertEquals("/some/path", descriptor.getPattern().toString());
+	}
+
 }

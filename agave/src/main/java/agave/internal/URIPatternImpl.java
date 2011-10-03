@@ -131,6 +131,10 @@ public class URIPatternImpl implements URIPattern {
         }
         return input;
     }
+    
+    public boolean matches(HttpServletRequest request) {
+    	return request != null && matches(request.getServletPath());
+    }
 
     /**
      * Determines whether the supplied URI string matches the pattern that this

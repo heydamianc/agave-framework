@@ -48,6 +48,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         filter.init(filterConfig);
@@ -62,6 +63,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/test1"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
@@ -74,6 +76,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
@@ -89,6 +92,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/aliased"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);

@@ -25,21 +25,33 @@
  */
 package agave.internal;
 
+import agave.HttpMethod;
+
 /**
  * Used internally when scanning for handlers.  A HandlerIdentifier is pieced together piece by piece
- * until the handler method is identified with a valid URI pattern.
+ * until the handler method is identified with a valid URI pattern.  The {@code uri} and 
+ * {@code method} properties come from the the {@code @HandlesRequestTo} annotation, whereas the
+ * {@code className} and {@code methodName} property come from the handler method that has been
+ * identified.
  */
 public class HandlerIdentifierImpl implements HandlerIdentifier {
 
-    private String uri;    
+    private String uri;
+    private HttpMethod method;
     private String className;
     private String methodName;
 
     public HandlerIdentifierImpl() {
+    	this(null, null, null);
     }
 
     public HandlerIdentifierImpl(String uri, String className, String methodName) {
-        setUri(uri);
+    	this(uri, HttpMethod.ANY, className, methodName);
+    }
+    
+    public HandlerIdentifierImpl(String uri, HttpMethod method, String className, String methodName) {
+    	setUri(uri);
+    	setMethod(method);
         setClassName(className);
         setMethodName(methodName);
     }
@@ -52,7 +64,15 @@ public class HandlerIdentifierImpl implements HandlerIdentifier {
         return uri;
     }
 
-    public void setClassName(String className) {
+    public HttpMethod getMethod() {
+		return method;
+	}
+
+	public void setMethod(HttpMethod method) {
+		this.method = method;
+	}
+
+	public void setClassName(String className) {
         this.className = className;
     }
 

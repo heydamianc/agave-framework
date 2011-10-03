@@ -28,50 +28,72 @@ package agave.internal;
 import java.util.Collection;
 
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Type;
+
+import agave.HttpMethod;
 
 /**
  * Scans the annotation of methods in search for a handler method.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class AnnotationScanner implements AnnotationVisitor {
 
-    private Collection<HandlerIdentifier> handlerIdentifiers;
-    private String className;
-    private String methodName;
-    
-    @SuppressWarnings("unused")
-	private String methodDesciptor;
-    
-    @SuppressWarnings("unused")
-    private String annotationDescriptor;
+	private static final String ANNOTATION_VALUE_PARAM = "value";
+	private static final String ANNOTATION_URI_PARAM = "uri";
+	private static final String ANNOTATION_METHOD_PARAM = "method";
 
-    public AnnotationScanner(Collection<HandlerIdentifier> handlerIdentifiers, String className, String methodName,
-        String methodDescriptor, String annotationDescriptor) {
-        this.handlerIdentifiers = handlerIdentifiers;
-        this.className = className.replace("/", ".");
-        this.methodName = methodName;
-        this.methodDesciptor = methodDescriptor;
-        this.annotationDescriptor = annotationDescriptor;
-    }
-    
-    public void visit(String name, Object value) {
-        if ("value".equals(name) && className != null && methodName != null) {
-            handlerIdentifiers.add(new HandlerIdentifierImpl(value.toString(), className, methodName));
-        }
-    }
-    
-    public void visitEnum(String name, String desc, String value) {
-    }
-    
-    public AnnotationVisitor visitArray(String name) {
-        return null;
-    }
-    
-    public AnnotationVisitor visitAnnotation(String name, String desc) {
-        return null;
-    }
-    
-    public void visitEnd() {
-    }
+	private Collection<HandlerIdentifier> handlerIdentifiers;
+
+	@SuppressWarnings("unused")
+	private String methodDesciptor;
+
+	@SuppressWarnings("unused")
+	private String annotationDescriptor;
+
+	private HandlerIdentifier handlerIdentifier;
+
+	public AnnotationScanner(Collection<HandlerIdentifier> handlerIdentifiers,
+			String className, String methodName, String methodDescriptor,
+			String annotationDescriptor) {
+		this.handlerIdentifiers = handlerIdentifiers;
+		this.methodDesciptor = methodDescriptor;
+		this.annotationDescriptor = annotationDescriptor;
+		this.handlerIdentifier = new HandlerIdentifierImpl();
+		this.handlerIdentifier.setClassName(className.replace("/", "."));
+		this.handlerIdentifier.setMethodName(methodName);
+		this.handlerIdentifier.setMethod(HttpMethod.ANY);
+	}
+
+	public void visit(String name, Object value) {
+		if (ANNOTATION_VALUE_PARAM.equals(name)
+				|| ANNOTATION_URI_PARAM.equals(name)) {
+			this.handlerIdentifier.setUri(value.toString());
+		}
+	}
+
+	public void visitEnum(String name, String desc, String value) {
+		if (ANNOTATION_METHOD_PARAM.equals(name)
+				&& Type.getDescriptor(HttpMethod.class).equals(desc)) {
+			this.handlerIdentifier.setMethod(HttpMethod.valueOf(value));
+		}
+	}
+
+	public AnnotationVisitor visitArray(String name) {
+		return null;
+	}
+
+	public AnnotationVisitor visitAnnotation(String name, String desc) {
+		return null;
+	}
+
+	public void visitEnd() {
+		if (this.handlerIdentifier.getClassName() != null
+				&& this.handlerIdentifier.getMethodName() != null
+				&& this.handlerIdentifier.getUri() != null
+				&& this.handlerIdentifier.getMethod() != null) {
+			handlerIdentifiers.add(this.handlerIdentifier);
+		}
+	}
 
 }
