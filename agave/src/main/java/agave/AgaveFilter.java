@@ -34,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -152,7 +153,7 @@ public class AgaveFilter implements Filter {
 		if (lifecycleHooksParameter != null) {
 			hooks = (LifecycleHooks) Class.forName(lifecycleHooksParameter)
 					.newInstance();
-			LOGGER.info("Using lifecycle hooks: " + hooks.getClass().getName());
+			LOGGER.log(Level.INFO, "Using lifecycle hooks: {0}", hooks.getClass().getName());
 		} else {
 			hooks = new DefaultLifecycleHooks();
 		}
@@ -185,21 +186,20 @@ public class AgaveFilter implements Filter {
 	protected HandlerFactory provideHandlerFactory(FilterConfig config)
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		HandlerFactory handlerFactory = null;
+		HandlerFactory factory = null;
 
 		String handlerFactoryParameter = config
 				.getInitParameter("handlerFactory");
 
 		if (handlerFactoryParameter != null) {
-			handlerFactory = (HandlerFactory) Class.forName(
+			factory = (HandlerFactory) Class.forName(
 					handlerFactoryParameter).newInstance();
-			LOGGER.info("Using HandlerFactory: "
-					+ handlerFactory.getClass().getName());
+			LOGGER.log(Level.INFO, "Using HandlerFactory: {0}", factory.getClass().getName());
 		} else {
-			handlerFactory = new HandlerFactoryImpl();
+			factory = new HandlerFactoryImpl();
 		}
 
-		return handlerFactory;
+		return factory;
 	}
 
 	/**
@@ -227,20 +227,19 @@ public class AgaveFilter implements Filter {
 	protected FormFactory provideFormFactory(FilterConfig config)
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		FormFactory formFactory = null;
+		FormFactory factory = null;
 
 		String formFactoryParameter = config.getInitParameter("formFactory");
 
 		if (formFactoryParameter != null) {
-			formFactory = (FormFactory) Class.forName(formFactoryParameter)
+			factory = (FormFactory) Class.forName(formFactoryParameter)
 					.newInstance();
-			LOGGER.info("Using formFactory: "
-					+ formFactory.getClass().getName());
+			LOGGER.log(Level.INFO, "Using formFactory: {0}", factory.getClass().getName());
 		} else {
-			formFactory = new FormFactoryImpl();
+			factory = new FormFactoryImpl();
 		}
 
-		return formFactory;
+		return factory;
 	}
 
 	/**
@@ -311,9 +310,7 @@ public class AgaveFilter implements Filter {
 		if (!handlerRegistry.getDescriptors().isEmpty()) {
 			for (HandlerDescriptor descriptor : handlerRegistry
 					.getDescriptors()) {
-				LOGGER.fine(descriptor.getHandlerClass().getName() + "#"
-						+ descriptor.getHandlerMethod().getName()
-						+ "() registered -> " + descriptor.getPattern());
+				LOGGER.log(Level.FINE, "{0}#{1}() registered -> {2}", new Object[]{descriptor.getHandlerClass().getName(), descriptor.getHandlerMethod().getName(), descriptor.getPattern()});
 			}
 		} else {
 			StringBuilder message = new StringBuilder(
