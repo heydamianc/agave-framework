@@ -2,6 +2,41 @@
 
 A simple and lightweight framework for creating Java web applications
 
+A quick example:
+
+    package com.domain.ws;
+
+    import java.io.IOException;
+    import java.util.List;
+
+    import agave.HandlerContext;
+    import agave.HandlesRequestsTo;
+    import agave.HttpMethod;
+    import agave.exception.AgaveException;
+    import com.domain.model.Location;
+    import com.domain.service.Service;
+
+    import com.google.gson.Gson;
+
+    public class RestaurantEndpoint {
+
+        private final Service<Location> locationService;
+
+        public RestaurantEndpoint(Service<Location> locationService) {
+            this.routineService = routineService;
+        }
+
+        @HandlesRequestsTo(uri = "/locations", method = HttpMethod.GET)
+        public void listLocations(final HandlerContext context) throws AgaveException, IOException {
+            List<Location> locations = locationService.retrieveAllDomainObjects();
+            Gson gson = new Gson();
+            String json = gson.toJson(locations);
+            context.getResponse().setContentType("application/json");
+            context.getResponse().getWriter().write(json);
+        }
+    }
+
+
 ## Getting Started
 
 *Prerequisites*: Java 5+ and Maven 2+
@@ -9,8 +44,7 @@ A simple and lightweight framework for creating Java web applications
 Use the `agave-archetype` to create a baseline web application for you with the following command:
 
     mvn archetype:generate -DarchetypeCatalog=http://agave-web-framework.googlecode.com/svn/maven2 \
-                           -DgroupId=org.sample \
-                           -DartifactId=sampleProject
+                           -DgroupId=org.sample -DartifactId=sampleProject
 
 It is possible to accomplish the same result from within an IDE, but I will leave that as an exercise 
 left to the reader. When you execute the previous command, you will be using a remotely hosted catalog 
@@ -31,14 +65,13 @@ you just entered compiles the code, packages a webapp, then uses the
 webapp. You can see the result of this in the `target` directory, with `sampleProject-1.0-SNAPSHOT.war` 
 and the associated exploded webapp dir of `sampleProject-1.0-SNAPSHOT`.  
 
-## Setting the `classesDirectory` Parameter
-
-Although you have a working webapp at this point, there is a deficiency in running your webapp with the 
-`run-war` goal while you are actively devloping it if you are using JSPs in your view tier. Changes 
-made to your JSPs will not be immediately visible because you will have to package the webapp up again, 
-whereas Jetty will respond to this by reloading the context. This is a good characteristic, but the 
-process can be streamlined. Open your `./src/main/webapp/WEB-INF/web.xml` file and add the following 
-initialization parameter to the `AgaveFilter`:
+**Caution** -- Although you have a working webapp at this point, there is a deficiency in running your webapp 
+with the `run-war` goal while you are actively developing it if you are using JSPs in your view tier. 
+Changes made to your JSPs will not be immediately visible because you will have to package the webapp up 
+again, whereas Jetty will respond to this by reloading the context. This is a good characteristic, but the 
+process can be streamlined by having Jetty monitor an exploded WAR directory. Open your 
+`./src/main/webapp/WEB-INF/web.xml` file and add the following initialization parameter to the 
+`AgaveFilter`:
 
     <filter>
       <filter-name>AgaveFilter</filter-name>
@@ -204,7 +237,7 @@ The custom implementation also replaces the `request.getParameter(...)` method i
 correct object is returned whenever you call it (the servlet implementation lacks this ability for a 
 multipart form).
 
-### The `@ConvertWith` Annotation
+#### The `@ConvertWith` Annotation
 
 URL encoded form objects have a default data type of string for all the fields that correspond to form 
 inputs. This is because the only type of request parameter is a string parameter. You can, however, 
@@ -250,11 +283,156 @@ converter. The converters provided by Agave are:
 
 ### The Agave Filter
 
-The `AgaveFilter` routes requests to handlers whenever a URI pattern is matched. It can be extended 
-and its protected methods overridden for maximum control, or any of the following initialization params 
-can be supplied:
+The `AgaveFilter` routes requests to handlers whenever the URI pattern of a given `@HandlesRequestsTo` 
+method-level annotation is matched. It can be extended and its protected methods overridden for maximum 
+control, however the idiomatic way to customize its behavior is through the use of classes that are 
+referenced through the filter's `init-param` configuration elements in the web.xml file.
 
-### The `classesDirectory` init-param
+#### The `handlerFactory` init-param
+
+The `handlerFactory` parameter is used as a way to integrate with dependency injection frameworks, or 
+create instances of handlers with factories. The default implementation uses reflection to create 
+instances handlers by calling the default constructor, so handler classes must have a default 
+constructor when you do not supply this parameter.
+
+Sample usage:
+
+    <web-app>
+      ...
+      <filter>
+        <filter-name>AgaveFilter</filter-name>
+        <filter-class>agave.AgaveFilter</filter-class>
+        <init-param>
+          <param-name>handlerFactory</param-name>
+          <param-value>com.domain.DefaultHandlerFactory</param-value>
+        </init-param>
+      </filter>
+      ...
+    </web-app>
+
+An example HandlerFactory implementation:
+
+    package com.domain;
+
+    import agave.HandlerFactory;
+    import agave.exception.HandlerException;
+    import agave.internal.HandlerDescriptor;
+    import com.domain.ws.RestaurantEndpoint;
+    import javax.servlet.ServletContext;
+
+    public class DefaultHandlerFactory implements HandlerFactory {
+
+        @Override
+        public void initialize() {
+            // do nothing
+        }
+
+        @Override
+        public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
+                throws HandlerException {
+            Object handler = null;
+
+            RestaurantApplication application = (RestaurantApplication) 
+                servletContext.getAttribute(RestaurantApplication.ATTRIBUTE_KEY);
+
+            if (descriptor.getHandlerClass().equals(RestaurantEndpoint.class)) {
+                handler = new RestaurantEndpoint(application.getMenuService());
+            }
+
+            return handler;
+         }
+    }
+
+In this particular use case, overriding the default `HandlerFactory` is useful because the relationship 
+between the handler and its collaborating objects is expressed by an invariant in the constructor.  For
+every request that matches one of the annotated handler methods in the `RestaurantEndpoint`, a new 
+handler instance is created.  This particular handler is a short-lived, small object, however, the supplied
+menu service may not be.  Typically you would see an object graph that is maintained throughout the 
+lifetime of the application, and that object graph is passed to the handler instance via the menu service.
+
+You can theoretically create single instances of handlers and maintain them yourself for the lifetime of
+the application, however, you would have to synchronize access to shared resources since multiple HTTP
+requests could be received simultaneaously. If you create a new instance every time, your code becomes 
+simpler, and you can structure it so that the lower levels of the application manage access to shared
+resources accordingly.
+
+#### The `formFactory` init-param
+
+The `formFactory` parameter is analogous to the `handlerFactory`, except that it is concerned with the 
+creation of form objects for a given handler method.  It is probably safe to say that you will rarely
+need to override the default `formFactory`, unless you treat form objects as top-teir players in the
+object graph. Consider using custom converters before leveraging a custom `formFactory`.
+
+Sample usage:
+
+    <web-app>
+      ...
+      <filter>
+        <filter-name>AgaveFilter</filter-name>
+        <filter-class>agave.AgaveFilter</filter-class>
+        <init-param>
+          <param-name>formFactory</param-name>
+          <param-value>com.domain.DefaultFormFactory</param-value>
+        </init-param>
+      </filter>
+      ...
+    </web-app>
+
+
+An example FormFactory implementation:
+
+    package com.domain.DefaultFormFactory;
+
+    import agave.HandlerFactory;
+    import agave.exception.HandlerException;
+    import agave.internal.HandlerDescriptor;
+    import com.domain.order.OrderForm;
+    import javax.servlet.ServletContext;
+
+    public class DefaultFormFactory implements FormFactory {
+
+        @Override
+        public void initialize() {
+            // do nothing
+        }
+
+        @Override
+        public Object createFormInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
+                throws HandlerException {
+            Object form = null;
+
+            if (descriptor.getHandlerClass().equals(RestaurantEndpoint.class)) {
+                handler = new OrderForm();
+            }
+
+            return handler;
+         }
+    }
+
+
+#### The `lifecycleHooks` init-param
+
+The `lifecycleHooks` parameter is used to hook into the lifecycle of Agave. This is good for implementing 
+security measures, or for doing universal preparation, etc. The value of this parameter is used by 
+`Class.forName()`, so it has to be a fully qualified class name.
+
+Sample usage:
+
+    <web-app>
+      ...
+      <filter>
+        <filter-name>AgaveFilter</filter-name>
+        <filter-class>agave.AgaveFilter</filter-class>
+        <init-param>
+          <param-name>lifecycleHooks</param-name>
+          <param-value>com.domain.package.ClassName</param-value>
+        </init-param>
+      </filter>
+      ...
+    </web-app>
+
+
+#### The `classesDirectory` init-param
 
 The `classesDirectory` parameter is used to override where Agave looks for classes.  With all technical 
 details aside, Agave scans a directory tree for class files and detects any classes that can be used to 
@@ -278,48 +456,6 @@ Sample usage:
       ...
     </web-app>
 
-### The `lifecycleHooks` init-param
-
-The `lifecycleHooks` parameter is used to hook into the lifecycle of Agave. This is good for implementing 
-security measures, or for doing universal preparation, etc. The value of this parameter is used by 
-`Class.forName()`, so it has to be a fully qualified class name.
-
-Sample usage:
-
-    <web-app>
-      ...
-      <filter>
-        <filter-name>AgaveFilter</filter-name>
-        <filter-class>agave.AgaveFilter</filter-class>
-        <init-param>
-          <param-name>lifecycleHooks</param-name>
-          <param-value>com.domain.package.ClassName</param-value>
-        </init-param>
-      </filter>
-      ...
-    </web-app>
-
-### The `instanceCreator` init-param
-
-The `instanceCreator` parameter is used as a way to integrate with dependency injection frameworks, or 
-create instances of objects with factories. The default implementation uses reflection to create 
-instances of forms and handlers by calling the default constructor, so both handler classes and form 
-classes must have a default constructor when you do not supply this parameter.
-
-Sample usage:
-
-    <web-app>
-      ...
-      <filter>
-        <filter-name>AgaveFilter</filter-name>
-        <filter-class>agave.AgaveFilter</filter-class>
-        <init-param>
-          <param-name>lifecycleHooks</param-name>
-          <param-value>com.domain.package.DefaultInstanceFactory</param-value>
-        </init-param>
-      </filter>
-      ...
-    </web-app>
 
 ## Frequently Asked Questions
 
