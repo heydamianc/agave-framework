@@ -2,38 +2,6 @@
 
 A simple and lightweight framework for creating Java web applications
 
-A quick example:
-
-    package com.domain.ws;
-
-    import java.io.IOException;
-    import java.util.List;
-    import agave.HandlerContext;
-    import agave.HandlesRequestsTo;
-    import agave.HttpMethod;
-    import agave.exception.AgaveException;
-    import com.domain.model.Location;
-    import com.domain.service.Service;
-    import com.google.gson.Gson;
-
-    public class RestaurantEndpoint {
-
-        private final Service<Location> locationService;
-
-        public RestaurantEndpoint(Service<Location> locationService) {
-            this.routineService = routineService;
-        }
-
-        @HandlesRequestsTo(uri = "/locations", method = HttpMethod.GET)
-        public void listLocations(final HandlerContext context) throws AgaveException, IOException {
-            List<Location> locations = locationService.retrieveAllDomainObjects();
-            Gson gson = new Gson();
-            String json = gson.toJson(locations);
-            context.getResponse().setContentType("application/json");
-            context.getResponse().getWriter().write(json);
-        }
-    }
-
 
 ## Getting Started
 
