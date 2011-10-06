@@ -43,7 +43,6 @@ public class FormFactoryImpl implements FormFactory {
 	 * method, so it is an effective way to set up a mechanism for providing
 	 * dependency injection or hooking into an IOC library.
 	 */
-	@Override
 	public void initialize() {
 		// do nothing
 	}
