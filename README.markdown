@@ -8,14 +8,12 @@ A quick example:
 
     import java.io.IOException;
     import java.util.List;
-
     import agave.HandlerContext;
     import agave.HandlesRequestsTo;
     import agave.HttpMethod;
     import agave.exception.AgaveException;
     import com.domain.model.Location;
     import com.domain.service.Service;
-
     import com.google.gson.Gson;
 
     public class RestaurantEndpoint {
