@@ -285,6 +285,7 @@ public class AgaveFilter implements Filter {
      *            the supplied filter configuration object
      * @throws ServletException
      */
+    @Override
     public void init(FilterConfig config) throws ServletException {
         this.config = config;
 
@@ -303,10 +304,9 @@ public class AgaveFilter implements Filter {
 
         if (!handlerRegistry.getDescriptors().isEmpty()) {
             for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
-                LOGGER.log(Level.FINE, "{0}#{1}() registered -> {2}", new Object[]{
-                    descriptor.getHandlerClass().getName(), 
-                    descriptor.getHandlerMethod().getName(), 
-                    descriptor.getPattern()
+                LOGGER.log(Level.FINE, "Routing {0} to {1}", new Object[]{
+                    descriptor.getPattern(),
+                    descriptor.getHandlerMethod()
                 });
             }
         } else {
@@ -325,6 +325,7 @@ public class AgaveFilter implements Filter {
     /**
      * Destroys this filter.
      */
+    @Override
     public void destroy() {
         config = null;
         classesDirectory = null;
@@ -408,6 +409,7 @@ public class AgaveFilter implements Filter {
      * @see agave.HandlesRequestsTo
      * @see agave.ConvertWith
      */
+    @Override
     public final void doFilter(ServletRequest req, ServletResponse resp,
             FilterChain chain) throws IOException, ServletException {
         ServletContext servletContext = config.getServletContext();
@@ -425,7 +427,10 @@ public class AgaveFilter implements Filter {
                 return;
             }
 
-            LOGGER.log(Level.FINE, "{0} -> {1}#{2}()", new Object[]{request.getServletPath(), descriptor.getHandlerClass().getName(), descriptor.getHandlerMethod()});
+            LOGGER.log(Level.FINE, "Handling request to {0} with {1}", new Object[] {
+                request.getServletPath(),
+                descriptor.getHandlerMethod()
+            });
 
             // wraps the request if necessary so that the uploaded content can
             // be accessed like
@@ -445,8 +450,14 @@ public class AgaveFilter implements Filter {
 
             // creates a form instance
             if (formInstance == null) {
-                formInstance = formFactory.createFormInstance(servletContext,
-                        descriptor);
+                formInstance = formFactory.createFormInstance(servletContext, descriptor);
+
+                if (descriptor.getFormClass() != null && formInstance == null) {
+                    throw new FormException(String.format("Unable to create instance of %s with %s",
+                        descriptor.getFormClass().getName(),
+                        handlerFactory.getClass().getName()
+                    ));
+                }
             }
 
             // populates the form if necessary
@@ -506,6 +517,12 @@ public class AgaveFilter implements Filter {
             if (handlerInstance == null) {
                 handlerInstance = handlerFactory.createHandlerInstance(
                         servletContext, descriptor);
+
+                if (handlerInstance == null) {
+                    throw new HandlerException(String.format("Unable to create instance of %s with %s",
+                        descriptor.getHandlerClass().getName(),
+                        handlerFactory.getClass().getName()));
+                }
             }
 
             // initiates a new workflow if necessary
@@ -580,7 +597,7 @@ public class AgaveFilter implements Filter {
                     try {
                         uri = new URI(null, destination.encode(config.getServletContext()), null);
                         if (destination.getRedirect() == null) {
-                            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                            if (HttpMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
                                 redirect = true;
                             }
                         } else {
