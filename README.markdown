@@ -84,7 +84,7 @@ effectively identify that method as being a handler method.
 ### Handler Method Signature
 
 The method signature is actually quite loose. It can be of the form: 
-`public [void|java.net.URL|agave.Destination] methodName(HandlerContext context(, FormClass form)?)`, 
+`public [void|java.net.URI|agave.Destination] methodName(HandlerContext context(, FormClass form)?)`, 
 where some examples of valid handler method signatures are:
 
   * `public void handle(HandlerContext context) throws IOException`
