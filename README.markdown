@@ -100,7 +100,7 @@ You indicate which methods should field requests with the `@HandlesRequestsTo` a
 `@HandlesRequestsTo` annotation can take a URI pattern and an optional HTTP method to match against. The 
 URI pattern indicates which URL the handler method will field, based on the URL constructed by combining 
 the protocol, port, context, and URI. The HTTP method is optional and may be used to define a more 
-granular HTTP reques matching scheme. The URI pattern can be used in the following fashion (note that 
+granular HTTP request matching scheme. The URI pattern can be used in the following fashion (note that 
 `http://localhost:8080/app/` will be used because a development environment is assumed, but these URI 
 patterns will work with any context deployed to any hostname running on any port): 
 <dl>
@@ -219,7 +219,7 @@ converter. The converters provided by Agave are:
       and <tt>y</tt>. Valid inputs that resolve to <tt>false</tt> are: <tt>false</tt>, <tt>f</tt>, 
       <tt>0</tt>, <tt>off</tt>, <tt>no</tt>, and <tt>n</tt>.</dd>
   <dt><tt>agave.conversion.BufferedImageConverter</tt></dt>
-  <dd>Used to convert input <tt>agave.Part</tt> into an editable
+  <dd>Used to convert an <tt>agave.Part</tt> into an editable
       <tt>java.awt.image.BufferedImage</tt>.</dd>
   <dt><tt>agave.conversion.ByteConverter</tt></dt>
   <dd>Used to convert an input <tt>String</tt> into a <tt>Byte</tt> object by calling 
