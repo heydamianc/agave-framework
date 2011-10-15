@@ -25,7 +25,9 @@
  */
 package agave.exception;
 
+import agave.Destination;
 import agave.internal.HandlerDescriptor;
+import java.net.URI;
 
 
 /**
@@ -52,9 +54,25 @@ public class DestinationException extends AgaveException {
     }
     
     // TODO internationalize this
-    public DestinationException(HandlerDescriptor descriptor) {
-        this("Invalid destination returned from " + descriptor.getHandlerClass().getName() + "#" +
-                descriptor.getHandlerMethod().getName());
+    
+    public DestinationException(URI destination, HandlerDescriptor descriptor, Throwable rootCause) {
+        this(String.format("Invalid destination (%s) returned from \"%s\"",
+                destination.toString(), descriptor.getHandlerMethod().toString()), rootCause);
+    }
+
+    public DestinationException(URI destination, HandlerDescriptor descriptor) {
+        this(String.format("Invalid destination (%s) returned from \"%s\"",
+                destination.toString(), descriptor.getHandlerMethod().toString()));
+    }
+
+    public DestinationException(Destination destination, HandlerDescriptor descriptor, Throwable rootCause) {
+        this(String.format("Invalid destination (%s) returned from \"%s\"",
+                destination.toString(), descriptor.getHandlerMethod().toString()), rootCause);
+    }
+
+    public DestinationException(Destination destination, HandlerDescriptor descriptor) {
+        this(String.format("Invalid destination (%s) returned from \"%s\"",
+                destination.toString(), descriptor.getHandlerMethod().toString()));
     }
     
 }

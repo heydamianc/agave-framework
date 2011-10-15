@@ -119,5 +119,10 @@ public class DestinationImpl implements Destination {
         }
         return path.toString();
     }
+
+    @Override
+    public String toString() {
+        return String.format("Destination[path:%s, redirect: %b]", this.path, this.redirect);
+    }
     
 }
