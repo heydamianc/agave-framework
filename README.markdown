@@ -144,9 +144,9 @@ patterns will work with any context deployed to any hostname running on any port
       <tt>http://localhost:8080/app/app/red/october/hunt</tt> but not 
       <tt>http://localhost:8080/app/duck/hunt/x</tt>. The portion of the URI matched by the wildcard is 
       not used as a parameter value; it is strictly used for matching purposes.</dd>
-  <dt><tt>@HandlesRequestsTo(uri&quot;/**/hunt&quot;)</tt></dt>
+  <dt><tt>@HandlesRequestsTo(uri=&quot;/**/hunt&quot;)</tt></dt>
   <dd>The same as before, except the URI pattern is explicitly specified.</dd>
-  <dt><tt>@HandlesRequestsTo(uri&quot;/**/hunt&quot;, method=HttpMethod.GET)</tt></dt>
+  <dt><tt>@HandlesRequestsTo(uri=&quot;/**/hunt&quot;, method=HttpMethod.GET)</tt></dt>
   <dd>The same as before, except the URI pattern and HTTP method are explicitly specified.</dd>
 </dl>
 
