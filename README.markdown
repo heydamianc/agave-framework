@@ -2,6 +2,8 @@
 
 A simple and lightweight framework for creating Java web applications
 
+See [an example](https://github.com/damiancarrillo/agave-web-framework/blob/master/agave-samples/pastebin/src/main/java/agave/samples/pastebin/web/PastebinHandler.java) of Agave in action
+
 
 ## Getting Started
 
