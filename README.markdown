@@ -90,7 +90,7 @@ where some examples of valid handler method signatures are:
   * `public void handle(HandlerContext context) throws IOException`
   * `public void handle(HandlerContext context, HandlerForm form) throws ServletException`
   * `public Destination login(HandlerContext context, AuthenticationForm form)`
-  * `public URL agreeOrRedirectToGoogle(HandlerContext context, AgreementForm form)`
+  * `public URI agreeOrRedirectToGoogle(HandlerContext context, AgreementForm form)`
 
 ### The `@HandlesRequestsTo` Annotation
 
@@ -164,7 +164,7 @@ following tokens:
   <dd>A single asterisk wildcard whose actual value in the URI pattern can be any whole token. In other 
       words, the following is not allowed: <tt>/some/uri/First*Rest/</tt>, and each <tt>*</tt> token 
       should be surrounded by forward slashes (as in <tt>/*/</tt>). Use the single asterisk wildcard 
-      when you want to field requests to multiple URLs with one method, but do not care about the value 
+      when you want to field requests to multiple URLs with one method, but do not care about the value
       supplied in place of the wildcard.</dd>
   <dt><tt>**</tt> Wildcard</dt>
   <dd><div>A double asterisk wildcard whose actual value in the URI pattern can be any series of whole 

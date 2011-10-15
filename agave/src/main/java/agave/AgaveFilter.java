@@ -304,7 +304,7 @@ public class AgaveFilter implements Filter {
 
         if (!handlerRegistry.getDescriptors().isEmpty()) {
             for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
-                LOGGER.log(Level.FINE, "Routing {0} to {1}", new Object[]{
+                LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[]{
                     descriptor.getPattern(),
                     descriptor.getHandlerMethod()
                 });
@@ -427,7 +427,7 @@ public class AgaveFilter implements Filter {
                 return;
             }
 
-            LOGGER.log(Level.FINE, "Handling request to {0} with {1}", new Object[] {
+            LOGGER.log(Level.FINE, "Handling requests to \"{0}\" with \"{1}\"", new Object[] {
                 request.getServletPath(),
                 descriptor.getHandlerMethod()
             });
@@ -453,7 +453,7 @@ public class AgaveFilter implements Filter {
                 formInstance = formFactory.createFormInstance(servletContext, descriptor);
 
                 if (descriptor.getFormClass() != null && formInstance == null) {
-                    throw new FormException(String.format("Unable to create instance of %s with %s",
+                    throw new FormException(String.format("Unable to create instance of \"%s\" with \"%s\"",
                         descriptor.getFormClass().getName(),
                         handlerFactory.getClass().getName()
                     ));
@@ -519,7 +519,7 @@ public class AgaveFilter implements Filter {
                         servletContext, descriptor);
 
                 if (handlerInstance == null) {
-                    throw new HandlerException(String.format("Unable to create instance of %s with %s",
+                    throw new HandlerException(String.format("Unable to create instance of \"%s\" with \"%s\"",
                         descriptor.getHandlerClass().getName(),
                         handlerFactory.getClass().getName()));
                 }
@@ -604,8 +604,7 @@ public class AgaveFilter implements Filter {
                             redirect = destination.getRedirect();
                         }
                     } catch (URISyntaxException ex) {
-                        throw new DestinationException(ex.getMessage(),
-                                ex.getCause());
+                        throw new DestinationException(destination, descriptor, ex);
                     }
                 } else if (result instanceof URI) {
                     uri = (URI) result;
@@ -617,7 +616,8 @@ public class AgaveFilter implements Filter {
 
                     redirect = true;
                 } else {
-                    throw new DestinationException(descriptor);
+                    throw new DestinationException(String.format("Invalid destination type (%s); expected either %s or %s",
+                            result.getClass().getName(), Destination.class.getName(), URI.class.getName()));
                 }
 
                 if (redirect) {
