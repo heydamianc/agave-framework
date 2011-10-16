@@ -25,7 +25,9 @@ when it prompts you to do so. After that, you will have a Maven project in a dir
 At this point, you have a fully working Agave web project. Change into the `sampleProject` directory, 
 and execute the following command:
 
-    mvn jetty:run-war
+```sh
+mvn jetty:run-war
+```
 
 Maven will download a few jetty dependencies and then start the Jetty servlet container. Then, from a 
 web browser, navigate to [http://localhost:8080/sampleProject](http://localhost:8080/sampleProject) and 
@@ -66,7 +68,9 @@ to the classes directory matches that of the exploded webapp's classes directory
 the webapp upstream, remove the `init-param` or just use the `run-war` goal to run the webapp. Now that 
 you have read the disclaimer, run the webapp with the following goal:
 
-    mvn jetty:run
+```sh
+mvn jetty:run
+```
 
 Once again, visit [http://localhost:8080/sampleProject](http://localhost:8080/sampleProject). Then, 
 open `./src/main/webapp/WEB-INF/jsp/index.jsp` and add a new paragraph or some visible change to it. 
@@ -269,51 +273,55 @@ constructor when you do not supply this parameter.
 
 Sample usage:
 
-    <web-app>
-      ...
-      <filter>
-        <filter-name>AgaveFilter</filter-name>
-        <filter-class>agave.AgaveFilter</filter-class>
-        <init-param>
-          <param-name>handlerFactory</param-name>
-          <param-value>com.domain.DefaultHandlerFactory</param-value>
-        </init-param>
-      </filter>
-      ...
-    </web-app>
+```xml
+<web-app>
+  ...
+  <filter>
+    <filter-name>AgaveFilter</filter-name>
+    <filter-class>agave.AgaveFilter</filter-class>
+    <init-param>
+      <param-name>handlerFactory</param-name>
+      <param-value>com.domain.DefaultHandlerFactory</param-value>
+    </init-param>
+  </filter>
+  ...
+</web-app>
+```
 
 An example HandlerFactory implementation:
 
-    package com.domain;
+```java
+package com.domain;
 
-    import agave.HandlerFactory;
-    import agave.exception.HandlerException;
-    import agave.internal.HandlerDescriptor;
-    import com.domain.ws.RestaurantEndpoint;
-    import javax.servlet.ServletContext;
+import agave.HandlerFactory;
+import agave.exception.HandlerException;
+import agave.internal.HandlerDescriptor;
+import com.domain.ws.RestaurantEndpoint;
+import javax.servlet.ServletContext;
 
-    public class DefaultHandlerFactory implements HandlerFactory {
+public class DefaultHandlerFactory implements HandlerFactory {
 
-        @Override
-        public void initialize() {
-            // do nothing
+    @Override
+    public void initialize() {
+        // do nothing
+    }
+
+    @Override
+    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
+            throws HandlerException {
+        Object handler = null;
+
+        RestaurantApplication application = (RestaurantApplication) 
+            servletContext.getAttribute(RestaurantApplication.ATTRIBUTE_KEY);
+
+        if (descriptor.getHandlerClass().equals(RestaurantEndpoint.class)) {
+            handler = new RestaurantEndpoint(application.getMenuService());
         }
 
-        @Override
-        public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
-                throws HandlerException {
-            Object handler = null;
-
-            RestaurantApplication application = (RestaurantApplication) 
-                servletContext.getAttribute(RestaurantApplication.ATTRIBUTE_KEY);
-
-            if (descriptor.getHandlerClass().equals(RestaurantEndpoint.class)) {
-                handler = new RestaurantEndpoint(application.getMenuService());
-            }
-
-            return handler;
-         }
-    }
+        return handler;
+     }
+}
+```
 
 In this particular use case, overriding the default `HandlerFactory` is useful because the relationship 
 between the handler and its collaborating objects is expressed by an invariant in the constructor.  For
@@ -337,49 +345,52 @@ object graph. Consider using custom converters before leveraging a custom `formF
 
 Sample usage:
 
-    <web-app>
-      ...
-      <filter>
-        <filter-name>AgaveFilter</filter-name>
-        <filter-class>agave.AgaveFilter</filter-class>
-        <init-param>
-          <param-name>formFactory</param-name>
-          <param-value>com.domain.DefaultFormFactory</param-value>
-        </init-param>
-      </filter>
-      ...
-    </web-app>
-
+```xml
+<web-app>
+  ...
+  <filter>
+    <filter-name>AgaveFilter</filter-name>
+    <filter-class>agave.AgaveFilter</filter-class>
+    <init-param>
+      <param-name>formFactory</param-name>
+      <param-value>com.domain.DefaultFormFactory</param-value>
+    </init-param>
+  </filter>
+  ...
+</web-app>
+```
 
 An example FormFactory implementation:
 
-    package com.domain.DefaultFormFactory;
+```java
+package com.domain.DefaultFormFactory;
 
-    import agave.HandlerFactory;
-    import agave.exception.HandlerException;
-    import agave.internal.HandlerDescriptor;
-    import com.domain.order.OrderForm;
-    import javax.servlet.ServletContext;
+import agave.HandlerFactory;
+import agave.exception.HandlerException;
+import agave.internal.HandlerDescriptor;
+import com.domain.order.OrderForm;
+import javax.servlet.ServletContext;
 
-    public class DefaultFormFactory implements FormFactory {
+public class DefaultFormFactory implements FormFactory {
 
-        @Override
-        public void initialize() {
-            // do nothing
+    @Override
+    public void initialize() {
+        // do nothing
+    }
+
+    @Override
+    public Object createFormInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
+            throws HandlerException {
+        Object form = null;
+
+        if (descriptor.getHandlerClass().equals(RestaurantEndpoint.class)) {
+            handler = new OrderForm();
         }
 
-        @Override
-        public Object createFormInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
-                throws HandlerException {
-            Object form = null;
-
-            if (descriptor.getHandlerClass().equals(RestaurantEndpoint.class)) {
-                handler = new OrderForm();
-            }
-
-            return handler;
-         }
-    }
+        return handler;
+     }
+}
+```
 
 
 #### The `lifecycleHooks` init-param
@@ -390,18 +401,20 @@ security measures, or for doing universal preparation, etc. The value of this pa
 
 Sample usage:
 
-    <web-app>
-      ...
-      <filter>
-        <filter-name>AgaveFilter</filter-name>
-        <filter-class>agave.AgaveFilter</filter-class>
-        <init-param>
-          <param-name>lifecycleHooks</param-name>
-          <param-value>com.domain.package.ClassName</param-value>
-        </init-param>
-      </filter>
-      ...
-    </web-app>
+```xml
+<web-app>
+  ...
+  <filter>
+    <filter-name>AgaveFilter</filter-name>
+    <filter-class>agave.AgaveFilter</filter-class>
+    <init-param>
+      <param-name>lifecycleHooks</param-name>
+      <param-value>com.domain.package.ClassName</param-value>
+    </init-param>
+  </filter>
+  ...
+</web-app>
+```
 
 
 #### The `classesDirectory` init-param
@@ -414,19 +427,21 @@ relative to the deployment directory. This is typically only good for a developm
 
 Sample usage:
 
-    <web-app>
-      ...
-      <filter>
-        <filter-name>AgaveFilter</filter-name>
-        <filter-class>agave.AgaveFilter</filter-class>
-        <init-param>
-          <param-name>classesDirectory</param-name>
-          <!-- Adds support for running "mvn jetty:run" -->
-          <param-value>${basedir}/target/classes/</param-value>
-        </init-param>
-      </filter>
-      ...
-    </web-app>
+```xml
+<web-app>
+  ...
+  <filter>
+    <filter-name>AgaveFilter</filter-name>
+    <filter-class>agave.AgaveFilter</filter-class>
+    <init-param>
+      <param-name>classesDirectory</param-name>
+      <!-- Adds support for running "mvn jetty:run" -->
+      <param-value>${basedir}/target/classes/</param-value>
+    </init-param>
+  </filter>
+  ...
+</web-app>
+```
 
 
 ## Frequently Asked Questions
