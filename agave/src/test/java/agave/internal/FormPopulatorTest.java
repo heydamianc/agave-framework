@@ -205,5 +205,4 @@ public class FormPopulatorTest {
         Assert.assertEquals("Tatu", form.getNested().getFavoritePopStars().get("dance").name());
     }
 
-
 }

@@ -43,9 +43,8 @@ import java.util.TreeMap;
  */
 public abstract class AbstractFormPopulator implements FormPopulator {
 
-	private static final String ILLEGAL_ARGUMENT_EXCEPTION_MSG = 
-		"Mutator {0}#{1}(...) is expecting argument of type {2} and recieved {3}";
-
+    private static final String ILLEGAL_ARGUMENT_EXCEPTION_MSG =
+            "Mutator {0}#{1}(...) is expecting argument of type {2} and recieved {3}";
     protected SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
     protected Locale locale;
 
@@ -57,14 +56,14 @@ public abstract class AbstractFormPopulator implements FormPopulator {
         return parameters;
     }
 
-    public void populate(Object formInstance) 
-        throws NoSuchMethodException, 
-               SecurityException, 
-               IllegalAccessException, 
-               IllegalArgumentException, 
-               InvocationTargetException,
-               InstantiationException,
-               ConversionException {
+    public void populate(Object formInstance)
+            throws NoSuchMethodException,
+            SecurityException,
+            IllegalAccessException,
+            IllegalArgumentException,
+            InvocationTargetException,
+            InstantiationException,
+            ConversionException {
         CallChain callChain = null;
         for (String parameterName : parameters.keySet()) {
             List<Object> parameterValues = parameters.get(parameterName);
@@ -76,29 +75,29 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             populateProperty(formInstance, callChain, parameterValues);
         }
     }
-    
-    private void populateProperty(Object formInstance, CallChain callChain, List<Object> parameterValues) 
-    throws NoSuchMethodException, 
-           SecurityException, 
-           IllegalAccessException, 
-           IllegalArgumentException, 
-           InvocationTargetException,
-           InstantiationException,
-           ConversionException {
+
+    private void populateProperty(Object formInstance, CallChain callChain, List<Object> parameterValues)
+            throws NoSuchMethodException,
+            SecurityException,
+            IllegalAccessException,
+            IllegalArgumentException,
+            InvocationTargetException,
+            InstantiationException,
+            ConversionException {
         Object targetInstance = formInstance;
         Class<?> targetClass = targetInstance.getClass();
-    
+
         for (String accessorName : callChain.getAccessorNames()) {
             try {
                 Method accessor = targetClass.getMethod(accessorName);
                 targetInstance = accessor.invoke(targetInstance);
                 targetClass = targetInstance.getClass();
             } catch (NoSuchMethodException ex) {
-                throw new NoSuchMethodException("Missing accessor \"" + accessorName + "\" on " + targetClass.getName() 
-                    + " invoked through request parameter \"" + callChain.getParameterName() + "\"");
+                throw new NoSuchMethodException("Missing accessor \"" + accessorName + "\" on " + targetClass.getName()
+                        + " invoked through request parameter \"" + callChain.getParameterName() + "\"");
             }
         }
-    
+
         for (Method mutator : targetClass.getMethods()) {
             if (mutator.getName().equals(callChain.getMutatorName())) {
                 Object parameterValue = null;
@@ -110,7 +109,7 @@ public abstract class AbstractFormPopulator implements FormPopulator {
                         setOrAppendProperty(mutator, targetInstance, parameterValue);
                         break;
                     case APPENDING:
-                        for (Object param: parameterValues) {
+                        for (Object param : parameterValues) {
                             setOrAppendProperty(mutator, targetInstance, param);
                         }
                         break;
@@ -130,60 +129,59 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             }
         }
     }
-    
-    private void setOrAppendProperty(Method mutator, Object targetInstance, Object parameterValue) 
-        throws IllegalAccessException, 
-               IllegalArgumentException, 
-               InvocationTargetException, 
-               InstantiationException,
-               ConversionException {
-		try {
-	        mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
-		} catch (IllegalArgumentException ex) {
-			String errorMessage = MessageFormat.format(ILLEGAL_ARGUMENT_EXCEPTION_MSG, 
-				mutator.getDeclaringClass().getName(), 
-				mutator.getName(), 
-				mutator.getParameterTypes()[0].getName(), 
-				parameterValue.getClass().getName());
-			throw new IllegalArgumentException(errorMessage);
-		}
+
+    private void setOrAppendProperty(Method mutator, Object targetInstance, Object parameterValue)
+            throws IllegalAccessException,
+            IllegalArgumentException,
+            InvocationTargetException,
+            InstantiationException,
+            ConversionException {
+        try {
+            mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
+        } catch (IllegalArgumentException ex) {
+            String errorMessage = MessageFormat.format(ILLEGAL_ARGUMENT_EXCEPTION_MSG,
+                    mutator.getDeclaringClass().getName(),
+                    mutator.getName(),
+                    mutator.getParameterTypes()[0].getName(),
+                    parameterValue.getClass().getName());
+            throw new IllegalArgumentException(errorMessage);
+        }
     }
 
     private void insertProperty(Method mutator, Object targetInstance, int index, Object parameterValue)
-        throws IllegalAccessException, 
-               IllegalArgumentException, 
-               InvocationTargetException, 
-               InstantiationException,
-               ConversionException {
+            throws IllegalAccessException,
+            IllegalArgumentException,
+            InvocationTargetException,
+            InstantiationException,
+            ConversionException {
         mutator.invoke(targetInstance, index, convertIfNecessary(mutator, parameterValue));
     }
-    
+
     private void putProperty(Method mutator, Object targetInstance, String key, Object parameterValue)
-    throws IllegalAccessException, 
-           IllegalArgumentException, 
-           InvocationTargetException, 
-           InstantiationException,
-           ConversionException {
+            throws IllegalAccessException,
+            IllegalArgumentException,
+            InvocationTargetException,
+            InstantiationException,
+            ConversionException {
         mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
     }
-	
+
     @SuppressWarnings("unchecked")
-	private Object convertIfNecessary(Method mutator, Object parameterValue) 
-    throws ConversionException, 
-           InstantiationException,
-           IllegalAccessException {
+    private Object convertIfNecessary(Method mutator, Object parameterValue)
+            throws ConversionException,
+            InstantiationException,
+            IllegalAccessException {
         Class<?>[] parameterTypes = mutator.getParameterTypes();
-        
+
         if (parameterTypes != null) {
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
             Class<?> parameterType = parameterTypes[parameterOffset];
             
-            @SuppressWarnings("rawtypes")
-			Converter converter = null; // keep this vague 
+            Converter converter = null; // keep this vague
             // first look for a ConvertWith annotation
             for (Annotation annotation : mutator.getParameterAnnotations()[parameterOffset]) {
                 if (annotation instanceof ConvertWith) {
-                    converter = ((ConvertWith)annotation).value().newInstance();
+                    converter = ((ConvertWith) annotation).value().newInstance();
                     break;
                 }
             }
@@ -204,15 +202,18 @@ public abstract class AbstractFormPopulator implements FormPopulator {
                     converter = new IntegerConverter();
                 } else if (parameterType.isAssignableFrom(Long.class) || parameterType.isAssignableFrom(long.class)) {
                     converter = new LongConverter();
-                } 
+                }
             }
-            
+
             if (converter != null) {
-                return converter.convert(parameterValue, locale);
+                try {
+                    return converter.convert(parameterValue, locale);
+                } catch (Throwable ex) {
+                    throw new ConversionException(ex);
+                }
             }
         }
-        
+
         return parameterValue;
     }
-    
 }

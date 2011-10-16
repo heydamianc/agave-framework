@@ -215,10 +215,12 @@ multipart form).
 
 #### The `@ConvertWith` Annotation
 
-URL encoded form objects have a default data type of string for all the fields that correspond to form 
+URL encoded form objects have a default data type of `String` for all the fields that correspond to form 
 inputs. This is because the only type of request parameter is a string parameter. You can, however, 
-convert these strings into other objects with a given set of converters or by creating your own custom 
-converter. See [an example](https://github.com/damiancarrillo/agave-web-framework/blob/master/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/web/GameOfLifeForm.java) that illustrates this annotation.  The converters provided by Agave are:
+convert these strings into other objects with a set of converters provided by Agave or by creating 
+a custom converter. You can explicitly name one of the Agave-provided converters as the value to the
+`@ConvertWith` annotation, however, it is superfluous.  Agave will implicitly determine the most
+appropriate converter at runtime. The converters provided by Agave are:
 
 <dl>
   <dt><tt>agave.conversion.BooleanConverter</tt></dt>
@@ -256,6 +258,64 @@ converter. See [an example](https://github.com/damiancarrillo/agave-web-framewor
   <dd>Used to convert an input <tt>String</tt> into a <tt>Short</tt> object by calling 
       <tt>Short.parseShort()</tt> on the input string.</dd>
 </dl>
+
+If Agave encounters a property on a form that is of a type that is foreign to it (ie. domain-specific 
+objects), a custom converter will need to be created and used to help Agave coerce the supplied
+parameter value into an appropriate representation. A custom converter looks like:
+
+```java
+package com.domain;
+
+import agave.conversion.StringConverter;
+import agave.exception.ConversionException;
+import com.domain.model.Status;
+import java.util.Locale;
+
+/**
+ * Converts a status string into an enumerated {@code Status}.
+ */
+public class StatusConverter implements StringConverter<Status> {
+
+    @Override
+    public Status convert(String input, Locale locale) throws ConversionException {
+        Status status = Status.PENDING;
+
+        if (input != null && !input.equals("")) {
+            status = Status.valueOf(input.toUpperCase());
+        }
+        
+        return status;
+    }
+
+}
+```
+
+From the context of a form, the previous `Converter`'s usage could look like:
+
+```java
+package com.domain;
+
+import agave.ConvertWith;
+import com.domain.model.Status;
+
+public class SubmissionForm {
+
+    private Status status;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(@ConvertWith(StatusConverter.class) Status status) {
+        this.status = status;
+    }
+    
+}
+```
+
+When coming up with a suitable way to perform conversions, my intent was express the fact that 
+prior to the value being set on the form, it is converted into a `Status` object (which just 
+so happens to be an `Enum`).
 
 ### The Agave Filter
 
