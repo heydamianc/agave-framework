@@ -177,7 +177,7 @@ following tokens:
       when you want to field requests to multiple URLs with one method, but do not care about the value
       supplied in place of the wildcard.</dd>
   <dt><tt>**</tt> Wildcard</dt>
-  <dd><div>A double asterisk wildcard whose actual value in the URI pattern can be any series of whole 
+  <dd>A double asterisk wildcard whose actual value in the URI pattern can be any series of whole 
       tokens. In other words, the following is not allowed: <tt>/some/uri/First**Rest/</tt>, and each 
       <tt>**</tt> token should be surrounded by forward slashes (as in <tt>/**/</tt>). Use the double 
       asterisk wildcard when you want to field requests to multiple URLs with one method, but do not 
