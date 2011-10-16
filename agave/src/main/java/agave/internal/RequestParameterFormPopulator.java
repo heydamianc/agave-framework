@@ -38,8 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestParameterFormPopulator extends AbstractFormPopulator {
 
     @SuppressWarnings("unchecked")
-	public RequestParameterFormPopulator(HttpServletRequest request) {
-		super(request.getLocale());
+    public RequestParameterFormPopulator(HttpServletRequest request) {
+        super(request.getLocale());
 
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
@@ -51,5 +51,4 @@ public class RequestParameterFormPopulator extends AbstractFormPopulator {
             parameters.put(parameterName, parameterValues);
         }
     }
-    
 }

@@ -210,7 +210,7 @@ multipart form).
 URL encoded form objects have a default data type of string for all the fields that correspond to form 
 inputs. This is because the only type of request parameter is a string parameter. You can, however, 
 convert these strings into other objects with a given set of converters or by creating your own custom 
-converter. The converters provided by Agave are:
+converter. See [an example](https://github.com/damiancarrillo/agave-web-framework/blob/master/agave-samples/game-of-life/src/main/java/agave/samples/gameOfLife/web/GameOfLifeForm.java) that illustrates this annotation.  The converters provided by Agave are:
 
 <dl>
   <dt><tt>agave.conversion.BooleanConverter</tt></dt>

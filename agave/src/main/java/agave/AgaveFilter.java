@@ -474,9 +474,8 @@ public class AgaveFilter implements Filter {
 
                 try {
                     // populates a form and convert into the target types if
-                    // they can be described
-                    // by the standard suite of converters out of the
-                    // agave.conversion package
+                    // they can be described by the standard suite of
+                    // converters out of the agave.conversion package
                     FormPopulator formPopulator = new RequestParameterFormPopulator(
                             request);
                     formPopulator.populate(formInstance);
