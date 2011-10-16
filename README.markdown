@@ -11,7 +11,7 @@ See [an example](https://github.com/damiancarrillo/agave-web-framework/blob/mast
 
 Use the `agave-archetype` to create a baseline web application for you with the following command:
 
-```bash
+```sh
 mvn archetype:generate -DarchetypeCatalog=http://agave-web-framework.googlecode.com/svn/maven2 \
                        -DgroupId=org.sample -DartifactId=sampleProject
 ```
@@ -43,14 +43,16 @@ process can be streamlined by having Jetty monitor an exploded WAR directory. Op
 `./src/main/webapp/WEB-INF/web.xml` file and add the following initialization parameter to the 
 `AgaveFilter`:
 
-    <filter>
-      <filter-name>AgaveFilter</filter-name>
-      <filter-class>agave.AgaveFilter</filter-class>
-      <init-param>
-        <param-name>classesDirectory</param-name>
-        <param-value>./target/classes/</param-value>
-      </init-param>
-    </filter>
+```xml
+<filter>
+  <filter-name>AgaveFilter</filter-name>
+  <filter-class>agave.AgaveFilter</filter-class>
+  <init-param>
+    <param-name>classesDirectory</param-name>
+    <param-value>./target/classes/</param-value>
+  </init-param>
+</filter>
+```
 
 Without the `classesDirectory` initialization parameter, the classes are loaded from `/WEB-INF/classes/` 
 directory, which is what the servlet specification designates as the standard for war files. Adding the 
