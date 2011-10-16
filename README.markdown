@@ -11,7 +11,7 @@ See [an example](https://github.com/damiancarrillo/agave-web-framework/blob/mast
 
 Use the `agave-archetype` to create a baseline web application for you with the following command:
 
-```shell
+```bash
 mvn archetype:generate -DarchetypeCatalog=http://agave-web-framework.googlecode.com/svn/maven2 \
                        -DgroupId=org.sample -DartifactId=sampleProject
 ```
