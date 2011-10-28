@@ -73,8 +73,8 @@ public class DestinationImpl implements Destination {
 
     public void setPath(String path) {
         if (!path.startsWith("/")) {
-            throw new IllegalArgumentException("Destination paths should start with a forward slash ('/')"
-                    + " signifying the root of the context");
+            throw new IllegalArgumentException("Destination paths should start with a forward slash '/'"
+                    + " but instead got '" + path + "'");
         }
         this.path = path;
     }

@@ -305,9 +305,9 @@ public class AgaveFilter implements Filter {
         if (!handlerRegistry.getDescriptors().isEmpty()) {
             for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
                 LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[]{
-                    descriptor.getPattern(),
-                    descriptor.getHandlerMethod()
-                });
+                            descriptor.getPattern(),
+                            descriptor.getHandlerMethod()
+                        });
             }
         } else {
             StringBuilder message = new StringBuilder(
@@ -428,9 +428,9 @@ public class AgaveFilter implements Filter {
             }
 
             LOGGER.log(Level.FINE, "Handling requests to \"{0}\" with \"{1}\"", new Object[] {
-                request.getServletPath(),
-                descriptor.getHandlerMethod()
-            });
+                        request.getServletPath(),
+                        descriptor.getHandlerMethod()
+                    });
 
             // wraps the request if necessary so that the uploaded content can
             // be accessed like
@@ -454,9 +454,8 @@ public class AgaveFilter implements Filter {
 
                 if (descriptor.getFormClass() != null && formInstance == null) {
                     throw new FormException(String.format("Unable to create instance of \"%s\" with \"%s\"",
-                        descriptor.getFormClass().getName(),
-                        handlerFactory.getClass().getName()
-                    ));
+                            descriptor.getFormClass().getName(),
+                            handlerFactory.getClass().getName()));
                 }
             }
 
@@ -476,8 +475,7 @@ public class AgaveFilter implements Filter {
                     // populates a form and convert into the target types if
                     // they can be described by the standard suite of
                     // converters out of the agave.conversion package
-                    FormPopulator formPopulator = new RequestParameterFormPopulator(
-                            request);
+                    FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
                     if (MultipartRequestImpl.isMultipart(request)) {
                         formPopulator = new RequestPartFormPopulator(
@@ -519,8 +517,8 @@ public class AgaveFilter implements Filter {
 
                 if (handlerInstance == null) {
                     throw new HandlerException(String.format("Unable to create instance of \"%s\" with \"%s\"",
-                        descriptor.getHandlerClass().getName(),
-                        handlerFactory.getClass().getName()));
+                            descriptor.getHandlerClass().getName(),
+                            handlerFactory.getClass().getName()));
                 }
             }
 

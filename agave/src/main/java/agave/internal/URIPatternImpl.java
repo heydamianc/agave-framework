@@ -71,6 +71,7 @@ public class URIPatternImpl implements URIPattern {
         }
     }
 
+    @Override
     public String getPattern() {
         return pattern;
     }
@@ -115,6 +116,7 @@ public class URIPatternImpl implements URIPattern {
      *            the URI string to normalize
      * @return the normalized URI string
      */
+    @Override
     public String normalizeURI(String uriStr) {
         URI uri;
         try {
@@ -132,6 +134,7 @@ public class URIPatternImpl implements URIPattern {
         return input;
     }
     
+    @Override
     public boolean matches(HttpServletRequest request) {
     	return request != null && matches(request.getServletPath());
     }
@@ -150,6 +153,7 @@ public class URIPatternImpl implements URIPattern {
      * @param uri the uri string
      * @return true if the uri matches this pattern
      */
+    @Override
     public boolean matches(String uri) {
         if (!uri.startsWith(FORWARD_SLASH)) {
             throw new IllegalArgumentException("URI must begin with a forward slash ('/')");
@@ -228,6 +232,7 @@ public class URIPatternImpl implements URIPattern {
      *         equal in specificity and 1 if that {@code URIPattern} is more
      *         specific
      */
+    @Override
     public int compareTo(URIPattern that) {
         if (this.equals(that)) {
             return 0;
@@ -287,6 +292,7 @@ public class URIPatternImpl implements URIPattern {
         return value;
     }
 
+    @Override
     public Map<String, String> getParameterMap(HttpServletRequest request) {
         String uri = request.getServletPath();
         Map<String, String> parameterMap = new HashMap<String, String>();
