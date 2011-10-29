@@ -60,6 +60,7 @@ public class DestinationImpl implements Destination {
         setRedirect(Boolean.valueOf(redirect));
     }
     
+    @Override
     public void addParameter(String name, String value) {
         if (!parameters.containsKey(name)) {
             parameters.put(name, new ArrayList<String>());
@@ -67,57 +68,64 @@ public class DestinationImpl implements Destination {
         parameters.get(name).add(value);
     }
     
+    @Override
     public String getPath() {
         return path;
     }
 
-    public void setPath(String path) {
-        if (!path.startsWith("/")) {
-            throw new IllegalArgumentException("Destination paths should start with a forward slash '/'"
-                    + " but instead got '" + path + "'");
+    @Override
+    public final void setPath(String path) {
+        if (!path.contains("://") && !path.startsWith("/")) {
+            throw new IllegalArgumentException("Relative destination paths should start with a forward slash '/'; "
+                    + "got '" + path + "' instead");
         }
         this.path = path;
     }
 
+    @Override
     public Map<String, List<String>> getParameters() {
         return parameters;
     }
 
+    @Override
     public void setParameters(Map<String, List<String>> parameters) {
         this.parameters = parameters;
     }
 
+    @Override
     public Boolean getRedirect() {
         return redirect;
     }
     
-    public void setRedirect(Boolean redirect) {
+    @Override
+    public final void setRedirect(Boolean redirect) {
         this.redirect = redirect;
     }
     
+    @Override
     public String encode(ServletContext context) {
-        StringBuilder path = new StringBuilder();
+        StringBuilder encodedPath = new StringBuilder();
         if (getPath() != null) {
-            path.append(getPath());
+            encodedPath.append(getPath());
         }
         if (!getParameters().isEmpty()) {
-            path.append("?");
+            encodedPath.append("?");
             boolean first = true;
             for (String parameterName : getParameters().keySet()) {
                 Collections.sort(getParameters().get(parameterName));
                 for (String parameterValue : getParameters().get(parameterName)) {
                     if (!first) {
-                        path.append("&");
+                        encodedPath.append("&");
                     }
                     if (parameterValue.contains("&")) {
                         parameterValue = parameterValue.replace("&", ENCODED_AMPERSAND);
                     }
-                    path.append(parameterName).append("=").append(parameterValue);
+                    encodedPath.append(parameterName).append("=").append(parameterValue);
                     first = false;
                 }
             }
         }
-        return path.toString();
+        return encodedPath.toString();
     }
 
     @Override
