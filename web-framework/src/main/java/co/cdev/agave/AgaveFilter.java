@@ -112,6 +112,7 @@ public class AgaveFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
     private static final String WORKFLOW_HANDLER_SUFFIX = "-handler";
     private static final String WORKFLOW_FORM_SUFFIX = "-form";
+    
     private FilterConfig config;
     private LifecycleHooks lifecycleHooks;
     private File classesDirectory;
@@ -291,8 +292,8 @@ public class AgaveFilter implements Filter {
 
         try {
             lifecycleHooks = provideLifecycleHooks(config);
-            setHandlerRegistry(new HandlerRegistryImpl());
             classesDirectory = provideClassesDirectory(config);
+            setHandlerRegistry(new HandlerRegistryImpl());
             scanClassesDirForHandlers(classesDirectory);
             handlerFactory = provideHandlerFactory(config);
             handlerFactory.initialize();
@@ -301,7 +302,7 @@ public class AgaveFilter implements Filter {
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
-
+        
         if (!handlerRegistry.getDescriptors().isEmpty()) {
             for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
                 LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[]{
@@ -319,7 +320,7 @@ public class AgaveFilter implements Filter {
             }
             throw new IllegalStateException(message.toString());
         }
-        LOGGER.info("AgaveFilter successfully initialized");
+        LOGGER.log(Level.INFO, "{0} successfully initialized", getClass().getSimpleName());
     }
 
     /**

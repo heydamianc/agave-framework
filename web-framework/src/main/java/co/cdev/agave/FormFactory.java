@@ -35,28 +35,27 @@ import co.cdev.agave.internal.HandlerDescriptor;
  */
 public interface FormFactory {
 
-	/**
-	 * Initializes this {@code FormFactory} if necessary. This method is called
-	 * in the {@link AgaveFilter#init(javax.servlet.FilterConfig)} method, so it
-	 * is an effective way to set up a mechanism for providing dependency
-	 * injection or hooking into an IOC library.
-	 */
-	public void initialize();
+    /**
+     * Initializes this {@code FormFactory} if necessary. This method is called
+     * in the {@link AgaveFilter#init(javax.servlet.FilterConfig)} method, so it
+     * is an effective way to set up a mechanism for providing dependency
+     * injection or hooking into an IOC library.
+     */
+    public void initialize();
 
-	/**
-	 * Creates a new instance of a form object for the form class.
-	 * 
-	 * @param handlerContext
-	 *            the global context object
-	 * @param descriptor
-	 *            the handler descriptor that describes which form to
-	 *            instantiate
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws FormError
-	 *             when a form instance failed to be instantiated
-	 */
-	public Object createFormInstance(ServletContext servletContext,
-			HandlerDescriptor descriptor) throws FormException;
-
+    /**
+     * Creates a new instance of a form object for the form class.
+     * 
+     * @param handlerContext
+     *            the global context object
+     * @param descriptor
+     *            the handler descriptor that describes which form to
+     *            instantiate
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws FormError
+     *             when a form instance failed to be instantiated
+     */
+    public Object createFormInstance(ServletContext servletContext,
+            HandlerDescriptor descriptor) throws FormException;
 }

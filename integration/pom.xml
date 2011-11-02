@@ -17,6 +17,8 @@
   <name>Agave Integration</name>
   <description>Agave Integration with other Libraries</description>
   
-  <modules></modules>
+  <modules>
+    <module>guice-integration</module>
+  </modules>
   
 </project>
