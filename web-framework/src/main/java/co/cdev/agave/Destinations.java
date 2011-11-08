@@ -36,35 +36,34 @@ import co.cdev.agave.internal.DestinationImpl;
  */
 public final class Destinations {
 
-	/**
-	 * Creates a new {@link Destination} within the deployed context.  The destination will be 
+    /**
+     * Creates a new {@link Destination} within the deployed context.  The destination will be 
      * redirected to if the HTTP request method was a POST, otherwise it will be forwarded to.
-	 * 
-	 * @param path the desired destination path relative to the deployed context
-	 * @return a constructed {@link Destination}
-	 */
-	public static Destination create(String path) {
-		return new DestinationImpl(path);
-	}
-	
-	/**
-	 * Creates a new {@link Destination} within the deployed context that will be redirected to. 
-	 * 
-	 * @param path the desired destination path relative to the deployed context (eg: {@code /section/resource}}
-	 * @return a constructed {@link Destination}
-	 */
-	public static Destination redirect(String path) {
-		return new DestinationImpl(path, true);
-	}
-	
-	/**
-	 * Creates a new {@link Destination} within the deployed context that will be forwarded to.
-	 * 
-	 * @param path the desired resource relative to the context path to forward to (eg: {@code /WEB-INF/jsp/index.jsp}) 
-	 * @return a constructed {@link Destination}
-	 */
-	public static Destination forward(String path) {
-		return new DestinationImpl(path, false);
-	}
-	
+     * 
+     * @param path the desired destination path relative to the deployed context
+     * @return a constructed {@link Destination}
+     */
+    public static Destination create(String path) {
+        return new DestinationImpl(path);
+    }
+
+    /**
+     * Creates a new {@link Destination} within the deployed context that will be redirected to. 
+     * 
+     * @param path the desired destination path relative to the deployed context (eg: {@code /section/resource}}
+     * @return a constructed {@link Destination}
+     */
+    public static Destination redirect(String path) {
+        return new DestinationImpl(path, true);
+    }
+
+    /**
+     * Creates a new {@link Destination} within the deployed context that will be forwarded to.
+     * 
+     * @param path the desired resource relative to the context path to forward to (eg: {@code /WEB-INF/jsp/index.jsp}) 
+     * @return a constructed {@link Destination}
+     */
+    public static Destination forward(String path) {
+        return new DestinationImpl(path, false);
+    }
 }

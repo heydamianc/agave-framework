@@ -40,6 +40,7 @@ public class CharacterConverter implements StringConverter<Character> {
      * @return a {@code Character} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
+    @Override
     public Character convert(String input, Locale locale) throws ConversionException {
         Character value = null;
         if (input != null && !"".equals(input)) {

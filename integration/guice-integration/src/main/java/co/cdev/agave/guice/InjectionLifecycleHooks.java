@@ -43,12 +43,12 @@ import javax.servlet.ServletException;
  *
  * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerLifecycleHooks implements LifecycleHooks {
+public class InjectionLifecycleHooks implements LifecycleHooks {
 
     private final Set<Class<?>> handlerClasses;
     private final LifecycleHooks wrappedHooks;
     
-    public HandlerLifecycleHooks(Set<Class<?>> handlerClasses, LifecycleHooks lifecycleHooks) {
+    public InjectionLifecycleHooks(Set<Class<?>> handlerClasses, LifecycleHooks lifecycleHooks) {
         this.handlerClasses = handlerClasses;
         this.wrappedHooks = lifecycleHooks;
     }

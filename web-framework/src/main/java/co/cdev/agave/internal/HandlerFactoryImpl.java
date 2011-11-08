@@ -37,39 +37,40 @@ import co.cdev.agave.exception.HandlerException;
  */
 public class HandlerFactoryImpl implements HandlerFactory {
 
-	/**
-	 * Initializes this {@code HandlerFactory} if necessary. This method is
-	 * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
-	 * method, so it is an effective way to set up a mechanism for providing
-	 * dependency injection or hooking into an IOC library.
-	 */
-	public void initialize() {
-		// do nothing
-	}
+    /**
+     * Initializes this {@code HandlerFactory} if necessary. This method is
+     * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
+     * method, so it is an effective way to set up a mechanism for providing
+     * dependency injection or hooking into an IOC library.
+     */
+    @Override
+    public void initialize() {
+        // do nothing
+    }
 
-	/**
-	 * Creates a new instance of a handler object for the handler class
-	 * specified in the supplied descriptor by calling its default constructor.
-	 * 
-	 * @param descriptor
-	 *            the handler descriptor that describes which handler to
-	 *            instantiate.
-	 * @throws FormError
-	 *             when a handler instance failed to be instantiated
-	 */
-	public Object createHandlerInstance(ServletContext servletContext,
-			HandlerDescriptor descriptor) throws HandlerException {
-		Object handlerInstance = null;
-		if (descriptor.getHandlerClass() != null) {
-			try {
-				handlerInstance = descriptor.getHandlerClass().newInstance();
-			} catch (InstantiationException ex) {
-				throw new HandlerException(descriptor, ex);
-			} catch (IllegalAccessException ex) {
-				throw new HandlerException(descriptor, ex);
-			}
-		}
-		return handlerInstance;
-	}
-
+    /**
+     * Creates a new instance of a handler object for the handler class
+     * specified in the supplied descriptor by calling its default constructor.
+     * 
+     * @param descriptor
+     *            the handler descriptor that describes which handler to
+     *            instantiate.
+     * @throws FormError
+     *             when a handler instance failed to be instantiated
+     */
+    @Override
+    public Object createHandlerInstance(ServletContext servletContext,
+            HandlerDescriptor descriptor) throws HandlerException {
+        Object handlerInstance = null;
+        if (descriptor.getHandlerClass() != null) {
+            try {
+                handlerInstance = descriptor.getHandlerClass().newInstance();
+            } catch (InstantiationException ex) {
+                throw new HandlerException(descriptor, ex);
+            } catch (IllegalAccessException ex) {
+                throw new HandlerException(descriptor, ex);
+            }
+        }
+        return handlerInstance;
+    }
 }

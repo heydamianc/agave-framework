@@ -41,16 +41,16 @@ import java.util.Locale;
  */
 public class BufferedImageConverter implements PartConverter<BufferedImage> {
 
-	public BufferedImage convert(Part input, Locale locale) throws ConversionException {
-		BufferedImage image = null;
-		if (input != null) {
-			try {
-				image = ImageIO.read(input.getContents());
-			} catch (IOException ex) {
-				throw new ConversionException(ex.getCause());
-			}
-		}
-		return image;
-	}
-
+    @Override
+    public BufferedImage convert(Part input, Locale locale) throws ConversionException {
+        BufferedImage image = null;
+        if (input != null) {
+            try {
+                image = ImageIO.read(input.getContents());
+            } catch (IOException ex) {
+                throw new ConversionException(ex.getCause());
+            }
+        }
+        return image;
+    }
 }

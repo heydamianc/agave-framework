@@ -30,7 +30,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * A request object that supports storage of multi-part information.  Both String parameters,
  * and higher level {@link Part}s are supported.  
@@ -39,18 +38,17 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface MultipartRequest extends HttpServletRequest {
 
-	/**
-	 * Gets a collection of parameters that have been supplied with the request.
-	 * 
-	 * @return the parameters
-	 */
+    /**
+     * Gets a collection of parameters that have been supplied with the request.
+     * 
+     * @return the parameters
+     */
     public Map<String, Collection<String>> getParameters();
-   
+
     /**
      * Gets a collection of {@code Part}s that have been supplied with the request.
      * 
      * @return the parts
      */
     public Map<String, Part> getParts();
-
 }

@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RequestParameterFormPopulator extends AbstractFormPopulator {
 
-    @SuppressWarnings("unchecked")
     public RequestParameterFormPopulator(HttpServletRequest request) {
         super(request.getLocale());
 

@@ -27,6 +27,7 @@ package co.cdev.agave.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -90,9 +91,7 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
                 Collection<String> parameterValues = new ArrayList<String>();
                 if (super.getParameterMap().get(parameterName) != null) {
                     String[] superParameterValues = (String[])super.getParameterMap().get(parameterName);
-                    for (String parameterValue : superParameterValues) {
-                        parameterValues.add(parameterValue);
-                    }
+                    parameterValues.addAll(Arrays.asList(superParameterValues));
                 }
                 if (getParameters().get(parameterName) != null) {
                     for (String parameterValue : getParameters().get(parameterName)) {
@@ -125,10 +124,12 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
         return getParameterMap().get(name);
     }
 
+    @Override
     public Map<String, Collection<String>> getParameters() {
         return parser.getParameters();
     }
 
+    @Override
     public Map<String, Part> getParts() {
         return parser.getParts();
     }

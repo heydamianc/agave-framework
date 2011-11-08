@@ -37,11 +37,7 @@ import javax.servlet.ServletContext;
  */
 public class InjectionHandlerFactory implements HandlerFactory {
     
-    private final Injector injector;
-    
-    public InjectionHandlerFactory(Injector injector) {
-        this.injector = injector;
-    }
+    private Injector injector;
 
     @Override
     public void initialize() {
@@ -52,6 +48,10 @@ public class InjectionHandlerFactory implements HandlerFactory {
     public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
             throws HandlerException {
         return injector.getInstance(descriptor.getHandlerClass());
+    }
+
+    public void setInjector(Injector injector) {
+        this.injector = injector;
     }
     
 }

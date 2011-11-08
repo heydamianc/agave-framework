@@ -119,11 +119,13 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     /**
      * Whether or not this {@code HandlerDescriptor} is equivalent to the supplied object.
      */
+    @Override
     public boolean equals(Object that);
 
     /**
      * Uniquely hashes this {@code HandlerDescriptor}.
      */
+    @Override
     public int hashCode();
 
 }

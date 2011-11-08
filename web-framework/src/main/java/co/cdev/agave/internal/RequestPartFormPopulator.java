@@ -36,13 +36,12 @@ import java.util.List;
 public class RequestPartFormPopulator extends AbstractFormPopulator {
 
     public RequestPartFormPopulator(MultipartRequest request) {
-		super(request.getLocale());
+        super(request.getLocale());
 
-		for (String partName : request.getParts().keySet()) {
-			List<Object> partContents = new ArrayList<Object>(1);
-			partContents.add(request.getParts().get(partName));
-			parameters.put(partName, partContents);
-		}
+        for (String partName : request.getParts().keySet()) {
+            List<Object> partContents = new ArrayList<Object>(1);
+            partContents.add(request.getParts().get(partName));
+            parameters.put(partName, partContents);
+        }
     }
-    
 }

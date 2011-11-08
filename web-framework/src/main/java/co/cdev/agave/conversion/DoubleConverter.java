@@ -40,6 +40,7 @@ public class DoubleConverter implements StringConverter<Double> {
      * @return a {@code Double} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
+    @Override
     public Double convert(String input, Locale locale) throws ConversionException {
         Double value = null;
         if (input != null && !"".equals(input)) {

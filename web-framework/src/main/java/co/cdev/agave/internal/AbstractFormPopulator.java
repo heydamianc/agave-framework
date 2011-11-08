@@ -52,10 +52,12 @@ public abstract class AbstractFormPopulator implements FormPopulator {
         this.locale = locale;
     }
 
+    @Override
     public SortedMap<String, List<Object>> getParameters() {
         return parameters;
     }
 
+    @Override
     public void populate(Object formInstance)
             throws NoSuchMethodException,
             SecurityException,

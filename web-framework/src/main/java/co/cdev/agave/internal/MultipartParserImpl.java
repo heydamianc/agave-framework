@@ -84,10 +84,12 @@ public class MultipartParserImpl implements MultipartParser {
         readLine(in);
     }
     
+    @Override
     public Map<String, Collection<String>> getParameters() {
         return parameters;
     }
 
+    @Override
     public Map<String, Part> getParts() {
         return parts;
     }
@@ -96,6 +98,7 @@ public class MultipartParserImpl implements MultipartParser {
         return boundary;
     }
 
+    @Override
     public void parseInput() throws IOException {
         try {
             while (true) {
@@ -257,7 +260,9 @@ public class MultipartParserImpl implements MultipartParser {
         return end;
     }
 
-    protected void finalize() throws Exception {
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
         if (in != null) {
             in.close();
         }

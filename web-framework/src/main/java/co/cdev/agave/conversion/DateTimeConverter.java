@@ -55,6 +55,7 @@ public class DateTimeConverter implements StringConverter<Date> {
 
     private static final Pattern timePattern = Pattern.compile("(.*)([AaPp][Mm]?)(.*)");
 
+    @Override
     public Date convert(String input, Locale locale) throws ConversionException {
         try {
             String formattedInput = input;

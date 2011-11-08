@@ -44,10 +44,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InitiatesWorkflow {
-	
-	/** 
-	 * @return an optional workflow name
-	 */
+
+    /** 
+     * @return an optional workflow name
+     */
     String value();
-    
 }

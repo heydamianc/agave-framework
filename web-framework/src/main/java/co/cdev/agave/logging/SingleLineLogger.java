@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Damian Carrillo
+ * Copyright (c) 2011, Damian Carrillo
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,34 +23,27 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.conversion;
+package co.cdev.agave.logging;
 
-import co.cdev.agave.exception.ConversionException;
-import java.util.Locale;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Logger;
 
-/**
- * Converts a {@code String} input into a {@code Integer} object.
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
- */
-public class IntegerConverter implements StringConverter<Integer> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Integer} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Integer convert(String input, Locale locale) throws ConversionException {
-        Integer value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Integer object", ex.getCause());
-            }
-        }
-        return value;
+public final class SingleLineLogger {
+    
+    private SingleLineLogger() {
+        // do nothing
     }
-
+    
+    public static Logger forClass(Class<?> representativeClass) {
+        Logger logger = Logger.getLogger(representativeClass.getName());
+        logger.setUseParentHandlers(false);
+        
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setFormatter(new SingleLineFormatter());
+        
+        logger.addHandler(consoleHandler);
+        
+        return logger;
+    }
+    
 }

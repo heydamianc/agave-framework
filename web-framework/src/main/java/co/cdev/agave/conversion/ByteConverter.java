@@ -40,6 +40,7 @@ public class ByteConverter implements StringConverter<Byte> {
      * @return a {@code Byte} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
+    @Override
     public Byte convert(String input, Locale locale) throws ConversionException {
         Byte value = null;
         if (input != null && !"".equals(input)) {

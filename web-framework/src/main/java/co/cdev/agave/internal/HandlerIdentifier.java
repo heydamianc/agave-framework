@@ -34,12 +34,18 @@ import co.cdev.agave.HttpMethod;
 public interface HandlerIdentifier {
 
     public void setUri(String uri);
-    public String getUri();
-    public HttpMethod getMethod();
-	public void setMethod(HttpMethod method);
-    public void setClassName(String className);
-    public String getClassName();
-    public void setMethodName(String methodName);
-    public String getMethodName();
 
+    public String getUri();
+
+    public HttpMethod getMethod();
+
+    public void setMethod(HttpMethod method);
+
+    public void setClassName(String className);
+
+    public String getClassName();
+
+    public void setMethodName(String methodName);
+
+    public String getMethodName();
 }

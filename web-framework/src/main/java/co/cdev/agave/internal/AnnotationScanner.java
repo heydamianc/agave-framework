@@ -39,61 +39,59 @@ import co.cdev.agave.HttpMethod;
  */
 public class AnnotationScanner implements AnnotationVisitor {
 
-	private static final String ANNOTATION_VALUE_PARAM = "value";
-	private static final String ANNOTATION_URI_PARAM = "uri";
-	private static final String ANNOTATION_METHOD_PARAM = "method";
+    private static final String ANNOTATION_VALUE_PARAM = "value";
+    private static final String ANNOTATION_URI_PARAM = "uri";
+    private static final String ANNOTATION_METHOD_PARAM = "method";
+    private Collection<HandlerIdentifier> handlerIdentifiers;
+    private String methodDesciptor;
+    private String annotationDescriptor;
+    private HandlerIdentifier handlerIdentifier;
 
-	private Collection<HandlerIdentifier> handlerIdentifiers;
+    public AnnotationScanner(Collection<HandlerIdentifier> handlerIdentifiers,
+            String className, String methodName, String methodDescriptor,
+            String annotationDescriptor) {
+        this.handlerIdentifiers = handlerIdentifiers;
+        this.methodDesciptor = methodDescriptor;
+        this.annotationDescriptor = annotationDescriptor;
+        this.handlerIdentifier = new HandlerIdentifierImpl();
+        this.handlerIdentifier.setClassName(className.replace("/", "."));
+        this.handlerIdentifier.setMethodName(methodName);
+        this.handlerIdentifier.setMethod(HttpMethod.ANY);
+    }
 
-	@SuppressWarnings("unused")
-	private String methodDesciptor;
+    @Override
+    public void visit(String name, Object value) {
+        if (ANNOTATION_VALUE_PARAM.equals(name)
+                || ANNOTATION_URI_PARAM.equals(name)) {
+            this.handlerIdentifier.setUri(value.toString());
+        }
+    }
 
-	@SuppressWarnings("unused")
-	private String annotationDescriptor;
+    @Override
+    public void visitEnum(String name, String desc, String value) {
+        if (ANNOTATION_METHOD_PARAM.equals(name)
+                && Type.getDescriptor(HttpMethod.class).equals(desc)) {
+            this.handlerIdentifier.setMethod(HttpMethod.valueOf(value));
+        }
+    }
 
-	private HandlerIdentifier handlerIdentifier;
+    @Override
+    public AnnotationVisitor visitArray(String name) {
+        return null;
+    }
 
-	public AnnotationScanner(Collection<HandlerIdentifier> handlerIdentifiers,
-			String className, String methodName, String methodDescriptor,
-			String annotationDescriptor) {
-		this.handlerIdentifiers = handlerIdentifiers;
-		this.methodDesciptor = methodDescriptor;
-		this.annotationDescriptor = annotationDescriptor;
-		this.handlerIdentifier = new HandlerIdentifierImpl();
-		this.handlerIdentifier.setClassName(className.replace("/", "."));
-		this.handlerIdentifier.setMethodName(methodName);
-		this.handlerIdentifier.setMethod(HttpMethod.ANY);
-	}
+    @Override
+    public AnnotationVisitor visitAnnotation(String name, String desc) {
+        return null;
+    }
 
-	public void visit(String name, Object value) {
-		if (ANNOTATION_VALUE_PARAM.equals(name)
-				|| ANNOTATION_URI_PARAM.equals(name)) {
-			this.handlerIdentifier.setUri(value.toString());
-		}
-	}
-
-	public void visitEnum(String name, String desc, String value) {
-		if (ANNOTATION_METHOD_PARAM.equals(name)
-				&& Type.getDescriptor(HttpMethod.class).equals(desc)) {
-			this.handlerIdentifier.setMethod(HttpMethod.valueOf(value));
-		}
-	}
-
-	public AnnotationVisitor visitArray(String name) {
-		return null;
-	}
-
-	public AnnotationVisitor visitAnnotation(String name, String desc) {
-		return null;
-	}
-
-	public void visitEnd() {
-		if (this.handlerIdentifier.getClassName() != null
-				&& this.handlerIdentifier.getMethodName() != null
-				&& this.handlerIdentifier.getUri() != null
-				&& this.handlerIdentifier.getMethod() != null) {
-			handlerIdentifiers.add(this.handlerIdentifier);
-		}
-	}
-
+    @Override
+    public void visitEnd() {
+        if (this.handlerIdentifier.getClassName() != null
+                && this.handlerIdentifier.getMethodName() != null
+                && this.handlerIdentifier.getUri() != null
+                && this.handlerIdentifier.getMethod() != null) {
+            handlerIdentifiers.add(this.handlerIdentifier);
+        }
+    }
 }

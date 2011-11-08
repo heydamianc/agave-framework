@@ -40,125 +40,132 @@ import co.cdev.agave.ResumesWorkflow;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerDescriptorImpl implements HandlerDescriptor {
+public final class HandlerDescriptorImpl implements HandlerDescriptor {
 
-	private URIPattern pattern;
-	private HttpMethod method;
-	private Class<?> handlerClass;
-	private Class<?> formClass;
-	private Method handlerMethod;
-	private boolean initiatesWorkflow;
-	private boolean completesWorkflow;
-	private String workflowName;
+    private URIPattern pattern;
+    private HttpMethod method;
+    private Class<?> handlerClass;
+    private Class<?> formClass;
+    private Method handlerMethod;
+    private boolean initiatesWorkflow;
+    private boolean completesWorkflow;
+    private String workflowName;
 
-	public HandlerDescriptorImpl(HandlerIdentifier identifier)
-			throws ClassNotFoundException {
-		pattern = new URIPatternImpl(identifier.getUri());
-		method = identifier.getMethod();
-		handlerClass = Class.forName(identifier.getClassName());
-		locateAnnotatedHandlerMethods(identifier);
-	}
+    public HandlerDescriptorImpl(HandlerIdentifier identifier)
+            throws ClassNotFoundException {
+        pattern = new URIPatternImpl(identifier.getUri());
+        method = identifier.getMethod();
+        handlerClass = Class.forName(identifier.getClassName());
+        locateAnnotatedHandlerMethods(identifier);
+    }
 
-	/**
-	 * Locates annotated methods on a handler class. This method will find the
-	 * annotated method that is identified by the supplied
-	 * {@code HandlerIdentifier} and then proceed to find any workflow-related
-	 * annotations ({@code InitiatesWorkflow}, {@code ResumesWorkflow},
-	 * {@code CompletesWorkflow}.
-	 * 
-	 * @param identifier
-	 *            the {@code HandlerIdentifier} that was created while scanning
-	 *            for a handler method
-	 */
-	public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
-		for (Method method : handlerClass.getMethods()) {
-			if (identifier.getMethodName().equals(method.getName())) {
-				handlerMethod = method;
-				if (handlerMethod.getParameterTypes().length > 1) {
-					formClass = handlerMethod.getParameterTypes()[1];
-				}
+    /**
+     * Locates annotated methods on a handler class. This method will find the
+     * annotated method that is identified by the supplied
+     * {@code HandlerIdentifier} and then proceed to find any workflow-related
+     * annotations ({@code InitiatesWorkflow}, {@code ResumesWorkflow},
+     * {@code CompletesWorkflow}.
+     * 
+     * @param identifier
+     *            the {@code HandlerIdentifier} that was created while scanning
+     *            for a handler method
+     */
+    @Override
+    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
+        for (Method m : handlerClass.getMethods()) {
+            if (identifier.getMethodName().equals(m.getName())) {
+                handlerMethod = m;
+                if (handlerMethod.getParameterTypes().length > 1) {
+                    formClass = handlerMethod.getParameterTypes()[1];
+                }
 
-				if (method.getAnnotation(InitiatesWorkflow.class) != null) {
-					initiatesWorkflow = true;
-					completesWorkflow = false;
-					workflowName = method
-							.getAnnotation(InitiatesWorkflow.class).value();
-				} else if (method.getAnnotation(CompletesWorkflow.class) != null) {
-					initiatesWorkflow = false;
-					completesWorkflow = true;
-					workflowName = method
-							.getAnnotation(CompletesWorkflow.class).value();
-				} else if (method.getAnnotation(ResumesWorkflow.class) != null) {
-					initiatesWorkflow = false;
-					completesWorkflow = false;
-					workflowName = method.getAnnotation(ResumesWorkflow.class)
-							.value();
-				}
-			}
-		}
-	}
+                if (m.getAnnotation(InitiatesWorkflow.class) != null) {
+                    initiatesWorkflow = true;
+                    completesWorkflow = false;
+                    workflowName = m.getAnnotation(InitiatesWorkflow.class).value();
+                } else if (m.getAnnotation(CompletesWorkflow.class) != null) {
+                    initiatesWorkflow = false;
+                    completesWorkflow = true;
+                    workflowName = m.getAnnotation(CompletesWorkflow.class).value();
+                } else if (m.getAnnotation(ResumesWorkflow.class) != null) {
+                    initiatesWorkflow = false;
+                    completesWorkflow = false;
+                    workflowName = m.getAnnotation(ResumesWorkflow.class).value();
+                }
+            }
+        }
+    }
 
-	public URIPattern getPattern() {
-		return pattern;
-	}
+    @Override
+    public URIPattern getPattern() {
+        return pattern;
+    }
 
-	public HttpMethod getMethod() {
-		return method;
-	}
+    @Override
+    public HttpMethod getMethod() {
+        return method;
+    }
 
-	public Class<?> getHandlerClass() {
-		return handlerClass;
-	}
+    @Override
+    public Class<?> getHandlerClass() {
+        return handlerClass;
+    }
 
-	public Class<?> getFormClass() {
-		return formClass;
-	}
+    @Override
+    public Class<?> getFormClass() {
+        return formClass;
+    }
 
-	public Method getHandlerMethod() {
-		return handlerMethod;
-	}
+    @Override
+    public Method getHandlerMethod() {
+        return handlerMethod;
+    }
 
-	public boolean initiatesWorkflow() {
-		return initiatesWorkflow;
-	}
+    @Override
+    public boolean initiatesWorkflow() {
+        return initiatesWorkflow;
+    }
 
-	public boolean completesWorkflow() {
-		return completesWorkflow;
-	}
+    @Override
+    public boolean completesWorkflow() {
+        return completesWorkflow;
+    }
 
-	public String getWorkflowName() {
-		return workflowName;
-	}
+    @Override
+    public String getWorkflowName() {
+        return workflowName;
+    }
 
-	public int compareTo(HandlerDescriptor that) {
-		int result = pattern.compareTo(that.getPattern());
-		if (result == 0) {
-			result = method.ordinal() - that.getMethod().ordinal();
-		}
-		return result;
-	}
+    @Override
+    public int compareTo(HandlerDescriptor that) {
+        int result = pattern.compareTo(that.getPattern());
+        if (result == 0) {
+            result = method.ordinal() - that.getMethod().ordinal();
+        }
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object that) {
-		if (this == that) {
-			return true;
-		}
-		if (!(that instanceof HandlerDescriptor)) {
-			return false;
-		}
-		HandlerDescriptor desc = (HandlerDescriptor) that;
-		boolean equal = pattern.equals(desc.getPattern()) && method == desc.getMethod();
-		return equal;
-	}
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (!(that instanceof HandlerDescriptor)) {
+            return false;
+        }
+        HandlerDescriptor desc = (HandlerDescriptor) that;
+        boolean equal = pattern.equals(desc.getPattern()) && method == desc.getMethod();
+        return equal;
+    }
 
-	@Override
-	public int hashCode() {
-		return pattern.hashCode() + method.name().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return pattern.hashCode() + method.name().hashCode();
+    }
 
-	public boolean matches(HttpServletRequest request) {
-		return request != null && method.matches(request)
-				&& pattern.matches(request);
-	}
-
+    @Override
+    public boolean matches(HttpServletRequest request) {
+        return request != null && method.matches(request)
+                && pattern.matches(request);
+    }
 }

@@ -34,7 +34,7 @@ import co.cdev.agave.HttpMethod;
  * {@code className} and {@code methodName} property come from the handler method that has been
  * identified.
  */
-public class HandlerIdentifierImpl implements HandlerIdentifier {
+public final class HandlerIdentifierImpl implements HandlerIdentifier {
 
     private String uri;
     private HttpMethod method;
@@ -56,34 +56,42 @@ public class HandlerIdentifierImpl implements HandlerIdentifier {
         setMethodName(methodName);
     }
 
+    @Override
     public void setUri(String uri) {
         this.uri = uri;
     }
 
+    @Override
     public String getUri() {
         return uri;
     }
 
+    @Override
     public HttpMethod getMethod() {
 		return method;
 	}
 
+    @Override
 	public void setMethod(HttpMethod method) {
 		this.method = method;
 	}
 
+    @Override
 	public void setClassName(String className) {
         this.className = className;
     }
 
+    @Override
     public String getClassName() {
         return className;
     }
 
+    @Override
     public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
+    @Override
     public String getMethodName() {
         return methodName;
     }

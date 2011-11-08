@@ -33,27 +33,26 @@ import javax.servlet.http.HttpServletRequest;
  *@author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public enum HttpMethod {
-	
-	GET,
-	PUT,
-	POST,
-	DELETE,
-	ANY;
-	
-	public boolean matches(HttpServletRequest request) {
-		boolean matches = false;
-		
-		if (request != null) {
-			if (request.getMethod() != null) {
-				matches = matches(HttpMethod.valueOf(request.getMethod().toUpperCase()));
-			}
-		}
-		
-		return matches;
-	}
 
-	public boolean matches(HttpMethod method) {
-		return this == ANY || method == ANY || this == method;
-	}
-	
+    GET,
+    PUT,
+    POST,
+    DELETE,
+    ANY;
+
+    public boolean matches(HttpServletRequest request) {
+        boolean matches = false;
+
+        if (request != null) {
+            if (request.getMethod() != null) {
+                matches = matches(HttpMethod.valueOf(request.getMethod().toUpperCase()));
+            }
+        }
+
+        return matches;
+    }
+
+    public boolean matches(HttpMethod method) {
+        return this == ANY || method == ANY || this == method;
+    }
 }

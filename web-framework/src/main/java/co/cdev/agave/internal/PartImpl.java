@@ -46,50 +46,62 @@ public class PartImpl implements Part {
     public PartImpl() {
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getFilename() {
         return filename;
     }
 
+    @Override
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
 
+    @Override
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
+    @Override
     public File getContents() {
         return contents;
     }
 
+    @Override
     public void setContents(File contents) {
         this.contents = contents;
     }
 
+    @Override
     public String getParameterValue() {
         return parameterValue;
     }
 
+    @Override
     public void setParameterValue(String parameterValue) {
         this.parameterValue = parameterValue;
     }
 
+    @Override
     public void addHeader(String headerName, String headerValue) {
         otherHeaders.put(headerName, headerValue);
     }
 
+    @Override
     public String getHeader(String headerName) {
         return otherHeaders.get(headerName);
     }

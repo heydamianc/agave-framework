@@ -37,28 +37,30 @@ import co.cdev.agave.exception.FormException;
  */
 public class FormFactoryImpl implements FormFactory {
 
-	/**
-	 * Initializes this {@code HandlerFactory} if necessary. This method is
-	 * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
-	 * method, so it is an effective way to set up a mechanism for providing
-	 * dependency injection or hooking into an IOC library.
-	 */
-	public void initialize() {
-		// do nothing
-	}
+    /**
+     * Initializes this {@code HandlerFactory} if necessary. This method is
+     * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
+     * method, so it is an effective way to set up a mechanism for providing
+     * dependency injection or hooking into an IOC library.
+     */
+    @Override
+    public void initialize() {
+        // do nothing
+    }
 
-	/**
-	 * Creates a new instance of a form object for the handler class
-	 * specified in the supplied descriptor by calling its default constructor.
-	 * 
-	 * @param descriptor
-	 *            the handler descriptor that describes which form to
-	 *            instantiate.
-	 * @throws FormError
-	 *             when a form instance failed to be instantiated
-	 */
-	public Object createFormInstance(ServletContext servletContext,
-			HandlerDescriptor descriptor) throws FormException {
+    /**
+     * Creates a new instance of a form object for the handler class
+     * specified in the supplied descriptor by calling its default constructor.
+     * 
+     * @param descriptor
+     *            the handler descriptor that describes which form to
+     *            instantiate.
+     * @throws FormError
+     *             when a form instance failed to be instantiated
+     */
+    @Override
+    public Object createFormInstance(ServletContext servletContext,
+            HandlerDescriptor descriptor) throws FormException {
         Object formInstance = null;
         if (descriptor.getFormClass() != null) {
             try {
@@ -70,6 +72,5 @@ public class FormFactoryImpl implements FormFactory {
             }
         }
         return formInstance;
-	}
-
+    }
 }

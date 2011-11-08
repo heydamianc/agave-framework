@@ -42,34 +42,34 @@ import co.cdev.agave.HandlesRequestsTo;
  */
 public class MethodScanner extends EmptyVisitor {
 
-	private static final Collection<String> desirableAnnotations = new ArrayList<String>();
-	static {
-		desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
-	};
+    private static final Collection<String> desirableAnnotations = new ArrayList<String>();
 
-	private Collection<HandlerIdentifier> handlerIdentifiers;
-	private String handlerClassName;
-	private String handlerMethodName;
-	private String handlerMethodDescriptor;
+    static {
+        desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
+    }
+    
+    private Collection<HandlerIdentifier> handlerIdentifiers;
+    private String handlerClassName;
+    private String handlerMethodName;
+    private String handlerMethodDescriptor;
 
-	public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers,
-			String handlerClassName, String handlerMethodName,
-			String handlerMethodDescriptor) {
-		this.handlerIdentifiers = handlerIdentifiers;
-		this.handlerClassName = handlerClassName;
-		this.handlerMethodName = handlerMethodName;
-		this.handlerMethodDescriptor = handlerMethodDescriptor;
-	}
+    public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers,
+            String handlerClassName, String handlerMethodName,
+            String handlerMethodDescriptor) {
+        this.handlerIdentifiers = handlerIdentifiers;
+        this.handlerClassName = handlerClassName;
+        this.handlerMethodName = handlerMethodName;
+        this.handlerMethodDescriptor = handlerMethodDescriptor;
+    }
 
-	@Override
-	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-		AnnotationVisitor annotationVisitor = null;
-		if (visible && desirableAnnotations.contains(desc)) {
-			annotationVisitor = new AnnotationScanner(handlerIdentifiers,
-					handlerClassName, handlerMethodName,
-					handlerMethodDescriptor, desc);
-		}
-		return annotationVisitor;
-	}
-
+    @Override
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        AnnotationVisitor annotationVisitor = null;
+        if (visible && desirableAnnotations.contains(desc)) {
+            annotationVisitor = new AnnotationScanner(handlerIdentifiers,
+                    handlerClassName, handlerMethodName,
+                    handlerMethodDescriptor, desc);
+        }
+        return annotationVisitor;
+    }
 }

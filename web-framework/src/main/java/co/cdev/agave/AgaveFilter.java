@@ -68,6 +68,7 @@ import co.cdev.agave.internal.MultipartRequestImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
 import co.cdev.agave.internal.URIParameterFormPopulator;
+import co.cdev.agave.logging.SingleLineLogger;
 
 /**
  * <p>
@@ -109,7 +110,7 @@ import co.cdev.agave.internal.URIParameterFormPopulator;
  */
 public class AgaveFilter implements Filter {
 
-    private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
+    private static final Logger LOGGER = SingleLineLogger.forClass(AgaveFilter.class);
     private static final String WORKFLOW_HANDLER_SUFFIX = "-handler";
     private static final String WORKFLOW_FORM_SUFFIX = "-form";
     
@@ -143,14 +144,12 @@ public class AgaveFilter implements Filter {
      *             {@code lifecycleHooks} initialization parameter value
      */
     protected LifecycleHooks provideLifecycleHooks(FilterConfig config)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         LifecycleHooks hooks = null;
 
         String lifecycleHooksParameter = config.getInitParameter("lifecycleHooks");
         if (lifecycleHooksParameter != null) {
             hooks = (LifecycleHooks) Class.forName(lifecycleHooksParameter).newInstance();
-            LOGGER.log(Level.INFO, "Using lifecycle hooks: {0}", hooks.getClass().getName());
         } else {
             hooks = new DefaultLifecycleHooks();
         }
@@ -181,16 +180,13 @@ public class AgaveFilter implements Filter {
      *             {@code classesDir} initialization parameter value
      */
     protected HandlerFactory provideHandlerFactory(FilterConfig config)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         HandlerFactory factory = null;
 
         String handlerFactoryParameter = config.getInitParameter("handlerFactory");
 
         if (handlerFactoryParameter != null) {
-            factory = (HandlerFactory) Class.forName(
-                    handlerFactoryParameter).newInstance();
-            LOGGER.log(Level.INFO, "Using HandlerFactory: {0}", factory.getClass().getName());
+            factory = (HandlerFactory) Class.forName(handlerFactoryParameter).newInstance();
         } else {
             factory = new HandlerFactoryImpl();
         }
@@ -221,15 +217,13 @@ public class AgaveFilter implements Filter {
      *             {@code classesDir} initialization parameter value
      */
     protected FormFactory provideFormFactory(FilterConfig config)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         FormFactory factory = null;
 
         String formFactoryParameter = config.getInitParameter("formFactory");
 
         if (formFactoryParameter != null) {
             factory = (FormFactory) Class.forName(formFactoryParameter).newInstance();
-            LOGGER.log(Level.INFO, "Using formFactory: {0}", factory.getClass().getName());
         } else {
             factory = new FormFactoryImpl();
         }
@@ -261,16 +255,14 @@ public class AgaveFilter implements Filter {
      *             {@code instanceCreator} initialization parameter value
      */
     protected File provideClassesDirectory(FilterConfig config)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         File classesDir = null;
 
         if (System.getProperty("classesDirectory") != null) {
             classesDir = new File(System.getProperty("classesDirectory"));
             classesDirectoryProvided = true;
         } else {
-            classesDir = new File(config.getServletContext().getRealPath(
-                    "/WEB-INF/classes"));
+            classesDir = new File(config.getServletContext().getRealPath("/WEB-INF/classes"));
         }
 
         return classesDir;
@@ -292,27 +284,41 @@ public class AgaveFilter implements Filter {
 
         try {
             lifecycleHooks = provideLifecycleHooks(config);
+            
+            LOGGER.log(Level.INFO, "Using lifecycle hooks: {0}", new Object[] {
+                lifecycleHooks.getClass().getName()
+            });
+            
             classesDirectory = provideClassesDirectory(config);
             setHandlerRegistry(new HandlerRegistryImpl());
             scanClassesDirForHandlers(classesDirectory);
+            
             handlerFactory = provideHandlerFactory(config);
             handlerFactory.initialize();
-            formFactory = provideFormFactory(config);
+            
+            LOGGER.log(Level.INFO, "Using handler factory: {0}", new Object[] {
+                handlerFactory.getClass().getName()
+            });
+            
+            formFactory = provideFormFactory(config);            
             formFactory.initialize();
+            
+            LOGGER.log(Level.INFO, "Using form factory: {0}", new Object[] {
+                formFactory.getClass().getName()
+            });
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
         
         if (!handlerRegistry.getDescriptors().isEmpty()) {
             for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
-                LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[]{
-                            descriptor.getPattern(),
-                            descriptor.getHandlerMethod()
-                        });
+                LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[] {
+                    descriptor.getPattern(),
+                    descriptor.getHandlerMethod()
+                });
             }
         } else {
-            StringBuilder message = new StringBuilder(
-                    "No handlers have been registered.");
+            StringBuilder message = new StringBuilder("No handlers have been registered.");
             if (classesDirectoryProvided) {
             } else if (config.getServletContext().getServerInfo().toLowerCase().contains("jetty")) {
                 message.append("  If you are running this webapp with 'mvn jetty:run', no"
@@ -411,8 +417,9 @@ public class AgaveFilter implements Filter {
      * @see agave.ConvertWith
      */
     @Override
-    public final void doFilter(ServletRequest req, ServletResponse resp,
-            FilterChain chain) throws IOException, ServletException {
+    public final void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
+            throws IOException, ServletException {
+        
         ServletContext servletContext = config.getServletContext();
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
@@ -420,22 +427,19 @@ public class AgaveFilter implements Filter {
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
         if (descriptor != null) {
             HttpSession session = request.getSession(true);
-            HandlerContext handlerContext = new HandlerContext(servletContext,
-                    request, response, session);
+            HandlerContext handlerContext = new HandlerContext(servletContext, request, response, session);
 
-            if (lifecycleHooks.beforeFilteringRequest(descriptor,
-                    handlerContext)) {
+            if (lifecycleHooks.beforeFilteringRequest(descriptor, handlerContext)) {
                 return;
             }
 
             LOGGER.log(Level.FINE, "Handling requests to \"{0}\" with \"{1}\"", new Object[] {
-                        request.getServletPath(),
-                        descriptor.getHandlerMethod()
-                    });
+                request.getServletPath(),
+                descriptor.getHandlerMethod()
+            });
 
-            // wraps the request if necessary so that the uploaded content can
-            // be accessed like
-            // regular string param eters
+            // wraps the request if necessary so that the uploaded content can be accessed like
+            // regular string parameters
             if (MultipartRequestImpl.isMultipart(request)) {
                 request = new MultipartRequestImpl(request);
             }
@@ -444,8 +448,7 @@ public class AgaveFilter implements Filter {
 
             // attempts to pull a form intance out of the session, stored from a
             // previous workflow phase
-            if (descriptor.getWorkflowName() != null
-                    && !descriptor.initiatesWorkflow()) {
+            if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
                 formInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
             }
 
@@ -463,12 +466,10 @@ public class AgaveFilter implements Filter {
             // populates the form if necessary
             if (formInstance != null) {
                 if (descriptor.initiatesWorkflow()) {
-                    session.setAttribute(descriptor.getWorkflowName()
-                            + WORKFLOW_FORM_SUFFIX, formInstance);
+                    session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX, formInstance);
                 }
 
-                if (lifecycleHooks.beforeHandlingRequest(descriptor,
-                        formInstance, handlerContext)) {
+                if (lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, handlerContext)) {
                     return;
                 }
 
@@ -479,12 +480,10 @@ public class AgaveFilter implements Filter {
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
                     if (MultipartRequestImpl.isMultipart(request)) {
-                        formPopulator = new RequestPartFormPopulator(
-                                (MultipartRequest) request);
+                        formPopulator = new RequestPartFormPopulator((MultipartRequest) request);
                         formPopulator.populate(formInstance);
                     }
-                    formPopulator = new URIParameterFormPopulator(request,
-                            descriptor);
+                    formPopulator = new URIParameterFormPopulator(request, descriptor);
                     formPopulator.populate(formInstance);
                 } catch (NoSuchMethodException ex) {
                     throw new FormException(ex);
@@ -496,8 +495,7 @@ public class AgaveFilter implements Filter {
                     throw new FormException(ex);
                 }
 
-                if (lifecycleHooks.afterInitializingForm(descriptor,
-                        formInstance, handlerContext)) {
+                if (lifecycleHooks.afterInitializingForm(descriptor, formInstance, handlerContext)) {
                     return;
                 }
             }
@@ -506,31 +504,26 @@ public class AgaveFilter implements Filter {
 
             // attempts to pull a handler from a previous workflow phase out of
             // the session
-            if (descriptor.getWorkflowName() != null
-                    && !descriptor.initiatesWorkflow()) {
+            if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
                 handlerInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
             }
 
             // creates a handler
             if (handlerInstance == null) {
-                handlerInstance = handlerFactory.createHandlerInstance(
-                        servletContext, descriptor);
+                handlerInstance = handlerFactory.createHandlerInstance(servletContext, descriptor);
 
                 if (handlerInstance == null) {
                     throw new HandlerException(String.format("Unable to create instance of \"%s\" with \"%s\"",
-                            descriptor.getHandlerClass().getName(),
-                            handlerFactory.getClass().getName()));
+                            descriptor.getHandlerClass().getName(), handlerFactory.getClass().getName()));
                 }
             }
 
             // initiates a new workflow if necessary
             if (descriptor.initiatesWorkflow()) {
-                session.setAttribute(descriptor.getWorkflowName()
-                        + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
+                session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
             }
 
-            if (lifecycleHooks.beforeHandlingRequest(descriptor,
-                    handlerInstance, handlerContext)) {
+            if (lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, handlerContext)) {
                 return;
             }
 
@@ -541,19 +534,15 @@ public class AgaveFilter implements Filter {
             try {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(
-                                handlerInstance, handlerContext, formInstance);
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance,
-                                handlerContext, formInstance);
+                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
                     }
                 } else {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(
-                                handlerInstance, handlerContext);
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance,
-                                handlerContext);
+                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
                     }
                 }
             } catch (InvocationTargetException ex) {
@@ -573,10 +562,8 @@ public class AgaveFilter implements Filter {
             // completes a workflow and flushes the referenced attributes from
             // the session
             if (descriptor.completesWorkflow()) {
-                session.removeAttribute(descriptor.getWorkflowName()
-                        + WORKFLOW_HANDLER_SUFFIX);
-                session.removeAttribute(descriptor.getWorkflowName()
-                        + WORKFLOW_FORM_SUFFIX);
+                session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
+                session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
             }
 
             // determines a destination
@@ -587,8 +574,7 @@ public class AgaveFilter implements Filter {
                 if (result instanceof DestinationImpl) {
                     Destination destination = (Destination) result;
 
-                    if (lifecycleHooks.afterHandlingRequest(descriptor,
-                            handlerInstance, destination, handlerContext)) {
+                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, handlerContext)) {
                         return;
                     }
 
@@ -607,8 +593,7 @@ public class AgaveFilter implements Filter {
                 } else if (result instanceof URI) {
                     uri = (URI) result;
 
-                    if (lifecycleHooks.afterHandlingRequest(descriptor,
-                            handlerInstance, uri, handlerContext)) {
+                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, handlerContext)) {
                         return;
                     }
 
@@ -625,12 +610,10 @@ public class AgaveFilter implements Filter {
                     }
                     response.sendRedirect(location);
                 } else {
-                    request.getRequestDispatcher(uri.toASCIIString()).forward(
-                            request, response);
+                    request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
             } else {
-                if (lifecycleHooks.afterHandlingRequest(descriptor,
-                        handlerInstance, handlerContext)) {
+                if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, handlerContext)) {
                     return;
                 }
             }

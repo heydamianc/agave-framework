@@ -37,14 +37,13 @@ import java.util.Map;
 public class URIParameterFormPopulator extends AbstractFormPopulator {
 
     public URIParameterFormPopulator(HttpServletRequest request, HandlerDescriptor descriptor) {
-		super(request.getLocale());
+        super(request.getLocale());
 
-		Map<String, String> uriParameters = descriptor.getPattern().getParameterMap(request);
-		for (String key : uriParameters.keySet()) {
-			List<Object> parameter = new ArrayList<Object>(1);
-			parameter.add(uriParameters.get(key));
-			parameters.put(key, parameter);
-		}
+        Map<String, String> uriParameters = descriptor.getPattern().getParameterMap(request);
+        for (String key : uriParameters.keySet()) {
+            List<Object> parameter = new ArrayList<Object>(1);
+            parameter.add(uriParameters.get(key));
+            parameters.put(key, parameter);
+        }
     }
-    
 }

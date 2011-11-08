@@ -35,16 +35,15 @@ import co.cdev.agave.internal.HandlerDescriptor;
  */
 public class DuplicateDescriptorException extends AgaveException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DuplicateDescriptorException(HandlerDescriptor existing,
-			HandlerDescriptor added) {
-		super("Failed to register a duplicate handler mapping, ("
-				+ added.getPattern().toString() + ", "
-				+ added.getMethod().toString() + ") for "
-				+ added.getHandlerClass().getName()
-				+ ".  Handler is already mapped in "
-				+ existing.getHandlerClass().getName() + ".");
-	}
-
+    public DuplicateDescriptorException(HandlerDescriptor existing,
+            HandlerDescriptor added) {
+        super("Failed to register a duplicate handler mapping, ("
+                + added.getPattern().toString() + ", "
+                + added.getMethod().toString() + ") for "
+                + added.getHandlerClass().getName()
+                + ".  Handler is already mapped in "
+                + existing.getHandlerClass().getName() + ".");
+    }
 }

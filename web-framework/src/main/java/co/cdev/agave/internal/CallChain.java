@@ -33,10 +33,14 @@ import java.util.List;
 public interface CallChain {
 
     public String getParameterName();
+
     public List<String> getAccessorNames();
-	public MutatorType getMutatorType();
+
+    public MutatorType getMutatorType();
+
     public String getMutatorName();
+
     public String getKey();
+
     public Integer getIndex();
-    
 }

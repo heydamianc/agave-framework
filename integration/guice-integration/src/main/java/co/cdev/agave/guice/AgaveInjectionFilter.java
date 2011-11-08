@@ -28,15 +28,22 @@ package co.cdev.agave.guice;
 import co.cdev.agave.AgaveFilter;
 import co.cdev.agave.HandlerFactory;
 import co.cdev.agave.LifecycleHooks;
+import co.cdev.agave.logging.SingleLineLogger;
 import com.google.inject.AbstractModule;
+import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
@@ -45,10 +52,14 @@ import javax.servlet.ServletException;
  * 
  * @author <a href="damiancarrillo@gmail.com>Damian Carrillo</a>
  */
-public abstract class AgaveInjectionFilter extends AgaveFilter {
+public class AgaveInjectionFilter extends AgaveFilter {
 
+    public static final String PARENT_INJECTOR = AgaveInjectionFilter.class.getName() + ".PARENT_INJECTOR";
+    
+    private static final Logger LOGGER = SingleLineLogger.forClass(AgaveInjectionFilter.class);
+    
     private final Set<Class<?>> handlerClasses;
-    private Injector injector;
+    private InjectionHandlerFactory injectionHandlerFactory;
 
     public AgaveInjectionFilter() {
         handlerClasses = new HashSet<Class<?>>();
@@ -56,16 +67,11 @@ public abstract class AgaveInjectionFilter extends AgaveFilter {
     
     @Override
     public void init(javax.servlet.FilterConfig config) throws ServletException {
+        injectionHandlerFactory = new InjectionHandlerFactory();
+        
         super.init(config);
         
-        Module handlerModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                for (Class<?> handlerClass : handlerClasses) {
-                    bind(handlerClass);
-                }
-            }
-        };
+        Module handlerModule = new HandlersModule(handlerClasses);
         
         // Automatically bind all handlers
         
@@ -73,12 +79,29 @@ public abstract class AgaveInjectionFilter extends AgaveFilter {
         modules.add(handlerModule);
         modules.addAll(provideGuiceModules());
         
-        injector = Guice.createInjector(modules);
+        Injector injector = (Injector) config.getServletContext().getAttribute(PARENT_INJECTOR);
+        injector = injector == null ? Guice.createInjector(modules) : injector.createChildInjector(modules);
+        
+        injectionHandlerFactory.setInjector(injector);
+        
+        if (LOGGER.isLoggable(Level.INFO)) {
+            printBindings(injector);
+        }
+    }
+    
+    private void printBindings(Injector injector) {
+        if (injector.getParent() != null) {
+            printBindings(injector.getParent());
+        }
+        
+        Map<Key<?>, Binding<?>> bindings = injector.getAllBindings();
+        for (Key<?> key : bindings.keySet()) {
+            LOGGER.log(Level.INFO, "Bound {0}", key.getTypeLiteral().getRawType().getName());
+        }
     }
     
     @Override
     public void destroy() {
-        injector = null;        
         super.destroy();
     }
 
@@ -86,10 +109,8 @@ public abstract class AgaveInjectionFilter extends AgaveFilter {
     protected LifecycleHooks provideLifecycleHooks(FilterConfig config) throws ClassNotFoundException, 
             InstantiationException, IllegalAccessException {
         LifecycleHooks configuredHooks = super.provideLifecycleHooks(config);
-        return new HandlerLifecycleHooks(handlerClasses, configuredHooks);
+        return new InjectionLifecycleHooks(handlerClasses, configuredHooks);
     }
-    
-    
 
     /**
      * Provides a default implementation of a handlerFactory if it has not been overridden in the
@@ -105,21 +126,34 @@ public abstract class AgaveInjectionFilter extends AgaveFilter {
     @Override
     protected HandlerFactory provideHandlerFactory(FilterConfig config) throws ClassNotFoundException, 
             InstantiationException, IllegalAccessException {
-        HandlerFactory defaultHandlerFactory = super.provideHandlerFactory(config);
-        
-        if (defaultHandlerFactory != null) {
-            return defaultHandlerFactory;
-        } else {
-            return new InjectionHandlerFactory(injector);
-        }
+        return injectionHandlerFactory;
     }
     
     /**
      * Provides additional Guice modules for the whole web application.  The handlers are included
-     * automatically, so there is no need to rebind them.
+     * automatically, so there is no need to rebind them.  The default implementation returns an
+     * empty list, however you can override this and supply more modules.
      * 
      * @return all Guice modules
      */
-    protected abstract Collection<Module> provideGuiceModules();
+    protected Collection<Module> provideGuiceModules() {
+        return Collections.emptyList();
+    }
+    
+    private static class HandlersModule extends AbstractModule {
+        
+        private final Set<Class<?>> handlerClasses;
+
+        public HandlersModule(Set<Class<?>> handlerClasses) {
+            this.handlerClasses = handlerClasses;
+        }
+        
+        @Override
+        protected void configure() {
+            for (Class<?> handlerClass : handlerClasses) {
+                bind(handlerClass);
+            }
+        }
+    }
     
 }

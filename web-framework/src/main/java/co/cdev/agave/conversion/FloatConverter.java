@@ -40,6 +40,7 @@ public class FloatConverter implements StringConverter<Float> {
      * @return a {@code Float} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
+    @Override
     public Float convert(String input, Locale locale) throws ConversionException {
         Float value = null;
         if (input != null && !"".equals(input)) {

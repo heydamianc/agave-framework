@@ -35,6 +35,7 @@ import java.util.Locale;
  */
 public interface PartConverter<OutputT> extends Converter<Part, OutputT> {
     
+    @Override
     public OutputT convert(Part input, Locale locale) throws ConversionException;
     
 }

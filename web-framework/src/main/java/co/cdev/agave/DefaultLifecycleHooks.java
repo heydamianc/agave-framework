@@ -42,51 +42,60 @@ import co.cdev.agave.internal.HandlerDescriptor;
  */
 public class DefaultLifecycleHooks implements LifecycleHooks {
 
+    @Override
     public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile)
             throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
             ServletContext servletContext) throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
             HandlerContext context) throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean beforeInitializingForm(HandlerDescriptor descriptor,
             Object formInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean afterInitializingForm(HandlerDescriptor descriptor,
             Object formInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, Destination destination,
             HandlerContext context) throws ServletException, IOException {
         return false;
     }
 
+    @Override
     public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, URI destination, HandlerContext context)
             throws ServletException, IOException {

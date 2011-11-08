@@ -53,13 +53,13 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Inherited
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HandlesRequestsTo {
 
-	String value() default ""; // convenience for 'uri'
+    String value() default ""; // convenience for 'uri'
 
-	String uri() default "";
+    String uri() default "";
 
-	HttpMethod method() default HttpMethod.ANY;
+    HttpMethod method() default HttpMethod.ANY;
 }

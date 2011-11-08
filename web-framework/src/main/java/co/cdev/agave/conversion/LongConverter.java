@@ -40,6 +40,7 @@ public class LongConverter implements StringConverter<Long> {
      * @return a {@code Long} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
+    @Override
     public Long convert(String input, Locale locale) throws ConversionException {
         Long value = null;
         if (input != null && !"".equals(input)) {

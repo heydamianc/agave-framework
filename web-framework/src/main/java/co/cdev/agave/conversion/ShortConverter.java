@@ -40,6 +40,7 @@ public class ShortConverter implements StringConverter<Short> {
      * @return a {@code Short} object representing the truth value of the input
      * @throws ConversionException when an unsupported input string is supplied as an argument
      */ 
+    @Override
     public Short convert(String input, Locale locale) throws ConversionException {
         Short value = null;
         if (input != null && !"".equals(input)) {

@@ -35,27 +35,26 @@ import co.cdev.agave.internal.HandlerDescriptor;
  */
 public interface HandlerFactory {
 
-	/**
-	 * Initializes this {@code HandlerFactory} if necessary. This method is
-	 * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
-	 * method, so it is an effective way to set up a mechanism for providing
-	 * dependency injection or hooking into an IOC library.
-	 */
-	public void initialize();
+    /**
+     * Initializes this {@code HandlerFactory} if necessary. This method is
+     * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
+     * method, so it is an effective way to set up a mechanism for providing
+     * dependency injection or hooking into an IOC library.
+     */
+    public void initialize();
 
-	/**
-	 * Creates instances of handler objects.
-	 * 
-	 * @param handlerContext
-	 *            the global context object
-	 * @param descriptor
-	 *            The {@link HandlerDescriptor} that describes the request
-	 *            handler
-	 * @return an instance of the described request handler
-	 * @throws HandlerException
-	 *             if construction fails
-	 */
-	public Object createHandlerInstance(ServletContext servletContext,
-			HandlerDescriptor descriptor) throws HandlerException;
-
+    /**
+     * Creates instances of handler objects.
+     * 
+     * @param handlerContext
+     *            the global context object
+     * @param descriptor
+     *            The {@link HandlerDescriptor} that describes the request
+     *            handler
+     * @return an instance of the described request handler
+     * @throws HandlerException
+     *             if construction fails
+     */
+    public Object createHandlerInstance(ServletContext servletContext,
+            HandlerDescriptor descriptor) throws HandlerException;
 }

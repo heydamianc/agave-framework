@@ -41,19 +41,19 @@ public class CallChainImpl implements CallChain {
     private String key;
     private Integer index;
 
-	/**
-	 * 
-	 * @param parameterName
-	 * @param unique
-	 *
-	 * @see http://www.w3.org/TR/html4/types.html#type-id
-	 * @see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.8
-	 */
-	public CallChainImpl(String parameterName, boolean unique) {
-        this.parameterName = parameterName;		
+    /**
+     * 
+     * @param parameterName
+     * @param unique
+     *
+     * @see http://www.w3.org/TR/html4/types.html#type-id
+     * @see http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.8
+     */
+    public CallChainImpl(String parameterName, boolean unique) {
+        this.parameterName = parameterName;
         LinkedList<String> callChain = new LinkedList<String>(Arrays.asList(parameterName.split("[-.:]")));
         String mutator = null;
-        
+
         if (callChain != null && !callChain.isEmpty()) {
             mutator = callChain.removeLast();
             for (String call : callChain) {
@@ -62,7 +62,7 @@ public class CallChainImpl implements CallChain {
         } else {
             mutator = parameterName;
         }
-        
+
         if (mutator.contains("$")) {
             String[] values = mutator.split("\\$");
             mutatorName = createPuttingMutatorFrom(values[0]);
@@ -81,53 +81,58 @@ public class CallChainImpl implements CallChain {
             mutatorType = MutatorType.APPENDING;
         }
     }
-    
+
+    @Override
     public String getParameterName() {
         return parameterName;
     }
 
+    @Override
     public List<String> getAccessorNames() {
         return accessorNames;
     }
-    
+
+    @Override
     public String getMutatorName() {
         return mutatorName;
     }
-    
+
+    @Override
     public MutatorType getMutatorType() {
         return mutatorType;
     }
-    
+
+    @Override
     public String getKey() {
         return key;
     }
-    
+
+    @Override
     public Integer getIndex() {
         return index;
     }
- 
+
     private String createAccessorFrom(String value) {
         return "get" + capitalize(value);
     }
-    
+
     private String createPuttingMutatorFrom(String value) {
         return "putIn" + capitalize(value);
     }
-    
+
     private String createInsertingMutatorFrom(String value) {
         return "insertIn" + capitalize(value);
     }
-    
+
     private String createAppendingMutatorFrom(String value) {
         return "addTo" + capitalize(value);
     }
-    
+
     private String createSettingMutatorFrom(String value) {
         return "set" + capitalize(value);
     }
-    
+
     private String capitalize(String value) {
         return value.substring(0, 1).toUpperCase() + value.substring(1);
     }
-    
 }

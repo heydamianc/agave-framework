@@ -38,9 +38,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface URIPattern extends Comparable<URIPattern> {
-    
+
     public String getPattern();
-    
+
     /**
      * Determines whether the supplied requests servlet path matches the pattern 
      * that this {@code URIPattern} describes. The URI string supplied as 
@@ -87,7 +87,10 @@ public interface URIPattern extends Comparable<URIPattern> {
      * Indicates whether this {@code URIPattern}'s normalized internal
      * pattern matches that of the supplied object's.
      */
+    @Override
     public boolean equals(Object obj);
+
+    @Override
     public int hashCode();
 
     /**
@@ -99,8 +102,8 @@ public interface URIPattern extends Comparable<URIPattern> {
      *         equal in specificity and 1 if that {@code URIPattern} is more
      *         specific
      */
+    @Override
     public int compareTo(URIPattern that);
 
     public Map<String, String> getParameterMap(HttpServletRequest request);
-
 }
