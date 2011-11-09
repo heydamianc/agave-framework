@@ -36,12 +36,21 @@ public final class SingleLineLogger {
     
     public static Logger forClass(Class<?> representativeClass) {
         Logger logger = Logger.getLogger(representativeClass.getName());
-        logger.setUseParentHandlers(false);
         
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setFormatter(new SingleLineFormatter());
+        SingleLineFormatter singleLineFormatter = new SingleLineFormatter();
         
-        logger.addHandler(consoleHandler);
+        try {
+            
+            // This was created primarily to work in Google's Appengine, however they disallow 
+            // adding custom handlers.
+            
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setFormatter(new SingleLineFormatter());
+            logger.addHandler(consoleHandler);
+            
+        } catch (NoClassDefFoundError ex) {
+            
+        }
         
         return logger;
     }

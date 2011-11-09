@@ -39,6 +39,10 @@
     </dependency>
   </dependencies>
   
+  <build>
+    <finalName>agave-${project.artifactId}-${project.version}</finalName>
+  </build>
+  
   <profiles>
     <profile>
       <id>with-deps</id>

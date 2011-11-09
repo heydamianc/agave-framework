@@ -36,6 +36,10 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <finalName>agave-${project.artifactId}-${project.version}</finalName>
+  </build>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
