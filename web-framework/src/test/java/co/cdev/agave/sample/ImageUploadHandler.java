@@ -27,20 +27,20 @@ package co.cdev.agave.sample;
 
 
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class ImageUploadHandler {
 
-	@HandlesRequestsTo("/upload/file")
+	@Route("/upload/file")
 	public void uploadFile(HandlerContext context, ImageUploadForm form) {
 		context.getRequest().setAttribute("file", form.getFile1() == null);
 		context.getResponse().setStatus(400);
 	}
 	
-	@HandlesRequestsTo("/upload/image")
+	@Route("/upload/image")
 	public void uploadImage(HandlerContext context, ImageUploadForm form) {
 		context.getRequest().setAttribute("image", form.getFile2() == null);
 		context.getResponse().setStatus(400);

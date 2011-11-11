@@ -31,7 +31,7 @@ import co.cdev.agave.samples.pastebin.snippet.Snippet;
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 import javax.servlet.ServletContext;
 
 /**
@@ -42,7 +42,7 @@ public class PastebinHandler extends AbstractHandler {
     private static final String SNIPPET_KEY = "snippet";
     private static final String OVERVIEW_KEY = "overview";
 
-    @HandlesRequestsTo("/")
+    @Route("/")
     public Destination welcome(HandlerContext handlerContext, PastebinForm form) {
         ServletContext servletContext = handlerContext.getServletContext();
         try {
@@ -54,7 +54,7 @@ public class PastebinHandler extends AbstractHandler {
         return Destinations.forward("/WEB-INF/pastebin.jsp");
     }
 
-    @HandlesRequestsTo("/create")
+    @Route("/create")
     public Destination create(HandlerContext handlerContext, PastebinForm form) {
         String uniqueId = null;
         ServletContext servletContext = handlerContext.getServletContext();
@@ -68,7 +68,7 @@ public class PastebinHandler extends AbstractHandler {
         return Destinations.redirect(String.format("/%s", uniqueId));
     }
 
-    @HandlesRequestsTo("/${uniqueId}")
+    @Route("/${uniqueId}")
     public Destination snippet(HandlerContext handlerContext, PastebinForm form) {
         ServletContext servletContext = handlerContext.getServletContext();
         try {

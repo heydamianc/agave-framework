@@ -34,7 +34,7 @@ import java.util.Map;
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.samples.gameOfLife.simulation.Board;
 import co.cdev.agave.samples.gameOfLife.simulation.Cell;
@@ -53,14 +53,14 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     
     public static final String BOARD_KEY = "board";
     
-    @HandlesRequestsTo("/")
+    @Route("/")
     public void root(HandlerContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         form.setConfiguration(Configuration.Blinker);
         init(handlerContext, form);
     }
     
-    @HandlesRequestsTo("/init/${configuration}")
+    @Route("/init/${configuration}")
     public void init(HandlerContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         Board board = new Board(form.getRows(), form.getColumns());
@@ -71,7 +71,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
         displayTemplate(handlerContext, templateModel);
     }
     
-    @HandlesRequestsTo("/advance")
+    @Route("/advance")
     public Destination advance(HandlerContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         Destination destination = null;
@@ -87,7 +87,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
         return destination;
     }
     
-    @HandlesRequestsTo("/play")
+    @Route("/play")
     public Destination play(HandlerContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         Destination destination = null;
@@ -107,7 +107,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
         return destination;
     }
     
-    @HandlesRequestsTo("/toggleState")
+    @Route("/toggleState")
     public void makeAlive(HandlerContext handlerContext, GameOfLifeForm form) {
         Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
         Cell clickedCell = board.getGrid().get(form.getY()).get(form.getX());

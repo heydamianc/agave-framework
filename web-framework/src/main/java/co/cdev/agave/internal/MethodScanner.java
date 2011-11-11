@@ -32,7 +32,7 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 
 /**
  * Scans classes for methods which are possible candidates to be handler
@@ -45,7 +45,7 @@ public class MethodScanner extends EmptyVisitor {
     private static final Collection<String> desirableAnnotations = new ArrayList<String>();
 
     static {
-        desirableAnnotations.add(Type.getDescriptor(HandlesRequestsTo.class));
+        desirableAnnotations.add(Type.getDescriptor(Route.class));
     }
     
     private Collection<HandlerIdentifier> handlerIdentifiers;

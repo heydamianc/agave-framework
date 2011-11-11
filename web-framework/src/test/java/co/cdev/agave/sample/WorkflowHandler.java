@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 
 import co.cdev.agave.CompletesWorkflow;
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 import co.cdev.agave.InitiatesWorkflow;
 import co.cdev.agave.ResumesWorkflow;
 
@@ -44,21 +44,21 @@ public class WorkflowHandler {
     private int step = 0;
     
     @InitiatesWorkflow("wizard")
-    @HandlesRequestsTo("/wizard/step1")
+    @Route("/wizard/step1")
     public void step1(HandlerContext context, WorkflowForm form) throws IOException, ServletException {
         form.setStep1Result("one");
         step++;
     }
     
     @ResumesWorkflow("wizard")
-    @HandlesRequestsTo("/wizard/step2")
+    @Route("/wizard/step2")
     public void step2(HandlerContext context, WorkflowForm form) throws IOException, ServletException {
         form.setStep2Result("two");
         step++;
     }
     
     @CompletesWorkflow("wizard")
-    @HandlesRequestsTo("/wizard/step3")
+    @Route("/wizard/step3")
     public void step3(HandlerContext context, WorkflowForm form) throws IOException, ServletException {
         form.setStep3Result("three");
         step++;

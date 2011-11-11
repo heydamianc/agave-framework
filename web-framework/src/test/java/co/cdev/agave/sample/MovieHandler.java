@@ -31,7 +31,7 @@ import java.util.Collections;
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.exception.AgaveException;
 
@@ -50,38 +50,38 @@ public class MovieHandler {
         movieRepository = new MovieRepository();
     }
 
-    @HandlesRequestsTo(uri = "/movies", method = HttpMethod.GET)
+    @Route(uri = "/movies", method = HttpMethod.GET)
     public Destination listMovies(HandlerContext context) throws AgaveException {
         context.getRequest().setAttribute("movies", movieRepository.list());
         return Destinations.forward("/WEB-INF/movies/list.jsp");
     }
 
-    @HandlesRequestsTo(uri = "/movies", method = HttpMethod.PUT)
+    @Route(uri = "/movies", method = HttpMethod.PUT)
     public Destination replaceMovies(HandlerContext context, MoviesForm moviesForm) throws AgaveException {
         context.getRequest().setAttribute("success", movieRepository.add(moviesForm.list()));
         return Destinations.forward("/WEB-INF/movies/replace.jsp");
     }
 
-    @HandlesRequestsTo(uri = "/movies", method = HttpMethod.POST)
+    @Route(uri = "/movies", method = HttpMethod.POST)
     public Destination createMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
         context.getRequest().setAttribute("success", movieRepository.add(movieForm.getMovie()));
         return Destinations.forward("/WEB-INF/movies/create.jsp");
     }
 
-    @HandlesRequestsTo(uri = "/movies", method = HttpMethod.DELETE)
+    @Route(uri = "/movies", method = HttpMethod.DELETE)
     public Destination deleteMovies(HandlerContext context) throws AgaveException {
         Collection<Movie> movies = movieRepository.list();
         context.getRequest().setAttribute("success", movieRepository.remove(movies));
         return Destinations.forward("/WEB-INF/movies/delete.jsp");
     }
 
-    @HandlesRequestsTo(uri = "/movies/${title}", method = HttpMethod.GET)
+    @Route(uri = "/movies/${title}", method = HttpMethod.GET)
     public Destination retrieveMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
         context.getRequest().setAttribute("movie", movieRepository.get(movieForm.getTitle()));
         return Destinations.forward("/WEB-INF/movie/display.jsp");
     }
 
-    @HandlesRequestsTo(uri = "/movies/${title}", method = HttpMethod.PUT)
+    @Route(uri = "/movies/${title}", method = HttpMethod.PUT)
     public Destination replaceMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
         if (movieRepository.remove(movieForm.getTitle())) {
             context.getRequest().setAttribute("success", movieRepository.add(movieForm.getMovie()));
@@ -89,7 +89,7 @@ public class MovieHandler {
         return Destinations.forward("/WEB-INF/movie/replace.jsp");
     }
 
-    @HandlesRequestsTo(uri = "/movies/${title}", method = HttpMethod.DELETE)
+    @Route(uri = "/movies/${title}", method = HttpMethod.DELETE)
     public Destination deleteMovie(HandlerContext context, MovieForm movieForm) throws AgaveException {
         movieRepository.remove(movieForm.getTitle());
         return Destinations.forward("/WEB-INF/movie/delete.jsp");

@@ -32,7 +32,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 import co.cdev.agave.Part;
 
 public class StegoHandler {
@@ -40,12 +40,12 @@ public class StegoHandler {
     public static final String ENCODED_FILENAME_PREFIX = "enc.";
     public static final String USER_SUBMITTED_IMAGE_DIR = "/img/submitted/";
 
-    @HandlesRequestsTo("/")
+    @Route("/")
     public Destination welcome(HandlerContext handlerContext) throws Exception {
         return Destinations.create("/WEB-INF/jsp/index.jsp");
     }
 
-    @HandlesRequestsTo("/obscure")
+    @Route("/obscure")
     public Destination obscure(HandlerContext handlerContext, StegoForm form) throws Exception {
         Part carrierPart = form.getCarrier();
         movePartContentsIntoAccessibleLocation(handlerContext, carrierPart);
@@ -64,7 +64,7 @@ public class StegoHandler {
         return Destinations.forward("/WEB-INF/jsp/obscured.jsp");
     }
 
-    @HandlesRequestsTo("/extract")
+    @Route("/extract")
     public Destination extract(HandlerContext handlerContext, StegoForm form) throws Exception {
         Part carrierPart = form.getCarrier();
         movePartContentsIntoAccessibleLocation(handlerContext, carrierPart);

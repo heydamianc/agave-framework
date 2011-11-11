@@ -30,10 +30,10 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 
 public class SampleHandler {
-    @HandlesRequestsTo("/login")
+    @Route("/login")
     public void login(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         if ("damian".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {
             context.getRequest().setAttribute("loggedIn", Boolean.TRUE);
@@ -43,27 +43,27 @@ public class SampleHandler {
         context.getResponse().setStatus(400);
     }
 
-    @HandlesRequestsTo("/aliased")
+    @Route("/aliased")
     public void aliased(HandlerContext context, AliasedForm aliasedForm) throws ServletException, IOException {
     }
 
-    @HandlesRequestsTo("/uri-params/${username}/${password}/")
+    @Route("/uri-params/${username}/${password}/")
     public void uriParams(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         context.getRequest().setAttribute("username", loginForm.getUsername());
         context.getRequest().setAttribute("password", loginForm.getPassword());
     }
 
-    @HandlesRequestsTo("/throws/nullPointerException")
+    @Route("/throws/nullPointerException")
     public void throwsNullPointerException(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         throw new NullPointerException();
     }
 
-    @HandlesRequestsTo("/throws/ioException")
+    @Route("/throws/ioException")
     public void throwsIOException(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
         throw new IOException();
     }
     
-    @HandlesRequestsTo("/lacks/form")
+    @Route("/lacks/form")
     public void lacksForm(HandlerContext context) throws ServletException, IOException {
         context.getRequest().setAttribute("noErrors", Boolean.TRUE);
     }

@@ -30,7 +30,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import co.cdev.agave.HandlerContext;
-import co.cdev.agave.HandlesRequestsTo;
+import co.cdev.agave.Route;
 
 /**
  * A simple example of a handler class that fields requests to a single URL.  This class is 
@@ -49,7 +49,7 @@ public class SimpleHandler {
      *                servlet context, and session objects
      * @param loginForm an unused form object
      */        
-    @HandlesRequestsTo("/test1")
+    @Route("/test1")
     public void test1(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
     	context.getRequest().setAttribute("x", "x");
     	context.getResponse().setStatus(400);
