@@ -32,7 +32,7 @@ import java.util.Locale;
  * Converts an input {@code String} into a {@code Boolean} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BooleanConverter implements StringConverter<Boolean> {
+public class BooleanParamConverter implements StringParamConverter<Boolean> {
 
     /**
      * Performs the conversion.

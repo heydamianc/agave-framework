@@ -25,8 +25,8 @@
  */
 package co.cdev.agave.samples.gameOfLife.web;
 
-import co.cdev.agave.ConvertWith;
-import co.cdev.agave.conversion.IntegerConverter;
+import co.cdev.agave.Converter;
+import co.cdev.agave.conversion.IntegerParamConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -43,7 +43,7 @@ public class GameOfLifeForm {
         return columns;
     }
     
-    public void setColumns(@ConvertWith(IntegerConverter.class) Integer columns) {
+    public void setColumns(@Converter(IntegerParamConverter.class) Integer columns) {
         this.columns = columns;
     }
     
@@ -51,7 +51,7 @@ public class GameOfLifeForm {
         return rows;
     }
     
-    public void setRows(@ConvertWith(IntegerConverter.class) Integer rows) {
+    public void setRows(@Converter(IntegerParamConverter.class) Integer rows) {
         this.rows = rows;
     }
 
@@ -59,7 +59,7 @@ public class GameOfLifeForm {
         return x;
     }
 
-    public void setX(@ConvertWith(IntegerConverter.class) int x) {
+    public void setX(@Converter(IntegerParamConverter.class) int x) {
         this.x = x;
     }
 
@@ -67,11 +67,11 @@ public class GameOfLifeForm {
         return y;
     }
 
-    public void setY(@ConvertWith(IntegerConverter.class) int y) {
+    public void setY(@Converter(IntegerParamConverter.class) int y) {
         this.y = y;
     }
 
-    public void setConfiguration(@ConvertWith(ConfigurationConverter.class) Configuration configuration) {
+    public void setConfiguration(@Converter(ConfigurationParamConverter.class) Configuration configuration) {
         this.configuration = configuration;
     }
     

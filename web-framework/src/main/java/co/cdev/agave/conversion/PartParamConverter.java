@@ -25,32 +25,17 @@
  */
 package co.cdev.agave.conversion;
 
+import co.cdev.agave.Part;
 import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
- * Converts a {@code String} input into a {@code Long} object.
+ * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class LongConverter implements StringConverter<Long> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Long} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
+public interface PartParamConverter<OutputT> extends ParamConverter<Part, OutputT> {
+    
     @Override
-    public Long convert(String input, Locale locale) throws ConversionException {
-        Long value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Long.parseLong(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Long object", ex.getCause());
-            }
-        }
-        return value;
-    }
-
+    public OutputT convert(Part input, Locale locale) throws ConversionException;
+    
 }

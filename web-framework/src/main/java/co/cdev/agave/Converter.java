@@ -32,7 +32,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import co.cdev.agave.conversion.Converter;
+import co.cdev.agave.conversion.ParamConverter;
 
 /**
  * Indicates which {@link Converter} to use.  An example of using this annotation is:
@@ -55,6 +55,6 @@ import co.cdev.agave.conversion.Converter;
 @Inherited
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConvertWith {
-    Class<? extends Converter<?,?>> value();
+public @interface Converter {
+    Class<? extends ParamConverter<?,?>> value();
 }

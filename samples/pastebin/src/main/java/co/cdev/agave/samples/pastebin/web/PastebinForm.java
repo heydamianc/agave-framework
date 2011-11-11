@@ -25,11 +25,11 @@
  */
 package co.cdev.agave.samples.pastebin.web;
 
+import co.cdev.agave.Converter;
+import co.cdev.agave.conversion.BooleanParamConverter;
+import co.cdev.agave.conversion.LongParamConverter;
 import co.cdev.agave.samples.pastebin.snippet.Snippet;
 import co.cdev.agave.samples.pastebin.snippet.Timeframe;
-import co.cdev.agave.ConvertWith;
-import co.cdev.agave.conversion.BooleanConverter;
-import co.cdev.agave.conversion.LongConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -64,7 +64,7 @@ public class PastebinForm {
         return revision;
     }
 
-    public void setRevision(@ConvertWith(LongConverter.class) Long revision) {
+    public void setRevision(@Converter(LongParamConverter.class) Long revision) {
         this.revision = revision;
     }
 
@@ -72,7 +72,7 @@ public class PastebinForm {
         return expiration;
     }
     
-    public void setExpiration(@ConvertWith(TimeframeConverter.class) Timeframe expiration) {
+    public void setExpiration(@Converter(TimeframeParamConverter.class) Timeframe expiration) {
         this.expiration = expiration;
     }
 
@@ -88,7 +88,7 @@ public class PastebinForm {
         return privateSnippet;
     }
 
-    public void setPrivateSnippet(@ConvertWith(BooleanConverter.class) Boolean privateSnippet) {
+    public void setPrivateSnippet(@Converter(BooleanParamConverter.class) Boolean privateSnippet) {
         this.privateSnippet = privateSnippet;
     }
 

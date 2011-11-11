@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,39 +25,37 @@
  */
 package co.cdev.agave.conversion;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.Locale;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import co.cdev.agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
- * Converts a supplied date string into a {@code java.util.Date} by leveraging
- * {@code DateFormat.format()}'s short locale-specific implementation. 
- * 
- * <p>An example of its usage can be seen in this class's unit test:
- * 
- * <pre>@Test
- *public void testConvert() throws Exception {
- *    Assert.assertEquals(new GregorianCalendar(2008, Calendar.OCTOBER, 31).getTime(),
- *        dateConverter.convert("10/31/2008", Locale.US));
- *    Assert.assertEquals(new GregorianCalendar(1982, Calendar.MAY, 7).getTime(),
- *        dateConverter.convert("7/5/82", Locale.UK));
- *}</pre>
- *</p>
- *
- * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateConverter implements StringConverter<Date> {
+public class DoubleParamConverterTest {
 
-    public Date convert(String input, Locale locale) throws ConversionException {
-        try {
-            DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-            return format.parse(input);
-        } catch (ParseException ex) {
-            throw new ConversionException("Could not convert " + input + " to a Date object", ex);
-        }
+    private DoubleParamConverter converter;    
+
+    @Before
+    public void setup() throws Exception {
+        converter = new DoubleParamConverter();
     }
 
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new Double("10.0"), converter.convert("10.0", Locale.getDefault()));
+        Assert.assertEquals(new Double("-4.89"), converter.convert("-4.89", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
+    }
+    
+    @Test(expected = ConversionException.class)
+    public void testConvertWithException() throws Exception {
+        converter.convert("some bad input", Locale.getDefault());
+    }
+    
 }
+

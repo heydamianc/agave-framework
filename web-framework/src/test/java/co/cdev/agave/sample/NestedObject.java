@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import co.cdev.agave.ConvertWith;
+import co.cdev.agave.Converter;
 
 public class NestedObject {
 
@@ -43,7 +43,7 @@ public class NestedObject {
         return weight;
     }
     
-    public void setConvertMe(@ConvertWith(HelloConverter.class) String convertMe) {
+    public void setConvertMe(@Converter(HelloConverter.class) String convertMe) {
         this.convertMe = convertMe;
     }
 
@@ -108,7 +108,7 @@ public class NestedObject {
     }
 
 
-    public void putInFavoritePopStars(String genre, @ConvertWith(FavoritePopStarConverter.class) FavoritePopStar popStar) {
+    public void putInFavoritePopStars(String genre, @Converter(FavoritePopStarConverter.class) FavoritePopStar popStar) {
         favoritePopStars.put(genre, popStar);
     }
 

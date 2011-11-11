@@ -25,8 +25,8 @@
  */
 package co.cdev.agave.sample;
 
-import co.cdev.agave.ConvertWith;
-import co.cdev.agave.conversion.BooleanConverter;
+import co.cdev.agave.Converter;
+import co.cdev.agave.conversion.BooleanParamConverter;
 
 public class LoginForm {
 
@@ -50,7 +50,7 @@ public class LoginForm {
         return password;
     }
     
-    public void setRemembered(@ConvertWith(BooleanConverter.class) Boolean remembered) {
+    public void setRemembered(@Converter(BooleanParamConverter.class) Boolean remembered) {
         this.remembered = remembered;
     }
 

@@ -1,7 +1,7 @@
 package co.cdev.agave.samples;
 
 import co.cdev.agave.Part;
-import co.cdev.agave.conversion.PartConverter;
+import co.cdev.agave.conversion.PartParamConverter;
 import co.cdev.agave.exception.ConversionException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +12,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 
-public class DocumentConverter implements PartConverter<Document> {
+public class DocumentParamConverter implements PartParamConverter<Document> {
     
     @Override
     public Document convert(Part part, Locale locale) throws ConversionException {

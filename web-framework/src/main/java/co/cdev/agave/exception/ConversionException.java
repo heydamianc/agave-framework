@@ -27,7 +27,7 @@ package co.cdev.agave.exception;
 
 import java.lang.reflect.Method;
 
-import co.cdev.agave.conversion.Converter;
+import co.cdev.agave.conversion.ParamConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -53,7 +53,7 @@ public class ConversionException extends AgaveException {
     }
     
     @SuppressWarnings("rawtypes")
-	public ConversionException(Method method, Class<? extends Converter> converterClass) {
+	public ConversionException(Method method, Class<? extends ParamConverter> converterClass) {
         this(converterClass.getName() + " is an unsupported converter for " 
                 + method.getDeclaringClass() + "#" + method.getName() + "()");
     }

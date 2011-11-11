@@ -23,19 +23,23 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.conversion;
+package co.cdev.agave.exception;
 
-import co.cdev.agave.Part;
-import co.cdev.agave.exception.ConversionException;
-import java.util.Locale;
+public class InvalidHandlerException extends AgaveException {
 
-/**
- * Converts an object from a string array to a collection of the output type.
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
- */
-public interface PartConverter<OutputT> extends Converter<Part, OutputT> {
-    
-    @Override
-    public OutputT convert(Part input, Locale locale) throws ConversionException;
+    public InvalidHandlerException(Throwable rootCause) {
+        super(rootCause);
+    }
+
+    public InvalidHandlerException(String message) {
+        super(message);
+    }
+
+    public InvalidHandlerException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public InvalidHandlerException() {
+    }
     
 }

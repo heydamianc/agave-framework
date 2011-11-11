@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -26,37 +26,31 @@
 package co.cdev.agave.conversion;
 
 import co.cdev.agave.exception.ConversionException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
- * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
+ * Converts a {@code String} input into a {@code Double} object.
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateConverterTest {
+public class DoubleParamConverter implements StringParamConverter<Double> {
 
-    private DateConverter dateConverter;
-
-    @Before
-    public void setup() throws Exception {
-        dateConverter = new DateConverter();
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Double} object representing the truth value of the input
+     * @throws ConversionException when an unsupported input string is supplied as an argument
+     */ 
+    @Override
+    public Double convert(String input, Locale locale) throws ConversionException {
+        Double value = null;
+        if (input != null && !"".equals(input)) {
+            try {
+                value = Double.parseDouble(input);
+            } catch (NumberFormatException ex) {
+                throw new ConversionException("Could not convert " + input + " to a Double object", ex.getCause());
+            }
+        }
+        return value;
     }
-
-    @Test
-    public void testConvert() throws Exception {
-        Assert.assertEquals(new GregorianCalendar(2008, Calendar.OCTOBER, 31).getTime(),
-            dateConverter.convert("10/31/2008", Locale.US));
-        Assert.assertEquals(new GregorianCalendar(1982, Calendar.MAY, 7).getTime(),
-            dateConverter.convert("7/5/82", Locale.UK));
-    }
-
-    @Test(expected = ConversionException.class)
-    public void testConvertWithError() throws Exception {
-        dateConverter.convert("this isn't a valid date", Locale.getDefault());
-    }
-
 
 }

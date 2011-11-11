@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,32 +25,37 @@
  */
 package co.cdev.agave.conversion;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
- * Converts an input {@code String} into a signed decimal {@code Byte} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ByteConverter implements StringConverter<Byte> {
+public class LongParamConverterTest {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Byte} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Byte convert(String input, Locale locale) throws ConversionException {
-        Byte value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Byte.parseByte(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " into a Byte object", ex.getCause());
-            }
-        }
-        return value;
+    private LongParamConverter converter;    
+
+    @Before
+    public void setup() throws Exception {
+        converter = new LongParamConverter();
     }
 
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new Long("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Long("-4"), converter.convert("-4", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
+    }
+    
+    @Test(expected = ConversionException.class)
+    public void testConvertWithException() throws Exception {
+        converter.convert("some bad input", Locale.getDefault());
+    }
+    
 }
+

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,37 +25,32 @@
  */
 package co.cdev.agave.conversion;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
+ * Converts a {@code String} input into a {@code Long} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverterTest {
+public class LongParamConverter implements StringParamConverter<Long> {
 
-    private ShortConverter converter;    
-
-    @Before
-    public void setup() throws Exception {
-        converter = new ShortConverter();
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Long} object representing the truth value of the input
+     * @throws ConversionException when an unsupported input string is supplied as an argument
+     */ 
+    @Override
+    public Long convert(String input, Locale locale) throws ConversionException {
+        Long value = null;
+        if (input != null && !"".equals(input)) {
+            try {
+                value = Long.parseLong(input);
+            } catch (NumberFormatException ex) {
+                throw new ConversionException("Could not convert " + input + " to a Long object", ex.getCause());
+            }
+        }
+        return value;
     }
 
-    @Test
-    public void testConvert() throws Exception {
-        Assert.assertEquals(new Short("10"), converter.convert("10", Locale.getDefault()));
-        Assert.assertEquals(new Short("-4"), converter.convert("-4", Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
-    }
-    
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert("some bad input", Locale.getDefault());
-    }
-    
 }
-

@@ -1,6 +1,6 @@
 package co.cdev.agave.samples;
 
-import co.cdev.agave.ConvertWith;
+import co.cdev.agave.Converter;
 import co.cdev.agave.Part;
 
 public class ReformatForm {
@@ -22,7 +22,7 @@ public class ReformatForm {
         return indentation;
     }
 
-    public void setIndentation(@ConvertWith(IndentationConverter.class) String indentation) {
+    public void setIndentation(@Converter(IndentationParamConverter.class) String indentation) {
         this.indentation = indentation;
     }
 

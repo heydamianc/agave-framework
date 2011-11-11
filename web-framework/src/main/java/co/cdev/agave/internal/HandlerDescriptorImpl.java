@@ -30,9 +30,14 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.CompletesWorkflow;
+import co.cdev.agave.Converter;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.InitiatesWorkflow;
+import co.cdev.agave.Param;
 import co.cdev.agave.ResumesWorkflow;
+import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.exception.InvalidHandlerException;
+import java.lang.annotation.Annotation;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -45,14 +50,15 @@ public final class HandlerDescriptorImpl implements HandlerDescriptor {
     private URIPattern pattern;
     private HttpMethod method;
     private Class<?> handlerClass;
-    private Class<?> formClass;
     private Method handlerMethod;
+    private String[] paramNames;
+    private Class<StringParamConverter<?>>[] converterClasses;
+    private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
     private String workflowName;
 
-    public HandlerDescriptorImpl(HandlerIdentifier identifier)
-            throws ClassNotFoundException {
+    public HandlerDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException, InvalidHandlerException {
         pattern = new URIPatternImpl(identifier.getUri());
         method = identifier.getMethod();
         handlerClass = Class.forName(identifier.getClassName());
@@ -71,11 +77,50 @@ public final class HandlerDescriptorImpl implements HandlerDescriptor {
      *            for a handler method
      */
     @Override
-    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) {
+    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) throws InvalidHandlerException {
         for (Method m : handlerClass.getMethods()) {
             if (identifier.getMethodName().equals(m.getName())) {
                 handlerMethod = m;
-                if (handlerMethod.getParameterTypes().length > 1) {
+                
+                int parameterCount = handlerMethod.getParameterTypes().length;
+                
+                // Account for the HandlerContext as the 0th argument
+                
+                if (parameterCount > 2) {
+                    int annotationCount = handlerMethod.getParameterAnnotations().length;
+                    
+                    paramNames = new String[annotationCount];
+                    converterClasses = new Class[annotationCount];
+                    
+                    for (int i = 1; i < annotationCount; i++) {
+                        Annotation[] parameterAnnotations = handlerMethod.getParameterAnnotations()[i];
+                        
+                        for (int j = 0; j < parameterAnnotations.length; i++) {
+                            if (Param.class.equals(parameterAnnotations[j].annotationType())) {
+                                Param annotation = (Param) parameterAnnotations[j];
+                                paramNames[i - 1] = annotation.value();
+                            } else if (Converter.class.equals(parameterAnnotations[j].annotationType())) {
+                                Converter annotation = (Converter) parameterAnnotations[j];
+                                
+                                if (annotation.value().isAssignableFrom(StringParamConverter.class)) {
+                                    converterClasses[i - 1] = (Class) annotation.value();
+                                } else {
+                                    String format = "Parameter %d with type %s of %s has an an "
+                                            + "invalid Converter specified.  It should be a subclass "
+                                            + "of StringParamConverter.";
+                                    Class<?> parameterType = handlerMethod.getParameterTypes()[i];
+                                    throw new InvalidHandlerException(String.format(format, i, parameterType.getName(), handlerMethod));
+                                }
+                            }
+                            
+                            if (paramNames[i - 1] == null) {
+                                String format = "Paramater %d with type %s of %s lacks a @Param annotation";
+                                Class<?> parameterType = handlerMethod.getParameterTypes()[i];
+                                throw new InvalidHandlerException(String.format(format, i, parameterType.getName(), handlerMethod));
+                            }
+                        }
+                    }
+                } else if (parameterCount == 2) {
                     formClass = handlerMethod.getParameterTypes()[1];
                 }
 

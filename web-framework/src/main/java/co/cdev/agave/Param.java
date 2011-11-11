@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,39 +23,32 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.conversion;
+package co.cdev.agave;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import co.cdev.agave.exception.ConversionException;
-import java.util.Locale;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Indicates that the annotated method parameter should be populated with values taken from either
+ * a URL parameter or request parameter. Ie.
+ * 
+ * @Route("/some/url/${token}")
+ * public Destination paramTest(HandlerContext context, @Param("token") String token) {
+ *    ...
+ * }
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class IntegerConverterTest {
+@Documented
+@Inherited
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Param {
 
-    private IntegerConverter converter;    
-
-    @Before
-    public void setup() throws Exception {
-        converter = new IntegerConverter();
-    }
-
-    @Test
-    public void testConvert() throws Exception {
-        Assert.assertEquals(new Integer("10"), converter.convert("10", Locale.getDefault()));
-        Assert.assertEquals(new Integer("-4"), converter.convert("-4", Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
-    }
-    
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert("some bad input", Locale.getDefault());
-    }
+    String value() default "";
     
 }
-

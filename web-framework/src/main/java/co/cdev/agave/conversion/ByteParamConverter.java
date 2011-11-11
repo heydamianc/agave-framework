@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,43 +25,32 @@
  */
 package co.cdev.agave.conversion;
 
-import java.awt.Image;
-import java.io.File;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import co.cdev.agave.Part;
-import co.cdev.agave.internal.PartImpl;
+import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
+ * Converts an input {@code String} into a signed decimal {@code Byte} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BufferedImageConverterTest {
-	
-	private BufferedImageConverter converter;
-	private File imageFile;
-	
-	@Before
-	public void setup() throws Exception {
-		converter = new BufferedImageConverter();
-		imageFile = new File(getClass().getClassLoader().getResource("vim.gif").toURI());
-	}
-	
-	@Test
-	public void testConvert() throws Exception {
-		Part part = new PartImpl();
-		part.setContents(imageFile);
-		part.setName("sampleImg");
-		part.setFilename("vim.gif");
-		Image image = converter.convert(part, Locale.getDefault());
-		
-		Assert.assertNotNull(image);
-		Assert.assertEquals(32, image.getHeight(null));
-		Assert.assertEquals(32, image.getWidth(null));
-	}
-	
+public class ByteParamConverter implements StringParamConverter<Byte> {
+
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Byte} object representing the truth value of the input
+     * @throws ConversionException when an unsupported input string is supplied as an argument
+     */ 
+    @Override
+    public Byte convert(String input, Locale locale) throws ConversionException {
+        Byte value = null;
+        if (input != null && !"".equals(input)) {
+            try {
+                value = Byte.parseByte(input);
+            } catch (NumberFormatException ex) {
+                throw new ConversionException("Could not convert " + input + " into a Byte object", ex.getCause());
+            }
+        }
+        return value;
+    }
+
 }

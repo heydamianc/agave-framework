@@ -26,11 +26,13 @@
 package co.cdev.agave.sample;
 
 import co.cdev.agave.HandlerContext;
+import co.cdev.agave.Param;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
 import co.cdev.agave.Route;
+import co.cdev.agave.exception.AgaveException;
 
 public class SampleHandler {
     @Route("/login")
@@ -66,6 +68,11 @@ public class SampleHandler {
     @Route("/lacks/form")
     public void lacksForm(HandlerContext context) throws ServletException, IOException {
         context.getRequest().setAttribute("noErrors", Boolean.TRUE);
+    }
+    
+    @Route("/has/named/params/${something}")
+    public void hasNamedParams(HandlerContext context, @Param("something") String something) throws AgaveException {
+        context.getRequest().setAttribute("hasNamedParams", Boolean.TRUE);
     }
 
 }

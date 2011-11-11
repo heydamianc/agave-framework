@@ -35,19 +35,37 @@ import java.util.Locale;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DoubleConverterTest {
+public class BooleanParamConverterTest {
 
-    private DoubleConverter converter;    
+    private BooleanParamConverter converter;    
 
     @Before
     public void setup() throws Exception {
-        converter = new DoubleConverter();
+        converter = new BooleanParamConverter();
     }
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(new Double("10.0"), converter.convert("10.0", Locale.getDefault()));
-        Assert.assertEquals(new Double("-4.89"), converter.convert("-4.89", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("true", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("TRUE", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("t", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("T", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("yes", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("YES", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("y", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("Y", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("1", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("false", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("FALSE", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("f", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("F", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("no", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("NO", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("n", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("N", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("0", Locale.getDefault()));
+        Assert.assertEquals(Boolean.TRUE, converter.convert("on", Locale.getDefault()));
+        Assert.assertEquals(Boolean.FALSE, converter.convert("off", Locale.getDefault()));
         Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
         Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
@@ -58,4 +76,5 @@ public class DoubleConverterTest {
     }
     
 }
+
 

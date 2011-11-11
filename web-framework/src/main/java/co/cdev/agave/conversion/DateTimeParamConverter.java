@@ -51,7 +51,7 @@ import co.cdev.agave.exception.ConversionException;
  * 
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateTimeConverter implements StringConverter<Date> {
+public class DateTimeParamConverter implements StringParamConverter<Date> {
 
     private static final Pattern timePattern = Pattern.compile("(.*)([AaPp][Mm]?)(.*)");
 

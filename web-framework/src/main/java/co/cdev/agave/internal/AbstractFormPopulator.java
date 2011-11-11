@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.ConvertWith;
+import co.cdev.agave.Converter;
 import co.cdev.agave.conversion.*;
 import co.cdev.agave.exception.ConversionException;
 
@@ -179,11 +179,11 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
             Class<?> parameterType = parameterTypes[parameterOffset];
             
-            Converter converter = null; // keep this vague
+            ParamConverter converter = null; // keep this vague
             // first look for a ConvertWith annotation
             for (Annotation annotation : mutator.getParameterAnnotations()[parameterOffset]) {
-                if (annotation instanceof ConvertWith) {
-                    converter = ((ConvertWith) annotation).value().newInstance();
+                if (annotation instanceof Converter) {
+                    converter = ((Converter) annotation).value().newInstance();
                     break;
                 }
             }
@@ -191,19 +191,19 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             // try to look up a converter for common types
             if (converter == null) {
                 if (parameterType.isAssignableFrom(Boolean.class) || parameterType.isAssignableFrom(boolean.class)) {
-                    converter = new BooleanConverter();
+                    converter = new BooleanParamConverter();
                 } else if (parameterType.isAssignableFrom(Byte.class) || parameterType.isAssignableFrom(byte.class)) {
-                    converter = new ByteConverter();
+                    converter = new ByteParamConverter();
                 } else if (parameterType.isAssignableFrom(Character.class) || parameterType.isAssignableFrom(char.class)) {
-                    converter = new CharacterConverter();
+                    converter = new CharacterParamConverter();
                 } else if (parameterType.isAssignableFrom(Double.class) || parameterType.isAssignableFrom(double.class)) {
-                    converter = new DoubleConverter();
+                    converter = new DoubleParamConverter();
                 } else if (parameterType.isAssignableFrom(Float.class) || parameterType.isAssignableFrom(float.class)) {
-                    converter = new FloatConverter();
+                    converter = new FloatParamConverter();
                 } else if (parameterType.isAssignableFrom(Integer.class) || parameterType.isAssignableFrom(int.class)) {
-                    converter = new IntegerConverter();
+                    converter = new IntegerParamConverter();
                 } else if (parameterType.isAssignableFrom(Long.class) || parameterType.isAssignableFrom(long.class)) {
-                    converter = new LongConverter();
+                    converter = new LongParamConverter();
                 }
             }
 

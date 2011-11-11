@@ -23,36 +23,39 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.conversion;
 
-import co.cdev.agave.Converter;
-import co.cdev.agave.conversion.BooleanParamConverter;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import co.cdev.agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class AliasedForm {
+public class ShortParamConverterTest {
 
-    private String someProperty;
-    private Boolean anotherProperty;
+    private ShortParamConverter converter;    
 
-    /**
-     * &quot;someAlias&quot; serves as an alias for the {@code someProperty}.
-     */
-    public void setSomeProperty(String someProperty) {
-        this.someProperty = someProperty;
+    @Before
+    public void setup() throws Exception {
+        converter = new ShortParamConverter();
     }
 
-    public String getSomeProperty() {
-        return someProperty;
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new Short("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Short("-4"), converter.convert("-4", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
-
-    public void setAnotherProperty(@Converter(BooleanParamConverter.class) Boolean anotherProperty) {
-        this.anotherProperty = anotherProperty;
+    
+    @Test(expected = ConversionException.class)
+    public void testConvertWithException() throws Exception {
+        converter.convert("some bad input", Locale.getDefault());
     }
-
-    public Boolean getAnotherProperty() {
-        return anotherProperty;
-    }
-
+    
 }
+

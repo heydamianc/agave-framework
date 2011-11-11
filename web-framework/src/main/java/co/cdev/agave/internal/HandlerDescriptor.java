@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.exception.InvalidHandlerException;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -68,7 +69,7 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
      * Locates annotated handler methods to field requests with
      * @param identifier
      */
-    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier);
+    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) throws InvalidHandlerException;
     
     /**
      * Gets the {@link agave.internal.URIPattern URIPattern} that this {@code HandlerDescriptor} describes.

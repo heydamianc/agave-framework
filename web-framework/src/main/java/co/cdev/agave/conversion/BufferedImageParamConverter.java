@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,37 +25,32 @@
  */
 package co.cdev.agave.conversion;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import co.cdev.agave.Part;
 import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
+ * Converts an uploaded file directly into a manipulatable {@code BufferedImage}.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class LongConverterTest {
+public class BufferedImageParamConverter implements PartParamConverter<BufferedImage> {
 
-    private LongConverter converter;    
-
-    @Before
-    public void setup() throws Exception {
-        converter = new LongConverter();
+    @Override
+    public BufferedImage convert(Part input, Locale locale) throws ConversionException {
+        BufferedImage image = null;
+        if (input != null) {
+            try {
+                image = ImageIO.read(input.getContents());
+            } catch (IOException ex) {
+                throw new ConversionException(ex.getCause());
+            }
+        }
+        return image;
     }
-
-    @Test
-    public void testConvert() throws Exception {
-        Assert.assertEquals(new Long("10"), converter.convert("10", Locale.getDefault()));
-        Assert.assertEquals(new Long("-4"), converter.convert("-4", Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
-    }
-    
-    @Test(expected = ConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert("some bad input", Locale.getDefault());
-    }
-    
 }
-

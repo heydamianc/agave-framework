@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,34 +23,32 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.conversion;
+package co.cdev.agave.samples.gameOfLife.web;
 
+import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
+
 /**
- * Converts a {@code String} input into a {@code Float} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FloatConverter implements StringConverter<Float> {
+public class ConfigurationParamConverter implements StringParamConverter<Configuration> {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Float} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
     @Override
-    public Float convert(String input, Locale locale) throws ConversionException {
-        Float value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Float.parseFloat(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Float object", ex.getCause());
+    public Configuration convert(String input, Locale locale) throws ConversionException {
+        Configuration selectedConfiguration = null;
+        if (input != null) {
+            for (Configuration configuration : Configuration.values()) {
+                if (input.toLowerCase().equals(configuration.name().toLowerCase())) {
+                    selectedConfiguration = configuration;
+                    break;
+                }
             }
+        } else {
+            throw new NullPointerException("Input to ConfigurationConverter#convert() is null");
         }
-        return value;
+        return selectedConfiguration;
     }
 
 }

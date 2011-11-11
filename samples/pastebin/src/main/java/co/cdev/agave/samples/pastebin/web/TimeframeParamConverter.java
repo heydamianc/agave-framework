@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,34 +23,29 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.conversion;
+package co.cdev.agave.samples.pastebin.web;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.conversion.StringParamConverter;
 import java.util.Locale;
 
+import co.cdev.agave.samples.pastebin.snippet.Timeframe;
+import co.cdev.agave.exception.ConversionException;
+
 /**
- * Converts a {@code String} input into a {@code Short} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortConverter implements StringConverter<Short> {
+public class TimeframeParamConverter implements StringParamConverter<Timeframe> {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
     @Override
-    public Short convert(String input, Locale locale) throws ConversionException {
-        Short value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Short.parseShort(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
+    public Timeframe convert(String input, Locale locale) throws ConversionException {
+        Timeframe timeframe = null;
+        for (Timeframe possibility : Timeframe.values()) {
+            if (possibility.name().equalsIgnoreCase(input)) {
+                timeframe = possibility;
+                break;
             }
         }
-        return value;
+        return timeframe;
     }
-
+    
 }

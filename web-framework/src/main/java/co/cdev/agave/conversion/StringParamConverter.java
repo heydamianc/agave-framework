@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -26,38 +26,15 @@
 package co.cdev.agave.conversion;
 
 import co.cdev.agave.exception.ConversionException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
- * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
+ * Converts an object from the input type to the output type.
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateTimeConverterTest {
-
-    private DateTimeConverter converter;
-
-    @Before
-    public void setup() throws Exception {
-        converter = new DateTimeConverter();
-    }
-
-    @Test
-    public void testConvert() throws Exception {
-        Date halloween = new GregorianCalendar(2008, Calendar.OCTOBER, 31, 8, 32).getTime();
-        Assert.assertEquals(halloween, converter.convert("10/31/2008 8:32 am", Locale.US));
-        Assert.assertEquals(halloween, converter.convert("10/31/2008 8:32am", Locale.US));
-        Assert.assertEquals(halloween, converter.convert("10/31/2008     8:32AM    ", Locale.US));
-        Assert.assertEquals(halloween, converter.convert("31/10/2008 8:32am", Locale.UK));
-    }
-
-    @Test(expected = ConversionException.class)
-    public void testConvertWithInvalidDate() throws Exception {
-        converter.convert("this is not a valid date", Locale.getDefault());
-    }
-
+public interface StringParamConverter<OutputT> extends ParamConverter<String, OutputT> {
+    
+    @Override
+    public OutputT convert(String input, Locale locale) throws ConversionException;
+    
 }

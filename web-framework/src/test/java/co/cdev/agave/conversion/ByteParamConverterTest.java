@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,32 +25,37 @@
  */
 package co.cdev.agave.conversion;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import co.cdev.agave.exception.ConversionException;
 import java.util.Locale;
 
 /**
- * Converts a {@code String} input into a {@code Integer} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class IntegerConverter implements StringConverter<Integer> {
+public class ByteParamConverterTest {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Integer} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Integer convert(String input, Locale locale) throws ConversionException {
-        Integer value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Integer object", ex.getCause());
-            }
-        }
-        return value;
+    private ByteParamConverter converter;    
+
+    @Before
+    public void setup() throws Exception {
+        converter = new ByteParamConverter();
     }
 
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new Byte("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Byte("-4"), converter.convert("-4", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
+    }
+    
+    @Test(expected = ConversionException.class)
+    public void testConvertWithException() throws Exception {
+        converter.convert("some bad input", Locale.getDefault());
+    }
+    
 }
+

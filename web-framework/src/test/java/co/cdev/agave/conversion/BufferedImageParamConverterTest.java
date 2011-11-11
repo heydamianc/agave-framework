@@ -23,36 +23,45 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.conversion;
 
-import co.cdev.agave.Converter;
-import co.cdev.agave.conversion.BooleanParamConverter;
+import java.awt.Image;
+import java.io.File;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import co.cdev.agave.Part;
+import co.cdev.agave.internal.PartImpl;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class AliasedForm {
-
-    private String someProperty;
-    private Boolean anotherProperty;
-
-    /**
-     * &quot;someAlias&quot; serves as an alias for the {@code someProperty}.
-     */
-    public void setSomeProperty(String someProperty) {
-        this.someProperty = someProperty;
-    }
-
-    public String getSomeProperty() {
-        return someProperty;
-    }
-
-    public void setAnotherProperty(@Converter(BooleanParamConverter.class) Boolean anotherProperty) {
-        this.anotherProperty = anotherProperty;
-    }
-
-    public Boolean getAnotherProperty() {
-        return anotherProperty;
-    }
-
+public class BufferedImageParamConverterTest {
+	
+	private BufferedImageParamConverter converter;
+	private File imageFile;
+	
+	@Before
+	public void setup() throws Exception {
+		converter = new BufferedImageParamConverter();
+		imageFile = new File(getClass().getClassLoader().getResource("vim.gif").toURI());
+	}
+	
+	@Test
+	public void testConvert() throws Exception {
+		Part part = new PartImpl();
+		part.setContents(imageFile);
+		part.setName("sampleImg");
+		part.setFilename("vim.gif");
+		Image image = converter.convert(part, Locale.getDefault());
+		
+		Assert.assertNotNull(image);
+		Assert.assertEquals(32, image.getHeight(null));
+		Assert.assertEquals(32, image.getWidth(null));
+	}
+	
 }

@@ -27,9 +27,9 @@ package co.cdev.agave.sample;
 
 import java.awt.image.BufferedImage;
 
-import co.cdev.agave.ConvertWith;
+import co.cdev.agave.Converter;
 import co.cdev.agave.Part;
-import co.cdev.agave.conversion.BufferedImageConverter;
+import co.cdev.agave.conversion.BufferedImageParamConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -52,7 +52,7 @@ public class ImageUploadForm {
         return file2;
     }
 
-    public void setFile2(@ConvertWith(BufferedImageConverter.class) BufferedImage file2) {
+    public void setFile2(@Converter(BufferedImageParamConverter.class) BufferedImage file2) {
         this.file2 = file2;
     }
 }

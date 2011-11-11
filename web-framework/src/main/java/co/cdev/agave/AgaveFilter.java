@@ -425,6 +425,7 @@ public class AgaveFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) resp;
 
         HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
+        
         if (descriptor != null) {
             HttpSession session = request.getSession(true);
             HandlerContext handlerContext = new HandlerContext(servletContext, request, response, session);
@@ -474,9 +475,9 @@ public class AgaveFilter implements Filter {
                 }
 
                 try {
-                    // populates a form and convert into the target types if
-                    // they can be described by the standard suite of
-                    // converters out of the agave.conversion package
+                    // populates a form and converts it into the target types if they can be 
+                    // described by the standard suite of converters out of the agave.conversion
+                    // package
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
                     if (MultipartRequestImpl.isMultipart(request)) {
@@ -535,14 +536,10 @@ public class AgaveFilter implements Filter {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
                         result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
-                    } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
                     }
                 } else {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
                         result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
-                    } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
                     }
                 }
             } catch (InvocationTargetException ex) {
@@ -567,7 +564,7 @@ public class AgaveFilter implements Filter {
             }
 
             // determines a destination
-            if (result != null && !response.isCommitted()) {
+            if (descriptor.getHandlerMethod().getReturnType() != null && result != null && !response.isCommitted()) {
                 URI uri = null;
                 boolean redirect = false;
 
@@ -638,8 +635,7 @@ public class AgaveFilter implements Filter {
      * @throws ServletException
      */
     protected void scanClassesDirForHandlers(File root)
-            throws FileNotFoundException, IOException, ClassNotFoundException,
-            ServletException {
+            throws FileNotFoundException, IOException, ClassNotFoundException, ServletException {
         if (root != null && root.canRead()) {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {
@@ -653,17 +649,14 @@ public class AgaveFilter implements Filter {
                     try {
                         ClassReader classReader = new ClassReader(nodeIn);
                         Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
-                        classReader.accept(new HandlerScanner(
-                                handlerIdentifiers), ClassReader.SKIP_CODE);
+                        classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);
 
                         for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
-                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(
-                                    handlerIdentifier);
+                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(handlerIdentifier);
                             descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
                             handlerRegistry.addDescriptor(descriptor);
 
-                            if (lifecycleHooks.afterHandlerIsDiscovered(
-                                    descriptor, config.getServletContext())) {
+                            if (lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext())) {
                                 return;
                             }
                         }

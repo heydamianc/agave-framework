@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,31 +23,41 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.samples.gameOfLife.web;
+package co.cdev.agave.conversion;
 
-import co.cdev.agave.conversion.StringConverter;
-import co.cdev.agave.exception.ConversionException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Locale;
 
+import co.cdev.agave.exception.ConversionException;
 
 /**
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * Converts a supplied date string into a {@code java.util.Date} by leveraging
+ * {@code DateFormat.format()}'s short locale-specific implementation. 
+ * 
+ * <p>An example of its usage can be seen in this class's unit test:
+ * 
+ * <pre>@Test
+ *public void testConvert() throws Exception {
+ *    Assert.assertEquals(new GregorianCalendar(2008, Calendar.OCTOBER, 31).getTime(),
+ *        dateConverter.convert("10/31/2008", Locale.US));
+ *    Assert.assertEquals(new GregorianCalendar(1982, Calendar.MAY, 7).getTime(),
+ *        dateConverter.convert("7/5/82", Locale.UK));
+ *}</pre>
+ *</p>
+ *
+ * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ConfigurationConverter implements StringConverter<Configuration> {
+public class DateParamConverter implements StringParamConverter<Date> {
 
-    public Configuration convert(String input, Locale locale) throws ConversionException {
-        Configuration selectedConfiguration = null;
-        if (input != null) {
-            for (Configuration configuration : Configuration.values()) {
-                if (input.toLowerCase().equals(configuration.name().toLowerCase())) {
-                    selectedConfiguration = configuration;
-                    break;
-                }
-            }
-        } else {
-            throw new NullPointerException("Input to ConfigurationConverter#convert() is null");
+    public Date convert(String input, Locale locale) throws ConversionException {
+        try {
+            DateFormat format = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            return format.parse(input);
+        } catch (ParseException ex) {
+            throw new ConversionException("Could not convert " + input + " to a Date object", ex);
         }
-        return selectedConfiguration;
     }
 
 }
