@@ -65,7 +65,9 @@ public class URIPatternImpl implements URIPattern {
                 "The supplied pattern is nondeterministic.  There is no way of "
                     + "knowing when to stop matching with this type of pattern: /**/${var}/");
         }
+        
         this.pattern = normalizePattern(pattern);
+        
         if (pattern.length() > 1) {
             this.parts = pattern.substring(1).split("/");
         }
@@ -212,6 +214,7 @@ public class URIPatternImpl implements URIPattern {
             return true;
         if (!(obj instanceof URIPattern))
             return false;
+        
         URIPattern that = (URIPattern) obj;
         return pattern.equalsIgnoreCase(that.getPattern());
     }

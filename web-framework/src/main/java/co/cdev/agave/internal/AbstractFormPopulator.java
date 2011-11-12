@@ -41,15 +41,15 @@ import java.util.TreeMap;
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public abstract class AbstractFormPopulator implements FormPopulator {
+public abstract class AbstractFormPopulator extends AbstractPopulator implements FormPopulator {
 
     private static final String ILLEGAL_ARGUMENT_EXCEPTION_MSG =
             "Mutator {0}#{1}(...) is expecting argument of type {2} and recieved {3}";
-    protected SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
-    protected Locale locale;
+    
+    protected final SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
 
     protected AbstractFormPopulator(Locale locale) {
-        this.locale = locale;
+        super(locale);
     }
 
     @Override
@@ -168,7 +168,6 @@ public abstract class AbstractFormPopulator implements FormPopulator {
         mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
     }
 
-    @SuppressWarnings("unchecked")
     private Object convertIfNecessary(Method mutator, Object parameterValue)
             throws ConversionException,
             InstantiationException,
@@ -180,7 +179,9 @@ public abstract class AbstractFormPopulator implements FormPopulator {
             Class<?> parameterType = parameterTypes[parameterOffset];
             
             ParamConverter converter = null; // keep this vague
-            // first look for a ConvertWith annotation
+            
+            // First look for a Converter annotation
+            
             for (Annotation annotation : mutator.getParameterAnnotations()[parameterOffset]) {
                 if (annotation instanceof Converter) {
                     converter = ((Converter) annotation).value().newInstance();
@@ -188,23 +189,10 @@ public abstract class AbstractFormPopulator implements FormPopulator {
                 }
             }
 
-            // try to look up a converter for common types
+            // Try to look up a converter for common types
+            
             if (converter == null) {
-                if (parameterType.isAssignableFrom(Boolean.class) || parameterType.isAssignableFrom(boolean.class)) {
-                    converter = new BooleanParamConverter();
-                } else if (parameterType.isAssignableFrom(Byte.class) || parameterType.isAssignableFrom(byte.class)) {
-                    converter = new ByteParamConverter();
-                } else if (parameterType.isAssignableFrom(Character.class) || parameterType.isAssignableFrom(char.class)) {
-                    converter = new CharacterParamConverter();
-                } else if (parameterType.isAssignableFrom(Double.class) || parameterType.isAssignableFrom(double.class)) {
-                    converter = new DoubleParamConverter();
-                } else if (parameterType.isAssignableFrom(Float.class) || parameterType.isAssignableFrom(float.class)) {
-                    converter = new FloatParamConverter();
-                } else if (parameterType.isAssignableFrom(Integer.class) || parameterType.isAssignableFrom(int.class)) {
-                    converter = new IntegerParamConverter();
-                } else if (parameterType.isAssignableFrom(Long.class) || parameterType.isAssignableFrom(long.class)) {
-                    converter = new LongParamConverter();
-                }
+                converter = determineMostAppropriateConverter(parameterType);
             }
 
             if (converter != null) {

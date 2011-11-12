@@ -70,9 +70,13 @@ public class SampleHandler {
         context.getRequest().setAttribute("noErrors", Boolean.TRUE);
     }
     
-    @Route("/has/named/params/${something}")
-    public void hasNamedParams(HandlerContext context, @Param("something") String something) throws AgaveException {
+    @Route("/has/named/params/${something}/${anything}")
+    public void hasNamedParams(HandlerContext context, 
+                               @Param("something") String something, 
+                               @Param("anything")  String anything) throws AgaveException {
         context.getRequest().setAttribute("hasNamedParams", Boolean.TRUE);
+        context.getRequest().setAttribute("something", something);
+        context.getRequest().setAttribute("anything", anything);
     }
 
 }

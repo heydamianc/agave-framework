@@ -64,11 +64,15 @@ import co.cdev.agave.internal.HandlerIdentifier;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 import co.cdev.agave.internal.HandlerScanner;
+import co.cdev.agave.internal.MapPopulator;
+import co.cdev.agave.internal.MapPopulatorImpl;
 import co.cdev.agave.internal.MultipartRequestImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
 import co.cdev.agave.internal.URIParameterFormPopulator;
 import co.cdev.agave.logging.SingleLineLogger;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -439,21 +443,24 @@ public class AgaveFilter implements Filter {
                 descriptor.getHandlerMethod()
             });
 
-            // wraps the request if necessary so that the uploaded content can be accessed like
+            // Wraps the request if necessary so that the uploaded content can be accessed like
             // regular string parameters
+            
             if (MultipartRequestImpl.isMultipart(request)) {
                 request = new MultipartRequestImpl(request);
             }
 
             Object formInstance = null;
 
-            // attempts to pull a form intance out of the session, stored from a
+            // Attempts to pull a form intance out of the session, stored from a
             // previous workflow phase
+            
             if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
                 formInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
             }
 
-            // creates a form instance
+            // Creates a form instance
+            
             if (formInstance == null) {
                 formInstance = formFactory.createFormInstance(servletContext, descriptor);
 
@@ -464,7 +471,9 @@ public class AgaveFilter implements Filter {
                 }
             }
 
-            // populates the form if necessary
+            // Populates the form if necessary.  If the handler method only has one additional argument
+            // beyond the HandlerContext, it is assumed that it will be a form object.
+            
             if (formInstance != null) {
                 if (descriptor.initiatesWorkflow()) {
                     session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX, formInstance);
@@ -475,9 +484,11 @@ public class AgaveFilter implements Filter {
                 }
 
                 try {
-                    // populates a form and converts it into the target types if they can be 
+                    
+                    // Populates a form and converts it into the target types if they can be 
                     // described by the standard suite of converters out of the agave.conversion
                     // package
+                    
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
                     if (MultipartRequestImpl.isMultipart(request)) {
@@ -500,16 +511,47 @@ public class AgaveFilter implements Filter {
                     return;
                 }
             }
+            
+            // If no form was found, attempt to supply arguments by taken the parameterized values 
+            // from either the URI path or the request params.  URI params override request params.
+            
+            LinkedHashMap<String, Object> arguments = null;
+            
+            if (formInstance == null && descriptor.getParamNames() != null) {
+                
+                // A LinkedHashMap is used because the iteration order will match the arguments that
+                // the handler method is expecting.  Reinsertion into the map is negligible -- the
+                // order will be established on the intitial put below.
+                
+                arguments = new LinkedHashMap<String, Object>();
+                
+                Map<String, String> uriValues = descriptor.getPattern().getParameterMap(request);
+                
+                for (String argument : descriptor.getParamNames()) {
+                    String value = uriValues.get(argument);
+                    
+                    if (value == null) {
+                        value = request.getParameter(argument);
+                    }
+                    
+                    arguments.put(argument, null);
+                }
+                
+                MapPopulator argumentPopulator = new MapPopulatorImpl(request, descriptor);
+                argumentPopulator.populate(arguments);
+            }
 
             Object handlerInstance = null;
 
-            // attempts to pull a handler from a previous workflow phase out of
+            // Attempts to pull a handler from a previous workflow phase out of
             // the session
+            
             if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
                 handlerInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
             }
 
-            // creates a handler
+            // Creates a handler
+            
             if (handlerInstance == null) {
                 handlerInstance = handlerFactory.createHandlerInstance(servletContext, descriptor);
 
@@ -519,7 +561,8 @@ public class AgaveFilter implements Filter {
                 }
             }
 
-            // initiates a new workflow if necessary
+            // Initiates a new workflow if necessary
+            
             if (descriptor.initiatesWorkflow()) {
                 session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
             }
@@ -536,10 +579,30 @@ public class AgaveFilter implements Filter {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
                         result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
+                    } else {
+                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
+                    }
+                } else if (arguments != null) {
+                    Object[] actualArguments = new Object[arguments.size() + 1];
+                    
+                    int i = 0;
+                    
+                    actualArguments[i++] = handlerContext;
+                    
+                    for (String name : arguments.keySet()) {
+                        actualArguments[i++] = arguments.get(name);
+                    }
+                    
+                    if (descriptor.getHandlerMethod().getReturnType() != null) {
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, actualArguments);
+                    } else {
+                        descriptor.getHandlerMethod().invoke(handlerInstance, actualArguments);
                     }
                 } else {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
                         result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
+                    } else {
+                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
                     }
                 }
             } catch (InvocationTargetException ex) {

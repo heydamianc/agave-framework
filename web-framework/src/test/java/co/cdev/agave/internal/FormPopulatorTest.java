@@ -68,33 +68,20 @@ public class FormPopulatorTest {
         parameterNames.add("three.a.d!1");
         final Enumeration<String> enumeration = parameterNames.elements();
 
-        context.checking(new Expectations() {
-
-            {
-                allowing(request).getParameterNames();
-                will(returnValue(enumeration));
-                allowing(request).getParameterValues("a");
-                will(returnValue(new String[]{"m"}));
-                allowing(request).getParameterValues("b");
-                will(returnValue(new String[]{"m", "n"}));
-                allowing(request).getParameterValues("two.a");
-                will(returnValue(new String[]{"m"}));
-                allowing(request).getParameterValues("two.b");
-                will(returnValue(new String[]{"m", "n"}));
-                allowing(request).getParameterValues("three.a.b");
-                will(returnValue(new String[]{"m"}));
-                allowing(request).getParameterValues("three.a.c$see");
-                will(returnValue(new String[]{"m"}));
-                allowing(request).getParameterValues("three.a.c$glee");
-                will(returnValue(new String[]{"n"}));
-                allowing(request).getParameterValues("three.a.d!0");
-                will(returnValue(new String[]{"m"}));
-                allowing(request).getParameterValues("three.a.d!1");
-                will(returnValue(new String[]{"n"}));
-                allowing(request).getLocale();
-                will(returnValue(Locale.ENGLISH));
-            }
-        });
+        context.checking(new Expectations() {{
+            allowing(request).getParameterNames(); will(returnValue(enumeration));
+            allowing(request).getParameterValues("a"); will(returnValue(new String[]{"m"}));
+            allowing(request).getParameterValues("b"); will(returnValue(new String[]{"m", "n"}));
+            allowing(request).getParameterValues("two.a"); will(returnValue(new String[]{"m"}));
+            allowing(request).getParameterValues("two.b"); will(returnValue(new String[]{"m", "n"}));
+            allowing(request).getParameterValues("three.a.b"); will(returnValue(new String[]{"m"}));
+            allowing(request).getParameterValues("three.a.c$see"); will(returnValue(new String[]{"m"}));
+            allowing(request).getParameterValues("three.a.c$glee"); will(returnValue(new String[]{"n"}));
+            allowing(request).getParameterValues("three.a.d!0"); will(returnValue(new String[]{"m"}));
+            allowing(request).getParameterValues("three.a.d!1"); will(returnValue(new String[]{"n"}));
+            allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
+            
+        }});
 
         FormPopulator populator = new RequestParameterFormPopulator(request);
 
@@ -135,8 +122,9 @@ public class FormPopulatorTest {
 
     @Test
     public void testPopulate() throws Exception {
-
+    
         Vector<String> parameterNames = new Vector<String>();
+        
         parameterNames.add("cat");
         parameterNames.add("names");
         parameterNames.add("nickNames!0");
@@ -162,59 +150,32 @@ public class FormPopulatorTest {
 
         final Enumeration<String> enumeration = parameterNames.elements();
 
-        context.checking(new Expectations() {
-
-            {
-                allowing(request).getParameterNames();
-                will(returnValue(enumeration));
-                allowing(request).getParameterValues("cat");
-                will(returnValue(new String[]{"tabby"}));
-                allowing(request).getParameterValues("names");
-                will(returnValue(new String[]{"ookwensu", "monster"}));
-                allowing(request).getParameterValues("nickNames!0");
-                will(returnValue(new String[]{"kitty"}));
-                allowing(request).getParameterValues("nickNames!1");
-                will(returnValue(new String[]{"grub"}));
-                allowing(request).getParameterValues("moodIndicators$teeth");
-                will(returnValue(new String[]{"mad"}));
-                allowing(request).getParameterValues("moodIndicators$questionMarkTail");
-                will(returnValue(new String[]{"happy"}));
-                allowing(request).getParameterValues("nested.cat");
-                will(returnValue(new String[]{"tabby"}));
-                allowing(request).getParameterValues("nested.age");
-                will(returnValue(new String[]{"3"}));
-                allowing(request).getParameterValues("nested.weight");
-                will(returnValue(new String[]{"12.2"}));
-                allowing(request).getParameterValues("nested.convertMe");
-                will(returnValue(new String[]{"something"}));
-                allowing(request).getParameterValues("nested.names");
-                will(returnValue(new String[]{"ookwensu", "monster"}));
-                allowing(request).getParameterValues("nested.nickNames!0");
-                will(returnValue(new String[]{"kitty"}));
-                allowing(request).getParameterValues("nested.nickNames!1");
-                will(returnValue(new String[]{"grub"}));
-                allowing(request).getParameterValues("nested.moodIndicators$teeth");
-                will(returnValue(new String[]{"mad"}));
-                allowing(request).getParameterValues("nested.moodIndicators$questionMarkTail");
-                will(returnValue(new String[]{"happy"}));
-                allowing(request).getParameterValues("nested.bites$hard");
-                will(returnValue(new String[]{"2"}));
-                allowing(request).getParameterValues("nested.bites$soft");
-                will(returnValue(new String[]{"6"}));
-                allowing(request).getParameterValues("nested.bites$gnawing");
-                will(returnValue(new String[]{"1"}));
-                allowing(request).getParameterValues("numbers!0");
-                will(returnValue(new String[]{"0"}));
-                allowing(request).getParameterValues("numbers!1");
-                will(returnValue(new String[]{"1"}));
-                allowing(request).getParameterValues("nested.favoritePopStars$pop");
-                will(returnValue(new String[]{"Prince"}));
-                allowing(request).getParameterValues("nested.favoritePopStars$dance");
-                will(returnValue(new String[]{"Tatu"}));
-                allowing(request).getLocale();
-                will(returnValue(Locale.ENGLISH));
-            }
-        });
+        context.checking(new Expectations() {{
+            allowing(request).getParameterNames(); will(returnValue(enumeration));
+            allowing(request).getParameterValues("cat"); will(returnValue(new String[]{"tabby"}));
+            allowing(request).getParameterValues("names"); will(returnValue(new String[]{"ookwensu", "monster"}));
+            allowing(request).getParameterValues("nickNames!0"); will(returnValue(new String[]{"kitty"}));
+            allowing(request).getParameterValues("nickNames!1"); will(returnValue(new String[]{"grub"}));
+            allowing(request).getParameterValues("moodIndicators$teeth"); will(returnValue(new String[]{"mad"}));
+            allowing(request).getParameterValues("moodIndicators$questionMarkTail"); will(returnValue(new String[]{"happy"}));
+            allowing(request).getParameterValues("nested.cat"); will(returnValue(new String[]{"tabby"}));
+            allowing(request).getParameterValues("nested.age"); will(returnValue(new String[]{"3"}));
+            allowing(request).getParameterValues("nested.weight"); will(returnValue(new String[]{"12.2"}));
+            allowing(request).getParameterValues("nested.convertMe"); will(returnValue(new String[]{"something"}));
+            allowing(request).getParameterValues("nested.names"); will(returnValue(new String[]{"ookwensu", "monster"}));
+            allowing(request).getParameterValues("nested.nickNames!0"); will(returnValue(new String[]{"kitty"}));
+            allowing(request).getParameterValues("nested.nickNames!1"); will(returnValue(new String[]{"grub"}));
+            allowing(request).getParameterValues("nested.moodIndicators$teeth"); will(returnValue(new String[]{"mad"}));
+            allowing(request).getParameterValues("nested.moodIndicators$questionMarkTail"); will(returnValue(new String[]{"happy"}));
+            allowing(request).getParameterValues("nested.bites$hard"); will(returnValue(new String[]{"2"}));
+            allowing(request).getParameterValues("nested.bites$soft"); will(returnValue(new String[]{"6"}));
+            allowing(request).getParameterValues("nested.bites$gnawing"); will(returnValue(new String[]{"1"}));
+            allowing(request).getParameterValues("numbers!0"); will(returnValue(new String[]{"0"}));
+            allowing(request).getParameterValues("numbers!1"); will(returnValue(new String[]{"1"}));
+            allowing(request).getParameterValues("nested.favoritePopStars$pop"); will(returnValue(new String[]{"Prince"}));
+            allowing(request).getParameterValues("nested.favoritePopStars$dance"); will(returnValue(new String[]{"Tatu"}));
+            allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
+        }});
 
         FormPopulator populator = new RequestParameterFormPopulator(request);
         ObjectGraph form = new ObjectGraph();

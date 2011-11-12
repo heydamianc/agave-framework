@@ -30,7 +30,9 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.InvalidHandlerException;
+import java.util.Map;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -97,19 +99,17 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public Method getHandlerMethod();
 
     /**
-     * Indicates whether the handler method this {@code HandlerDescriptor} describes initiates the named workflow.
-     */
-    public boolean initiatesWorkflow();
-
-    /**
-     * Indicates whether the handler method this {@code HandlerDescriptor} describes completes the named workflow.
-     */
-    public boolean completesWorkflow();
-
-    /**
      * Returns the workflow name.
      */
     public String getWorkflowName();
+
+    public Map<String, Class<? extends StringParamConverter<?>>> getConverters();
+
+    public String[] getParamNames();
+    
+    public boolean initiatesWorkflow();
+
+    public boolean completesWorkflow();
 
     /**
      * Whether or not this {@code HandlerDescriptor} matches the supplied request.  The URI string 
