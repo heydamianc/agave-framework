@@ -39,7 +39,7 @@ import co.cdev.agave.sample.SampleHandler;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerDescriptorTest {
+public class HandlerMethodDescriptorTest {
     private static final String cls = SampleHandler.class.getName();
     private static final String met = "login";
 

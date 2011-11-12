@@ -33,10 +33,16 @@ import javax.servlet.http.HttpServletRequest;
 import co.cdev.agave.CompletesWorkflow;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.InitiatesWorkflow;
+import co.cdev.agave.Param;
 import co.cdev.agave.ResumesWorkflow;
+import co.cdev.agave.conversion.PassThroughParamConverter;
 import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.InvalidHandlerException;
+import co.cdev.agave.exception.InvalidParamException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -50,9 +56,14 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     private HttpMethod method;
     private Class<?> handlerClass;
     private Method handlerMethod;
+    
+    private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
+    
     private String[] paramNames;
     private Class<?>[] paramTypes;
     private Map<String, Class<? extends StringParamConverter<?>>> converters;
+    
+    
     private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
@@ -86,18 +97,40 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
                 
                 // Account for the HandlerContext as the 0th argument
                 
-                Annotation[][] annotations = handlerMethod.getParameterAnnotations();
+                paramDescriptors = new ArrayList<ParamDescriptor>(paramCount - 1);
                 
-                if (annotations != null) {
-                    for (int i = 1; i < annotations.length; i++) {
-                        
+                Annotation[][] allAnnotations = handlerMethod.getParameterAnnotations();
+
+                try {
+                    if (allAnnotations != null && allAnnotations.length == paramCount) {
+                        for (int i = 1; i < paramCount; i++) {
+                            Class<?> paramType = m.getParameterTypes()[i];
+                            Annotation[] annotations = m.getParameterAnnotations()[i];
+
+                            ParamDescriptor descriptor = ParamDescriptor.createIfApplicable(paramType, annotations);
+
+                            if (descriptor == null) {
+                                break;
+                            }
+
+                            paramDescriptors.add(descriptor);
+                        }
                     }
+                } catch (InvalidParamException ex) {
+                    String message = String.format("%s is an invalid handler method", m);
+                    throw new InvalidHandlerException(message, ex);
                 }
                 
+                // Once again, account for the HandlerContext as the 0th argument
                 
+                if (paramDescriptors.size() != paramCount - 1) {
+                    paramDescriptors = Collections.emptyList();
+                }
                 
+                // Now, if the parameters weren't all marked as being named @Params,
+                // treat an additional argument as a form
                 
-                if (paramCount == 2) {
+                if (paramDescriptors.isEmpty() && paramCount == 2) {
                     formClass = handlerMethod.getParameterTypes()[1];
                 }
 
@@ -199,6 +232,74 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     @Override
     public String[] getParamNames() {
         return paramNames;
+    }
+    
+    public static class ParamDescriptor {
+        
+        private Class<?> type;
+        private String name;
+        private Class<? extends StringParamConverter<?>> converter;
+        
+        public ParamDescriptor(Class<?> type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public Class<? extends StringParamConverter<?>> getConverter() {
+            return converter;
+        }
+
+        public void setConverter(Class<? extends StringParamConverter<?>> converter) {
+            this.converter = converter;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        public void setType(Class<?> type) {
+            this.type = type;
+        }
+        
+        private static ParamDescriptor createIfApplicable(Class<?> type, Annotation[] annotations) 
+                throws InvalidParamException {
+            
+            ParamDescriptor descriptor = null;
+            
+            for (int i = 0; i < annotations.length; i++) {
+                Class<?> annotationType = annotations[i].annotationType();
+                
+                if (annotationType.isAssignableFrom(Param.class)) {
+                    Param param = (Param) annotations[i];
+                    String name = param.name();
+                    
+                    if (name == null) {
+                        name = param.value();
+                    } else {
+                        descriptor = new ParamDescriptor(type, name);
+                        
+                        if (!param.converter().equals(PassThroughParamConverter.class)) {
+                            descriptor.setConverter(param.converter());
+                        }
+                    }
+                    
+                    if (name == null) {
+                        
+                    }
+                }
+            }
+            
+            return descriptor;
+        }
+        
     }
     
 }

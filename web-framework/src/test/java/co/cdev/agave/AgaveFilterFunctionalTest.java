@@ -236,6 +236,30 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         filter.init(filterConfig);
         filter.doFilter(request, response, filterChain);
     }
+    
+    @Test
+    public void testNamedParams() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+        
+        emulateServletContainer(parameterMap);
+        
+        context.checking(new Expectations() {{
+            allowing(request).getServletPath();
+            will(returnValue("/has/named/params/someValue/5"));
+
+            allowing(request).getMethod();
+            will(returnValue("GET"));
+
+            allowing(request).getContentType();
+            will(returnValue("application/x-www-form-urlencoded"));
+            
+            one(request).setAttribute("something", "someValue");
+            one(request).setAttribute("aNumber", Integer.valueOf(5));
+        }});
+        
+        
+    }
 
     @Test
     public void testMultipartRequest() throws Exception {
