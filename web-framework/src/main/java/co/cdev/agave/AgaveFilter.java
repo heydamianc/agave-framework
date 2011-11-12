@@ -57,8 +57,8 @@ import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.internal.DestinationImpl;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
-import co.cdev.agave.internal.HandlerDescriptor;
-import co.cdev.agave.internal.HandlerDescriptorImpl;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl;
 import co.cdev.agave.internal.HandlerFactoryImpl;
 import co.cdev.agave.internal.HandlerIdentifier;
 import co.cdev.agave.internal.HandlerRegistry;
@@ -315,7 +315,7 @@ public class AgaveFilter implements Filter {
         }
         
         if (!handlerRegistry.getDescriptors().isEmpty()) {
-            for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
+            for (HandlerMethodDescriptor descriptor : handlerRegistry.getDescriptors()) {
                 LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[] {
                     descriptor.getPattern(),
                     descriptor.getHandlerMethod()
@@ -428,7 +428,7 @@ public class AgaveFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
+        HandlerMethodDescriptor descriptor = handlerRegistry.findMatch(request);
         
         if (descriptor != null) {
             HttpSession session = request.getSession(true);
@@ -715,7 +715,7 @@ public class AgaveFilter implements Filter {
                         classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);
 
                         for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
-                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(handlerIdentifier);
+                            HandlerMethodDescriptor descriptor = new HandlerMethodDescriptorImpl(handlerIdentifier);
                             descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
                             handlerRegistry.addDescriptor(descriptor);
 

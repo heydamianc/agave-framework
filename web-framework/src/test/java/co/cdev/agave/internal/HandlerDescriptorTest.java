@@ -53,7 +53,7 @@ public class HandlerDescriptorTest {
     
     @Test
     public void testConstructor() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
         Assert.assertNotNull(a);
         Assert.assertNotNull(a.getPattern());
         Assert.assertNotNull(a.getHandlerClass());
@@ -63,12 +63,12 @@ public class HandlerDescriptorTest {
 
     @Test
     public void testEquals() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
-        HandlerDescriptor b = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
-        HandlerDescriptor c = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/notLogin", cls, met));
-        HandlerDescriptor d = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
-        HandlerDescriptor e = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
-        HandlerDescriptor f = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.ANY, cls, met));
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor c = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/notLogin", cls, met));
+        HandlerMethodDescriptor d = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+        HandlerMethodDescriptor e = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
+        HandlerMethodDescriptor f = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.ANY, cls, met));
         
         Assert.assertEquals(a, b);
         Assert.assertFalse(a.equals(c));
@@ -80,19 +80,19 @@ public class HandlerDescriptorTest {
 
     @Test
     public void testCompareTo() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
-        HandlerDescriptor b = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
         Assert.assertEquals(0, a.compareTo(b));
         
-        a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/a", cls, met));
-        b = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/b", cls, met));
+        a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/a", cls, met));
+        b = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/b", cls, met));
         Assert.assertEquals(-1, a.compareTo(b));
         Assert.assertEquals(1, b.compareTo(a));
     }
     
     @Test
     public void testMatches_withNullRequest() throws Exception {
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
     	Assert.assertFalse(a.matches(null));
     }
     
@@ -103,7 +103,7 @@ public class HandlerDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/login"));
     	}});
     	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
     	Assert.assertTrue(a.matches(request));
     }
     
@@ -114,7 +114,7 @@ public class HandlerDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/login"));
     	}});
     	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
     	Assert.assertTrue(a.matches(request));
     }
     
@@ -125,7 +125,7 @@ public class HandlerDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/login"));
     	}});
     	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
     	Assert.assertFalse(a.matches(request));
     }
 
@@ -136,7 +136,7 @@ public class HandlerDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/logout"));
     	}});
     	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
     	Assert.assertFalse(a.matches(request));
     }
     

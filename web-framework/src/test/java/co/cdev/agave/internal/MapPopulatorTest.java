@@ -46,7 +46,7 @@ public class MapPopulatorTest {
     private Mockery context = new Mockery();
     
     private HttpServletRequest request;
-    private HandlerDescriptor descriptor;
+    private HandlerMethodDescriptor descriptor;
     private URIPattern pattern;
     
     private Locale locale;
@@ -59,7 +59,7 @@ public class MapPopulatorTest {
     @Before
     public void setup() throws Exception {        
         request = context.mock(HttpServletRequest.class);
-        descriptor = context.mock(HandlerDescriptor.class);
+        descriptor = context.mock(HandlerMethodDescriptor.class);
         pattern = context.mock(URIPattern.class);
         
         locale = Locale.getDefault();

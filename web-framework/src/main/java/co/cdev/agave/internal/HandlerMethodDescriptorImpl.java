@@ -36,6 +36,7 @@ import co.cdev.agave.InitiatesWorkflow;
 import co.cdev.agave.ResumesWorkflow;
 import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.InvalidHandlerException;
+import java.lang.annotation.Annotation;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -43,20 +44,21 @@ import co.cdev.agave.exception.InvalidHandlerException;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public final class HandlerDescriptorImpl implements HandlerDescriptor {
+public final class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
 
     private URIPattern pattern;
     private HttpMethod method;
     private Class<?> handlerClass;
     private Method handlerMethod;
     private String[] paramNames;
+    private Class<?>[] paramTypes;
     private Map<String, Class<? extends StringParamConverter<?>>> converters;
     private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
     private String workflowName;
 
-    public HandlerDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException, InvalidHandlerException {
+    public HandlerMethodDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException, InvalidHandlerException {
         pattern = new URIPatternImpl(identifier.getUri());
         method = identifier.getMethod();
         handlerClass = Class.forName(identifier.getClassName());
@@ -80,11 +82,22 @@ public final class HandlerDescriptorImpl implements HandlerDescriptor {
             if (identifier.getMethodName().equals(m.getName())) {
                 handlerMethod = m;
                 
-                int parameterCount = handlerMethod.getParameterTypes().length;
+                int paramCount = handlerMethod.getParameterTypes().length;
                 
                 // Account for the HandlerContext as the 0th argument
                 
-                if (parameterCount == 2) {
+                Annotation[][] annotations = handlerMethod.getParameterAnnotations();
+                
+                if (annotations != null) {
+                    for (int i = 1; i < annotations.length; i++) {
+                        
+                    }
+                }
+                
+                
+                
+                
+                if (paramCount == 2) {
                     formClass = handlerMethod.getParameterTypes()[1];
                 }
 
@@ -146,7 +159,7 @@ public final class HandlerDescriptorImpl implements HandlerDescriptor {
     }
 
     @Override
-    public int compareTo(HandlerDescriptor that) {
+    public int compareTo(HandlerMethodDescriptor that) {
         int result = pattern.compareTo(that.getPattern());
         if (result == 0) {
             result = method.ordinal() - that.getMethod().ordinal();
@@ -159,10 +172,10 @@ public final class HandlerDescriptorImpl implements HandlerDescriptor {
         if (this == that) {
             return true;
         }
-        if (!(that instanceof HandlerDescriptor)) {
+        if (!(that instanceof HandlerMethodDescriptor)) {
             return false;
         }
-        HandlerDescriptor desc = (HandlerDescriptor) that;
+        HandlerMethodDescriptor desc = (HandlerMethodDescriptor) that;
         boolean equal = pattern.equals(desc.getPattern()) && method == desc.getMethod();
         return equal;
     }
@@ -187,4 +200,5 @@ public final class HandlerDescriptorImpl implements HandlerDescriptor {
     public String[] getParamNames() {
         return paramNames;
     }
+    
 }

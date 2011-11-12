@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class URIParameterFormPopulator extends AbstractFormPopulator {
 
-    public URIParameterFormPopulator(HttpServletRequest request, HandlerDescriptor descriptor) {
+    public URIParameterFormPopulator(HttpServletRequest request, HandlerMethodDescriptor descriptor) {
         super(request.getLocale());
 
         Map<String, String> uriParameters = descriptor.getPattern().getParameterMap(request);

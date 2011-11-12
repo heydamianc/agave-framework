@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Damian Carrillo
+ * Copyright (c) 2011, Damian Carrillo
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,46 +23,20 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.exception;
+package co.cdev.agave.conversion;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.exception.ConversionException;
+import java.util.Locale;
 
 /**
+ *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerException extends AgaveException {
+public class PassThroughParamConverter implements StringParamConverter<String> {
 
-    private static final long serialVersionUID = 1L;
-
-    public HandlerException() {
-        super();
-    }
-
-    public HandlerException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
-
-    public HandlerException(String message) {
-        super(message);
-    }
-
-    public HandlerException(Throwable rootCause) {
-        super(rootCause);
-    }
-
-    // TODO internationalize this
-    public HandlerException(HandlerMethodDescriptor descriptor, InstantiationException rootCause) {
-        this(getErrorMessage(descriptor), rootCause);
-            
+    @Override
+    public String convert(String input, Locale locale) throws ConversionException {
+        return input;
     }
     
-    // TODO internationalize this
-    public HandlerException(HandlerMethodDescriptor descriptor, IllegalAccessException rootCause) {
-        this(getErrorMessage(descriptor), rootCause);
-    }
-    
-    private synchronized static String getErrorMessage(HandlerMethodDescriptor descriptor) {
-       return  "Unable to create an instance of handler " +  descriptor.getHandlerClass().getName();
-    }
-
 }

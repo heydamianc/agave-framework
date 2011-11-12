@@ -51,27 +51,27 @@ public class HandlerRegistryTest {
 
     @Test(expected = DuplicateDescriptorException.class)
     public void testAddDescriptor() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
 
         Assert.assertEquals(2, registry.getDescriptors().size());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAddToUnmodifiable() throws Exception {
-        registry.getDescriptors().add(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
+        registry.getDescriptors().add(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testMatches() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/some/path", SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new HandlerIdentifierImpl("/other/path", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/some/path", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/other/path", SampleHandler.class.getName(), "login")));
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath();
@@ -80,7 +80,7 @@ public class HandlerRegistryTest {
             will(returnValue("GET"));
         }});
 
-        HandlerDescriptor descriptor = registry.findMatch(request);
+        HandlerMethodDescriptor descriptor = registry.findMatch(request);
         Assert.assertNotNull(descriptor);
         Assert.assertEquals("/some/path", descriptor.getPattern().toString());
     }

@@ -32,7 +32,7 @@ import java.net.URI;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
 
 /**
  * Stub implementations of all the lifecycle hooks.  All methods return false, indicating that
@@ -49,54 +49,54 @@ public class DefaultLifecycleHooks implements LifecycleHooks {
     }
 
     @Override
-    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
+    public boolean afterHandlerIsDiscovered(HandlerMethodDescriptor descriptor,
             ServletContext servletContext) throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
+    public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor,
             HandlerContext context) throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean beforeInitializingForm(HandlerDescriptor descriptor,
+    public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor,
             Object formInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean afterInitializingForm(HandlerDescriptor descriptor,
+    public boolean afterInitializingForm(HandlerMethodDescriptor descriptor,
             Object formInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
+    public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, HandlerContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, Destination destination,
             HandlerContext context) throws ServletException, IOException {
         return false;
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, URI destination, HandlerContext context)
             throws ServletException, IOException {
         return false;

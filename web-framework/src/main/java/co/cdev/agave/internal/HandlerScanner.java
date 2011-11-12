@@ -54,12 +54,13 @@ public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
     }
 
     @Override
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, 
-        String[] interfaces) {
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] interfaces) { 
         MethodVisitor methodScanner = null;
+        
         if ((access & Opcodes.ACC_PUBLIC) > 0) {
             methodScanner = new MethodScanner(handlerIdentifiers, className, name, desc);
         }
+        
         return methodScanner;
     }
 

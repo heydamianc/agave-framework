@@ -42,13 +42,13 @@ import co.cdev.agave.exception.DuplicateDescriptorException;
  */
 public final class HandlerRegistryImpl implements HandlerRegistry {
 
-    private Collection<HandlerDescriptor> descriptors;
+    private Collection<HandlerMethodDescriptor> descriptors;
 
     public HandlerRegistryImpl() {
-        descriptors = new TreeSet<HandlerDescriptor>();
+        descriptors = new TreeSet<HandlerMethodDescriptor>();
     }
 
-    public HandlerRegistryImpl(Collection<HandlerDescriptor> descriptors)
+    public HandlerRegistryImpl(Collection<HandlerMethodDescriptor> descriptors)
             throws DuplicateDescriptorException {
         this();
         addAllDescriptors(descriptors);
@@ -64,9 +64,9 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
      *      used in determining the specificity
      */
     @Override
-    public void addDescriptor(HandlerDescriptor descriptor)
+    public void addDescriptor(HandlerMethodDescriptor descriptor)
             throws DuplicateDescriptorException {
-        for (HandlerDescriptor existingDescriptor : descriptors) {
+        for (HandlerMethodDescriptor existingDescriptor : descriptors) {
             if (existingDescriptor.equals(descriptor)) {
                 throw new DuplicateDescriptorException(existingDescriptor, descriptor);
             }
@@ -75,16 +75,16 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     }
 
     @Override
-    public void addAllDescriptors(Collection<HandlerDescriptor> descriptors)
+    public void addAllDescriptors(Collection<HandlerMethodDescriptor> descriptors)
             throws DuplicateDescriptorException {
-        for (HandlerDescriptor descriptor : descriptors) {
+        for (HandlerMethodDescriptor descriptor : descriptors) {
             addDescriptor(descriptor);
         }
     }
 
     @Override
-    public HandlerDescriptor findMatch(HttpServletRequest request) {
-        for (HandlerDescriptor descriptor : descriptors) {
+    public HandlerMethodDescriptor findMatch(HttpServletRequest request) {
+        for (HandlerMethodDescriptor descriptor : descriptors) {
             if (descriptor.matches(request)) {
                 return descriptor;
             }
@@ -93,7 +93,7 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     }
 
     @Override
-    public Collection<HandlerDescriptor> getDescriptors() {
+    public Collection<HandlerMethodDescriptor> getDescriptors() {
         return Collections.unmodifiableCollection(descriptors);
     }
 }

@@ -25,6 +25,8 @@
  */
 package co.cdev.agave;
 
+import co.cdev.agave.conversion.PassThroughParamConverter;
+import co.cdev.agave.conversion.StringParamConverter;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -49,6 +51,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Param {
 
-    String value() default "";
+    String value() default ""; // an alias for 'name'
+    
+    String name() default "";
+    
+    Class<? extends StringParamConverter<?>> converter() default PassThroughParamConverter.class;
     
 }

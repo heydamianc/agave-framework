@@ -39,9 +39,9 @@ import javax.servlet.http.HttpServletRequest;
 public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator {
 
     private final HttpServletRequest request;
-    private final HandlerDescriptor descriptor;
+    private final HandlerMethodDescriptor descriptor;
     
-    public MapPopulatorImpl(HttpServletRequest request, HandlerDescriptor descriptor) {
+    public MapPopulatorImpl(HttpServletRequest request, HandlerMethodDescriptor descriptor) {
         super(request.getLocale());
    
         this.request = request;

@@ -65,7 +65,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
+public interface HandlerMethodDescriptor extends Comparable<HandlerMethodDescriptor> {
     
     /**
      * Locates annotated handler methods to field requests with

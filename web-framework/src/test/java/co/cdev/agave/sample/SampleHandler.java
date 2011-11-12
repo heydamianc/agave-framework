@@ -32,6 +32,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import co.cdev.agave.Route;
+import co.cdev.agave.conversion.IntegerParamConverter;
 import co.cdev.agave.exception.AgaveException;
 
 public class SampleHandler {
@@ -70,13 +71,13 @@ public class SampleHandler {
         context.getRequest().setAttribute("noErrors", Boolean.TRUE);
     }
     
-    @Route("/has/named/params/${something}/${anything}")
+    @Route("/has/named/params/${something}/${aNumber}")
     public void hasNamedParams(HandlerContext context, 
                                @Param("something") String something, 
-                               @Param("anything")  String anything) throws AgaveException {
+                               @Param(name = "aNumber", converter = IntegerParamConverter.class) int aNumber) throws AgaveException {
         context.getRequest().setAttribute("hasNamedParams", Boolean.TRUE);
         context.getRequest().setAttribute("something", something);
-        context.getRequest().setAttribute("anything", anything);
+        context.getRequest().setAttribute("aNumber", aNumber);
     }
 
 }

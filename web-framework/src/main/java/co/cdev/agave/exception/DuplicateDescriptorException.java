@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.exception;
 
-import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
 
 /**
  * An exception that is thrown to indicate that two handlers share the same
@@ -37,8 +37,8 @@ public class DuplicateDescriptorException extends AgaveException {
 
     private static final long serialVersionUID = 1L;
 
-    public DuplicateDescriptorException(HandlerDescriptor existing,
-            HandlerDescriptor added) {
+    public DuplicateDescriptorException(HandlerMethodDescriptor existing,
+            HandlerMethodDescriptor added) {
         super("Failed to register a duplicate handler mapping, ("
                 + added.getPattern().toString() + ", "
                 + added.getMethod().toString() + ") for "

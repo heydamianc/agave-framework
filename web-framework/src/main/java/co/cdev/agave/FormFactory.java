@@ -3,7 +3,7 @@ package co.cdev.agave;
 import javax.servlet.ServletContext;
 
 import co.cdev.agave.exception.FormException;
-import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
 
 /**
  * Creates instances of forms for the {@link AgaveFilter}. The default
@@ -57,5 +57,5 @@ public interface FormFactory {
      *             when a form instance failed to be instantiated
      */
     public Object createFormInstance(ServletContext servletContext,
-            HandlerDescriptor descriptor) throws FormException;
+            HandlerMethodDescriptor descriptor) throws FormException;
 }
