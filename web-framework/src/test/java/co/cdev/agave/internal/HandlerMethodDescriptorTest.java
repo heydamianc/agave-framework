@@ -56,9 +56,15 @@ public class HandlerMethodDescriptorTest {
         HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
         Assert.assertNotNull(a);
         Assert.assertNotNull(a.getPattern());
-        Assert.assertNotNull(a.getHandlerClass());
-        Assert.assertNotNull(a.getFormClass());
-        Assert.assertNotNull(a.getHandlerMethod());
+    }
+    
+    @Test
+    public void testLocateAnnotatedHandlerMethods() throws Exception {
+    	HandlerIdentifier identifier = new HandlerIdentifierImpl("/login", cls, met);
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(identifier);
+    	a.locateAnnotatedHandlerMethods(identifier);
+    	
+    	Assert.assertNotNull(a.getFormClass());
     }
 
     @Test
