@@ -27,9 +27,8 @@ package co.cdev.agave.internal;
 
 import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -50,34 +49,42 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
     
     @Override
     public void populate(Map<String, Object> namedArguments) throws ConversionException {
-        Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
-        Map<String, String> requestParams = request.getParameterMap();
         
-        for (String name : namedArguments.keySet()) {
-            String value = uriParams.get(name);
+        Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
+        
+        @SuppressWarnings("unchecked")
+		Map<String, String> requestParams = request.getParameterMap();
+        
+        for (ParamDescriptor paramDescriptor : descriptor.getParamDescriptors()) {
+            Object value = uriParams.get(paramDescriptor.getName());
             
             if (value == null) {
-                value = requestParams.get(name);
+                value = requestParams.get(paramDescriptor.getName());
             }
             
             if (value != null) {
-                Class<? extends StringParamConverter<?>> converterClass = descriptor.getConverters().get(name);
+                StringParamConverter<?> converter = null;
+                Class<? extends StringParamConverter<?>> converterClass = paramDescriptor.getConverter();
                 
                 if (converterClass != null) {
                     try {
-                        StringParamConverter<?> converter = converterClass.newInstance();
-                        namedArguments.put(name, converter.convert(value, request.getLocale()));
-                        
-                        continue;
+                        converter = converterClass.newInstance();
                     } catch (InstantiationException ex) {
-                        Logger.getLogger(MapPopulatorImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        throw new ConversionException(ex);
                     } catch (IllegalAccessException ex) {
-                        Logger.getLogger(MapPopulatorImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        throw new ConversionException(ex);
                     }
+                } else {
+                    converter = (StringParamConverter<?>) determineMostAppropriateConverter(paramDescriptor.getType());
+                }
+                
+                if (converter != null) {
+                    value = converter.convert((String) value, locale);
+                    namedArguments.put(paramDescriptor.getName(), value);
                 }
             }
             
-            namedArguments.put(name, value);
+            namedArguments.put(paramDescriptor.getName(), value);
         }
     }
     

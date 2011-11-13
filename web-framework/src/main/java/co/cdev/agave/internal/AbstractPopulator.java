@@ -18,8 +18,8 @@ public abstract class AbstractPopulator {
         this.locale = locale;
     }
     
-    protected ParamConverter determineMostAppropriateConverter(Class<?> parameterType) {
-        ParamConverter converter = null;
+    protected ParamConverter<?, ?> determineMostAppropriateConverter(Class<?> parameterType) {
+        ParamConverter<?, ?> converter = null;
         
         if (parameterType.isAssignableFrom(Boolean.class) || parameterType.isAssignableFrom(boolean.class)) {
             converter = new BooleanParamConverter();

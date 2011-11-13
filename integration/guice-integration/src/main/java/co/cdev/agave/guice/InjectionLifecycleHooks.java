@@ -25,16 +25,18 @@
  */
 package co.cdev.agave.guice;
 
-import co.cdev.agave.Destination;
-import co.cdev.agave.HandlerContext;
-import co.cdev.agave.LifecycleHooks;
-import co.cdev.agave.internal.HandlerDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+
+import co.cdev.agave.Destination;
+import co.cdev.agave.HandlerContext;
+import co.cdev.agave.LifecycleHooks;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
 
 /**
  * Aggregates handler classes into the set supplied in the constructor.  This class functions as a 
@@ -60,7 +62,7 @@ public class InjectionLifecycleHooks implements LifecycleHooks {
     }
 
     @Override
-    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
+    public boolean afterHandlerIsDiscovered(HandlerMethodDescriptor descriptor,
             ServletContext servletContext) throws ServletException, IOException {
         
         // Save the handler class so that it can be configured later
@@ -70,48 +72,48 @@ public class InjectionLifecycleHooks implements LifecycleHooks {
     }
 
     @Override
-    public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
+    public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor,
             HandlerContext context) throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.beforeFilteringRequest(descriptor, context);
     }
 
     @Override
-    public boolean beforeInitializingForm(HandlerDescriptor descriptor,
+    public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor,
             Object formInstance, HandlerContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.beforeInitializingForm(descriptor, formInstance, context);
     }
 
     @Override
-    public boolean afterInitializingForm(HandlerDescriptor descriptor,
+    public boolean afterInitializingForm(HandlerMethodDescriptor descriptor,
             Object formInstance, HandlerContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterInitializingForm(descriptor, formInstance, context);
     }
 
     @Override
-    public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
+    public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, HandlerContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.beforeHandlingRequest(descriptor, handlerInstance, context);
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, HandlerContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterHandlingRequest(descriptor, handlerInstance, context);
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, Destination destination,
             HandlerContext context) throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterHandlingRequest(descriptor, handlerInstance, destination, context);
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, URI destination, HandlerContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterHandlingRequest(descriptor, handlerInstance, destination, context);

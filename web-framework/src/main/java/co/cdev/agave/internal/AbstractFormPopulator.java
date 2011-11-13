@@ -168,7 +168,8 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
         mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
     }
 
-    private Object convertIfNecessary(Method mutator, Object parameterValue)
+    @SuppressWarnings("unchecked")
+	private Object convertIfNecessary(Method mutator, Object parameterValue)
             throws ConversionException,
             InstantiationException,
             IllegalAccessException {
@@ -178,7 +179,8 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
             Class<?> parameterType = parameterTypes[parameterOffset];
             
-            ParamConverter converter = null; // keep this vague
+            @SuppressWarnings("rawtypes")
+			ParamConverter converter = null; // keep this vague
             
             // First look for a Converter annotation
             

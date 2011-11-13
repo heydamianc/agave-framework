@@ -258,7 +258,8 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
             one(request).setAttribute("aNumber", Integer.valueOf(5));
         }});
         
-        
+        filter.init(filterConfig);
+        filter.doFilter(request, response, filterChain);
     }
 
     @Test

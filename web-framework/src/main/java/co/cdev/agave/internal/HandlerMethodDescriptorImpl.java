@@ -25,9 +25,12 @@
  */
 package co.cdev.agave.internal;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.CompletesWorkflow;
@@ -39,10 +42,6 @@ import co.cdev.agave.conversion.PassThroughParamConverter;
 import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.InvalidHandlerException;
 import co.cdev.agave.exception.InvalidParamException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -56,14 +55,7 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     private HttpMethod method;
     private Class<?> handlerClass;
     private Method handlerMethod;
-    
     private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
-    
-    private String[] paramNames;
-    private Class<?>[] paramTypes;
-    private Map<String, Class<? extends StringParamConverter<?>>> converters;
-    
-    
     private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
@@ -73,7 +65,6 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         pattern = new URIPatternImpl(identifier.getUri());
         method = identifier.getMethod();
         handlerClass = Class.forName(identifier.getClassName());
-        locateAnnotatedHandlerMethods(identifier);
     }
 
     /**
@@ -223,15 +214,18 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         return request != null && method.matches(request)
                 && pattern.matches(request);
     }
-
+    
     @Override
-    public Map<String, Class<? extends StringParamConverter<?>>> getConverters() {
-        return converters;
+    public List<ParamDescriptor> getParamDescriptors() {
+        return paramDescriptors;
     }
 
-    @Override
-    public String[] getParamNames() {
-        return paramNames;
+    public boolean isCompletesWorkflow() {
+        return completesWorkflow;
+    }
+
+    public boolean isInitiatesWorkflow() {
+        return initiatesWorkflow;
     }
     
     public static class ParamDescriptor {
@@ -281,9 +275,11 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
                     Param param = (Param) annotations[i];
                     String name = param.name();
                     
-                    if (name == null) {
+                    if (name == null || "".equals(name)) {
                         name = param.value();
-                    } else {
+                    } 
+                    
+                    if (name != null) {
                         descriptor = new ParamDescriptor(type, name);
                         
                         if (!param.converter().equals(PassThroughParamConverter.class)) {

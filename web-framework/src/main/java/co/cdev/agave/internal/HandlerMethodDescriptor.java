@@ -26,13 +26,13 @@
 package co.cdev.agave.internal;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.HttpMethod;
-import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.InvalidHandlerException;
-import java.util.Map;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -103,9 +103,7 @@ public interface HandlerMethodDescriptor extends Comparable<HandlerMethodDescrip
      */
     public String getWorkflowName();
 
-    public Map<String, Class<? extends StringParamConverter<?>>> getConverters();
-
-    public String[] getParamNames();
+    public List<ParamDescriptor> getParamDescriptors();
     
     public boolean initiatesWorkflow();
 

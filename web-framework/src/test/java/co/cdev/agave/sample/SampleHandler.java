@@ -75,7 +75,6 @@ public class SampleHandler {
     public void hasNamedParams(HandlerContext context, 
                                @Param("something") String something, 
                                @Param(name = "aNumber", converter = IntegerParamConverter.class) int aNumber) throws AgaveException {
-        context.getRequest().setAttribute("hasNamedParams", Boolean.TRUE);
         context.getRequest().setAttribute("something", something);
         context.getRequest().setAttribute("aNumber", aNumber);
     }

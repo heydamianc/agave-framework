@@ -27,13 +27,13 @@ package co.cdev.agave.guice;
 
 import co.cdev.agave.HandlerFactory;
 import co.cdev.agave.exception.HandlerException;
-import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
 import com.google.inject.Injector;
 import javax.servlet.ServletContext;
 
 /**
  *
- * @author ddc
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class InjectionHandlerFactory implements HandlerFactory {
     
@@ -45,7 +45,7 @@ public class InjectionHandlerFactory implements HandlerFactory {
     }
 
     @Override
-    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
+    public Object createHandlerInstance(ServletContext servletContext, HandlerMethodDescriptor descriptor) 
             throws HandlerException {
         return injector.getInstance(descriptor.getHandlerClass());
     }

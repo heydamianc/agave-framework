@@ -34,6 +34,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,10 +60,11 @@ import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.internal.DestinationImpl;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
-import co.cdev.agave.internal.HandlerMethodDescriptor;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl;
 import co.cdev.agave.internal.HandlerFactoryImpl;
 import co.cdev.agave.internal.HandlerIdentifier;
+import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 import co.cdev.agave.internal.HandlerScanner;
@@ -71,8 +75,6 @@ import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
 import co.cdev.agave.internal.URIParameterFormPopulator;
 import co.cdev.agave.logging.SingleLineLogger;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * <p>
@@ -512,30 +514,35 @@ public class AgaveFilter implements Filter {
                 }
             }
             
-            // If no form was found, attempt to supply arguments by taken the parameterized values 
+            // If no form was found, attempt to supply arguments by taking the parameterized values 
             // from either the URI path or the request params.  URI params override request params.
             
             LinkedHashMap<String, Object> arguments = null;
+            List<ParamDescriptor> paramDescriptors = descriptor.getParamDescriptors();
             
-            if (formInstance == null && descriptor.getParamNames() != null) {
+            if (formInstance == null && !paramDescriptors.isEmpty()) {
                 
                 // A LinkedHashMap is used because the iteration order will match the arguments that
-                // the handler method is expecting.  Reinsertion into the map is negligible -- the
-                // order will be established on the intitial put below.
+                // the handler method is expecting.  Reinsertion into the map is negligible
                 
                 arguments = new LinkedHashMap<String, Object>();
                 
                 Map<String, String> uriValues = descriptor.getPattern().getParameterMap(request);
                 
-                for (String argument : descriptor.getParamNames()) {
-                    String value = uriValues.get(argument);
+                // Establish the order of the parameter so the params can be looked up
+                
+                for (ParamDescriptor paramDescriptor : paramDescriptors) {
+                    String value = uriValues.get(paramDescriptor.getName());
                     
                     if (value == null) {
-                        value = request.getParameter(argument);
+                		value = request.getParameter(paramDescriptor.getName());
                     }
                     
-                    arguments.put(argument, null);
+                    arguments.put(paramDescriptor.getName(), null);
                 }
+                
+                // Now that the argument order has been established, populate
+                // the actual values
                 
                 MapPopulator argumentPopulator = new MapPopulatorImpl(request, descriptor);
                 argumentPopulator.populate(arguments);
@@ -573,8 +580,10 @@ public class AgaveFilter implements Filter {
 
             Object result = null;
 
-            // invokes the handler method, supplying a context and a form
-            // instance
+            // Invokes the handler method, by either supplying a context and a form
+            // instance, a context and a string of named parameters, or a single
+            // HandlerContext
+            
             try {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {

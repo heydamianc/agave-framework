@@ -25,10 +25,10 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.conversion.DoubleParamConverter;
-import co.cdev.agave.conversion.IntegerParamConverter;
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +52,7 @@ public class MapPopulatorTest {
     private Locale locale;
     private Map<String, String> uriParams;
     private Map<String, String> requestParams;
-    private Map<String, Class<? extends StringParamConverter<?>>> converters;
+    private List<ParamDescriptor> paramDescriptors;
 
     private MapPopulator populator;
     
@@ -65,7 +65,7 @@ public class MapPopulatorTest {
         locale = Locale.getDefault();
         uriParams = new HashMap<String, String>();
         requestParams = new HashMap<String, String>();
-        converters = new HashMap<String, Class<? extends StringParamConverter<?>>>();
+        paramDescriptors = new ArrayList<ParamDescriptor>();
         
         context.checking(new Expectations() {{
             allowing(request).getLocale();
@@ -77,8 +77,8 @@ public class MapPopulatorTest {
             allowing(descriptor).getPattern(); 
             will(returnValue(pattern));
             
-            allowing(descriptor).getConverters();
-            will(returnValue(converters));
+            allowing(descriptor).getParamDescriptors();
+            will(returnValue(paramDescriptors));
             
             allowing(pattern).getParameterMap(with(any(HttpServletRequest.class))); 
             will(returnValue(uriParams));
@@ -92,6 +92,9 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withURIParams() throws Exception {
+        paramDescriptors.add(new ParamDescriptor(String.class, "one"));
+        paramDescriptors.add(new ParamDescriptor(String.class, "two"));
+        
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
         
@@ -107,6 +110,9 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withRequestParams() throws Exception {
+        paramDescriptors.add(new ParamDescriptor(String.class, "one"));
+        paramDescriptors.add(new ParamDescriptor(String.class, "two"));
+        
         requestParams.put("one", "cat");
         requestParams.put("two", "possum");
         
@@ -122,6 +128,9 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withURIParamsOverridingRequestParams() throws Exception {
+        paramDescriptors.add(new ParamDescriptor(String.class, "one"));
+        paramDescriptors.add(new ParamDescriptor(String.class, "two"));
+        
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
         
@@ -139,12 +148,12 @@ public class MapPopulatorTest {
     }
     
     @Test
-    public void testCollectParameters_withConvertedURIParams() throws Exception {
+    public void testCollectParameters_withImplicitConvertedURIParams() throws Exception {
+        paramDescriptors.add(new ParamDescriptor(Integer.class, "one"));
+        paramDescriptors.add(new ParamDescriptor(Double.class, "two"));
+        
         uriParams.put("one", "1");
         uriParams.put("two", "2.0");
-        
-        converters.put("one", IntegerParamConverter.class);
-        converters.put("two", DoubleParamConverter.class);
         
         Map<String, Object> namedArguments = new HashMap<String, Object>();
         namedArguments.put("one", null);
@@ -157,12 +166,12 @@ public class MapPopulatorTest {
     }
     
     @Test
-    public void testCollectParameters_withConvertedRequestParams() throws Exception {
+    public void testCollectParameters_withImplicitConvertedRequestParams() throws Exception {
+        paramDescriptors.add(new ParamDescriptor(Integer.class, "one"));
+        paramDescriptors.add(new ParamDescriptor(Double.class, "two"));
+        
         requestParams.put("one", "1");
         requestParams.put("two", "2.0");
-        
-        converters.put("one", IntegerParamConverter.class);
-        converters.put("two", DoubleParamConverter.class);
         
         Map<String, Object> namedArguments = new HashMap<String, Object>();
         namedArguments.put("one", null);

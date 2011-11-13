@@ -31,7 +31,9 @@ package co.cdev.agave.exception;
  */
 public class InvalidParamException extends AgaveException {
 
-    public InvalidParamException() {
+	private static final long serialVersionUID = 1L;
+
+	public InvalidParamException() {
     }
 
     public InvalidParamException(String message, Throwable rootCause) {

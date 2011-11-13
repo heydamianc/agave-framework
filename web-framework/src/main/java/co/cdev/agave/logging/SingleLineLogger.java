@@ -37,8 +37,6 @@ public final class SingleLineLogger {
     public static Logger forClass(Class<?> representativeClass) {
         Logger logger = Logger.getLogger(representativeClass.getName());
         
-        SingleLineFormatter singleLineFormatter = new SingleLineFormatter();
-        
         try {
             
             // This was created primarily to work in Google's Appengine, however they disallow 

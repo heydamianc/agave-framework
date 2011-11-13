@@ -43,16 +43,12 @@ public class AnnotationScanner implements AnnotationVisitor {
     private static final String ANNOTATION_URI_PARAM = "uri";
     private static final String ANNOTATION_METHOD_PARAM = "method";
     private Collection<HandlerIdentifier> handlerIdentifiers;
-    private String methodDesciptor;
-    private String annotationDescriptor;
     private HandlerIdentifier handlerIdentifier;
 
     public AnnotationScanner(Collection<HandlerIdentifier> handlerIdentifiers,
             String className, String methodName, String methodDescriptor,
             String annotationDescriptor) {
         this.handlerIdentifiers = handlerIdentifiers;
-        this.methodDesciptor = methodDescriptor;
-        this.annotationDescriptor = annotationDescriptor;
         this.handlerIdentifier = new HandlerIdentifierImpl();
         this.handlerIdentifier.setClassName(className.replace("/", "."));
         this.handlerIdentifier.setMethodName(methodName);
