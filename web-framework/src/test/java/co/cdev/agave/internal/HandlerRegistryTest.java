@@ -51,11 +51,11 @@ public class HandlerRegistryTest {
 
     @Test(expected = DuplicateDescriptorException.class)
     public void testAddDescriptor() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/pattern", 
                 SampleHandler.class.getName(), 
                 "login")));
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/pattern", 
                 SampleHandler.class.getName(), 
                 "login")));
@@ -63,12 +63,12 @@ public class HandlerRegistryTest {
 
     @Test
     public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/pattern", 
                 HttpMethod.GET, 
                 SampleHandler.class.getName(), "login")));
         registry.addDescriptor(new HandlerMethodDescriptorImpl(
-                new HandlerIdentifierImpl("/pattern", HttpMethod.POST, 
+                new ScanResultImpl("/pattern", HttpMethod.POST, 
                 SampleHandler.class.getName(), 
                 "login")));
 
@@ -77,18 +77,18 @@ public class HandlerRegistryTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAddToUnmodifiable() throws Exception {
-        registry.getDescriptors().add(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", 
+        registry.getDescriptors().add(new HandlerMethodDescriptorImpl(new ScanResultImpl("/pattern", 
                 SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testMatches() throws Exception {
         registry.addDescriptor(new HandlerMethodDescriptorImpl(
-                new HandlerIdentifierImpl("/some/path", 
+                new ScanResultImpl("/some/path", 
                 SampleHandler.class.getName(),
                 "login")));
         
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/other/path", 
                 SampleHandler.class.getName(),
                 "login")));
@@ -108,12 +108,12 @@ public class HandlerRegistryTest {
     
     @Test
     public void testMatches_withOverloadedHandlerDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/overloaded", 
                 SampleHandler.class.getName(),
                 "overloaded")));
         
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/overloaded/${param}", 
                 SampleHandler.class.getName(),
                 "overloaded")));
@@ -133,12 +133,12 @@ public class HandlerRegistryTest {
         
     @Test
     public void testMatches_withOverloadedHandlerDescriptors2() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/overloaded/${param}", 
                 SampleHandler.class.getName(),
                 "overloaded")));
         
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new ScanResultImpl(
                 "/overloaded", 
                 SampleHandler.class.getName(),
                 "overloaded")));

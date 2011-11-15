@@ -261,6 +261,54 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         filter.init(filterConfig);
         filter.doFilter(request, response, filterChain);
     }
+    
+    @Test
+    public void testPotentiallyAmbiguousHandlerMethods_expectShorterMatch() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+        
+        emulateServletContainer(parameterMap);
+        
+        context.checking(new Expectations() {{
+            allowing(request).getServletPath();
+            will(returnValue("/overloaded"));
+
+            allowing(request).getMethod();
+            will(returnValue("GET"));
+
+            allowing(request).getContentType();
+            will(returnValue("application/x-www-form-urlencoded"));
+            
+            one(request).setAttribute("overloadedWithNoAdditionalParams", Boolean.TRUE);
+        }});
+        
+        filter.init(filterConfig);
+        filter.doFilter(request, response, filterChain);
+    }
+    
+    @Test
+    public void testPotentiallyAmbiguousHandlerMethods_expectLongerMatch() throws Exception {
+        AgaveFilter filter = new AgaveFilter();
+        final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+        
+        emulateServletContainer(parameterMap);
+        
+        context.checking(new Expectations() {{
+            allowing(request).getServletPath();
+            will(returnValue("/overloaded/something"));
+
+            allowing(request).getMethod();
+            will(returnValue("GET"));
+
+            allowing(request).getContentType();
+            will(returnValue("application/x-www-form-urlencoded"));
+            
+            one(request).setAttribute("overloadedWithAdditionalParams", "something");
+        }});
+        
+        filter.init(filterConfig);
+        filter.doFilter(request, response, filterChain);
+    }
 
     @Test
     public void testMultipartRequest() throws Exception {

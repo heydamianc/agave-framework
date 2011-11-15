@@ -55,98 +55,121 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     private HttpMethod method;
     private Class<?> handlerClass;
     private Method handlerMethod;
-    private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
+    private List<ParameterDescriptor> parameterDescriptors; // only applicable when @Param is used
     private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
     private String workflowName;
 
-    public HandlerMethodDescriptorImpl(HandlerIdentifier identifier) throws ClassNotFoundException, InvalidHandlerException {
-        pattern = new URIPatternImpl(identifier.getUri());
-        method = identifier.getMethod();
-        handlerClass = Class.forName(identifier.getClassName());
-        paramDescriptors = Collections.emptyList();
+    public HandlerMethodDescriptorImpl(ScanResult scanResult) throws ClassNotFoundException, InvalidHandlerException {
+        pattern              = new URIPatternImpl(scanResult.getUri());
+        method               = scanResult.getMethod();
+        handlerClass         = Class.forName(scanResult.getClassName());
+        parameterDescriptors = Collections.emptyList();
     }
 
     /**
      * Locates annotated methods on a handler class. This method will find the
      * annotated method that is identified by the supplied
-     * {@code HandlerIdentifier} and then proceed to find any workflow-related
+     * {@code Scanresult} and then proceed to find any workflow-related
      * annotations ({@code InitiatesWorkflow}, {@code ResumesWorkflow},
      * {@code CompletesWorkflow}.
      * 
-     * @param identifier
+     * @param scanResult
      *            the {@code HandlerIdentifier} that was created while scanning
      *            for a handler method
      */
     @Override
-    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) throws InvalidHandlerException {
+    public void locateAnnotatedHandlerMethods(ScanResult scanResult) throws InvalidHandlerException {
         for (Method m : handlerClass.getMethods()) {
-            if (identifier.matches(m)) {
-                handlerMethod = m;
-                
-                int paramCount = handlerMethod.getParameterTypes().length;
-                
-                // Account for the HandlerContext as the 0th argument
-                
-                paramDescriptors = new ArrayList<ParamDescriptor>(paramCount - 1);
-                
-                Annotation[][] allAnnotations = handlerMethod.getParameterAnnotations();
-
-                try {
-                    if (allAnnotations != null && allAnnotations.length == paramCount) {
-                        for (int i = 1; i < paramCount; i++) {
-                            Class<?> paramType = m.getParameterTypes()[i];
-                            Annotation[] annotations = m.getParameterAnnotations()[i];
-
-                            ParamDescriptor descriptor = ParamDescriptor.createIfApplicable(paramType, annotations);
-
-                            if (descriptor == null) {
-                                break;
+            
+            initiatesWorkflow = false;
+            completesWorkflow = false;
+            workflowName = null;
+            
+            // Interpret workflow-related information
+            
+            if (m.getAnnotation(InitiatesWorkflow.class) != null) {
+                initiatesWorkflow = true;
+                completesWorkflow = false;
+                workflowName = m.getAnnotation(InitiatesWorkflow.class).value();
+            } else if (m.getAnnotation(CompletesWorkflow.class) != null) {
+                initiatesWorkflow = false;
+                completesWorkflow = true;
+                workflowName = m.getAnnotation(CompletesWorkflow.class).value();
+            } else if (m.getAnnotation(ResumesWorkflow.class) != null) {
+                initiatesWorkflow = false;
+                completesWorkflow = false;
+                workflowName = m.getAnnotation(ResumesWorkflow.class).value();
+            }
+            
+            // Determine if the handler method matches the scan result
+            
+            Class<?>[] parameterTypes = m.getParameterTypes();
+            int expectedParameterCount = scanResult.getParameterTypes().size();
+            
+            if (scanResult.getMethodName().equals(m.getName()) && expectedParameterCount == parameterTypes.length) {
+                if (parameterTypes.length == 1 && !hasAdditionalParams(m)) {
+                    handlerMethod = m;
+                    return;
+                } else if (parameterTypes.length == 2 && !hasNamedParams(m)) {
+                    handlerMethod = m;
+                    formClass = parameterTypes[1];
+                    return;
+                } else if (expectedParameterCount == parameterTypes.length) {
+                    parameterDescriptors = new ArrayList<ParameterDescriptor>(expectedParameterCount - 1);
+                    
+                    for (int i = 1; i < parameterTypes.length; i++) {
+                        Class<?> expectedType = scanResult.getParameterTypes().get(i);
+                        Class<?> actualType = parameterTypes[i];
+                        Annotation[] annotations = m.getParameterAnnotations()[i];
+                        
+                        if (expectedType == actualType) {
+                            try {
+                                ParameterDescriptor parameterDescriptor;
+                                parameterDescriptor = ParameterDescriptor.createIfApplicable(actualType, annotations);
+                                parameterDescriptors.add(parameterDescriptor);
+                            } catch (InvalidParamException ex) {
+                                throw new InvalidHandlerException(ex);
                             }
-
-                            paramDescriptors.add(descriptor);
-                        }
+                        }                        
                     }
-                } catch (InvalidParamException ex) {
-                    String message = String.format("%s is an invalid handler method", m);
-                    throw new InvalidHandlerException(message, ex);
-                }
-                
-                // Once again, account for the HandlerContext as the 0th argument
-                
-                if (paramDescriptors.size() != paramCount - 1) {
-                    paramDescriptors = Collections.emptyList();
-                }
-                
-                // Now, if the parameters weren't all marked as being named @Params,
-                // treat an additional argument as a form
-                
-                if (paramDescriptors.isEmpty() && paramCount == 2) {
-                    formClass = handlerMethod.getParameterTypes()[1];
-                }
-
-                if (m.getAnnotation(InitiatesWorkflow.class) != null) {
-                    initiatesWorkflow = true;
-                    completesWorkflow = false;
-                    workflowName = m.getAnnotation(InitiatesWorkflow.class).value();
-                } else if (m.getAnnotation(CompletesWorkflow.class) != null) {
-                    initiatesWorkflow = false;
-                    completesWorkflow = true;
-                    workflowName = m.getAnnotation(CompletesWorkflow.class).value();
-                } else if (m.getAnnotation(ResumesWorkflow.class) != null) {
-                    initiatesWorkflow = false;
-                    completesWorkflow = false;
-                    workflowName = m.getAnnotation(ResumesWorkflow.class).value();
+                    
+                    if (parameterDescriptors.size() == expectedParameterCount - 1) {
+                        handlerMethod = m;
+                        return;
+                    } else {
+                        parameterDescriptors.clear();
+                    }
                 }
             }
         }
         
         if (handlerMethod == null) {
-            throw new IllegalStateException(String.format("Unable to find handler method for %s", identifier.getUri()));
+            throw new InvalidHandlerException(String.format("Unable to find handler method for %s", scanResult.getUri()));
         }
     }
 
+    private boolean hasAdditionalParams(Method m) {
+        return m.getParameterTypes().length > 1;
+    }
+    
+    @SuppressWarnings("unused")
+    private boolean hasNamedParams(Method m) {
+        Annotation[][] annotations = m.getParameterAnnotations();
+        
+        for (int i = 1; i < annotations.length; i++) {
+            for (int j = 0; j < annotations[i].length; j++) {
+                if (annotations[i][j].annotationType() == Param.class) {
+                    continue;
+                }
+            }
+            return  false;
+        }
+        
+        return true;
+    }
+    
     @Override
     public URIPattern getPattern() {
         return pattern;
@@ -227,8 +250,8 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     }
 
     @Override
-    public List<ParamDescriptor> getParamDescriptors() {
-        return paramDescriptors;
+    public List<ParameterDescriptor> getParamDescriptors() {
+        return parameterDescriptors;
     }
 
     public boolean isCompletesWorkflow() {
@@ -239,13 +262,13 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         return initiatesWorkflow;
     }
     
-    public static class ParamDescriptor {
+    public static class ParameterDescriptor {
         
         private Class<?> type;
         private String name;
         private Class<? extends StringParamConverter<?>> converter;
         
-        public ParamDescriptor(Class<?> type, String name) {
+        public ParameterDescriptor(Class<?> type, String name) {
             this.type = type;
             this.name = name;
         }
@@ -274,10 +297,10 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
             this.type = type;
         }
         
-        private static ParamDescriptor createIfApplicable(Class<?> type, Annotation[] annotations) 
+        private static ParameterDescriptor createIfApplicable(Class<?> paramType, Annotation[] annotations) 
                 throws InvalidParamException {
             
-            ParamDescriptor descriptor = null;
+            ParameterDescriptor descriptor = null;
             
             for (int i = 0; i < annotations.length; i++) {
                 Class<?> annotationType = annotations[i].annotationType();
@@ -291,7 +314,7 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
                     } 
                     
                     if (name != null) {
-                        descriptor = new ParamDescriptor(type, name);
+                        descriptor = new ParameterDescriptor(paramType, name);
                         
                         if (!param.converter().equals(PassThroughParamConverter.class)) {
                             descriptor.setConverter(param.converter());

@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +52,7 @@ public class MapPopulatorTest {
     private Locale locale;
     private Map<String, String> uriParams;
     private Map<String, String> requestParams;
-    private List<ParamDescriptor> paramDescriptors;
+    private List<ParameterDescriptor> paramDescriptors;
 
     private MapPopulator populator;
     
@@ -65,7 +65,7 @@ public class MapPopulatorTest {
         locale = Locale.getDefault();
         uriParams = new HashMap<String, String>();
         requestParams = new HashMap<String, String>();
-        paramDescriptors = new ArrayList<ParamDescriptor>();
+        paramDescriptors = new ArrayList<ParameterDescriptor>();
         
         context.checking(new Expectations() {{
             allowing(request).getLocale();
@@ -92,8 +92,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withURIParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptor(String.class, "one"));
-        paramDescriptors.add(new ParamDescriptor(String.class, "two"));
+        paramDescriptors.add(new ParameterDescriptor(String.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(String.class, "two"));
         
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
@@ -110,8 +110,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withRequestParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptor(String.class, "one"));
-        paramDescriptors.add(new ParamDescriptor(String.class, "two"));
+        paramDescriptors.add(new ParameterDescriptor(String.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(String.class, "two"));
         
         requestParams.put("one", "cat");
         requestParams.put("two", "possum");
@@ -128,8 +128,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withURIParamsOverridingRequestParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptor(String.class, "one"));
-        paramDescriptors.add(new ParamDescriptor(String.class, "two"));
+        paramDescriptors.add(new ParameterDescriptor(String.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(String.class, "two"));
         
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
@@ -149,8 +149,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withImplicitConvertedURIParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptor(Integer.class, "one"));
-        paramDescriptors.add(new ParamDescriptor(Double.class, "two"));
+        paramDescriptors.add(new ParameterDescriptor(Integer.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(Double.class, "two"));
         
         uriParams.put("one", "1");
         uriParams.put("two", "2.0");
@@ -167,8 +167,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withImplicitConvertedRequestParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptor(Integer.class, "one"));
-        paramDescriptors.add(new ParamDescriptor(Double.class, "two"));
+        paramDescriptors.add(new ParameterDescriptor(Integer.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(Double.class, "two"));
         
         requestParams.put("one", "1");
         requestParams.put("two", "2.0");

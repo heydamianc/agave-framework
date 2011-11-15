@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.exception.InvalidHandlerException;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -69,9 +69,9 @@ public interface HandlerMethodDescriptor extends Comparable<HandlerMethodDescrip
     
     /**
      * Locates annotated handler methods to field requests with
-     * @param identifier
+     * @param scanResult
      */
-    public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) throws InvalidHandlerException;
+    public void locateAnnotatedHandlerMethods(ScanResult scanResult) throws InvalidHandlerException;
     
     /**
      * Gets the {@link agave.internal.URIPattern URIPattern} that this {@code HandlerDescriptor} describes.
@@ -103,7 +103,7 @@ public interface HandlerMethodDescriptor extends Comparable<HandlerMethodDescrip
      */
     public String getWorkflowName();
 
-    public List<ParamDescriptor> getParamDescriptors();
+    public List<ParameterDescriptor> getParamDescriptors();
     
     public boolean initiatesWorkflow();
 

@@ -25,8 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
+import java.util.List;
 
 import co.cdev.agave.HttpMethod;
 
@@ -34,7 +33,7 @@ import co.cdev.agave.HttpMethod;
  * Used internally when scanning for handlers.  A HandlerIdentifier is pieced together piece by piece
  * until the handler method is identified with a valid URI pattern.
  */
-public interface HandlerIdentifier {
+public interface ScanResult {
 
     public void setUri(String uri);
 
@@ -52,9 +51,8 @@ public interface HandlerIdentifier {
 
     public String getMethodName();
     
-    public Collection<Class<?>> getParamTypes();
+    public List<Class<?>> getParameterTypes();
     
-    public void setArgumentTypes(Collection<Class<?>> paramTypes);
+    public void setParameterTypes(List<Class<?>> parameterTypes);
     
-    public boolean matches(Method method);
 }

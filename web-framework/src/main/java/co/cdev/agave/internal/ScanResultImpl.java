@@ -25,11 +25,8 @@
  */
 package co.cdev.agave.internal;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import co.cdev.agave.HttpMethod;
 
@@ -40,32 +37,32 @@ import co.cdev.agave.HttpMethod;
  * {@code className} and {@code methodName} property come from the handler method that has been
  * identified.
  */
-public final class HandlerIdentifierImpl implements HandlerIdentifier {
+public final class ScanResultImpl implements ScanResult {
 
     private String uri;
     private HttpMethod method;
     private String className;
     private String methodName;
-    private Collection<Class<?>> argumentTypes;
+    private List<Class<?>> parameterTypes;
 
-    public HandlerIdentifierImpl() {
+    public ScanResultImpl() {
     	this(null, null, null);
     }
 
-    public HandlerIdentifierImpl(String uri, String className, String methodName) {
+    public ScanResultImpl(String uri, String className, String methodName) {
         this(uri, HttpMethod.ANY, className, methodName);
     }
     
-    public HandlerIdentifierImpl(String uri, HttpMethod method, String className, String methodName) {
+    public ScanResultImpl(String uri, HttpMethod method, String className, String methodName) {
         this(uri, method, className, methodName, new ArrayList<Class<?>>());
     }
     
-    public HandlerIdentifierImpl(String uri, HttpMethod method, String className, String methodName, Collection<Class<?>> argumentTypes) {
+    public ScanResultImpl(String uri, HttpMethod method, String className, String methodName, List<Class<?>> parameterTypes) {
     	setUri(uri);
     	setMethod(method);
         setClassName(className);
         setMethodName(methodName);
-        setArgumentTypes(argumentTypes);
+        setParameterTypes(parameterTypes);
     }
 
     @Override
@@ -109,40 +106,13 @@ public final class HandlerIdentifierImpl implements HandlerIdentifier {
     }
 
     @Override
-    public Collection<Class<?>> getParamTypes() {
-        return argumentTypes;
+    public List<Class<?>> getParameterTypes() {
+        return parameterTypes;
     }
 
     @Override
-    public void setArgumentTypes(Collection<Class<?>> paramTypes) {
-        this.argumentTypes = paramTypes;
-    }
-    
-    @Override
-    public boolean matches(Method method) {
-        boolean matches = method.getName().equals(this.getMethodName());
-        
-        Map<Class<?>, Boolean> arguments = new HashMap<Class<?>, Boolean>();
-        
-        if (argumentTypes != null) {
-            for (Class<?> argumentType : argumentTypes) {
-                arguments.put(argumentType, Boolean.FALSE);
-            }
-        }
-        
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        
-        if (parameterTypes.length > 1) {
-            for (int i = 1; i < parameterTypes.length; i++) {
-                arguments.put(parameterTypes[i], arguments.containsKey(parameterTypes[i]));
-            }
-        }
-        
-        for (Boolean expected : arguments.values()) {
-            matches &= expected;
-        }
-        
-        return matches;
+    public void setParameterTypes(List<Class<?>> paramTypes) {
+        this.parameterTypes = paramTypes;
     }
 
 }

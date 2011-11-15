@@ -48,16 +48,16 @@ public class MethodScanner extends EmptyVisitor {
         desirableAnnotations.add(Type.getDescriptor(Route.class));
     }
     
-    private Collection<HandlerIdentifier> handlerIdentifiers;
+    private Collection<ScanResult> scanResults;
     private String handlerClassName;
     private String handlerMethodName;
     private String handlerMethodDescriptor;
 
-    public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers,
+    public MethodScanner(Collection<ScanResult> scanResults,
                          String handlerClassName, 
                          String handlerMethodName,
                          String handlerMethodDescriptor) {
-        this.handlerIdentifiers = handlerIdentifiers;
+        this.scanResults = scanResults;
         this.handlerClassName = handlerClassName;
         this.handlerMethodName = handlerMethodName;
         this.handlerMethodDescriptor = handlerMethodDescriptor;
@@ -67,7 +67,7 @@ public class MethodScanner extends EmptyVisitor {
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         AnnotationVisitor annotationVisitor = null;
         if (visible && desirableAnnotations.contains(desc)) {
-            annotationVisitor = new AnnotationScanner(handlerIdentifiers,
+            annotationVisitor = new AnnotationScanner(scanResults,
                     handlerClassName, handlerMethodName,
                     handlerMethodDescriptor, desc);
         }

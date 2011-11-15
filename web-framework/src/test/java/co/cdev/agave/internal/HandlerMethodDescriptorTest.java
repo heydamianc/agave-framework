@@ -25,6 +25,8 @@
  */
 package co.cdev.agave.internal;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jmock.Expectations;
@@ -33,7 +35,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import co.cdev.agave.HandlerContext;
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
 
 
@@ -54,28 +58,30 @@ public class HandlerMethodDescriptorTest {
     
     @Test
     public void testConstructor() throws Exception {
-        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
         Assert.assertNotNull(a);
         Assert.assertNotNull(a.getPattern());
     }
     
     @Test
     public void testLocateAnnotatedHandlerMethods() throws Exception {
-    	HandlerIdentifier identifier = new HandlerIdentifierImpl("/login", cls, met);
-    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(identifier);
-    	a.locateAnnotatedHandlerMethods(identifier);
+    	ScanResult scanResult = new ScanResultImpl("/login", cls, met);
+    	scanResult.setParameterTypes(Arrays.asList(new Class<?>[] {HandlerContext.class, LoginForm.class}));
     	
-    	Assert.assertNotNull(a.getFormClass());
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(scanResult);
+    	a.locateAnnotatedHandlerMethods(scanResult);
+    	
+    	Assert.assertEquals(LoginForm.class, a.getFormClass());
     }
 
     @Test
     public void testEquals() throws Exception {
-        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
-        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
-        HandlerMethodDescriptor c = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/notLogin", cls, met));
-        HandlerMethodDescriptor d = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
-        HandlerMethodDescriptor e = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
-        HandlerMethodDescriptor f = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.ANY, cls, met));
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
+        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
+        HandlerMethodDescriptor c = new HandlerMethodDescriptorImpl(new ScanResultImpl("/notLogin", cls, met));
+        HandlerMethodDescriptor d = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
+        HandlerMethodDescriptor e = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met));
+        HandlerMethodDescriptor f = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.ANY, cls, met));
         
         Assert.assertEquals(a, b);
         Assert.assertFalse(a.equals(c));
@@ -87,19 +93,19 @@ public class HandlerMethodDescriptorTest {
 
     @Test
     public void testCompareTo() throws Exception {
-        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
-        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
+        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
         Assert.assertEquals(0, a.compareTo(b));
         
-        a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/a", cls, met));
-        b = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/b", cls, met));
+        a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/a", cls, met));
+        b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/b", cls, met));
         Assert.assertEquals(-1, a.compareTo(b));
         Assert.assertEquals(1, b.compareTo(a));
     }
     
     @Test
     public void testMatches_withNullRequest() throws Exception {
-    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
     	Assert.assertFalse(a.matches(null));
     }
     
@@ -110,7 +116,7 @@ public class HandlerMethodDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/login"));
     	}});
     	
-    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
     	Assert.assertTrue(a.matches(request));
     }
     
@@ -121,7 +127,7 @@ public class HandlerMethodDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/login"));
     	}});
     	
-    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
     	Assert.assertTrue(a.matches(request));
     }
     
@@ -132,7 +138,7 @@ public class HandlerMethodDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/login"));
     	}});
     	
-    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.POST, cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met));
     	Assert.assertFalse(a.matches(request));
     }
 
@@ -143,7 +149,7 @@ public class HandlerMethodDescriptorTest {
     		allowing(request).getServletPath(); will(returnValue("/logout"));
     	}});
     	
-    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/login", HttpMethod.GET, cls, met));
+    	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
     	Assert.assertFalse(a.matches(request));
     }
     

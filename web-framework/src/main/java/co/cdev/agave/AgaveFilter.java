@@ -61,10 +61,9 @@ import co.cdev.agave.internal.DestinationImpl;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
 import co.cdev.agave.internal.HandlerFactoryImpl;
-import co.cdev.agave.internal.HandlerIdentifier;
 import co.cdev.agave.internal.HandlerMethodDescriptor;
 import co.cdev.agave.internal.HandlerMethodDescriptorImpl;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParamDescriptor;
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 import co.cdev.agave.internal.HandlerScanner;
@@ -73,6 +72,7 @@ import co.cdev.agave.internal.MapPopulatorImpl;
 import co.cdev.agave.internal.MultipartRequestImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
+import co.cdev.agave.internal.ScanResult;
 import co.cdev.agave.internal.URIParameterFormPopulator;
 
 /**
@@ -355,7 +355,7 @@ public class AgaveFilter implements Filter {
                 if (descriptor.getParamDescriptors() != null && !descriptor.getParamDescriptors().isEmpty()) {
                     configuration.append(String.format("    Params:\n"));
                     
-                    for (ParamDescriptor param : descriptor.getParamDescriptors()) {
+                    for (ParameterDescriptor param : descriptor.getParamDescriptors()) {
                         configuration.append(String.format("      * %s - %s (Converter: %s)\n", 
                                 param.getType().getName(),
                                 param.getName(),
@@ -554,7 +554,7 @@ public class AgaveFilter implements Filter {
             // from either the URI path or the request params.  URI params override request params.
             
             LinkedHashMap<String, Object> arguments = null;
-            List<ParamDescriptor> paramDescriptors = descriptor.getParamDescriptors();
+            List<ParameterDescriptor> paramDescriptors = descriptor.getParamDescriptors();
             
             if (formInstance == null && !paramDescriptors.isEmpty()) {
                 
@@ -567,7 +567,7 @@ public class AgaveFilter implements Filter {
                 
                 // Establish the order of the parameter so the params can be looked up
                 
-                for (ParamDescriptor paramDescriptor : paramDescriptors) {
+                for (ParameterDescriptor paramDescriptor : paramDescriptors) {
                     String value = uriValues.get(paramDescriptor.getName());
                     
                     if (value == null) {
@@ -756,12 +756,12 @@ public class AgaveFilter implements Filter {
                     FileInputStream nodeIn = new FileInputStream(node);
                     try {
                         ClassReader classReader = new ClassReader(nodeIn);
-                        Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
-                        classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE);
+                        Collection<ScanResult> scanResults = new ArrayList<ScanResult>();
+                        classReader.accept(new HandlerScanner(scanResults), ClassReader.SKIP_CODE);
 
-                        for (HandlerIdentifier handlerIdentifier : handlerIdentifiers) {
-                            HandlerMethodDescriptor descriptor = new HandlerMethodDescriptorImpl(handlerIdentifier);
-                            descriptor.locateAnnotatedHandlerMethods(handlerIdentifier);
+                        for (ScanResult scanResult : scanResults) {
+                            HandlerMethodDescriptor descriptor = new HandlerMethodDescriptorImpl(scanResult);
+                            descriptor.locateAnnotatedHandlerMethods(scanResult);
                             handlerRegistry.addDescriptor(descriptor);
 
                             if (lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext())) {

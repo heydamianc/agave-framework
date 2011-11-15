@@ -86,7 +86,7 @@ public class SampleHandler {
     
     @Route("/overloaded/${param}")
     public void overloaded(HandlerContext context, @Param("param") String param) {
-        context.getRequest().setAttribute("overloadedWithAdditionalParams", Boolean.TRUE);
+        context.getRequest().setAttribute("overloadedWithAdditionalParams", param);
     }
     
 }

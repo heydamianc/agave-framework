@@ -37,12 +37,12 @@ import org.objectweb.asm.commons.EmptyVisitor;
  */
 public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
 
-    Collection<HandlerIdentifier> handlerIdentifiers;
+    Collection<ScanResult> scanResults;
     String className;
 
-    public HandlerScanner(Collection<HandlerIdentifier> handlerIdentifiers) {
+    public HandlerScanner(Collection<ScanResult> scanResults) {
         super();
-        this.handlerIdentifiers = handlerIdentifiers;
+        this.scanResults = scanResults;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
         MethodVisitor methodScanner = null;
         
         if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            methodScanner = new MethodScanner(handlerIdentifiers, className, name, desc);
+            methodScanner = new MethodScanner(scanResults, className, name, desc);
         }
         
         return methodScanner;

@@ -37,19 +37,19 @@ import org.objectweb.asm.Opcodes;
 
 public class HandlerScannerTest {
     
-    Collection<HandlerIdentifier> handlerIdentifiers = new ArrayList<HandlerIdentifier>();
+    Collection<ScanResult> scanResults = new ArrayList<ScanResult>();
     
     @Test
     public void testVisit() throws Exception {
-        HandlerScanner scanner = new HandlerScanner(handlerIdentifiers);
+        HandlerScanner scanner = new HandlerScanner(scanResults);
         scanner.visit(1, Opcodes.ACC_PUBLIC, "className", "", "", new String[] {});
         Assert.assertEquals("className", scanner.className);
         
-        scanner = new HandlerScanner(handlerIdentifiers);
+        scanner = new HandlerScanner(scanResults);
         scanner.visit(1, Opcodes.ACC_PROTECTED, "className", "", "", new String[] {});
         Assert.assertNull(scanner.className);
         
-        scanner = new HandlerScanner(handlerIdentifiers);
+        scanner = new HandlerScanner(scanResults);
         scanner.visit(1, Opcodes.ACC_PRIVATE, "className", "", "", new String[] {});
         Assert.assertNull(scanner.className);
     }
@@ -60,10 +60,10 @@ public class HandlerScannerTest {
             getClass().getClassLoader().getResourceAsStream("co/cdev/agave/sample/SampleHandler.class");
         try {
             ClassReader classReader = new ClassReader(sampleStream);
-            handlerIdentifiers = new ArrayList<HandlerIdentifier>();
-            classReader.accept(new HandlerScanner(handlerIdentifiers), ClassReader.SKIP_CODE );
-            HandlerIdentifier hi = null;
-            for (HandlerIdentifier identifier : handlerIdentifiers) {
+            scanResults = new ArrayList<ScanResult>();
+            classReader.accept(new HandlerScanner(scanResults), ClassReader.SKIP_CODE );
+            ScanResult hi = null;
+            for (ScanResult identifier : scanResults) {
                 if (identifier.getUri().equals("/login")) {
                     hi = identifier;
                 }
