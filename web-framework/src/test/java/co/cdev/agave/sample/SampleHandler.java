@@ -25,12 +25,12 @@
  */
 package co.cdev.agave.sample;
 
-import co.cdev.agave.HandlerContext;
-import co.cdev.agave.Param;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import co.cdev.agave.HandlerContext;
+import co.cdev.agave.Param;
 import co.cdev.agave.Route;
 import co.cdev.agave.conversion.IntegerParamConverter;
 import co.cdev.agave.exception.AgaveException;
@@ -78,5 +78,15 @@ public class SampleHandler {
         context.getRequest().setAttribute("something", something);
         context.getRequest().setAttribute("aNumber", aNumber);
     }
-
+    
+    @Route("/overloaded")
+    public void overloaded(HandlerContext context) {
+        context.getRequest().setAttribute("overloadedWithNoAdditionalParams", Boolean.TRUE);
+    }
+    
+    @Route("/overloaded/${param}")
+    public void overloaded(HandlerContext context, @Param("param") String param) {
+        context.getRequest().setAttribute("overloadedWithAdditionalParams", Boolean.TRUE);
+    }
+    
 }

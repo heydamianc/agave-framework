@@ -25,6 +25,8 @@
  */
 package co.cdev.agave;
 
+import java.io.File;
+
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,9 +34,8 @@ import org.junit.Test;
 import co.cdev.agave.internal.HandlerMethodDescriptor;
 import co.cdev.agave.sample.AliasedForm;
 import co.cdev.agave.sample.LoginForm;
-import co.cdev.agave.sample.SimpleHandler;
 import co.cdev.agave.sample.SampleHandler;
-import java.io.File;
+import co.cdev.agave.sample.SimpleHandler;
 
 
 /**

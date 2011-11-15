@@ -65,6 +65,7 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         pattern = new URIPatternImpl(identifier.getUri());
         method = identifier.getMethod();
         handlerClass = Class.forName(identifier.getClassName());
+        paramDescriptors = Collections.emptyList();
     }
 
     /**
@@ -81,7 +82,7 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     @Override
     public void locateAnnotatedHandlerMethods(HandlerIdentifier identifier) throws InvalidHandlerException {
         for (Method m : handlerClass.getMethods()) {
-            if (identifier.getMethodName().equals(m.getName())) {
+            if (identifier.matches(m)) {
                 handlerMethod = m;
                 
                 int paramCount = handlerMethod.getParameterTypes().length;
@@ -139,6 +140,10 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
                     workflowName = m.getAnnotation(ResumesWorkflow.class).value();
                 }
             }
+        }
+        
+        if (handlerMethod == null) {
+            throw new IllegalStateException(String.format("Unable to find handler method for %s", identifier.getUri()));
         }
     }
 
@@ -201,6 +206,7 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         }
         HandlerMethodDescriptor desc = (HandlerMethodDescriptor) that;
         boolean equal = pattern.equals(desc.getPattern()) && method == desc.getMethod();
+        
         return equal;
     }
 
@@ -215,6 +221,11 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
                 && pattern.matches(request);
     }
     
+    @Override
+    public String toString() {
+        return "HandlerMethodDescriptorImpl [pattern=" + pattern + ", method=" + method + "]";
+    }
+
     @Override
     public List<ParamDescriptor> getParamDescriptors() {
         return paramDescriptors;

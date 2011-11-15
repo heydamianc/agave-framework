@@ -51,31 +51,52 @@ public class HandlerRegistryTest {
 
     @Test(expected = DuplicateDescriptorException.class)
     public void testAddDescriptor() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/pattern", 
+                SampleHandler.class.getName(), 
+                "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/pattern", 
+                SampleHandler.class.getName(), 
+                "login")));
     }
 
     @Test
     public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/pattern", 
+                HttpMethod.GET, 
+                SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(
+                new HandlerIdentifierImpl("/pattern", HttpMethod.POST, 
+                SampleHandler.class.getName(), 
+                "login")));
 
         Assert.assertEquals(2, registry.getDescriptors().size());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAddToUnmodifiable() throws Exception {
-        registry.getDescriptors().add(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", SampleHandler.class.getName(), "login")));
+        registry.getDescriptors().add(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/pattern", 
+                SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testMatches() throws Exception {
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/some/path", SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl("/other/path", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(
+                new HandlerIdentifierImpl("/some/path", 
+                SampleHandler.class.getName(),
+                "login")));
+        
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/other/path", 
+                SampleHandler.class.getName(),
+                "login")));
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath();
             will(returnValue("/some/path"));
+            
             allowing(request).getMethod();
             will(returnValue("GET"));
         }});
@@ -84,4 +105,55 @@ public class HandlerRegistryTest {
         Assert.assertNotNull(descriptor);
         Assert.assertEquals("/some/path", descriptor.getPattern().toString());
     }
+    
+    @Test
+    public void testMatches_withOverloadedHandlerDescriptors() throws Exception {
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/overloaded", 
+                SampleHandler.class.getName(),
+                "overloaded")));
+        
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/overloaded/${param}", 
+                SampleHandler.class.getName(),
+                "overloaded")));
+
+        context.checking(new Expectations() {{
+            allowing(request).getServletPath();
+            will(returnValue("/overloaded/blah"));
+            
+            allowing(request).getMethod();
+            will(returnValue("GET"));
+        }});
+        
+        HandlerMethodDescriptor descriptor = registry.findMatch(request);
+        Assert.assertNotNull(descriptor);
+        Assert.assertEquals("/overloaded/${param}", descriptor.getPattern().toString());
+    }
+        
+    @Test
+    public void testMatches_withOverloadedHandlerDescriptors2() throws Exception {
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/overloaded/${param}", 
+                SampleHandler.class.getName(),
+                "overloaded")));
+        
+        registry.addDescriptor(new HandlerMethodDescriptorImpl(new HandlerIdentifierImpl(
+                "/overloaded", 
+                SampleHandler.class.getName(),
+                "overloaded")));
+        
+        context.checking(new Expectations() {{
+            allowing(request).getServletPath();
+            will(returnValue("/overloaded"));
+            
+            allowing(request).getMethod();
+            will(returnValue("GET"));
+        }});
+        
+        HandlerMethodDescriptor descriptor = registry.findMatch(request);
+        Assert.assertNotNull(descriptor);
+        Assert.assertEquals("/overloaded", descriptor.getPattern().toString());        
+    }
+    
 }

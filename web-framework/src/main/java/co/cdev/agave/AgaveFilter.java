@@ -74,7 +74,6 @@ import co.cdev.agave.internal.MultipartRequestImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
 import co.cdev.agave.internal.URIParameterFormPopulator;
-import co.cdev.agave.logging.SingleLineLogger;
 
 /**
  * <p>
@@ -116,7 +115,7 @@ import co.cdev.agave.logging.SingleLineLogger;
  */
 public class AgaveFilter implements Filter {
 
-    private static final Logger LOGGER = SingleLineLogger.forClass(AgaveFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
     private static final String WORKFLOW_HANDLER_SUFFIX = "-handler";
     private static final String WORKFLOW_FORM_SUFFIX = "-form";
     
@@ -333,6 +332,43 @@ public class AgaveFilter implements Filter {
             throw new IllegalStateException(message.toString());
         }
         LOGGER.log(Level.INFO, "{0} successfully initialized", getClass().getSimpleName());
+        
+        
+        if (LOGGER.isLoggable(Level.FINE)) {
+            StringBuilder configuration = new StringBuilder();
+            configuration.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            configuration.append("Configuration:\n");
+            
+            for (HandlerMethodDescriptor descriptor : getHandlerRegistry().getDescriptors()) {
+                configuration.append(String.format("  %s\n", descriptor.getPattern()));
+                configuration.append(String.format("    Handler Method: %s\n", descriptor.getHandlerMethod()));
+                configuration.append(String.format("    HTTP Method: %s\n", descriptor.getMethod()));
+                
+                if (descriptor.getFormClass() != null) {
+                    configuration.append(String.format("    Form Class: %s\n", descriptor.getFormClass()));
+                }
+                
+                if (descriptor.getWorkflowName() != null) {
+                    configuration.append(String.format("    Workflow: %s\n", descriptor.getWorkflowName()));
+                }
+                
+                if (descriptor.getParamDescriptors() != null && !descriptor.getParamDescriptors().isEmpty()) {
+                    configuration.append(String.format("    Params:\n"));
+                    
+                    for (ParamDescriptor param : descriptor.getParamDescriptors()) {
+                        configuration.append(String.format("      * %s - %s (Converter: %s)\n", 
+                                param.getType().getName(),
+                                param.getName(),
+                                param.getConverter() == null ? null : param.getConverter().getName()
+                        ));
+                    }
+                }
+            }
+            
+            configuration.append("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            
+            LOGGER.log(Level.FINE, configuration.toString());
+        }
     }
 
     /**

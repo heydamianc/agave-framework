@@ -27,6 +27,7 @@ package co.cdev.agave.internal;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +86,7 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     @Override
     public HandlerMethodDescriptor findMatch(HttpServletRequest request) {
         for (HandlerMethodDescriptor descriptor : descriptors) {
-            if (descriptor.matches(request)) {
+            if (descriptor.matches(request)) {                
                 return descriptor;
             }
         }
@@ -96,4 +97,24 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     public Collection<HandlerMethodDescriptor> getDescriptors() {
         return Collections.unmodifiableCollection(descriptors);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("HandlerRegistryImpl [descriptors=");
+        
+        Iterator<HandlerMethodDescriptor> itr = descriptors.iterator();
+        
+         while (itr.hasNext()) {
+             s.append(itr.next().toString());
+             
+             if (itr.hasNext()) {
+                 s.append(",");
+             }
+         }
+        
+        s.append("]");
+        
+        return s.toString();
+    }
+    
 }

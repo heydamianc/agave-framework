@@ -25,6 +25,7 @@
  */
 package co.cdev.agave.internal;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.objectweb.asm.AnnotationVisitor;
@@ -53,6 +54,19 @@ public class AnnotationScanner implements AnnotationVisitor {
         this.handlerIdentifier.setClassName(className.replace("/", "."));
         this.handlerIdentifier.setMethodName(methodName);
         this.handlerIdentifier.setMethod(HttpMethod.ANY);
+        
+        Type[] argumentTypes = Type.getArgumentTypes(methodDescriptor);
+        Class<?>[] argumentClasses = new Class<?>[argumentTypes.length];
+        
+        for (int i = 0; i < argumentTypes.length; i++) {
+            try {
+                argumentClasses[i] = Class.forName(argumentTypes[i].getClassName());
+            } catch (ClassNotFoundException e) {
+                
+            }
+        }
+        
+        this.handlerIdentifier.setArgumentTypes(Arrays.asList(argumentClasses));
     }
 
     @Override

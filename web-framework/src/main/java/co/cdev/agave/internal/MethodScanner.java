@@ -54,8 +54,9 @@ public class MethodScanner extends EmptyVisitor {
     private String handlerMethodDescriptor;
 
     public MethodScanner(Collection<HandlerIdentifier> handlerIdentifiers,
-            String handlerClassName, String handlerMethodName,
-            String handlerMethodDescriptor) {
+                         String handlerClassName, 
+                         String handlerMethodName,
+                         String handlerMethodDescriptor) {
         this.handlerIdentifiers = handlerIdentifiers;
         this.handlerClassName = handlerClassName;
         this.handlerMethodName = handlerMethodName;

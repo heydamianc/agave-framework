@@ -25,16 +25,6 @@
  */
 package co.cdev.agave.guice;
 
-import co.cdev.agave.AgaveFilter;
-import co.cdev.agave.HandlerFactory;
-import co.cdev.agave.LifecycleHooks;
-import co.cdev.agave.logging.SingleLineLogger;
-import com.google.inject.AbstractModule;
-import com.google.inject.Binding;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,8 +34,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+
+import co.cdev.agave.AgaveFilter;
+import co.cdev.agave.HandlerFactory;
+import co.cdev.agave.LifecycleHooks;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Binding;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
 
 /**
  * Integrates Agave's handler and form creation into Guice's dependency injection mechanism.
@@ -56,7 +58,7 @@ public class AgaveInjectionFilter extends AgaveFilter {
 
     public static final String PARENT_INJECTOR = AgaveInjectionFilter.class.getName() + ".PARENT_INJECTOR";
     
-    private static final Logger LOGGER = SingleLineLogger.forClass(AgaveInjectionFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(AgaveInjectionFilter.class.getName());
     
     private final Set<Class<?>> handlerClasses;
     private InjectionHandlerFactory injectionHandlerFactory;

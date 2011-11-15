@@ -25,10 +25,12 @@
  */
 package co.cdev.agave;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
 import java.io.File;
 import java.net.URI;
+
 import javax.servlet.ServletContext;
+
+import co.cdev.agave.internal.HandlerMethodDescriptor;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>

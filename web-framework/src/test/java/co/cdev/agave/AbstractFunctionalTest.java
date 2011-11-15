@@ -25,14 +25,12 @@
  */
 package co.cdev.agave;
 
-import co.cdev.agave.internal.HandlerRegistryImpl;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -44,12 +42,14 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.servlet.http.HttpSession;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
+
+import co.cdev.agave.internal.HandlerRegistryImpl;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>

@@ -25,6 +25,9 @@
  */
 package co.cdev.agave.internal;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+
 import co.cdev.agave.HttpMethod;
 
 /**
@@ -48,4 +51,10 @@ public interface HandlerIdentifier {
     public void setMethodName(String methodName);
 
     public String getMethodName();
+    
+    public Collection<Class<?>> getParamTypes();
+    
+    public void setArgumentTypes(Collection<Class<?>> paramTypes);
+    
+    public boolean matches(Method method);
 }

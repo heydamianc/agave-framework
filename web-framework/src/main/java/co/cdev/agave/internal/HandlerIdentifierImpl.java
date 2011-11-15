@@ -25,6 +25,12 @@
  */
 package co.cdev.agave.internal;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import co.cdev.agave.HttpMethod;
 
 /**
@@ -40,20 +46,26 @@ public final class HandlerIdentifierImpl implements HandlerIdentifier {
     private HttpMethod method;
     private String className;
     private String methodName;
+    private Collection<Class<?>> argumentTypes;
 
     public HandlerIdentifierImpl() {
     	this(null, null, null);
     }
 
     public HandlerIdentifierImpl(String uri, String className, String methodName) {
-    	this(uri, HttpMethod.ANY, className, methodName);
+        this(uri, HttpMethod.ANY, className, methodName);
     }
     
     public HandlerIdentifierImpl(String uri, HttpMethod method, String className, String methodName) {
+        this(uri, method, className, methodName, new ArrayList<Class<?>>());
+    }
+    
+    public HandlerIdentifierImpl(String uri, HttpMethod method, String className, String methodName, Collection<Class<?>> argumentTypes) {
     	setUri(uri);
     	setMethod(method);
         setClassName(className);
         setMethodName(methodName);
+        setArgumentTypes(argumentTypes);
     }
 
     @Override
@@ -94,6 +106,43 @@ public final class HandlerIdentifierImpl implements HandlerIdentifier {
     @Override
     public String getMethodName() {
         return methodName;
+    }
+
+    @Override
+    public Collection<Class<?>> getParamTypes() {
+        return argumentTypes;
+    }
+
+    @Override
+    public void setArgumentTypes(Collection<Class<?>> paramTypes) {
+        this.argumentTypes = paramTypes;
+    }
+    
+    @Override
+    public boolean matches(Method method) {
+        boolean matches = method.getName().equals(this.getMethodName());
+        
+        Map<Class<?>, Boolean> arguments = new HashMap<Class<?>, Boolean>();
+        
+        if (argumentTypes != null) {
+            for (Class<?> argumentType : argumentTypes) {
+                arguments.put(argumentType, Boolean.FALSE);
+            }
+        }
+        
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        
+        if (parameterTypes.length > 1) {
+            for (int i = 1; i < parameterTypes.length; i++) {
+                arguments.put(parameterTypes[i], arguments.containsKey(parameterTypes[i]));
+            }
+        }
+        
+        for (Boolean expected : arguments.values()) {
+            matches &= expected;
+        }
+        
+        return matches;
     }
 
 }
