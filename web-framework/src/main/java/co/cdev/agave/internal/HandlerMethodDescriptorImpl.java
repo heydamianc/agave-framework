@@ -154,20 +154,18 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         return m.getParameterTypes().length > 1;
     }
     
-    @SuppressWarnings("unused")
     private boolean hasNamedParams(Method m) {
         Annotation[][] annotations = m.getParameterAnnotations();
         
         for (int i = 1; i < annotations.length; i++) {
             for (int j = 0; j < annotations[i].length; j++) {
                 if (annotations[i][j].annotationType() == Param.class) {
-                    continue;
+                    return true;
                 }
             }
-            return  false;
         }
         
-        return true;
+        return false;
     }
     
     @Override
@@ -220,22 +218,55 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     }
 
     @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (!(that instanceof HandlerMethodDescriptor)) {
-            return false;
-        }
-        HandlerMethodDescriptor desc = (HandlerMethodDescriptor) that;
-        boolean equal = pattern.equals(desc.getPattern()) && method == desc.getMethod();
-        
-        return equal;
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (completesWorkflow ? 1231 : 1237);
+        result = prime * result + ((handlerMethod == null) ? 0 : handlerMethod.hashCode());
+        result = prime * result + (initiatesWorkflow ? 1231 : 1237);
+        result = prime * result + ((method == null) ? 0 : method.hashCode());
+        result = prime * result + ((parameterDescriptors == null) ? 0 : parameterDescriptors.hashCode());
+        result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+        result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
+        return result;
     }
 
     @Override
-    public int hashCode() {
-        return pattern.hashCode() + method.name().hashCode();
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        HandlerMethodDescriptorImpl other = (HandlerMethodDescriptorImpl) obj;
+        if (completesWorkflow != other.completesWorkflow)
+            return false;
+        if (handlerMethod == null) {
+            if (other.handlerMethod != null)
+                return false;
+        } else if (!handlerMethod.equals(other.handlerMethod))
+            return false;
+        if (initiatesWorkflow != other.initiatesWorkflow)
+            return false;
+        if (method != other.method)
+            return false;
+        if (parameterDescriptors == null) {
+            if (other.parameterDescriptors != null)
+                return false;
+        } else if (!parameterDescriptors.equals(other.parameterDescriptors))
+            return false;
+        if (pattern == null) {
+            if (other.pattern != null)
+                return false;
+        } else if (!pattern.equals(other.pattern))
+            return false;
+        if (workflowName == null) {
+            if (other.workflowName != null)
+                return false;
+        } else if (!workflowName.equals(other.workflowName))
+            return false;
+        return true;
     }
 
     @Override
