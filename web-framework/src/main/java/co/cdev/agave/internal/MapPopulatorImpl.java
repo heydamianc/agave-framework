@@ -25,11 +25,13 @@
  */
 package co.cdev.agave.internal;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.ConversionException;
 import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
@@ -52,14 +54,17 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
         
         Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
         
-        @SuppressWarnings("unchecked")
-		Map<String, String> requestParams = request.getParameterMap();
+		@SuppressWarnings("unchecked")
+        Map<String, Object[]> requestParams = request.getParameterMap();
         
         for (ParameterDescriptor paramDescriptor : descriptor.getParamDescriptors()) {
             Object value = uriParams.get(paramDescriptor.getName());
             
             if (value == null) {
-                value = requestParams.get(paramDescriptor.getName());
+
+                // TODO TRY AND MAKE THIS SUPPORT ARRAYS AS WELL
+
+                value = requestParams.get(paramDescriptor.getName())[0];
             }
             
             if (value != null) {

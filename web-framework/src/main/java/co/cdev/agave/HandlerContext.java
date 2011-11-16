@@ -89,7 +89,5 @@ public class HandlerContext {
     public void setSession(HttpSession session) {
         this.session = session;
     }
-    
-    
-    
+
 }

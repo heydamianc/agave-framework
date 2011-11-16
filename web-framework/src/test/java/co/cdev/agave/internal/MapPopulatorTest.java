@@ -51,7 +51,7 @@ public class MapPopulatorTest {
     
     private Locale locale;
     private Map<String, String> uriParams;
-    private Map<String, String> requestParams;
+    private Map<String, String[]> requestParams;
     private List<ParameterDescriptor> paramDescriptors;
 
     private MapPopulator populator;
@@ -64,7 +64,7 @@ public class MapPopulatorTest {
         
         locale = Locale.getDefault();
         uriParams = new HashMap<String, String>();
-        requestParams = new HashMap<String, String>();
+        requestParams = new HashMap<String, String[]>();
         paramDescriptors = new ArrayList<ParameterDescriptor>();
         
         context.checking(new Expectations() {{
@@ -113,8 +113,8 @@ public class MapPopulatorTest {
         paramDescriptors.add(new ParameterDescriptor(String.class, "one"));
         paramDescriptors.add(new ParameterDescriptor(String.class, "two"));
         
-        requestParams.put("one", "cat");
-        requestParams.put("two", "possum");
+        requestParams.put("one", new String[] {"cat"});
+        requestParams.put("two", new String[] {"possum"});
         
         Map<String, Object> namedArguments = new HashMap<String, Object>();
         namedArguments.put("one", null);
@@ -134,8 +134,8 @@ public class MapPopulatorTest {
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
         
-        requestParams.put("one", "dog");
-        requestParams.put("two", "raccoon");
+        requestParams.put("one", new String[] {"dog"});
+        requestParams.put("two", new String[] {"raccoon"});
         
         Map<String, Object> namedArguments = new HashMap<String, Object>();
         namedArguments.put("one", null);
@@ -170,8 +170,8 @@ public class MapPopulatorTest {
         paramDescriptors.add(new ParameterDescriptor(Integer.class, "one"));
         paramDescriptors.add(new ParameterDescriptor(Double.class, "two"));
         
-        requestParams.put("one", "1");
-        requestParams.put("two", "2.0");
+        requestParams.put("one", new String[] {"1"});
+        requestParams.put("two", new String[] {"2.0"});
         
         Map<String, Object> namedArguments = new HashMap<String, Object>();
         namedArguments.put("one", null);
