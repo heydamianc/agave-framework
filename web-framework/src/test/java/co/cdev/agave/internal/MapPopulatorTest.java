@@ -25,18 +25,21 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -183,4 +186,19 @@ public class MapPopulatorTest {
         Assert.assertEquals(Double.valueOf(2.0), namedArguments.get("two"));
     }
     
+    @Test
+    public void testPopulate_withNullRequestParameters() throws Exception {
+        paramDescriptors.add(new ParameterDescriptor(Integer.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(Double.class, "two"));
+
+        requestParams.put("one", null);
+        requestParams.put("two", null);
+
+        Map<String, Object> namedArguments = new HashMap<String, Object>();
+        namedArguments.put("one", null);
+        namedArguments.put("two", null);
+
+        populator.populate(namedArguments);
+    }
+
 }

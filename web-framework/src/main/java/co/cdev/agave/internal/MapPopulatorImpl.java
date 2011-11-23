@@ -64,7 +64,11 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
 
                 // TODO TRY AND MAKE THIS SUPPORT ARRAYS AS WELL
 
-                value = requestParams.get(paramDescriptor.getName())[0];
+                String[] values = (String[]) requestParams.get(paramDescriptor.getName());
+
+                if (values != null && values.length > 0) {
+                    value = requestParams.get(paramDescriptor.getName())[0];
+                }
             }
             
             if (value != null) {
