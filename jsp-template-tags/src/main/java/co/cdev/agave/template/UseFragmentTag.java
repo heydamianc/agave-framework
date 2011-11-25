@@ -31,7 +31,7 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 
 /**
- * Injects a fragment of content into a templated page.  A JSP is intended to
+ * Inserts a fragment of content into a templated page.  A JSP is intended to
  * have one or multiple {@code <template:use />} tags so that the fragments can
  * be pulled from the request and injected into the page.
  *
