@@ -51,19 +51,21 @@ public final class Destinations {
      * Creates a new {@link Destination} within the deployed context that will be redirected to. 
      * 
      * @param path the desired destination path relative to the deployed context (eg: {@code /section/resource}}
+     * @param formatValues the values to use as replacements for the format string supplied in the path parameter
      * @return a constructed {@link Destination}
      */
-    public static Destination redirect(String path) {
-        return new DestinationImpl(path, true);
+    public static Destination redirect(String path, Object...formatValues) {
+        return new DestinationImpl(String.format(path, formatValues), true);
     }
 
     /**
      * Creates a new {@link Destination} within the deployed context that will be forwarded to.
      * 
-     * @param path the desired resource relative to the context path to forward to (eg: {@code /WEB-INF/jsp/index.jsp}) 
+     * @param path the desired resource relative to the context path to forward to (eg: {@code /WEB-INF/jsp/index.jsp})
+     * @param formatValues the values to use as replacements for the format string supplied in the path parameter 
      * @return a constructed {@link Destination}
      */
-    public static Destination forward(String path) {
-        return new DestinationImpl(path, false);
+    public static Destination forward(String path, Object...formatValues) {
+        return new DestinationImpl(String.format(path, formatValues), false);
     }
 }
