@@ -93,7 +93,16 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
                 }
             }
             
-            namedArguments.put(paramDescriptor.getName(), value);
+            if (value == null 
+                    && (paramDescriptor.getType() == int.class
+                    || paramDescriptor.getType() == long.class
+                    || paramDescriptor.getType() == short.class
+                    || paramDescriptor.getType() == float.class
+                    || paramDescriptor.getType() == double.class)) {
+                namedArguments.put(paramDescriptor.getName(), 0);
+            } else {
+                namedArguments.put(paramDescriptor.getName(), value);
+            }
         }
     }
     

@@ -199,6 +199,27 @@ public class MapPopulatorTest {
         namedArguments.put("two", null);
 
         populator.populate(namedArguments);
+        
+        Assert.assertEquals(null, namedArguments.get("one"));
+        Assert.assertEquals(null, namedArguments.get("two"));
+    }
+    
+    @Test
+    public void testPopulate_withNullRequestParametersForPrimitiveArguments() throws Exception {
+        paramDescriptors.add(new ParameterDescriptor(int.class, "one"));
+        paramDescriptors.add(new ParameterDescriptor(double.class, "two"));
+
+        requestParams.put("one", null);
+        requestParams.put("two", null);
+
+        Map<String, Object> namedArguments = new HashMap<String, Object>();
+        namedArguments.put("one", null);
+        namedArguments.put("two", null);
+
+        populator.populate(namedArguments);
+        
+        Assert.assertEquals(0, namedArguments.get("one"));
+        Assert.assertEquals(0, namedArguments.get("two"));
     }
 
 }
