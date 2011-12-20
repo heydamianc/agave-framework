@@ -25,8 +25,6 @@
  */
 package co.cdev.agave.internal;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -45,11 +43,11 @@ import co.cdev.agave.Part;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class MultipartParserImpl implements MultipartParser {
+public abstract class AbstractMultipartParser implements MultipartParser {
 
-    private static class CoupledLine {
-        private StringBuilder characters = new StringBuilder();
-        private List<Byte> bytes = new LinkedList<Byte>();
+    static class CoupledLine {
+        StringBuilder characters = new StringBuilder();
+        List<Byte> bytes = new LinkedList<Byte>();
 
         public void append(int i) {
             characters.append((char)i);
@@ -67,12 +65,12 @@ public class MultipartParserImpl implements MultipartParser {
     private static final Pattern OTHER_HEADER_PATTERN = Pattern.compile("(\\S+):\\s*(.+?)");
     
     private Map<String, Collection<String>> parameters;
-    private Map<String, Part> parts;
-    private String boundary;
-    private String eos;
-    private InputStream in;
+    protected Map<String, Part> parts;
+    protected String boundary;
+    protected String eos;
+    protected InputStream in;
     
-    public MultipartParserImpl(HttpServletRequest request) throws IOException {
+    public AbstractMultipartParser(HttpServletRequest request) throws IOException {
         parameters = new HashMap<String, Collection<String>>();
         parts = new HashMap<String, Part>();
         Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
@@ -99,13 +97,25 @@ public class MultipartParserImpl implements MultipartParser {
     }
 
     @Override
-    public void parseInput() throws IOException {
+    public void parseInput() throws Exception {
         try {
             while (true) {
                 Part part = new PartImpl();
                 readHeaders(part);
                 if (part.getFilename() != null) {
-                    if (readPart(part)) {
+                    String prefix = null;
+                    String suffix = null;
+                    
+                    Matcher matcher = FILENAME_PATTERN.matcher(part.getFilename());
+                    if (matcher.matches() && matcher.groupCount() >= 2) {
+                        prefix = matcher.group(1);
+                        suffix = (matcher.group(2).startsWith(".")) ? matcher.group(2) : '.' + matcher.group(2);
+                    } else {
+                        prefix = part.getName();
+                        suffix = DEFAULT_SUFFIX;
+                    }
+                    
+                    if (readPart(prefix, suffix, part)) {
                         break;
                     }
                 } else {
@@ -120,7 +130,7 @@ public class MultipartParserImpl implements MultipartParser {
         }
     }
     
-    public void readHeaders(Part part) throws IOException {
+    private void readHeaders(Part part) throws IOException {
         String line = null;
         while ((line = readLine(in)) != null) {
             line = line.trim();
@@ -171,7 +181,7 @@ public class MultipartParserImpl implements MultipartParser {
         return text.toString();
     }
     
-    private CoupledLine readCoupledLine(InputStream in) throws IOException {
+    protected CoupledLine readCoupledLine(InputStream in) throws IOException {
         CoupledLine line = new CoupledLine();
         
         int i = -1;
@@ -186,7 +196,7 @@ public class MultipartParserImpl implements MultipartParser {
         return line;
     }
     
-    public boolean readParameter(Part part) throws IOException {
+    private boolean readParameter(Part part) throws IOException {
         boolean end = false;
 
         StringBuilder parameterValue = new StringBuilder();
@@ -215,51 +225,11 @@ public class MultipartParserImpl implements MultipartParser {
         return end;
     }
     
-    public boolean readPart(Part part) throws IOException {
-        boolean end = false;
-
-        String prefix = null;
-        String suffix = null;
-        
-        Matcher matcher = FILENAME_PATTERN.matcher(part.getFilename());
-        if (matcher.matches() && matcher.groupCount() >= 2) {
-            prefix = matcher.group(1);
-            suffix = (matcher.group(2).startsWith(".")) ? matcher.group(2) : '.' + matcher.group(2);
-        } else {
-            prefix = part.getName();
-            suffix = DEFAULT_SUFFIX;
-        }
-        
-        File temporaryFile = File.createTempFile(prefix, suffix);
-        temporaryFile.deleteOnExit();
-        
-        FileOutputStream out = new FileOutputStream(temporaryFile);
-        
-        CoupledLine line = null;
-        while ((line = readCoupledLine(in)) != null) {
-            String text = line.characters.toString().trim();
-            
-            if (eos.equals(text)) {
-                end = true;
-                break;
-            }
-            
-            if (boundary.equals(text)) {
-                break;
-            }
-            
-            for (Byte b : line.bytes) {
-                out.write(b);
-            }
-        }
-        
-    	out.flush();
-        out.close();
-        part.setContents(temporaryFile);
-        parts.put(part.getName(), part);
-        return end;
-    }
-
+    protected abstract boolean readPart(String prefix, String suffix, Part part) throws Exception;
+    
+    /**
+     * Just making sure that this is closed... (see the finally block of the parseInput method as well)
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();

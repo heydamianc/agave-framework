@@ -68,7 +68,7 @@ public class MultipartParserTest {
                 }
             });
 
-            MultipartParserImpl parser = new MultipartParserImpl(request);
+            AbstractMultipartParser parser = new FilesystemMultipartParser(request);
             Assert.assertEquals("------WebKitFormBoundary4O7BAy0axyQ5Kkpu", parser.getBoundary());
         } finally {
             sampleStream.close();
@@ -94,7 +94,7 @@ public class MultipartParserTest {
                 }
             });
 
-            MultipartParser parser = new MultipartParserImpl(request);
+            MultipartParser parser = new FilesystemMultipartParser(request);
             parser.parseInput();
 
             Assert.assertNotNull(parser.getParameters());
@@ -129,7 +129,7 @@ public class MultipartParserTest {
                 }
             });
 
-            MultipartParser parser = new MultipartParserImpl(request);
+            MultipartParser parser = new FilesystemMultipartParser(request);
             parser.parseInput();
 
             Assert.assertNotNull(parser.getParts());

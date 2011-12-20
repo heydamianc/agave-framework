@@ -48,6 +48,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -57,7 +58,9 @@ import co.cdev.agave.exception.AgaveException;
 import co.cdev.agave.exception.DestinationException;
 import co.cdev.agave.exception.FormException;
 import co.cdev.agave.exception.HandlerException;
+import co.cdev.agave.internal.DefaultMultipartRequest;
 import co.cdev.agave.internal.DestinationImpl;
+import co.cdev.agave.internal.FilesystemMultipartParser;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
 import co.cdev.agave.internal.HandlerFactoryImpl;
@@ -69,7 +72,6 @@ import co.cdev.agave.internal.HandlerRegistryImpl;
 import co.cdev.agave.internal.HandlerScanner;
 import co.cdev.agave.internal.MapPopulator;
 import co.cdev.agave.internal.MapPopulatorImpl;
-import co.cdev.agave.internal.MultipartRequestImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
 import co.cdev.agave.internal.ScanResult;
@@ -484,8 +486,12 @@ public class AgaveFilter implements Filter {
             // Wraps the request if necessary so that the uploaded content can be accessed like
             // regular string parameters
             
-            if (MultipartRequestImpl.isMultipart(request)) {
-                request = new MultipartRequestImpl(request);
+            if (DefaultMultipartRequest.isMultipart(request)) {
+                try {
+                    request = wrapMultipartRequest(request);
+                } catch (Exception e) {
+                    throw new ServletException(e);
+                }
             }
 
             Object formInstance = null;
@@ -529,7 +535,7 @@ public class AgaveFilter implements Filter {
                     
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
-                    if (MultipartRequestImpl.isMultipart(request)) {
+                    if (DefaultMultipartRequest.isMultipart(request)) {
                         formPopulator = new RequestPartFormPopulator((MultipartRequest) request);
                         formPopulator.populate(formInstance);
                     }
@@ -725,6 +731,18 @@ public class AgaveFilter implements Filter {
         } else {
             chain.doFilter(req, resp);
         }
+    }
+    
+    /**
+     * Provides support for wrapping multipart requests. The returned wrapper should implement {@code MultipartRequest}. 
+     * 
+     * @param request the multipart request
+     * @return the wrapped multipart request 
+     * @throws Exception
+     */
+    protected HttpServletRequestWrapper wrapMultipartRequest(HttpServletRequest request) throws Exception {
+        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
+        return new DefaultMultipartRequest(request, parser);
     }
 
     /**

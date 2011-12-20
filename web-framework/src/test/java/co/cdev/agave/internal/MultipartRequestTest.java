@@ -74,7 +74,8 @@ public class MultipartRequestTest {
             }
         });
 
-        MultipartRequest multipartRequest = new MultipartRequestImpl(request);
+        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
+        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
         Assert.assertNotNull(multipartRequest);
         Assert.assertEquals("because", multipartRequest.getParameter("why"));
         Assert.assertEquals("forever", multipartRequest.getParameter("when"));
@@ -100,7 +101,8 @@ public class MultipartRequestTest {
             }
         });
 
-        MultipartRequest multipartRequest = new MultipartRequestImpl(request);
+        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
+        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
         Map<String, String[]> parameterMap = multipartRequest.getParameterMap();
 
         Assert.assertNotNull(parameterMap);
@@ -136,7 +138,8 @@ public class MultipartRequestTest {
             }
         });
 
-        MultipartRequest multipartRequest = new MultipartRequestImpl(request);
+        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
+        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
         Enumeration<String> parameterNames = multipartRequest.getParameterNames();
 
         while (parameterNames.hasMoreElements()) {
@@ -163,7 +166,8 @@ public class MultipartRequestTest {
             }
         });
 
-        MultipartRequest multipartRequest = new MultipartRequestImpl(request);
+        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
+        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
         Assert.assertArrayEquals(new String[]{"a", "b"}, multipartRequest.getParameterValues("a"));
         Assert.assertArrayEquals(new String[]{"1", "2"}, multipartRequest.getParameterValues("b"));
         Assert.assertArrayEquals(new String[]{"because"}, multipartRequest.getParameterValues("why"));

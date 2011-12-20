@@ -25,7 +25,6 @@
  */
 package co.cdev.agave.internal;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,21 +41,26 @@ import co.cdev.agave.MultipartRequest;
 import co.cdev.agave.Part;
 
 /**
+ * Wraps a multipart request and exposes the uploaded files in the request parameter map.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class MultipartRequestImpl extends HttpServletRequestWrapper implements MultipartRequest {
+public class DefaultMultipartRequest extends HttpServletRequestWrapper implements MultipartRequest {
 
-    private MultipartParser parser;
-
+    private final MultipartParser parser;
+    
     private Map<String, String[]> parameterMap;
 
-    public MultipartRequestImpl(HttpServletRequest request) throws IOException {
+    public DefaultMultipartRequest(HttpServletRequest request, MultipartParser parser) throws Exception {
         super(request);
-        try {
-            parser = new MultipartParserImpl(request);
-            parser.parseInput();
-        } finally {
-            request.getInputStream().close();
+        this.parser = parser;
+        
+        if (parser != null) {
+            try {
+                parser.parseInput();
+            } finally {
+                request.getInputStream().close();
+            }
         }
     }
 
