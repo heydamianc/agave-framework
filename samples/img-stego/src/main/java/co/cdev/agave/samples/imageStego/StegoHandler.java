@@ -31,7 +31,7 @@ import org.apache.commons.lang.RandomStringUtils;
 
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 import co.cdev.agave.Part;
 
@@ -41,12 +41,12 @@ public class StegoHandler {
     public static final String USER_SUBMITTED_IMAGE_DIR = "/img/submitted/";
 
     @Route("/")
-    public Destination welcome(HandlerContext handlerContext) throws Exception {
+    public Destination welcome(RoutingContext handlerContext) throws Exception {
         return Destinations.create("/WEB-INF/jsp/index.jsp");
     }
 
     @Route("/obscure")
-    public Destination obscure(HandlerContext handlerContext, StegoForm form) throws Exception {
+    public Destination obscure(RoutingContext handlerContext, StegoForm form) throws Exception {
         Part carrierPart = form.getCarrier();
         movePartContentsIntoAccessibleLocation(handlerContext, carrierPart);
         handlerContext.getRequest().setAttribute("filename",
@@ -65,7 +65,7 @@ public class StegoHandler {
     }
 
     @Route("/extract")
-    public Destination extract(HandlerContext handlerContext, StegoForm form) throws Exception {
+    public Destination extract(RoutingContext handlerContext, StegoForm form) throws Exception {
         Part carrierPart = form.getCarrier();
         movePartContentsIntoAccessibleLocation(handlerContext, carrierPart);
         handlerContext.getRequest().setAttribute("encodedFilename",
@@ -80,7 +80,7 @@ public class StegoHandler {
         return Destinations.forward("/WEB-INF/jsp/extracted.jsp");
     }
 
-    private void movePartContentsIntoAccessibleLocation(HandlerContext handlerContext, Part carrierPart) {
+    private void movePartContentsIntoAccessibleLocation(RoutingContext handlerContext, Part carrierPart) {
         String[] filenameParts = carrierPart.getFilename().split("\\.");
         String filename = carrierPart.getName() + "-" + RandomStringUtils.randomAlphanumeric(4) +
             "." + filenameParts[filenameParts.length - 1];

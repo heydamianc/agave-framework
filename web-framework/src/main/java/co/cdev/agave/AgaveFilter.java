@@ -409,10 +409,10 @@ public class AgaveFilter implements Filter {
      * {@link agave.InstanceCreator#createHandlerInstance Instantiates a
      * handler}.</li>
      * <li>
-     * Populates a new {@link HandlerContext}, or look up a previously created
+     * Populates a new {@link RoutingContext}, or look up a previously created
      * one if this handler method participates in a workflow.</li>
      * <li>
-     * Invokes the handler method with the populated {@link HandlerContext} and
+     * Invokes the handler method with the populated {@link RoutingContext} and
      * the form instance (if applicable).</li>
      * </ol>
      * 
@@ -470,7 +470,7 @@ public class AgaveFilter implements Filter {
         
         if (descriptor != null) {
             HttpSession session = request.getSession(true);
-            HandlerContext handlerContext = new HandlerContext(servletContext, request, response, session);
+            RoutingContext handlerContext = new RoutingContext(servletContext, request, response, session);
 
             if (lifecycleHooks.beforeFilteringRequest(descriptor, handlerContext)) {
                 return;

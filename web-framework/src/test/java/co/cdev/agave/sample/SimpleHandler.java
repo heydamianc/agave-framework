@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 
 /**
@@ -50,7 +50,7 @@ public class SimpleHandler {
      * @param loginForm an unused form object
      */        
     @Route("/test1")
-    public void test1(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+    public void test1(RoutingContext context, LoginForm loginForm) throws ServletException, IOException {
     	context.getRequest().setAttribute("x", "x");
     	context.getResponse().setStatus(400);
     }

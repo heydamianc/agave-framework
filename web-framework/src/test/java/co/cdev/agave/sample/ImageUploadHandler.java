@@ -26,7 +26,7 @@
 package co.cdev.agave.sample;
 
 
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 
 /**
@@ -35,13 +35,13 @@ import co.cdev.agave.Route;
 public class ImageUploadHandler {
 
 	@Route("/upload/file")
-	public void uploadFile(HandlerContext context, ImageUploadForm form) {
+	public void uploadFile(RoutingContext context, ImageUploadForm form) {
 		context.getRequest().setAttribute("file", form.getFile1() == null);
 		context.getResponse().setStatus(400);
 	}
 	
 	@Route("/upload/image")
-	public void uploadImage(HandlerContext context, ImageUploadForm form) {
+	public void uploadImage(RoutingContext context, ImageUploadForm form) {
 		context.getRequest().setAttribute("image", form.getFile2() == null);
 		context.getResponse().setStatus(400);
 	}

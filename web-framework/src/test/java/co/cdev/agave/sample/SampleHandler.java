@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Param;
 import co.cdev.agave.Route;
 import co.cdev.agave.conversion.IntegerParamConverter;
@@ -37,7 +37,7 @@ import co.cdev.agave.exception.AgaveException;
 
 public class SampleHandler {
     @Route("/login")
-    public void login(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+    public void login(RoutingContext context, LoginForm loginForm) throws ServletException, IOException {
         if ("damian".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {
             context.getRequest().setAttribute("loggedIn", Boolean.TRUE);
         } else {
@@ -47,32 +47,32 @@ public class SampleHandler {
     }
 
     @Route("/aliased")
-    public void aliased(HandlerContext context, AliasedForm aliasedForm) throws ServletException, IOException {
+    public void aliased(RoutingContext context, AliasedForm aliasedForm) throws ServletException, IOException {
     }
 
     @Route("/uri-params/${username}/${password}/")
-    public void uriParams(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+    public void uriParams(RoutingContext context, LoginForm loginForm) throws ServletException, IOException {
         context.getRequest().setAttribute("username", loginForm.getUsername());
         context.getRequest().setAttribute("password", loginForm.getPassword());
     }
 
     @Route("/throws/nullPointerException")
-    public void throwsNullPointerException(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+    public void throwsNullPointerException(RoutingContext context, LoginForm loginForm) throws ServletException, IOException {
         throw new NullPointerException();
     }
 
     @Route("/throws/ioException")
-    public void throwsIOException(HandlerContext context, LoginForm loginForm) throws ServletException, IOException {
+    public void throwsIOException(RoutingContext context, LoginForm loginForm) throws ServletException, IOException {
         throw new IOException();
     }
     
     @Route("/lacks/form")
-    public void lacksForm(HandlerContext context) throws ServletException, IOException {
+    public void lacksForm(RoutingContext context) throws ServletException, IOException {
         context.getRequest().setAttribute("noErrors", Boolean.TRUE);
     }
     
     @Route("/has/named/params/${something}/${aNumber}")
-    public void hasNamedParams(HandlerContext context, 
+    public void hasNamedParams(RoutingContext context, 
                                @Param("something") String something, 
                                @Param(name = "aNumber", converter = IntegerParamConverter.class) int aNumber) throws AgaveException {
         context.getRequest().setAttribute("something", something);
@@ -80,12 +80,12 @@ public class SampleHandler {
     }
     
     @Route("/overloaded")
-    public void overloaded(HandlerContext context) {
+    public void overloaded(RoutingContext context) {
         context.getRequest().setAttribute("overloadedWithNoAdditionalParams", Boolean.TRUE);
     }
     
     @Route("/overloaded/${param}")
-    public void overloaded(HandlerContext context, @Param("param") String param) {
+    public void overloaded(RoutingContext context, @Param("param") String param) {
         context.getRequest().setAttribute("overloadedWithAdditionalParams", param);
     }
     

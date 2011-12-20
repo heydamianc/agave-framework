@@ -2,7 +2,7 @@ package co.cdev.agave.samples;
 
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 import co.cdev.agave.exception.ConversionException;
 import java.io.BufferedReader;
@@ -28,12 +28,12 @@ public class XMLToolsHandler {
      * @return a destination object that wraps the index.jsp page
      */
     @Route("/")
-    public Destination welcome(HandlerContext handlerContext) throws Exception {
+    public Destination welcome(RoutingContext handlerContext) throws Exception {
         return Destinations.forward("/WEB-INF/jsp/index.jsp");
     }
 
     @Route("/reformat")
-    public Destination reformat(HandlerContext handlerContext, ReformatForm form) throws Exception {
+    public Destination reformat(RoutingContext handlerContext, ReformatForm form) throws Exception {
         StringWriter sink = new StringWriter();
 
         File documentFile = form.getDocument().getContents();
@@ -62,7 +62,7 @@ public class XMLToolsHandler {
     }
 
     @Route("/reformatted/${fileName}")
-    public void output(HandlerContext handlerContext) throws Exception {
+    public void output(RoutingContext handlerContext) throws Exception {
         handlerContext.getResponse().setContentType("text/xml");
         PrintWriter out = handlerContext.getResponse().getWriter();
         out.write(handlerContext.getSession().getAttribute("contents").toString());

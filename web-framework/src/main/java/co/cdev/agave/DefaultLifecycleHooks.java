@@ -56,34 +56,34 @@ public class DefaultLifecycleHooks implements LifecycleHooks {
 
     @Override
     public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor,
-            HandlerContext context) throws ServletException, IOException {
+            RoutingContext context) throws ServletException, IOException {
         return false;
     }
 
     @Override
     public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor,
-            Object formInstance, HandlerContext context)
+            Object formInstance, RoutingContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
     public boolean afterInitializingForm(HandlerMethodDescriptor descriptor,
-            Object formInstance, HandlerContext context)
+            Object formInstance, RoutingContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
     public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor,
-            Object handlerInstance, HandlerContext context)
+            Object handlerInstance, RoutingContext context)
             throws ServletException, IOException {
         return false;
     }
 
     @Override
     public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
-            Object handlerInstance, HandlerContext context)
+            Object handlerInstance, RoutingContext context)
             throws ServletException, IOException {
         return false;
     }
@@ -91,13 +91,13 @@ public class DefaultLifecycleHooks implements LifecycleHooks {
     @Override
     public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, Destination destination,
-            HandlerContext context) throws ServletException, IOException {
+            RoutingContext context) throws ServletException, IOException {
         return false;
     }
 
     @Override
     public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
-            Object handlerInstance, URI destination, HandlerContext context)
+            Object handlerInstance, URI destination, RoutingContext context)
             throws ServletException, IOException {
         return false;
     }

@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -39,7 +39,7 @@ import freemarker.template.TemplateException;
  */
 public abstract class FreemarkerHandler {
 	
-    protected void displayTemplate(HandlerContext handlerContext, Map<String, Object> model) 
+    protected void displayTemplate(RoutingContext handlerContext, Map<String, Object> model) 
     throws IOException, TemplateException {
         Configuration config = (Configuration)handlerContext.getServletContext()
         	.getAttribute(FreemarkerContextListener.FREEMARKER_CONFIG_KEY);

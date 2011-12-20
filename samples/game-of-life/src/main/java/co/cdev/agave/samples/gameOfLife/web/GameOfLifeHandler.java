@@ -33,7 +33,7 @@ import java.util.Map;
 
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.samples.gameOfLife.simulation.Board;
@@ -54,14 +54,14 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     public static final String BOARD_KEY = "board";
     
     @Route("/")
-    public void root(HandlerContext handlerContext, GameOfLifeForm form) 
+    public void root(RoutingContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         form.setConfiguration(Configuration.Blinker);
         init(handlerContext, form);
     }
     
     @Route("/init/${configuration}")
-    public void init(HandlerContext handlerContext, GameOfLifeForm form) 
+    public void init(RoutingContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         Board board = new Board(form.getRows(), form.getColumns());
         Configuration configuration = form.getConfiguration();
@@ -72,7 +72,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     }
     
     @Route("/advance")
-    public Destination advance(HandlerContext handlerContext, GameOfLifeForm form) 
+    public Destination advance(RoutingContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         Destination destination = null;
         Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
@@ -88,7 +88,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     }
     
     @Route("/play")
-    public Destination play(HandlerContext handlerContext, GameOfLifeForm form) 
+    public Destination play(RoutingContext handlerContext, GameOfLifeForm form) 
     throws HandlerException, IOException, TemplateException {
         Destination destination = null;
         Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
@@ -108,7 +108,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
     }
     
     @Route("/toggleState")
-    public void makeAlive(HandlerContext handlerContext, GameOfLifeForm form) {
+    public void makeAlive(RoutingContext handlerContext, GameOfLifeForm form) {
         Board board = (Board)handlerContext.getSession().getAttribute(BOARD_KEY);
         Cell clickedCell = board.getGrid().get(form.getY()).get(form.getX());
         if (clickedCell.getState() == State.ALIVE) {
@@ -120,7 +120,7 @@ public class GameOfLifeHandler extends FreemarkerHandler {
         handlerContext.getSession().setAttribute(BOARD_KEY, board);
     }
     
-    private Map<String, Object> buildTemplateModel(HandlerContext handlerContext, Board board) {
+    private Map<String, Object> buildTemplateModel(RoutingContext handlerContext, Board board) {
         Map<String, Object> templateModel = new HashMap<String, Object>();
         templateModel.put("contextPath", handlerContext.getRequest().getContextPath());
         templateModel.put("board", board);

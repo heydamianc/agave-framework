@@ -109,7 +109,7 @@ public interface LifecycleHooks {
      * @throws IOException
      */
     public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor,
-            HandlerContext context) throws ServletException, IOException;
+            RoutingContext context) throws ServletException, IOException;
 
     /**
      * Executed by the {@link AgaveFilter} before reading request parameters and URI parameters
@@ -124,7 +124,7 @@ public interface LifecycleHooks {
      * @throws IOException
      */
     public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor,
-            Object formInstance, HandlerContext context)
+            Object formInstance, RoutingContext context)
             throws ServletException, IOException;
 
     /**
@@ -140,7 +140,7 @@ public interface LifecycleHooks {
      * @throws IOException
      */
     public boolean afterInitializingForm(HandlerMethodDescriptor descriptor,
-            Object formInstance, HandlerContext context)
+            Object formInstance, RoutingContext context)
             throws ServletException, IOException;
 
     /**
@@ -155,7 +155,7 @@ public interface LifecycleHooks {
      * @throws IOException
      */
     public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor,
-            Object handlerInstance, HandlerContext context)
+            Object handlerInstance, RoutingContext context)
             throws ServletException, IOException;
 
     /**
@@ -171,7 +171,7 @@ public interface LifecycleHooks {
      * @throws IOException
      */
     public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
-            Object handlerInstance, HandlerContext context)
+            Object handlerInstance, RoutingContext context)
             throws ServletException, IOException;
 
     /**
@@ -189,7 +189,7 @@ public interface LifecycleHooks {
      */
     public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
             Object handlerInstance, Destination destination,
-            HandlerContext context) throws ServletException, IOException;
+            RoutingContext context) throws ServletException, IOException;
 
     /**
      * Executed by the {@link AgaveFilter} after execution has been routed through the handler
@@ -205,6 +205,6 @@ public interface LifecycleHooks {
      * @throws IOException
      */
     public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
-            Object handlerInstance, URI destination, HandlerContext context)
+            Object handlerInstance, URI destination, RoutingContext context)
             throws ServletException, IOException;
 }

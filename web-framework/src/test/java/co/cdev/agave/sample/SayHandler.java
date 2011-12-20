@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 
 /**
@@ -41,14 +41,14 @@ import co.cdev.agave.Route;
 public class SayHandler {
 
     @Route("/say/${phrase}")
-    public Destination say(HandlerContext context, SayForm form) {
+    public Destination say(RoutingContext context, SayForm form) {
         Destination dest = Destinations.create("/say.jsp");
         dest.addParameter("said", form.getPhrase());
         return dest;
     }
     
     @Route("/whisper/${phrase}")
-    public Destination whisper(HandlerContext context, SayForm form) {
+    public Destination whisper(RoutingContext context, SayForm form) {
         Destination dest = Destinations.redirect("/whisper.jsp");
         dest.addParameter("said", form.getPhrase());
         dest.addParameter("how", "very softly & sweetly");
@@ -56,12 +56,12 @@ public class SayHandler {
     }
     
     @Route("/proclaim/${phrase}")
-    public URI proclaim(HandlerContext context) throws URISyntaxException {
+    public URI proclaim(RoutingContext context) throws URISyntaxException {
         return new URI("http", "//www.utexas.edu/", null);
     }
     
     @Route("/shout/${phrase}")
-    public void shout(HandlerContext context) {
+    public void shout(RoutingContext context) {
         context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
     

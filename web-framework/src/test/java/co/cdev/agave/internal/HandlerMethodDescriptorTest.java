@@ -35,7 +35,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
@@ -66,7 +66,7 @@ public class HandlerMethodDescriptorTest {
     @Test
     public void testLocateAnnotatedHandlerMethods() throws Exception {
     	ScanResult scanResult = new ScanResultImpl("/login", cls, met);
-    	scanResult.setParameterTypes(Arrays.asList(new Class<?>[] {HandlerContext.class, LoginForm.class}));
+    	scanResult.setParameterTypes(Arrays.asList(new Class<?>[] {RoutingContext.class, LoginForm.class}));
     	
     	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(scanResult);
     	a.locateAnnotatedHandlerMethods(scanResult);

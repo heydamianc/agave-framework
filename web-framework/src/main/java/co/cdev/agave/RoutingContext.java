@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSession;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerContext {
+public class RoutingContext {
 
     public ServletContext servletContext;
     public HttpServletRequest request;
@@ -49,7 +49,7 @@ public class HandlerContext {
      * @param response
      * @param session
      */
-    public HandlerContext(ServletContext servletContext, HttpServletRequest request,
+    public RoutingContext(ServletContext servletContext, HttpServletRequest request,
             HttpServletResponse response, HttpSession session) {
         super();
         this.servletContext = servletContext;

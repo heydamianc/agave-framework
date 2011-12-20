@@ -30,7 +30,7 @@ import co.cdev.agave.samples.pastebin.overview.Overview;
 import co.cdev.agave.samples.pastebin.snippet.Snippet;
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.HandlerContext;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 import javax.servlet.ServletContext;
 
@@ -43,7 +43,7 @@ public class PastebinHandler extends AbstractHandler {
     private static final String OVERVIEW_KEY = "overview";
 
     @Route("/")
-    public Destination welcome(HandlerContext handlerContext, PastebinForm form) {
+    public Destination welcome(RoutingContext handlerContext, PastebinForm form) {
         ServletContext servletContext = handlerContext.getServletContext();
         try {
             Overview overview = getOverviewService(servletContext).getOverview();
@@ -55,7 +55,7 @@ public class PastebinHandler extends AbstractHandler {
     }
 
     @Route("/create")
-    public Destination create(HandlerContext handlerContext, PastebinForm form) {
+    public Destination create(RoutingContext handlerContext, PastebinForm form) {
         String uniqueId = null;
         ServletContext servletContext = handlerContext.getServletContext();
         try {
@@ -69,7 +69,7 @@ public class PastebinHandler extends AbstractHandler {
     }
 
     @Route("/${uniqueId}")
-    public Destination snippet(HandlerContext handlerContext, PastebinForm form) {
+    public Destination snippet(RoutingContext handlerContext, PastebinForm form) {
         ServletContext servletContext = handlerContext.getServletContext();
         try {
             Snippet snippet = getSnippetService(servletContext).getSnippet(form.getUniqueId());
