@@ -27,6 +27,7 @@ package co.cdev.agave.conversion;
 
 import java.awt.Image;
 import java.io.File;
+import java.util.Locale;
 
 import junit.framework.Assert;
 
@@ -34,8 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import co.cdev.agave.Part;
-import co.cdev.agave.internal.PartImpl;
-import java.util.Locale;
+import co.cdev.agave.internal.DefaultPart;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -53,7 +53,7 @@ public class BufferedImageParamConverterTest {
 	
 	@Test
 	public void testConvert() throws Exception {
-		Part part = new PartImpl();
+		Part<File> part = new DefaultPart<File>();
 		part.setContents(imageFile);
 		part.setName("sampleImg");
 		part.setFilename("vim.gif");

@@ -25,8 +25,11 @@
  */
 package co.cdev.agave.internal;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.Part;
 
@@ -34,10 +37,11 @@ import co.cdev.agave.Part;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface MultipartParser {
+public interface MultipartParser<T> {
 
+    public void prepare(HttpServletRequest request) throws IOException;
     public void parseInput() throws Exception;
     public Map<String, Collection<String>> getParameters();
-    public Map<String, Part> getParts();
+    public Map<String, Part<T>> getParts();
 
 }

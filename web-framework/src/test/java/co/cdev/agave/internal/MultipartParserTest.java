@@ -25,6 +25,7 @@
  */
 package co.cdev.agave.internal;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -58,17 +59,15 @@ public class MultipartParserTest {
                 new DelegatingServletInputStream(
                 getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
         try {
-            context.checking(new Expectations() {
+            context.checking(new Expectations() {{
+                allowing(request).getContentType();
+                will(returnValue(contentType));
+                allowing(request).getInputStream();
+                will(returnValue(sampleStream));
+            }});
 
-                {
-                    allowing(request).getContentType();
-                    will(returnValue(contentType));
-                    allowing(request).getInputStream();
-                    will(returnValue(sampleStream));
-                }
-            });
-
-            AbstractMultipartParser parser = new FilesystemMultipartParser(request);
+            AbstractMultipartParser<File> parser = new FileMultipartParser();
+            parser.prepare(request);
             Assert.assertEquals("------WebKitFormBoundary4O7BAy0axyQ5Kkpu", parser.getBoundary());
         } finally {
             sampleStream.close();
@@ -84,17 +83,15 @@ public class MultipartParserTest {
                 new DelegatingServletInputStream(
                 getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
         try {
-            context.checking(new Expectations() {
+            context.checking(new Expectations() {{
+                allowing(request).getContentType();
+                will(returnValue(contentType));
+                allowing(request).getInputStream();
+                will(returnValue(sampleStream));
+            }});
 
-                {
-                    allowing(request).getContentType();
-                    will(returnValue(contentType));
-                    allowing(request).getInputStream();
-                    will(returnValue(sampleStream));
-                }
-            });
-
-            MultipartParser parser = new FilesystemMultipartParser(request);
+            MultipartParser<File> parser = new FileMultipartParser();
+            parser.prepare(request);
             parser.parseInput();
 
             Assert.assertNotNull(parser.getParameters());
@@ -119,17 +116,15 @@ public class MultipartParserTest {
                 new DelegatingServletInputStream(
                 getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
         try {
-            context.checking(new Expectations() {
+            context.checking(new Expectations() {{
+                allowing(request).getContentType();
+                will(returnValue(contentType));
+                allowing(request).getInputStream();
+                will(returnValue(sampleStream));
+            }});
 
-                {
-                    allowing(request).getContentType();
-                    will(returnValue(contentType));
-                    allowing(request).getInputStream();
-                    will(returnValue(sampleStream));
-                }
-            });
-
-            MultipartParser parser = new FilesystemMultipartParser(request);
+            MultipartParser<File> parser = new FileMultipartParser();
+            parser.prepare(request);
             parser.parseInput();
 
             Assert.assertNotNull(parser.getParts());

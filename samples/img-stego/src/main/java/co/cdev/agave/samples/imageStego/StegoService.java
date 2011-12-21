@@ -35,7 +35,7 @@ import co.cdev.agave.Part;
  */
 public interface StegoService {
 
-	public File encode(Part part, String message, String encodedFilenamePrefix) throws IOException;
+	public File encode(Part<File> part, String message, String encodedFilenamePrefix) throws IOException;
 
 	public String decode(File imageFile) throws IOException;
 }

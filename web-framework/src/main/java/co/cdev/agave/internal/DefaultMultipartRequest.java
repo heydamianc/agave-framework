@@ -45,15 +45,16 @@ import co.cdev.agave.Part;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DefaultMultipartRequest extends HttpServletRequestWrapper implements MultipartRequest {
+public class DefaultMultipartRequest<T> extends HttpServletRequestWrapper implements MultipartRequest<T> {
 
-    private final MultipartParser parser;
+    private final MultipartParser<T> parser;
     
     private Map<String, String[]> parameterMap;
 
-    public DefaultMultipartRequest(HttpServletRequest request, MultipartParser parser) throws Exception {
+    public DefaultMultipartRequest(HttpServletRequest request, MultipartParser<T> parser) throws Exception {
         super(request);
         this.parser = parser;
+        this.parser.prepare(request);
         
         if (parser != null) {
             try {
@@ -134,7 +135,7 @@ public class DefaultMultipartRequest extends HttpServletRequestWrapper implement
     }
 
     @Override
-    public Map<String, Part> getParts() {
+    public Map<String, Part<T>> getParts() {
         return parser.getParts();
     }
 

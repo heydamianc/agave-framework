@@ -1,20 +1,22 @@
 package co.cdev.agave.samples;
 
+import java.io.File;
+
 import co.cdev.agave.Converter;
 import co.cdev.agave.Part;
 
 public class ReformatForm {
     
-    private Part document;
+    private Part<File> document;
     private String indentation;
     private boolean newlines;
 
 
-    public Part getDocument() {
+    public Part<File> getDocument() {
         return document;
     }
 
-    public void setDocument(Part document) {
+    public void setDocument(Part<File> document) {
         this.document = document;
     }
 

@@ -25,17 +25,17 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.MultipartRequest;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import co.cdev.agave.MultipartRequest;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class RequestPartFormPopulator extends AbstractFormPopulator {
+public class RequestPartFormPopulator<T> extends AbstractFormPopulator {
 
-    public RequestPartFormPopulator(MultipartRequest request) {
+    public RequestPartFormPopulator(MultipartRequest<T> request) {
         super(request.getLocale());
 
         for (String partName : request.getParts().keySet()) {

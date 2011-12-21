@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface MultipartRequest extends HttpServletRequest {
+public interface MultipartRequest<T> extends HttpServletRequest {
 
     /**
      * Gets a collection of parameters that have been supplied with the request.
@@ -50,5 +50,5 @@ public interface MultipartRequest extends HttpServletRequest {
      * 
      * @return the parts
      */
-    public Map<String, Part> getParts();
+    public Map<String, Part<T>> getParts();
 }

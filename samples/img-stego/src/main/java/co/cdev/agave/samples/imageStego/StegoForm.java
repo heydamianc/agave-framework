@@ -25,12 +25,14 @@
  */
 package co.cdev.agave.samples.imageStego;
 
+import java.io.File;
+
 import co.cdev.agave.Part;
 
 public class StegoForm {
     
     private String payload;
-    private Part carrier;
+    private Part<File> carrier;
     
     public void setPayload(String payload) {
         this.payload = payload;
@@ -40,11 +42,11 @@ public class StegoForm {
         return payload;
     }
     
-    public void setCarrier(Part carrier) {
+    public void setCarrier(Part<File> carrier) {
         this.carrier = carrier;
     }
 
-    public Part getCarrier() {
+    public Part<File> getCarrier() {
         return carrier;
     }
     

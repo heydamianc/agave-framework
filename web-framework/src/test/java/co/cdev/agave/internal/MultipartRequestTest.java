@@ -25,6 +25,7 @@
  */
 package co.cdev.agave.internal;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -74,8 +75,8 @@ public class MultipartRequestTest {
             }
         });
 
-        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
-        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
+        FileMultipartParser parser = new FileMultipartParser();
+        MultipartRequest<File> multipartRequest = new DefaultMultipartRequest<File>(request, parser);
         Assert.assertNotNull(multipartRequest);
         Assert.assertEquals("because", multipartRequest.getParameter("why"));
         Assert.assertEquals("forever", multipartRequest.getParameter("when"));
@@ -101,8 +102,8 @@ public class MultipartRequestTest {
             }
         });
 
-        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
-        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
+        FileMultipartParser parser = new FileMultipartParser();
+        MultipartRequest<File> multipartRequest = new DefaultMultipartRequest<File>(request, parser);
         Map<String, String[]> parameterMap = multipartRequest.getParameterMap();
 
         Assert.assertNotNull(parameterMap);
@@ -138,8 +139,8 @@ public class MultipartRequestTest {
             }
         });
 
-        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
-        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
+        FileMultipartParser parser = new FileMultipartParser();
+        MultipartRequest<File> multipartRequest = new DefaultMultipartRequest<File>(request, parser);
         Enumeration<String> parameterNames = multipartRequest.getParameterNames();
 
         while (parameterNames.hasMoreElements()) {
@@ -166,8 +167,8 @@ public class MultipartRequestTest {
             }
         });
 
-        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
-        MultipartRequest multipartRequest = new DefaultMultipartRequest(request, parser);
+        FileMultipartParser parser = new FileMultipartParser();
+        MultipartRequest<File> multipartRequest = new DefaultMultipartRequest<File>(request, parser);
         Assert.assertArrayEquals(new String[]{"a", "b"}, multipartRequest.getParameterValues("a"));
         Assert.assertArrayEquals(new String[]{"1", "2"}, multipartRequest.getParameterValues("b"));
         Assert.assertArrayEquals(new String[]{"because"}, multipartRequest.getParameterValues("why"));

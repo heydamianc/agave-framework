@@ -60,7 +60,7 @@ public class StegoServiceImpl implements StegoService {
      * @return the encoded image file
      */
     @Override
-    public File encode(Part part, String msg, String encodedFilenamePrefix) throws IOException {
+    public File encode(Part<File> part, String msg, String encodedFilenamePrefix) throws IOException {
         BufferedImage originalImage = ImageIO.read(part.getContents());
         int width = originalImage.getWidth();
         int height = originalImage.getHeight();

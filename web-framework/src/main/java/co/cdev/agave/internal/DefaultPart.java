@@ -25,25 +25,24 @@
  */
 package co.cdev.agave.internal;
 
-import java.io.File;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import co.cdev.agave.Part;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class PartImpl implements Part {
+public class DefaultPart<T> implements Part<T> {
 
     private String name;
     private String filename;
     private String contentType; 
-    private File contents;
+    private T contents;
     private String parameterValue;
     private Map<String, String> otherHeaders = new HashMap<String, String>();
 
-    public PartImpl() {
+    public DefaultPart() {
     }
 
     @Override
@@ -77,12 +76,12 @@ public class PartImpl implements Part {
     }
 
     @Override
-    public File getContents() {
+    public T getContents() {
         return contents;
     }
 
     @Override
-    public void setContents(File contents) {
+    public void setContents(T contents) {
         this.contents = contents;
     }
 

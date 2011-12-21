@@ -43,11 +43,11 @@ import co.cdev.agave.Part;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public abstract class AbstractMultipartParser implements MultipartParser {
+public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
 
-    static class CoupledLine {
-        StringBuilder characters = new StringBuilder();
-        List<Byte> bytes = new LinkedList<Byte>();
+    protected static class CoupledLine {
+        public StringBuilder characters = new StringBuilder();
+        public List<Byte> bytes = new LinkedList<Byte>();
 
         public void append(int i) {
             characters.append((char)i);
@@ -65,14 +65,14 @@ public abstract class AbstractMultipartParser implements MultipartParser {
     private static final Pattern OTHER_HEADER_PATTERN = Pattern.compile("(\\S+):\\s*(.+?)");
     
     private Map<String, Collection<String>> parameters;
-    protected Map<String, Part> parts;
+    protected Map<String, Part<T>> parts;
     protected String boundary;
     protected String eos;
     protected InputStream in;
     
-    public AbstractMultipartParser(HttpServletRequest request) throws IOException {
+    public void prepare(HttpServletRequest request) throws IOException {
         parameters = new HashMap<String, Collection<String>>();
-        parts = new HashMap<String, Part>();
+        parts = new HashMap<String, Part<T>>();
         Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
         if (boundaryMatcher.matches() && boundaryMatcher.groupCount() >= 1) {
             boundary = "--" + boundaryMatcher.group(1);
@@ -88,7 +88,7 @@ public abstract class AbstractMultipartParser implements MultipartParser {
     }
 
     @Override
-    public Map<String, Part> getParts() {
+    public Map<String, Part<T>> getParts() {
         return parts;
     }
     
@@ -98,9 +98,13 @@ public abstract class AbstractMultipartParser implements MultipartParser {
 
     @Override
     public void parseInput() throws Exception {
+        if (in == null) {
+            throw new IllegalStateException("prepare(HttpServletRequest) must be called prior to parseInput()");
+        }
+        
         try {
             while (true) {
-                Part part = new PartImpl();
+                Part<T> part = new DefaultPart<T>();
                 readHeaders(part);
                 if (part.getFilename() != null) {
                     String prefix = null;
@@ -130,7 +134,7 @@ public abstract class AbstractMultipartParser implements MultipartParser {
         }
     }
     
-    private void readHeaders(Part part) throws IOException {
+    private void readHeaders(Part<T> part) throws IOException {
         String line = null;
         while ((line = readLine(in)) != null) {
             line = line.trim();
@@ -196,7 +200,7 @@ public abstract class AbstractMultipartParser implements MultipartParser {
         return line;
     }
     
-    private boolean readParameter(Part part) throws IOException {
+    private boolean readParameter(Part<T> part) throws IOException {
         boolean end = false;
 
         StringBuilder parameterValue = new StringBuilder();
@@ -225,7 +229,7 @@ public abstract class AbstractMultipartParser implements MultipartParser {
         return end;
     }
     
-    protected abstract boolean readPart(String prefix, String suffix, Part part) throws Exception;
+    protected abstract boolean readPart(String prefix, String suffix, Part<T> part) throws Exception;
     
     /**
      * Just making sure that this is closed... (see the finally block of the parseInput method as well)

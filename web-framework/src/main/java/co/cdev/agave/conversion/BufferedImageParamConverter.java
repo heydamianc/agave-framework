@@ -26,27 +26,28 @@
 package co.cdev.agave.conversion;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
 import co.cdev.agave.Part;
 import co.cdev.agave.exception.ConversionException;
-import java.util.Locale;
 
 /**
  * Converts an uploaded file directly into a manipulatable {@code BufferedImage}.
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BufferedImageParamConverter implements PartParamConverter<BufferedImage> {
+public class BufferedImageParamConverter implements PartParamConverter<BufferedImage, File> {
 
     @Override
-    public BufferedImage convert(Part input, Locale locale) throws ConversionException {
+    public BufferedImage convert(Part<File> input, Locale locale) throws ConversionException {
         BufferedImage image = null;
         if (input != null) {
             try {
-                image = ImageIO.read(input.getContents());
+                image = ImageIO.read((File) input.getContents());
             } catch (IOException ex) {
                 throw new ConversionException(ex.getCause());
             }

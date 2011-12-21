@@ -1,24 +1,26 @@
 package co.cdev.agave.samples;
 
-import co.cdev.agave.Part;
-import co.cdev.agave.conversion.PartParamConverter;
-import co.cdev.agave.exception.ConversionException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 
-public class DocumentParamConverter implements PartParamConverter<Document> {
+import co.cdev.agave.Part;
+import co.cdev.agave.conversion.PartParamConverter;
+import co.cdev.agave.exception.ConversionException;
+
+public class DocumentParamConverter implements PartParamConverter<Document, File> {
     
     @Override
-    public Document convert(Part part, Locale locale) throws ConversionException {
+    public Document convert(Part<File> part, Locale locale) throws ConversionException {
         Document document = null;
 
-        File documentFile = part.getContents();
+        File documentFile = ((Part<File>) part).getContents();
         if (documentFile.canRead() && documentFile.exists()) {
             try {
                 BufferedReader in = new BufferedReader(new FileReader(documentFile));

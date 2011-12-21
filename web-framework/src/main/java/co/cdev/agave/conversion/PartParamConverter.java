@@ -25,17 +25,18 @@
  */
 package co.cdev.agave.conversion;
 
+import java.util.Locale;
+
 import co.cdev.agave.Part;
 import co.cdev.agave.exception.ConversionException;
-import java.util.Locale;
 
 /**
  * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface PartParamConverter<OutputT> extends ParamConverter<Part, OutputT> {
+public interface PartParamConverter<OutputT, PartT> extends ParamConverter<Part<PartT>, OutputT> {
     
     @Override
-    public OutputT convert(Part input, Locale locale) throws ConversionException;
+    public OutputT convert(Part<PartT> input, Locale locale) throws ConversionException;
     
 }

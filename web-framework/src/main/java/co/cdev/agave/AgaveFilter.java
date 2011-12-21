@@ -60,7 +60,7 @@ import co.cdev.agave.exception.FormException;
 import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.internal.DefaultMultipartRequest;
 import co.cdev.agave.internal.DestinationImpl;
-import co.cdev.agave.internal.FilesystemMultipartParser;
+import co.cdev.agave.internal.FileMultipartParser;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
 import co.cdev.agave.internal.HandlerFactoryImpl;
@@ -460,6 +460,7 @@ public class AgaveFilter implements Filter {
      * @see agave.HandlesRequestsTo
      * @see agave.ConvertWith
      */
+    @SuppressWarnings("unchecked")
     @Override
     public final void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
             throws IOException, ServletException {
@@ -536,7 +537,7 @@ public class AgaveFilter implements Filter {
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
                     if (DefaultMultipartRequest.isMultipart(request)) {
-                        formPopulator = new RequestPartFormPopulator((MultipartRequest) request);
+                        formPopulator = new RequestPartFormPopulator<Object>((MultipartRequest<Object>) request);
                         formPopulator.populate(formInstance);
                     }
                     formPopulator = new URIParameterFormPopulator(request, descriptor);
@@ -741,8 +742,7 @@ public class AgaveFilter implements Filter {
      * @throws Exception
      */
     protected HttpServletRequestWrapper wrapMultipartRequest(HttpServletRequest request) throws Exception {
-        FilesystemMultipartParser parser = new FilesystemMultipartParser(request);
-        return new DefaultMultipartRequest(request, parser);
+        return new DefaultMultipartRequest<File>(request, new FileMultipartParser());
     }
 
     /**

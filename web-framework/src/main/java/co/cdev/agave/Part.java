@@ -25,7 +25,6 @@
  */
 package co.cdev.agave;
 
-import java.io.File;
 
 /**
  * A part in a multipart/form-data HTTP post which either encapsulates a {@code File} upload or a 
@@ -34,7 +33,7 @@ import java.io.File;
  * and contents will be set.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface Part {
+public interface Part<T> {
 
     public String getName();
     public void setName(String name);
@@ -46,7 +45,7 @@ public interface Part {
     public void setParameterValue(String parameterValue);
     public void addHeader(String headerName, String headerValue);
     public String getHeader(String headerName);
-    public File getContents();
-    public void setContents(File contents);
+    public T getContents();
+    public void setContents(T contents);
 
 }

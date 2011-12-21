@@ -26,6 +26,7 @@
 package co.cdev.agave.sample;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import co.cdev.agave.Converter;
 import co.cdev.agave.Part;
@@ -37,14 +38,14 @@ import co.cdev.agave.conversion.BufferedImageParamConverter;
 public class ImageUploadForm {
 
     // matches the parameters in the test file
-    private Part file1;
+    private Part<File> file1;
     private BufferedImage file2;
 
-    public Part getFile1() {
+    public Part<File> getFile1() {
         return file1;
     }
 
-    public void setFile1(Part file1) {
+    public void setFile1(Part<File> file1) {
         this.file1 = file1;
     }
 
