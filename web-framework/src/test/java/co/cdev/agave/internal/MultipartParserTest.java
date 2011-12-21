@@ -53,28 +53,6 @@ public class MultipartParserTest {
     }
 
     @Test
-    public void testConstructor() throws Exception {
-        final String contentType = "multipart/form-data; boundary=----WebKitFormBoundary4O7BAy0axyQ5Kkpu";
-        final InputStream sampleStream =
-                new DelegatingServletInputStream(
-                getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
-        try {
-            context.checking(new Expectations() {{
-                allowing(request).getContentType();
-                will(returnValue(contentType));
-                allowing(request).getInputStream();
-                will(returnValue(sampleStream));
-            }});
-
-            AbstractMultipartParser<File> parser = new FileMultipartParser();
-            parser.prepare(request);
-            Assert.assertEquals("------WebKitFormBoundary4O7BAy0axyQ5Kkpu", parser.getBoundary());
-        } finally {
-            sampleStream.close();
-        }
-    }
-
-    @Test
     public void testParseParameters() throws Exception {
         final String contentType =
                 "multipart/form-data; boundary=---------------------------2746393686911676941624173958";
@@ -91,9 +69,8 @@ public class MultipartParserTest {
             }});
 
             MultipartParser<File> parser = new FileMultipartParser();
-            parser.prepare(request);
-            parser.parseInput();
-
+            parser.parseInput(request);
+            
             Assert.assertNotNull(parser.getParameters());
             Assert.assertTrue(!parser.getParameters().isEmpty());
             Assert.assertEquals(1, parser.getParameters().get("text1").size());
@@ -124,8 +101,7 @@ public class MultipartParserTest {
             }});
 
             MultipartParser<File> parser = new FileMultipartParser();
-            parser.prepare(request);
-            parser.parseInput();
+            parser.parseInput(request);
 
             Assert.assertNotNull(parser.getParts());
             Assert.assertEquals(2, parser.getParts().size());

@@ -25,7 +25,6 @@
  */
 package co.cdev.agave.internal;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -39,8 +38,7 @@ import co.cdev.agave.Part;
  */
 public interface MultipartParser<T> {
 
-    public void prepare(HttpServletRequest request) throws IOException;
-    public void parseInput() throws Exception;
+    public void parseInput(HttpServletRequest request) throws Exception;
     public Map<String, Collection<String>> getParameters();
     public Map<String, Part<T>> getParts();
 

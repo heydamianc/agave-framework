@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import co.cdev.agave.Part;
 
 /**
@@ -45,7 +47,7 @@ public class FileMultipartParser extends AbstractMultipartParser<File> {
     private static final String DEFAULT_SUFFIX = ".tmp";
     private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)\\.(.*)");
     
-    protected boolean readPart(Part<File> part) throws IOException {
+    protected boolean readPart(HttpServletRequest request, Part<File> part) throws IOException {
         boolean end = false;
         
         String prefix = null;

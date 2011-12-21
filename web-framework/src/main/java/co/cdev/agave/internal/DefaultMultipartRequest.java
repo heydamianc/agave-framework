@@ -54,11 +54,10 @@ public class DefaultMultipartRequest<T> extends HttpServletRequestWrapper implem
     public DefaultMultipartRequest(HttpServletRequest request, MultipartParser<T> parser) throws Exception {
         super(request);
         this.parser = parser;
-        this.parser.prepare(request);
         
         if (parser != null) {
             try {
-                parser.parseInput();
+                parser.parseInput(request);
             } finally {
                 request.getInputStream().close();
             }
@@ -137,14 +136,6 @@ public class DefaultMultipartRequest<T> extends HttpServletRequestWrapper implem
     @Override
     public Map<String, Part<T>> getParts() {
         return parser.getParts();
-    }
-
-    public static boolean isMultipart(HttpServletRequest request) {
-    	return request.getContentType() != null && request.getContentType().startsWith("multipart/form-data");
-    }
-
-    public static boolean isFormURLEncoded(HttpServletRequest request) {
-        return "application/x-www-form-urlencoded".equals(request.getContentType());
     }
 
 }

@@ -62,6 +62,8 @@ public class AgaveInjectionFilter extends AgaveFilter {
     
     private final Set<Class<?>> handlerClasses;
     private InjectionHandlerFactory injectionHandlerFactory;
+    
+    protected Injector injector;
 
     public AgaveInjectionFilter() {
         handlerClasses = new HashSet<Class<?>>();
@@ -81,7 +83,7 @@ public class AgaveInjectionFilter extends AgaveFilter {
         modules.add(handlerModule);
         modules.addAll(provideGuiceModules());
         
-        Injector injector = (Injector) config.getServletContext().getAttribute(PARENT_INJECTOR);
+        injector = (Injector) config.getServletContext().getAttribute(PARENT_INJECTOR);
         injector = injector == null ? Guice.createInjector(modules) : injector.createChildInjector(modules);
         
         injectionHandlerFactory.setInjector(injector);

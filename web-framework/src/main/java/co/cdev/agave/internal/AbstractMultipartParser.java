@@ -68,18 +68,6 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
     protected String eos;
     protected InputStream in;
     
-    public void prepare(HttpServletRequest request) throws IOException {
-        parameters = new HashMap<String, Collection<String>>();
-        parts = new HashMap<String, Part<T>>();
-        Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
-        if (boundaryMatcher.matches() && boundaryMatcher.groupCount() >= 1) {
-            boundary = "--" + boundaryMatcher.group(1);
-        }
-        eos = boundary + "--";
-        in = request.getInputStream();
-        readLine(in);
-    }
-    
     @Override
     public Map<String, Collection<String>> getParameters() {
         return parameters;
@@ -95,17 +83,23 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
     }
 
     @Override
-    public void parseInput() throws Exception {
-        if (in == null) {
-            throw new IllegalStateException("prepare(HttpServletRequest) must be called prior to parseInput()");
+    public void parseInput(HttpServletRequest request) throws Exception {
+        parameters = new HashMap<String, Collection<String>>();
+        parts = new HashMap<String, Part<T>>();
+        Matcher boundaryMatcher = BOUNDARY_PATTERN.matcher(request.getContentType());
+        if (boundaryMatcher.matches() && boundaryMatcher.groupCount() >= 1) {
+            boundary = "--" + boundaryMatcher.group(1);
         }
+        eos = boundary + "--";
+        in = request.getInputStream();
+        readLine(in);
         
         try {
             while (true) {
                 Part<T> part = new DefaultPart<T>();
                 readHeaders(part);
                 if (part.getFilename() != null) {                    
-                    if (readPart(part)) {
+                    if (readPart(request, part)) {
                         break;
                     }
                 } else {
@@ -160,7 +154,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         StringBuilder text = new StringBuilder();
         
         int i = -1;
-        while ((i = in.read()) != -1) {
+        while ((i = in.read()) > 0) {
             text.append((char) i);
             
             if ((char) i == '\n') {
@@ -215,7 +209,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         return end;
     }
     
-    protected abstract boolean readPart(Part<T> part) throws Exception;
+    protected abstract boolean readPart(HttpServletRequest request, Part<T> part) throws Exception;
     
     /**
      * Just making sure that this is closed... (see the finally block of the parseInput method as well)

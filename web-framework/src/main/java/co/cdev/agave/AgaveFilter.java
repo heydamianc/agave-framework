@@ -48,7 +48,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -487,7 +486,7 @@ public class AgaveFilter implements Filter {
             // Wraps the request if necessary so that the uploaded content can be accessed like
             // regular string parameters
             
-            if (DefaultMultipartRequest.isMultipart(request)) {
+            if (RequestUtils.isMultipart(request)) {
                 try {
                     request = wrapMultipartRequest(request);
                 } catch (Exception e) {
@@ -536,7 +535,7 @@ public class AgaveFilter implements Filter {
                     
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
-                    if (DefaultMultipartRequest.isMultipart(request)) {
+                    if (RequestUtils.isMultipart(request)) {
                         formPopulator = new RequestPartFormPopulator<Object>((MultipartRequest<Object>) request);
                         formPopulator.populate(formInstance);
                     }
@@ -747,7 +746,7 @@ public class AgaveFilter implements Filter {
      * @return the wrapped multipart request 
      * @throws Exception
      */
-    protected HttpServletRequestWrapper wrapMultipartRequest(HttpServletRequest request) throws Exception {
+    protected HttpServletRequest wrapMultipartRequest(HttpServletRequest request) throws Exception {
         return new DefaultMultipartRequest<File>(request, new FileMultipartParser());
     }
 
