@@ -55,11 +55,9 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         }
     }
     
-    private static final String DEFAULT_SUFFIX = ".tmp";
     private static final Pattern BOUNDARY_PATTERN = Pattern.compile("multipart/form-data;\\s*boundary=(.*)");
     private static final String CONTENT_DISPOSIITON = "Content-Disposition:\\s*form-data;\\s*name=\"(.*)\"";
     private static final Pattern PART_PATTERN = Pattern.compile(CONTENT_DISPOSIITON + ";\\s*filename=\"(.+)\"");
-    private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)\\.(.*)");
     private static final Pattern PARAMETER_PATTERN = Pattern.compile(CONTENT_DISPOSIITON);
     private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("Content-Type:\\s*(.+)");
     private static final Pattern OTHER_HEADER_PATTERN = Pattern.compile("(\\S+):\\s*(.+?)");
@@ -106,20 +104,8 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
             while (true) {
                 Part<T> part = new DefaultPart<T>();
                 readHeaders(part);
-                if (part.getFilename() != null) {
-                    String prefix = null;
-                    String suffix = null;
-                    
-                    Matcher matcher = FILENAME_PATTERN.matcher(part.getFilename());
-                    if (matcher.matches() && matcher.groupCount() >= 2) {
-                        prefix = matcher.group(1);
-                        suffix = (matcher.group(2).startsWith(".")) ? matcher.group(2) : '.' + matcher.group(2);
-                    } else {
-                        prefix = part.getName();
-                        suffix = DEFAULT_SUFFIX;
-                    }
-                    
-                    if (readPart(prefix, suffix, part)) {
+                if (part.getFilename() != null) {                    
+                    if (readPart(part)) {
                         break;
                     }
                 } else {
@@ -229,7 +215,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         return end;
     }
     
-    protected abstract boolean readPart(String prefix, String suffix, Part<T> part) throws Exception;
+    protected abstract boolean readPart(Part<T> part) throws Exception;
     
     /**
      * Just making sure that this is closed... (see the finally block of the parseInput method as well)

@@ -735,7 +735,13 @@ public class AgaveFilter implements Filter {
     }
     
     /**
-     * Provides support for wrapping multipart requests. The returned wrapper should implement {@code MultipartRequest}. 
+     * Provides support for wrapping multipart requests. The returned wrapper should implement {@code MultipartRequest}.
+     * This uses a {@link FileMultipartParser} by default, but this method can be overridden in order to achieve
+     * the desired behavior. An example implementation would look like:
+     * 
+     * <pre>protected HttpServletRequestWrapper wrapMultipartRequest(HttpServletRequest request) throws Exception {
+     *   return new DefaultMultipartRequest<File>(request, new FileMultipartParser());
+     * }</pre>
      * 
      * @param request the multipart request
      * @return the wrapped multipart request 
