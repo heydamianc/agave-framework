@@ -25,46 +25,23 @@
  */
 package co.cdev.agave.internal;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.ByteArrayOutputStream;
 
 import co.cdev.agave.Part;
 
 /**
- * A file backed multipart parser. All parts are saved to individual temporary files that are 
- * deleted when the JVM exits. 
+ * A memory backed multipart parser. The posted part's byte contents are available via 
+ * {@code part.getContents().toByteArray()}.  
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FileMultipartParser extends AbstractMultipartParser<File> {
+public class ByteStreamMultipartParser extends AbstractMultipartParser<ByteArrayOutputStream> {
 
-    private static final String DEFAULT_SUFFIX = ".tmp";
-    private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)\\.(.*)");
-    
-    protected boolean readPart(Part<File> part) throws IOException {
+    @Override
+    protected boolean readPart(Part<ByteArrayOutputStream> part) throws Exception {
         boolean end = false;
         
-        String prefix = null;
-        String suffix = null;
-        
-        Matcher matcher = FILENAME_PATTERN.matcher(part.getFilename());
-        if (matcher.matches() && matcher.groupCount() >= 2) {
-            prefix = matcher.group(1);
-            suffix = (matcher.group(2).startsWith(".")) ? matcher.group(2) : '.' + matcher.group(2);
-        } else {
-            prefix = part.getName();
-            suffix = DEFAULT_SUFFIX;
-        }
-    
-        File temporaryFile = File.createTempFile(prefix, suffix);
-        temporaryFile.deleteOnExit();
-        
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(temporaryFile));
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         
         CoupledLine line = null;
         while ((line = readCoupledLine(in)) != null) {
@@ -79,15 +56,13 @@ public class FileMultipartParser extends AbstractMultipartParser<File> {
                 break;
             }
             
-            out.write(line.byteStream.toByteArray());
+            byteStream.write(line.byteStream.toByteArray());
         }
         
-    	out.flush();
-        out.close();
-        part.setContents(temporaryFile);
+        byteStream.flush();
+        byteStream.close();
+        part.setContents(byteStream);
         parts.put(part.getName(), part);
-        
-        temporaryFile = null;
         
         return end;
     }

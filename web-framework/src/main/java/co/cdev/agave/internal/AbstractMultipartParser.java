@@ -25,13 +25,13 @@
  */
 package co.cdev.agave.internal;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,11 +47,11 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
 
     protected static class CoupledLine {
         public StringBuilder characters = new StringBuilder();
-        public List<Byte> bytes = new LinkedList<Byte>();
+        public ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
         public void append(int i) {
             characters.append((char)i);
-            bytes.add((byte)i);
+            byteStream.write(i);
         }
     }
     
@@ -91,7 +91,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
             boundary = "--" + boundaryMatcher.group(1);
         }
         eos = boundary + "--";
-        in = request.getInputStream();
+        in = new BufferedInputStream(request.getInputStream());
         readLine(in);
         
         try {
@@ -99,7 +99,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
                 Part<T> part = new DefaultPart<T>();
                 readHeaders(part);
                 if (part.getFilename() != null) {                    
-                    if (readPart(request, part)) {
+                    if (readPart(part)) {
                         break;
                     }
                 } else {
@@ -165,6 +165,17 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         return text.toString();
     }
     
+    /**
+     * Reads a line from the input stream and represents it as a {@link CoupledLine}.
+     * This is done because it is not known whether the line is the terminating character
+     * sequence, and in lieu of backtracking, it's just stored as character and 
+     * binary data. The amount of data stored should be relatively small, so little 
+     * memory pressure should be evident.
+     * 
+     * @param in the data from the multipart post that corresponds to an individual part
+     * @return a line represented as character and binary data
+     * @throws IOException
+     */
     protected CoupledLine readCoupledLine(InputStream in) throws IOException {
         CoupledLine line = new CoupledLine();
         
@@ -209,7 +220,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         return end;
     }
     
-    protected abstract boolean readPart(HttpServletRequest request, Part<T> part) throws Exception;
+    protected abstract boolean readPart(Part<T> part) throws Exception;
     
     /**
      * Just making sure that this is closed... (see the finally block of the parseInput method as well)

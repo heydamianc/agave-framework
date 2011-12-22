@@ -25,7 +25,8 @@
  */
 package co.cdev.agave.internal;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -42,7 +43,7 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class MultipartParserTest {
+public class ByteStreamMultipartParserTest {
 
     Mockery context = new Mockery();
     HttpServletRequest request;
@@ -68,7 +69,7 @@ public class MultipartParserTest {
                 will(returnValue(sampleStream));
             }});
 
-            MultipartParser<File> parser = new FileMultipartParser();
+            MultipartParser<ByteArrayOutputStream> parser = new ByteStreamMultipartParser();
             parser.parseInput(request);
             
             Assert.assertNotNull(parser.getParameters());
@@ -100,7 +101,7 @@ public class MultipartParserTest {
                 will(returnValue(sampleStream));
             }});
 
-            MultipartParser<File> parser = new FileMultipartParser();
+            MultipartParser<ByteArrayOutputStream> parser = new ByteStreamMultipartParser();
             parser.parseInput(request);
 
             Assert.assertNotNull(parser.getParts());
@@ -109,8 +110,8 @@ public class MultipartParserTest {
             Assert.assertNotNull(parser.getParts().get("file2"));
 
             InputStream imgStream = getClass().getClassLoader().getResourceAsStream("vim.gif");
-            InputStream file1Stream = new FileInputStream(parser.getParts().get("file1").getContents());
-            InputStream file2Stream = new FileInputStream(parser.getParts().get("file2").getContents());
+            InputStream file1Stream = new ByteArrayInputStream(parser.getParts().get("file1").getContents().toByteArray());
+            InputStream file2Stream = new ByteArrayInputStream(parser.getParts().get("file2").getContents().toByteArray());
 
             int b = -1;
             while ((b = imgStream.read()) != -1) {

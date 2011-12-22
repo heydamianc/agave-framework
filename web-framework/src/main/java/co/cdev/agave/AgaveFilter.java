@@ -471,18 +471,7 @@ public class AgaveFilter implements Filter {
         HandlerMethodDescriptor descriptor = handlerRegistry.findMatch(request);
         
         if (descriptor != null) {
-            HttpSession session = request.getSession(true);
-            RoutingContext handlerContext = new RoutingContext(servletContext, request, response, session);
-
-            if (lifecycleHooks.beforeFilteringRequest(descriptor, handlerContext)) {
-                return;
-            }
-
-            LOGGER.log(Level.FINE, "Handling requests to \"{0}\" with \"{1}\"", new Object[] {
-                request.getServletPath(),
-                descriptor.getHandlerMethod()
-            });
-
+            
             // Wraps the request if necessary so that the uploaded content can be accessed like
             // regular string parameters
             
@@ -493,6 +482,18 @@ public class AgaveFilter implements Filter {
                     throw new ServletException(e);
                 }
             }
+            
+            HttpSession session = request.getSession(true);
+            RoutingContext routingContext = new RoutingContext(servletContext, request, response, session);
+
+            if (lifecycleHooks.beforeFilteringRequest(descriptor, routingContext)) {
+                return;
+            }
+
+            LOGGER.log(Level.FINE, "Handling requests to \"{0}\" with \"{1}\"", new Object[] {
+                request.getServletPath(),
+                descriptor.getHandlerMethod()
+            });
 
             Object formInstance = null;
 
@@ -523,7 +524,7 @@ public class AgaveFilter implements Filter {
                     session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX, formInstance);
                 }
 
-                if (lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, handlerContext)) {
+                if (lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, routingContext)) {
                     return;
                 }
 
@@ -535,10 +536,12 @@ public class AgaveFilter implements Filter {
                     
                     FormPopulator formPopulator = new RequestParameterFormPopulator(request);
                     formPopulator.populate(formInstance);
+                    
                     if (RequestUtils.isMultipart(request)) {
                         formPopulator = new RequestPartFormPopulator<Object>((MultipartRequest<Object>) request);
                         formPopulator.populate(formInstance);
                     }
+                    
                     formPopulator = new URIParameterFormPopulator(request, descriptor);
                     formPopulator.populate(formInstance);
                 } catch (NoSuchMethodException ex) {
@@ -551,7 +554,7 @@ public class AgaveFilter implements Filter {
                     throw new FormException(ex);
                 }
 
-                if (lifecycleHooks.afterInitializingForm(descriptor, formInstance, handlerContext)) {
+                if (lifecycleHooks.afterInitializingForm(descriptor, formInstance, routingContext)) {
                     return;
                 }
             }
@@ -616,7 +619,7 @@ public class AgaveFilter implements Filter {
                 session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
             }
 
-            if (lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, handlerContext)) {
+            if (lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, routingContext)) {
                 return;
             }
 
@@ -629,16 +632,16 @@ public class AgaveFilter implements Filter {
             try {
                 if (formInstance != null) {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, routingContext, formInstance);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext, formInstance);
+                        descriptor.getHandlerMethod().invoke(handlerInstance, routingContext, formInstance);
                     }
                 } else if (arguments != null) {
                     Object[] actualArguments = new Object[arguments.size() + 1];
                     
                     int i = 0;
                     
-                    actualArguments[i++] = handlerContext;
+                    actualArguments[i++] = routingContext;
                     
                     for (String name : arguments.keySet()) {
                         actualArguments[i++] = arguments.get(name);
@@ -651,9 +654,9 @@ public class AgaveFilter implements Filter {
                     }
                 } else {
                     if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
+                        result = descriptor.getHandlerMethod().invoke(handlerInstance, routingContext);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, handlerContext);
+                        descriptor.getHandlerMethod().invoke(handlerInstance, routingContext);
                     }
                 }
             } catch (InvocationTargetException ex) {
@@ -685,7 +688,7 @@ public class AgaveFilter implements Filter {
                 if (result instanceof DestinationImpl) {
                     Destination destination = (Destination) result;
 
-                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, handlerContext)) {
+                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, routingContext)) {
                         return;
                     }
 
@@ -704,7 +707,7 @@ public class AgaveFilter implements Filter {
                 } else if (result instanceof URI) {
                     uri = (URI) result;
 
-                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, handlerContext)) {
+                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, routingContext)) {
                         return;
                     }
 
@@ -724,7 +727,7 @@ public class AgaveFilter implements Filter {
                     request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
             } else {
-                if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, handlerContext)) {
+                if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, routingContext)) {
                     return;
                 }
             }
