@@ -66,8 +66,9 @@ public class RoutingContext {
         this.servletContext = servletContext;
     }
     
-    public HttpServletRequest getRequest() {
-        return request;
+    @SuppressWarnings("unchecked")
+    public <T extends HttpServletRequest> T getRequest() {
+        return (T) request;
     }
     
     public void setRequest(HttpServletRequest request) {
