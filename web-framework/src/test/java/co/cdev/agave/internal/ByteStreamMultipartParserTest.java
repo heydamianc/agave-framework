@@ -27,7 +27,6 @@ package co.cdev.agave.internal;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.servlet.DelegatingServletInputStream;
