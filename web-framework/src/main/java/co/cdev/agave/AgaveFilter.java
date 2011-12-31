@@ -497,7 +497,7 @@ public class AgaveFilter implements Filter {
 
             Object formInstance = null;
 
-            // Attempts to pull a form intance out of the session, stored from a
+            // Attempts to pull a form instance out of the session, stored from a
             // previous workflow phase
             
             if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
