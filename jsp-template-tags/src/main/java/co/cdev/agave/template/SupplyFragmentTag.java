@@ -61,15 +61,17 @@ public class SupplyFragmentTag extends TemplateTag {
     public int doEndTag() throws JspException {
         super.doEndTag();
 
-        if (additive) {
-            Map<String, List<String>> globalFragments = getGlobalFragmentMap();
-            if (globalFragments.get(name) == null) {
-                globalFragments.put(name, new ArrayList<String>());
+        if (bodyContent != null) {
+            if (additive) {
+                Map<String, List<String>> globalFragments = getGlobalFragmentMap();
+                if (globalFragments.get(name) == null) {
+                    globalFragments.put(name, new ArrayList<String>());
+                }
+                globalFragments.get(name).add(bodyContent.getString());
+            } else {
+                Map<String, String> templateFragments = getCurrentFragmentMap();
+                templateFragments.put(name, bodyContent.getString());
             }
-            globalFragments.get(name).add(bodyContent.getString());
-        } else {
-            Map<String, String> templateFragments = getCurrentFragmentMap();
-            templateFragments.put(name, bodyContent.getString());
         }
         
         return EVAL_PAGE;
