@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -117,8 +118,6 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
                     formClass = parameterTypes[1];
                     return;
                 } else if (expectedParameterCount == parameterTypes.length) {
-                    parameterDescriptors = new ArrayList<ParameterDescriptor>(expectedParameterCount - 1);
-                    
                     for (int i = 1; i < parameterTypes.length; i++) {
                         Class<?> expectedType = scanResult.getParameterTypes().get(i);
                         Class<?> actualType = parameterTypes[i];
@@ -150,6 +149,13 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         }
     }
 
+    void addParameterDescriptor(ParameterDescriptor parameterDescriptor) {
+        if (parameterDescriptors.isEmpty()) {
+            parameterDescriptors = new ArrayList<ParameterDescriptor>();
+        }
+        parameterDescriptors.add(parameterDescriptor);
+    }
+    
     private boolean hasAdditionalParams(Method m) {
         return m.getParameterTypes().length > 1;
     }
@@ -271,8 +277,18 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
 
     @Override
     public boolean matches(HttpServletRequest request) {
-        return request != null && method.matches(request)
-                && pattern.matches(request);
+        boolean matches = request != null && method.matches(request) && pattern.matches(request);
+        
+        if (matches && !parameterDescriptors.isEmpty()) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> params = request.getParameterMap();
+            
+            for (ParameterDescriptor param : parameterDescriptors) {
+                matches &= params.containsKey(param.getName());
+            }
+        }
+        
+        return matches;
     }
     
     @Override

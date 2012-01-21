@@ -26,6 +26,8 @@
 package co.cdev.agave.internal;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,8 +37,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.RoutingContext;
 import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
 
@@ -151,6 +153,25 @@ public class HandlerMethodDescriptorTest {
     	
     	HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
     	Assert.assertFalse(a.matches(request));
+    }
+    
+    @Test
+    public void testMatches_withParameterDescriptors() throws Exception {
+        final Map<String, Object> parameterMap = new HashMap<String, Object>();
+        parameterMap.put("color", "orange");
+        parameterMap.put("always", Boolean.FALSE);
+        
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/favorites"));
+            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+        }});
+        
+        HandlerMethodDescriptorImpl a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, cls, met));
+        a.addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(String.class, "color"));
+        a.addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(Boolean.class, "always"));
+        
+        Assert.assertTrue(a.matches(request));
     }
     
 }
