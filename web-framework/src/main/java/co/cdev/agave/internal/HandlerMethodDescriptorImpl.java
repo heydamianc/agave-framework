@@ -127,7 +127,7 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
                             try {
                                 ParameterDescriptor parameterDescriptor;
                                 parameterDescriptor = ParameterDescriptor.createIfApplicable(actualType, annotations);
-                                parameterDescriptors.add(parameterDescriptor);
+                                addParameterDescriptor(parameterDescriptor);
                             } catch (InvalidParamException ex) {
                                 throw new InvalidHandlerException(ex);
                             }
@@ -381,6 +381,19 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
             }
             
             return descriptor;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder representation = new StringBuilder();
+            representation.append("[");
+            representation.append("type:").append(type.getName());
+            representation.append(",").append("name:").append(name);
+            if (converter != null) {
+                representation.append(",").append("converter:").append(converter.getName());
+            }
+            representation.append("]");
+            return representation.toString();
         }
         
     }

@@ -241,6 +241,8 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
     public void testNamedParams() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+        parameterMap.put("something", new String[] { "someValue" });
+        parameterMap.put("aNumber", new String[] { "5" });
         
         emulateServletContainer(parameterMap);
         
@@ -290,7 +292,7 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
     public void testPotentiallyAmbiguousHandlerMethods_expectLongerMatch() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        
+        parameterMap.put("param", new String[] { "something" });
         emulateServletContainer(parameterMap);
         
         context.checking(new Expectations() {{
