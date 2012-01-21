@@ -94,15 +94,38 @@ public class HandlerMethodDescriptorTest {
     }
 
     @Test
-    public void testCompareTo() throws Exception {
+    public void testCompareTo_withDistinctPath() throws Exception {
         HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
         HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", cls, met));
         Assert.assertEquals(0, a.compareTo(b));
         
         a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/a", cls, met));
         b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/b", cls, met));
-        Assert.assertEquals(-1, a.compareTo(b));
-        Assert.assertEquals(1, b.compareTo(a));
+        
+        Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));
+    }
+    
+    @Test
+    public void testCompareTo_withDuplicatePathAndDistinctMethod() throws Exception {
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
+        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met));
+        Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));
+    }
+    
+    @Test
+    public void testCompareTo_withDuplicatePathAndMethodAndDifferentNumberOfParameters() throws Exception {
+        HandlerMethodDescriptor a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met)) {{
+            addParameterDescriptor(new ParameterDescriptor(String.class, "a"));
+            addParameterDescriptor(new ParameterDescriptor(String.class, "b"));
+            addParameterDescriptor(new ParameterDescriptor(String.class, "c"));
+        }};
+        
+        HandlerMethodDescriptor b = new HandlerMethodDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met)) {{
+            addParameterDescriptor(new ParameterDescriptor(String.class, "a"));
+            addParameterDescriptor(new ParameterDescriptor(String.class, "b"));
+        }};
+        
+        Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));
     }
     
     @Test

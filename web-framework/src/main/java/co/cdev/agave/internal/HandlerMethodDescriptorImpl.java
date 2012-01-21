@@ -50,7 +50,7 @@ import co.cdev.agave.exception.InvalidParamException;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public final class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
+public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
 
     private URIPattern pattern;
     private HttpMethod method;
@@ -149,7 +149,7 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
         }
     }
 
-    void addParameterDescriptor(ParameterDescriptor parameterDescriptor) {
+    protected void addParameterDescriptor(ParameterDescriptor parameterDescriptor) {
         if (parameterDescriptors.isEmpty()) {
             parameterDescriptors = new ArrayList<ParameterDescriptor>();
         }
@@ -217,9 +217,15 @@ public final class HandlerMethodDescriptorImpl implements HandlerMethodDescripto
     @Override
     public int compareTo(HandlerMethodDescriptor that) {
         int result = pattern.compareTo(that.getPattern());
+        
         if (result == 0) {
             result = method.ordinal() - that.getMethod().ordinal();
         }
+        
+        if (result == 0) {
+            result = -(parameterDescriptors.size() - that.getParamDescriptors().size());
+        }
+        
         return result;
     }
 
