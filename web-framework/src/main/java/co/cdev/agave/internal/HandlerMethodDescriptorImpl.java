@@ -287,10 +287,12 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
         
         if (matches && !parameterDescriptors.isEmpty()) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> params = request.getParameterMap();
+            Map<String, Object> requestParams = request.getParameterMap();
+            Map<String, String> uriParams = pattern.getParameterMap(request);
             
             for (ParameterDescriptor param : parameterDescriptors) {
-                matches &= params.containsKey(param.getName());
+                String paramName = param.getName();
+                matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
             }
         }
         

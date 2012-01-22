@@ -157,7 +157,7 @@ public class HandlerMethodDescriptorTest {
     }
     
     @Test
-    public void testMatches_withNonMethodAndMatchingURI() throws Exception {
+    public void testMatches_withNonMatchingMethodAndMatchingURI() throws Exception {
     	context.checking(new Expectations() {{
     		allowing(request).getMethod(); will(returnValue("GET"));
     		allowing(request).getServletPath(); will(returnValue("/login"));
@@ -190,9 +190,27 @@ public class HandlerMethodDescriptorTest {
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
         }});
         
-        HandlerMethodDescriptorImpl a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, cls, met));
-        a.addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(String.class, "color"));
-        a.addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(Boolean.class, "always"));
+        HandlerMethodDescriptorImpl a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, cls, met)) {{
+            addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(String.class, "color"));
+            addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(Boolean.class, "always"));
+        }};
+        
+        Assert.assertTrue(a.matches(request));
+    }
+    
+    @Test
+    public void testMatches_withURIParameters() throws Exception {
+        final Map<String, Object> parameterMap = new HashMap<String, Object>();
+        
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/favorites/orange"));
+            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+        }});
+        
+        HandlerMethodDescriptorImpl a = new HandlerMethodDescriptorImpl(new ScanResultImpl("/favorites/${color}", HttpMethod.GET, cls, met)) {{
+            addParameterDescriptor(new HandlerMethodDescriptorImpl.ParameterDescriptor(String.class, "color"));
+        }};
         
         Assert.assertTrue(a.matches(request));
     }
