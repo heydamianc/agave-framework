@@ -48,6 +48,7 @@ import co.cdev.agave.exception.ConversionException;
  *</p>
  *
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
+ * @deprecated
  */
 public class DateParamConverter implements StringParamConverter<Date> {
 
