@@ -25,8 +25,6 @@
  */
 package co.cdev.agave;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * All supported values for the {@link HandlesRequestsTo} {@code method} parameter.
  * 
@@ -39,18 +37,6 @@ public enum HttpMethod {
     POST,
     DELETE,
     ANY;
-
-    public boolean matches(HttpServletRequest request) {
-        boolean matches = false;
-
-        if (request != null) {
-            if (request.getMethod() != null) {
-                matches = matches(HttpMethod.valueOf(request.getMethod().toUpperCase()));
-            }
-        }
-
-        return matches;
-    }
 
     public boolean matches(HttpMethod method) {
         return this == ANY || method == ANY || this == method;

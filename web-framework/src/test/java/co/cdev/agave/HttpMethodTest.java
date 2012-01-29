@@ -25,12 +25,7 @@
  */
 package co.cdev.agave;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -38,42 +33,6 @@ import org.junit.Test;
  * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class HttpMethodTest {
-	
-	Mockery context = new Mockery();
-	HttpServletRequest request;
-	
-	@Before
-	public void setUp() {
-		request = context.mock(HttpServletRequest.class);
-		
-	}
-	
-	@Test
-	public void testMatches_withMatchingMethod() {
-		context.checking(new Expectations() {{
-			allowing(request).getMethod(); will(returnValue("GET"));
-		}});
-		
-		Assert.assertTrue(HttpMethod.GET.matches(request));
-	}
-	
-	@Test
-	public void testMatches_againsAnyMethod() {
-		context.checking(new Expectations() {{
-			allowing(request).getMethod(); will(returnValue("GET"));
-		}});
-		
-		Assert.assertTrue(HttpMethod.ANY.matches(request));
-	}
-	
-	@Test
-	public void testMatches_withNonMatchingMethod() {
-		context.checking(new Expectations() {{
-			allowing(request).getMethod(); will(returnValue("GET"));
-		}});
-		
-		Assert.assertFalse(HttpMethod.PUT.matches(request));
-	}
 	
 	@Test
 	public void testMatches_whenThisIsAny() {

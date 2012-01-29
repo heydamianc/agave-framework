@@ -283,16 +283,20 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
 
     @Override
     public boolean matches(HttpServletRequest request) {
-        boolean matches = request != null && method.matches(request) && pattern.matches(request);
+        boolean matches = request != null && request.getMethod() != null && pattern.matches(request);
         
-        if (matches && !parameterDescriptors.isEmpty()) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> requestParams = request.getParameterMap();
-            Map<String, String> uriParams = pattern.getParameterMap(request);
+        if (matches) {
+            matches &= method.matches(HttpMethod.valueOf(request.getMethod().toUpperCase()));
             
-            for (ParameterDescriptor param : parameterDescriptors) {
-                String paramName = param.getName();
-                matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
+            if (!parameterDescriptors.isEmpty()) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> requestParams = request.getParameterMap();
+                Map<String, String> uriParams = pattern.getParameterMap(request);
+                
+                for (ParameterDescriptor param : parameterDescriptors) {
+                    String paramName = param.getName();
+                    matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
+                }
             }
         }
         
