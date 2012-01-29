@@ -25,8 +25,10 @@
  */
 package co.cdev.agave.conversion;
 
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -67,9 +69,9 @@ import co.cdev.agave.exception.ConversionException;
  *
  * The date must be specified in full, and must be exactly 8 digits long, with an
  * optional dash to separate each component of the date. Optionally specify a date
- * as a year followed by the ordinal number of the day in the year. Support for 
- * specifying a date as year, week in year, day of week has been omitted because 
- * the standard is not clear about which day of the week is the starting day.
+ * as a year followed by the ordinal number of the day in the year. Also, you can 
+ * specify the date as the year, followed by the week of the year, followed by the
+ * day of the week, were Monday is 1, Tuesday is 2, ..., Sunday is 7.
  * 
  * A great degree of granularity can be left off in the time designator. Any missing
  * component indicates 00, eg. 18 implies 6 o'clock PM, with 0 seconds trailing. An
@@ -99,7 +101,33 @@ public class ISO8601DateTimeParamConverter implements StringParamConverter<Date>
             if (components.length > 0) {
                 components[0] = components[0].replace("-", "");
 
-                if (components[0].length() == 8) { 
+                if (components[0].contains("W")) {
+                    
+                    // Date as year, week in year, day of week (starting with Monday as 1
+                    // and ending with Sunday as 7
+                    
+                    formatString = "yyyy'W'wwEEE";
+                    actualInput = components[0].substring(0, 7);
+                    
+                    DateFormatSymbols symbols = new DateFormatSymbols(locale);
+                    int dayOfWeek = Integer.valueOf(components[0].substring(7, 8));
+                    
+                    if (dayOfWeek == 1) {
+                        actualInput += symbols.getWeekdays()[Calendar.MONDAY];
+                    } else if (dayOfWeek == 2) {
+                        actualInput += symbols.getWeekdays()[Calendar.TUESDAY];
+                    } else if (dayOfWeek == 3) {
+                        actualInput += symbols.getWeekdays()[Calendar.WEDNESDAY];
+                    } else if (dayOfWeek == 4) {
+                        actualInput += symbols.getWeekdays()[Calendar.THURSDAY];
+                    } else if (dayOfWeek == 5) {
+                        actualInput += symbols.getWeekdays()[Calendar.FRIDAY];
+                    } else if (dayOfWeek == 6) {
+                        actualInput += symbols.getWeekdays()[Calendar.SATURDAY];
+                    } else if (dayOfWeek == 7) {
+                        actualInput += symbols.getWeekdays()[Calendar.SUNDAY];
+                    }
+                } else if (components[0].length() == 8) { 
                     
                     // Date as year, month, day
                     

@@ -35,6 +35,7 @@ public class ISO8601DateTimeParamConverterTest {
         
         assertEquals(halloween, converter.convert("20081031", locale));
         assertEquals(halloween, converter.convert("2008305", locale));
+        assertEquals(halloween, converter.convert("2008W445", locale));
     }
     
     @Test
@@ -43,6 +44,7 @@ public class ISO8601DateTimeParamConverterTest {
         
         assertEquals(halloween, converter.convert("2008-10-31", locale));
         assertEquals(halloween, converter.convert("2008-305", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5", locale));
     }
     
     @Test
@@ -51,6 +53,7 @@ public class ISO8601DateTimeParamConverterTest {
         
         assertEquals(halloween, converter.convert("20081031T20", locale));
         assertEquals(halloween, converter.convert("2008305T20", locale));
+        assertEquals(halloween, converter.convert("2008W445T20", locale));
     }
     
     @Test
@@ -61,6 +64,8 @@ public class ISO8601DateTimeParamConverterTest {
         assertEquals(halloween, converter.convert("2008-10-31T20Z", locale));
         assertEquals(halloween, converter.convert("2008-305T20", locale)); 
         assertEquals(halloween, converter.convert("2008-305T20Z", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20", locale)); 
+        assertEquals(halloween, converter.convert("2008-W44-5T20Z", locale));
     }
     
     @Test
@@ -80,6 +85,13 @@ public class ISO8601DateTimeParamConverterTest {
         assertEquals(halloween, converter.convert("2008305T20:35", locale)); 
         assertEquals(halloween, converter.convert("2008-305T20:35Z", locale));
         assertEquals(halloween, converter.convert("2008305T20:35Z", locale));
+        
+        assertEquals(halloween, converter.convert("2008W445T2035", locale)); 
+        assertEquals(halloween, converter.convert("2008-W445T2035", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35", locale));
+        assertEquals(halloween, converter.convert("2008W445T20:35", locale)); 
+        assertEquals(halloween, converter.convert("2008-W445T20:35Z", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35Z", locale));
     }
     
     @Test
@@ -113,6 +125,20 @@ public class ISO8601DateTimeParamConverterTest {
         assertEquals(halloween, converter.convert("2008305T20:35:13Z", locale));
         assertEquals(halloween, converter.convert("2008305T2035:13Z", locale));
         assertEquals(halloween, converter.convert("2008305T20:3513Z", locale));
+        
+        assertEquals(halloween, converter.convert("2008W445T203513", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13", locale));
+        assertEquals(halloween, converter.convert("2008-W445T203513", locale));
+        assertEquals(halloween, converter.convert("2008W445T20:35:13", locale));
+        assertEquals(halloween, converter.convert("2008W445T2035:13", locale));
+        assertEquals(halloween, converter.convert("2008W445T20:3513", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13Z", locale));
+        assertEquals(halloween, converter.convert("2008-W445T203513Z", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:3513Z", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T2035:13Z", locale));
+        assertEquals(halloween, converter.convert("2008W445T20:35:13Z", locale));
+        assertEquals(halloween, converter.convert("2008W445T2035:13Z", locale));
+        assertEquals(halloween, converter.convert("2008W445T20:3513Z", locale));
     }
     
     @Test
@@ -194,5 +220,60 @@ public class ISO8601DateTimeParamConverterTest {
         assertEquals(halloween, converter.convert("2008-305T20:35:13+00:00", locale));
         assertEquals(halloween, converter.convert("2008-305T19:35:13-01:00", locale));
         assertEquals(halloween, converter.convert("2008-305T21:35:13+01:00", locale));
+        
+        assertEquals(halloween, converter.convert("2008W445T203513-00", locale));
+        assertEquals(halloween, converter.convert("2008W445T203513-0000", locale));
+        assertEquals(halloween, converter.convert("2008W445T203513+00", locale));
+        assertEquals(halloween, converter.convert("2008W445T203513+0000", locale));
+        assertEquals(halloween, converter.convert("2008W445T193513-01", locale));
+        assertEquals(halloween, converter.convert("2008W445T193513-0100", locale));
+        assertEquals(halloween, converter.convert("2008W445T213513+01", locale));
+        assertEquals(halloween, converter.convert("2008W445T213513+0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T203513-00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T203513-0000", locale));
+        assertEquals(halloween, converter.convert("2008-W445T203513+00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T203513+0000", locale));
+        assertEquals(halloween, converter.convert("2008-W445T193513-01", locale));
+        assertEquals(halloween, converter.convert("2008-W445T193513-0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T213513+01", locale));
+        assertEquals(halloween, converter.convert("2008-W445T213513+0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:3513-00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:3513-0000", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:3513+00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:3513+0000", locale));
+        assertEquals(halloween, converter.convert("2008-W445T19:3513-01", locale));
+        assertEquals(halloween, converter.convert("2008-W445T19:3513-0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T21:3513+01", locale));
+        assertEquals(halloween, converter.convert("2008-W445T21:3513+0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13-00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13-0000", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13+00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13+0000", locale));
+        assertEquals(halloween, converter.convert("2008-W445T19:35:13-01", locale));
+        assertEquals(halloween, converter.convert("2008-W445T19:35:13-0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T21:35:13+01", locale));
+        assertEquals(halloween, converter.convert("2008-W445T21:35:13+0100", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13-00:00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T20:35:13+00:00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T19:35:13-01:00", locale));
+        assertEquals(halloween, converter.convert("2008-W445T21:35:13+01:00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:3513+00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:3513+0000", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T19:3513-01", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T19:3513-0100", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T21:3513+01", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T21:3513+0100", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13-00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13-0000", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13+00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13+0000", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T19:35:13-01", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T19:35:13-0100", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T21:35:13+01", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T21:35:13+0100", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13-00:00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T20:35:13+00:00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T19:35:13-01:00", locale));
+        assertEquals(halloween, converter.convert("2008-W44-5T21:35:13+01:00", locale));
     }
 }
