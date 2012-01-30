@@ -25,11 +25,9 @@
  */
 package co.cdev.agave;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import co.cdev.agave.internal.HandlerDescriptor;
@@ -41,19 +39,7 @@ import co.cdev.agave.internal.HandlerDescriptor;
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
 public class DefaultLifecycleHooks implements LifecycleHooks {
-
-    @Override
-    public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile)
-            throws ServletException, IOException {
-        return false;
-    }
-
-    @Override
-    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
-            ServletContext servletContext) throws ServletException, IOException {
-        return false;
-    }
-
+    
     @Override
     public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
             RoutingContext context) throws ServletException, IOException {

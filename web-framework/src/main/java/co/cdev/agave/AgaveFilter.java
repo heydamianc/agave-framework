@@ -34,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,10 +63,10 @@ import co.cdev.agave.internal.DestinationImpl;
 import co.cdev.agave.internal.FileMultipartParser;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
-import co.cdev.agave.internal.HandlerFactoryImpl;
 import co.cdev.agave.internal.HandlerDescriptor;
 import co.cdev.agave.internal.HandlerDescriptorImpl;
 import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.internal.HandlerFactoryImpl;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 import co.cdev.agave.internal.HandlerScanner;
@@ -296,8 +297,8 @@ public class AgaveFilter implements Filter {
             });
             
             classesDirectory = provideClassesDirectory(config);
-            setHandlerRegistry(new HandlerRegistryImpl());
-            scanClassesDirForHandlers(classesDirectory);
+            Collection<HandlerDescriptor> descriptors = scanClassesDirForHandlers(classesDirectory);
+            setHandlerRegistry(new HandlerRegistryImpl(descriptors));
             
             handlerFactory = provideHandlerFactory(config);
             handlerFactory.initialize();
@@ -753,33 +754,22 @@ public class AgaveFilter implements Filter {
         return new DefaultMultipartRequest<File>(request, new FileMultipartParser());
     }
 
-    /**
-     * Scans the supplied directory for handlers. Handlers in turn are inspected
-     * and have a {@link agave.internal.HandlerDescriptor HandlerDescriptor}
-     * generated for them which then gets registered in the
-     * {@link agave.internal.HandlerRegistry HandlerRegistry} as handlers are
-     * found.
-     * 
-     * @param root
-     *            the root directory to scan files for, typically
-     *            {@code /WEB-INF/classes}
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws ServletException
-     */
-    protected void scanClassesDirForHandlers(File root)
-            throws FileNotFoundException, IOException, ClassNotFoundException, ServletException {
+    protected Collection<HandlerDescriptor> scanClassesDirForHandlers(File root)
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveException {
+        Collection<HandlerDescriptor> descriptors = new HashSet<HandlerDescriptor>();
+        scanClassesDirForHandlers(root, descriptors);
+        return descriptors;
+    }
+    
+    private void scanClassesDirForHandlers(File root, Collection<HandlerDescriptor> descriptors)
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveException {
         if (root != null && root.canRead()) {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {
-                    scanClassesDirForHandlers(node);
+                    scanClassesDirForHandlers(node, descriptors);
                 } else if (node.isFile() && node.getName().endsWith(".class")) {
-                    if (lifecycleHooks.beforeHandlerIsDiscovered(node)) {
-                        return;
-                    }
-
                     FileInputStream nodeIn = new FileInputStream(node);
+                    
                     try {
                         ClassReader classReader = new ClassReader(nodeIn);
                         Collection<ScanResult> scanResults = new ArrayList<ScanResult>();
@@ -788,11 +778,7 @@ public class AgaveFilter implements Filter {
                         for (ScanResult scanResult : scanResults) {
                             HandlerDescriptor descriptor = new HandlerDescriptorImpl(scanResult);
                             descriptor.locateAnnotatedHandlerMethods(scanResult);
-                            handlerRegistry.addDescriptor(descriptor);
-
-                            if (lifecycleHooks.afterHandlerIsDiscovered(descriptor, config.getServletContext())) {
-                                return;
-                            }
+                            descriptors.add(descriptor);
                         }
                     } finally {
                         nodeIn.close();

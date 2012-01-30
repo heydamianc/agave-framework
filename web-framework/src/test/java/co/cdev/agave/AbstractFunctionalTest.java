@@ -28,6 +28,7 @@ package co.cdev.agave;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +50,7 @@ import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 
+import co.cdev.agave.internal.HandlerDescriptor;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 
 /**
@@ -119,8 +121,8 @@ public abstract class AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
         
         filter.init(filterConfig);
-        filter.setHandlerRegistry(new HandlerRegistryImpl());
-        filter.scanClassesDirForHandlers(root);
+        Collection<HandlerDescriptor> descriptors = filter.scanClassesDirForHandlers(root);
+        filter.setHandlerRegistry(new HandlerRegistryImpl(descriptors));
         return filter;
     }
     

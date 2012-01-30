@@ -25,11 +25,9 @@
  */
 package co.cdev.agave;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import co.cdev.agave.internal.HandlerDescriptor;
@@ -69,33 +67,6 @@ import co.cdev.agave.internal.HandlerDescriptor;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public interface LifecycleHooks {
-
-    /**
-     * Executed by the {@link AgaveFilter} prior to each potential handler is discovered.
-     *
-     * @param potentalHandlerClassFile The actual {@code File} object that a potential handler
-     *		  class is stored in.  It is potentially a handler class because at this point, it
-     *		  has not been inspected and could just be a regular file (or even a random resource).
-     * @return a truth value that indicates whether execution should halt.  See the class-level
-     *         description for more information.
-     * @throws ServletException
-     * @throws IOException
-     */
-    public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile)
-            throws ServletException, IOException;
-
-    /**
-     * Executed by {@link AgaveFilter} after a handler has been discovered.
-     *
-     * @param descriptor the generated {@link HandlerDescriptor}
-     * @param servletContext the {@code ServletContext}
-     * @return a truth value that indicates whether execution should halt.  See the class-level
-     *         description for more information.
-     * @throws ServletException
-     * @throws IOException
-     */
-    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
-            ServletContext servletContext) throws ServletException, IOException;
 
     /**
      * Executed by the {@link AgaveFilter} before actually performing the work of filtering the

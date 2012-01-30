@@ -25,10 +25,7 @@
  */
 package co.cdev.agave;
 
-import java.io.File;
 import java.net.URI;
-
-import javax.servlet.ServletContext;
 
 import co.cdev.agave.internal.HandlerDescriptor;
 
@@ -37,19 +34,6 @@ import co.cdev.agave.internal.HandlerDescriptor;
  * @version $Rev$ $Date$
  */
 public class SampleLifecycleHooks extends DefaultLifecycleHooks {
-
-    // from init
-    
-    @Override
-    public boolean beforeHandlerIsDiscovered(File potentalHandlerClassFile) {
-        return false;
-    }
-    
-    @Override
-    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor, ServletContext servletContext) {
-        servletContext.setAttribute("afterHandlerIsDiscovered", Boolean.TRUE);
-        return false;
-    }
     
     // from doFilter
     

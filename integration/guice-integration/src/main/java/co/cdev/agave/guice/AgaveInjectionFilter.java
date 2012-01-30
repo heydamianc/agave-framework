@@ -40,7 +40,8 @@ import javax.servlet.ServletException;
 
 import co.cdev.agave.AgaveFilter;
 import co.cdev.agave.HandlerFactory;
-import co.cdev.agave.LifecycleHooks;
+import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.internal.HandlerRegistry;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
@@ -57,23 +58,23 @@ import com.google.inject.Module;
 public class AgaveInjectionFilter extends AgaveFilter {
 
     public static final String PARENT_INJECTOR = AgaveInjectionFilter.class.getName() + ".PARENT_INJECTOR";
-    
     private static final Logger LOGGER = Logger.getLogger(AgaveInjectionFilter.class.getName());
     
-    private final Set<Class<?>> handlerClasses;
     private InjectionHandlerFactory injectionHandlerFactory;
-    
     protected Injector injector;
-
-    public AgaveInjectionFilter() {
-        handlerClasses = new HashSet<Class<?>>();
-    }
     
     @Override
     public void init(javax.servlet.FilterConfig config) throws ServletException {
         injectionHandlerFactory = new InjectionHandlerFactory();
         
         super.init(config);
+        
+        Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
+        
+        HandlerRegistry handlerRegistry = super.getHandlerRegistry();
+        for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
+            handlerClasses.add(descriptor.getHandlerClass());
+        }
         
         Module handlerModule = new HandlersModule(handlerClasses);
         
@@ -107,13 +108,6 @@ public class AgaveInjectionFilter extends AgaveFilter {
     @Override
     public void destroy() {
         super.destroy();
-    }
-
-    @Override
-    protected LifecycleHooks provideLifecycleHooks(FilterConfig config) throws ClassNotFoundException, 
-            InstantiationException, IllegalAccessException {
-        LifecycleHooks configuredHooks = super.provideLifecycleHooks(config);
-        return new InjectionLifecycleHooks(handlerClasses, configuredHooks);
     }
 
     /**
