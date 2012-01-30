@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -38,16 +38,16 @@ public class FloatParamConverter implements StringParamConverter<Float> {
      * Performs the conversion.
      * @param input the input parameter as a {@code String}.
      * @return a {@code Float} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Float convert(String input, Locale locale) throws ConversionException {
+    public Float convert(String input, Locale locale) throws AgaveConversionException {
         Float value = null;
         if (input != null && !"".equals(input)) {
             try {
                 value = Float.parseFloat(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Float object", ex.getCause());
+                throw new AgaveConversionException("Could not convert " + input + " to a Float object", ex.getCause());
             }
         }
         return value;

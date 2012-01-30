@@ -27,7 +27,7 @@ package co.cdev.agave.internal;
 
 import co.cdev.agave.Converter;
 import co.cdev.agave.conversion.*;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -65,7 +65,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
-            ConversionException {
+            AgaveConversionException {
         CallChain callChain = null;
         for (String parameterName : parameters.keySet()) {
             List<Object> parameterValues = parameters.get(parameterName);
@@ -85,7 +85,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
-            ConversionException {
+            AgaveConversionException {
         Object targetInstance = formInstance;
         Class<?> targetClass = targetInstance.getClass();
 
@@ -137,7 +137,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
-            ConversionException {
+            AgaveConversionException {
         try {
             mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
         } catch (IllegalArgumentException ex) {
@@ -155,7 +155,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
-            ConversionException {
+            AgaveConversionException {
         mutator.invoke(targetInstance, index, convertIfNecessary(mutator, parameterValue));
     }
 
@@ -164,13 +164,13 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
-            ConversionException {
+            AgaveConversionException {
         mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
     }
 
     @SuppressWarnings("unchecked")
 	private Object convertIfNecessary(Method mutator, Object parameterValue)
-            throws ConversionException,
+            throws AgaveConversionException,
             InstantiationException,
             IllegalAccessException {
         Class<?>[] parameterTypes = mutator.getParameterTypes();
@@ -201,7 +201,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
                 try {
                     return converter.convert(parameterValue, locale);
                 } catch (Throwable ex) {
-                    throw new ConversionException(ex);
+                    throw new AgaveConversionException(ex);
                 }
             }
         }

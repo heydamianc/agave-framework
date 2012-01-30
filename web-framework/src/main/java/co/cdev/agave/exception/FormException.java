@@ -30,7 +30,7 @@ import co.cdev.agave.internal.HandlerDescriptor;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FormException extends AgaveException {
+public class FormException extends AgaveWebException {
     
     private static final long serialVersionUID = 1L;
 

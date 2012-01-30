@@ -29,7 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -52,7 +52,7 @@ public class DoubleParamConverterTest {
         Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
     
-    @Test(expected = ConversionException.class)
+    @Test(expected = AgaveConversionException.class)
     public void testConvertWithException() throws Exception {
         converter.convert("some bad input", Locale.getDefault());
     }

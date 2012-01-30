@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 /**
  * This class support a profile of the functionality defined in the ISO/FDIS 
  * 8601:2000(E) date format. The international standard describes multiple ways
@@ -87,7 +87,7 @@ import co.cdev.agave.exception.ConversionException;
 public class DateTimeParamConverter implements StringParamConverter<Date> {
     
     @Override
-    public Date convert(String input, Locale locale) throws ConversionException {
+    public Date convert(String input, Locale locale) throws AgaveConversionException {
         Date value = null;
         
         if (input != null && !"".equals(input)) {

@@ -29,7 +29,7 @@ package co.cdev.agave.exception;
  *
  * @author <a href="mailto:damiancarrilo@gmail.com">Damian Carrillo</a>
  */
-public class InvalidParamException extends AgaveException {
+public class InvalidParamException extends AgaveConfigurationException {
 
 	private static final long serialVersionUID = 1L;
 

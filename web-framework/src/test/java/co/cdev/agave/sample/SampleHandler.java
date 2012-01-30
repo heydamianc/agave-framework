@@ -33,7 +33,7 @@ import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Param;
 import co.cdev.agave.Route;
 import co.cdev.agave.conversion.IntegerParamConverter;
-import co.cdev.agave.exception.AgaveException;
+import co.cdev.agave.exception.AgaveWebException;
 
 public class SampleHandler {
     @Route("/login")
@@ -74,7 +74,7 @@ public class SampleHandler {
     @Route("/has/named/params/${something}/${aNumber}")
     public void hasNamedParams(RoutingContext context, 
                                @Param("something") String something, 
-                               @Param(name = "aNumber", converter = IntegerParamConverter.class) int aNumber) throws AgaveException {
+                               @Param(name = "aNumber", converter = IntegerParamConverter.class) int aNumber) throws AgaveWebException {
         context.getRequest().setAttribute("something", something);
         context.getRequest().setAttribute("aNumber", aNumber);
     }

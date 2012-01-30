@@ -12,12 +12,12 @@ import org.dom4j.DocumentHelper;
 
 import co.cdev.agave.Part;
 import co.cdev.agave.conversion.PartParamConverter;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 
 public class DocumentParamConverter implements PartParamConverter<Document, File> {
     
     @Override
-    public Document convert(Part<File> part, Locale locale) throws ConversionException {
+    public Document convert(Part<File> part, Locale locale) throws AgaveConversionException {
         Document document = null;
 
         File documentFile = ((Part<File>) part).getContents();
@@ -32,10 +32,10 @@ public class DocumentParamConverter implements PartParamConverter<Document, File
                 document = DocumentHelper.parseText(documentContents.toString());
             }
             catch (DocumentException ex) {
-                throw new ConversionException("Unable to parse XML file", ex);
+                throw new AgaveConversionException("Unable to parse XML file", ex);
             }
             catch (IOException ex) {
-                throw new ConversionException("Unable to read XML file", ex);
+                throw new AgaveConversionException("Unable to read XML file", ex);
             }
         }
 

@@ -30,7 +30,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.conversion.StringParamConverter;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
@@ -50,7 +50,7 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
     }
     
     @Override
-    public void populate(Map<String, Object> namedArguments) throws ConversionException {
+    public void populate(Map<String, Object> namedArguments) throws AgaveConversionException {
         
         Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
         
@@ -79,9 +79,9 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
                     try {
                         converter = converterClass.newInstance();
                     } catch (InstantiationException ex) {
-                        throw new ConversionException(ex);
+                        throw new AgaveConversionException(ex);
                     } catch (IllegalAccessException ex) {
-                        throw new ConversionException(ex);
+                        throw new AgaveConversionException(ex);
                     }
                 } else {
                     converter = (StringParamConverter<?>) determineMostAppropriateConverter(paramDescriptor.getType());

@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -45,6 +45,6 @@ public interface FormPopulator {
                IllegalArgumentException, 
                InvocationTargetException,
                InstantiationException,
-               ConversionException;
+               AgaveConversionException;
 
 }

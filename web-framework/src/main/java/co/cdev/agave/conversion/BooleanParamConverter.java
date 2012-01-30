@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -58,10 +58,10 @@ public class BooleanParamConverter implements StringParamConverter<Boolean> {
      *    </ul>
      *  </p>
      * @return a {@code Boolean} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Boolean convert(String input, Locale locale) throws ConversionException {
+    public Boolean convert(String input, Locale locale) throws AgaveConversionException {
         Boolean value = null;
         if (input != null && !"".equals(input)) {
             String parameter = input.toLowerCase();
@@ -80,7 +80,7 @@ public class BooleanParamConverter implements StringParamConverter<Boolean> {
                 || "n".endsWith(parameter)) {
                 value = Boolean.FALSE;
             } else {
-                throw new ConversionException("Could not convert " + input + " into a boolean object");
+                throw new AgaveConversionException("Could not convert " + input + " into a boolean object");
             }
         }
         return value;

@@ -33,7 +33,7 @@ import java.net.URI;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DestinationException extends AgaveException {
+public class DestinationException extends AgaveWebException {
 
     private static final long serialVersionUID = 1L;
 

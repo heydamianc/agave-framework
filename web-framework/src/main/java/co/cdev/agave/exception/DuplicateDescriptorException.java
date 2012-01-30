@@ -33,7 +33,7 @@ import co.cdev.agave.internal.HandlerDescriptor;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DuplicateDescriptorException extends AgaveException {
+public class DuplicateDescriptorException extends AgaveConfigurationException {
 
     private static final long serialVersionUID = 1L;
 

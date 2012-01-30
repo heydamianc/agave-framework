@@ -32,28 +32,28 @@ import co.cdev.agave.conversion.ParamConverter;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ConversionException extends AgaveException {
+public class AgaveConversionException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public ConversionException() {
+    public AgaveConversionException() {
         super();
     }
 
-    public ConversionException(String message, Throwable rootCause) {
+    public AgaveConversionException(String message, Throwable rootCause) {
         super(message, rootCause);
     }
 
-    public ConversionException(String message) {
+    public AgaveConversionException(String message) {
         super(message);
     }
 
-    public ConversionException(Throwable rootCause) {
+    public AgaveConversionException(Throwable rootCause) {
         super(rootCause);
     }
     
     @SuppressWarnings("rawtypes")
-	public ConversionException(Method method, Class<? extends ParamConverter> converterClass) {
+	public AgaveConversionException(Method method, Class<? extends ParamConverter> converterClass) {
         this(converterClass.getName() + " is an unsupported converter for " 
                 + method.getDeclaringClass() + "#" + method.getName() + "()");
     }

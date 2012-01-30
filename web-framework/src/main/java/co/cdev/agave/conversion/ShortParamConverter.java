@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -38,16 +38,16 @@ public class ShortParamConverter implements StringParamConverter<Short> {
      * Performs the conversion.
      * @param input the input parameter as a {@code String}.
      * @return a {@code Short} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Short convert(String input, Locale locale) throws ConversionException {
+    public Short convert(String input, Locale locale) throws AgaveConversionException {
         Short value = null;
         if (input != null && !"".equals(input)) {
             try {
                 value = Short.parseShort(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Short object", ex.getCause());
+                throw new AgaveConversionException("Could not convert " + input + " to a Short object", ex.getCause());
             }
         }
         return value;

@@ -29,7 +29,7 @@ import co.cdev.agave.conversion.StringParamConverter;
 import java.util.Locale;
 
 import co.cdev.agave.samples.pastebin.snippet.Timeframe;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -37,7 +37,7 @@ import co.cdev.agave.exception.ConversionException;
 public class TimeframeParamConverter implements StringParamConverter<Timeframe> {
 
     @Override
-    public Timeframe convert(String input, Locale locale) throws ConversionException {
+    public Timeframe convert(String input, Locale locale) throws AgaveConversionException {
         Timeframe timeframe = null;
         for (Timeframe possibility : Timeframe.values()) {
             if (possibility.name().equalsIgnoreCase(input)) {

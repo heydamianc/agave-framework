@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -34,6 +34,6 @@ import java.util.Locale;
  */
 public interface ParamConverter<InputT, OutputT> {
     
-    public OutputT convert(InputT input, Locale locale) throws ConversionException;
+    public OutputT convert(InputT input, Locale locale) throws AgaveConversionException;
     
 }

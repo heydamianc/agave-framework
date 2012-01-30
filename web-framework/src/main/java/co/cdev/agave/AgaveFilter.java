@@ -54,7 +54,9 @@ import javax.servlet.http.HttpSession;
 
 import org.objectweb.asm.ClassReader;
 
-import co.cdev.agave.exception.AgaveException;
+import co.cdev.agave.exception.AgaveConfigurationException;
+import co.cdev.agave.exception.AgaveConversionException;
+import co.cdev.agave.exception.AgaveWebException;
 import co.cdev.agave.exception.DestinationException;
 import co.cdev.agave.exception.FormException;
 import co.cdev.agave.exception.HandlerException;
@@ -553,6 +555,8 @@ public class AgaveFilter implements Filter {
                     throw new FormException(ex.getCause());
                 } catch (InstantiationException ex) {
                     throw new FormException(ex);
+                } catch (AgaveConversionException ex) {
+                    throw new FormException(ex);
                 }
 
                 if (lifecycleHooks.afterInitializingForm(descriptor, formInstance, routingContext)) {
@@ -591,7 +595,12 @@ public class AgaveFilter implements Filter {
                 // the actual values
                 
                 MapPopulator argumentPopulator = new MapPopulatorImpl(request, descriptor);
-                argumentPopulator.populate(arguments);
+                
+                try {
+                    argumentPopulator.populate(arguments);
+                } catch (AgaveConversionException ex) {
+                    throw new FormException(ex);
+                }
             }
 
             Object handlerInstance = null;
@@ -661,8 +670,8 @@ public class AgaveFilter implements Filter {
                     }
                 }
             } catch (InvocationTargetException ex) {
-                if (ex.getCause() instanceof AgaveException) {
-                    throw (AgaveException) ex.getCause();
+                if (ex.getCause() instanceof AgaveWebException) {
+                    throw (AgaveWebException) ex.getCause();
                 } else if (ex.getCause() instanceof IOException) {
                     throw (IOException) ex.getCause();
                 } else if (ex.getCause() instanceof RuntimeException) {
@@ -755,14 +764,14 @@ public class AgaveFilter implements Filter {
     }
 
     protected Collection<HandlerDescriptor> scanClassesDirForHandlers(File root)
-            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveException {
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
         Collection<HandlerDescriptor> descriptors = new HashSet<HandlerDescriptor>();
         scanClassesDirForHandlers(root, descriptors);
         return descriptors;
     }
     
     private void scanClassesDirForHandlers(File root, Collection<HandlerDescriptor> descriptors)
-            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveException {
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
         if (root != null && root.canRead()) {
             for (File node : root.listFiles()) {
                 if (node.isDirectory()) {

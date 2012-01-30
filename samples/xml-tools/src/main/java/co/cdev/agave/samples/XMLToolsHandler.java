@@ -4,7 +4,7 @@ import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -50,10 +50,10 @@ public class XMLToolsHandler {
                 new XMLWriter(sink, formatter).write(document);
             }
             catch (DocumentException ex) {
-                throw new ConversionException("Unable to parse XML file", ex);
+                throw new AgaveConversionException("Unable to parse XML file", ex);
             }
             catch (IOException ex) {
-                throw new ConversionException("Unable to read XML file", ex);
+                throw new AgaveConversionException("Unable to read XML file", ex);
             }
         }
 

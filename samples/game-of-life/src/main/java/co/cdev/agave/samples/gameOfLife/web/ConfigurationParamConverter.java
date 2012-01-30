@@ -26,7 +26,7 @@
 package co.cdev.agave.samples.gameOfLife.web;
 
 import co.cdev.agave.conversion.StringParamConverter;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 
@@ -36,7 +36,7 @@ import java.util.Locale;
 public class ConfigurationParamConverter implements StringParamConverter<Configuration> {
 
     @Override
-    public Configuration convert(String input, Locale locale) throws ConversionException {
+    public Configuration convert(String input, Locale locale) throws AgaveConversionException {
         Configuration selectedConfiguration = null;
         if (input != null) {
             for (Configuration configuration : Configuration.values()) {

@@ -1,13 +1,13 @@
 package co.cdev.agave.samples;
 
 import co.cdev.agave.conversion.StringParamConverter;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 public class IndentationParamConverter implements StringParamConverter<String> {
 
     @Override
-    public String convert(String input, Locale locale) throws ConversionException {
+    public String convert(String input, Locale locale) throws AgaveConversionException {
         String indentation = null;
         
         if ("1s".equals(input)) {

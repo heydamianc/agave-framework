@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -38,16 +38,16 @@ public class DoubleParamConverter implements StringParamConverter<Double> {
      * Performs the conversion.
      * @param input the input parameter as a {@code String}.
      * @return a {@code Double} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Double convert(String input, Locale locale) throws ConversionException {
+    public Double convert(String input, Locale locale) throws AgaveConversionException {
         Double value = null;
         if (input != null && !"".equals(input)) {
             try {
                 value = Double.parseDouble(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Double object", ex.getCause());
+                throw new AgaveConversionException("Could not convert " + input + " to a Double object", ex.getCause());
             }
         }
         return value;

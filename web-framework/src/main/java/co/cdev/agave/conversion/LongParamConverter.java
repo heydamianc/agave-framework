@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
@@ -38,16 +38,16 @@ public class LongParamConverter implements StringParamConverter<Long> {
      * Performs the conversion.
      * @param input the input parameter as a {@code String}.
      * @return a {@code Long} object representing the truth value of the input
-     * @throws ConversionException when an unsupported input string is supplied as an argument
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Long convert(String input, Locale locale) throws ConversionException {
+    public Long convert(String input, Locale locale) throws AgaveConversionException {
         Long value = null;
         if (input != null && !"".equals(input)) {
             try {
                 value = Long.parseLong(input);
             } catch (NumberFormatException ex) {
-                throw new ConversionException("Could not convert " + input + " to a Long object", ex.getCause());
+                throw new AgaveConversionException("Could not convert " + input + " to a Long object", ex.getCause());
             }
         }
         return value;

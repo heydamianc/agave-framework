@@ -28,7 +28,7 @@ package co.cdev.agave.conversion;
 import java.util.Locale;
 
 import co.cdev.agave.Part;
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 
 /**
  * Converts an object from a string array to a collection of the output type.
@@ -37,6 +37,6 @@ import co.cdev.agave.exception.ConversionException;
 public interface PartParamConverter<OutputT, PartT> extends ParamConverter<Part<PartT>, OutputT> {
     
     @Override
-    public OutputT convert(Part<PartT> input, Locale locale) throws ConversionException;
+    public OutputT convert(Part<PartT> input, Locale locale) throws AgaveConversionException;
     
 }

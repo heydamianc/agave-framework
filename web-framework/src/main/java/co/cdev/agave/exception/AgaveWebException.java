@@ -30,23 +30,23 @@ import javax.servlet.ServletException;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class AgaveException extends ServletException {
+public class AgaveWebException extends ServletException {
 
     private static final long serialVersionUID = 1L;
 
-    public AgaveException() {
+    public AgaveWebException() {
         super();
     }
 
-    public AgaveException(String message, Throwable rootCause) {
+    public AgaveWebException(String message, Throwable rootCause) {
         super(message, rootCause);
     }
 
-    public AgaveException(String message) {
+    public AgaveWebException(String message) {
         super(message);
     }
 
-    public AgaveException(Throwable rootCause) {
+    public AgaveWebException(Throwable rootCause) {
         super(rootCause);
     }
 

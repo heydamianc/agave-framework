@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.exception.ConversionException;
+import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Map;
 
 /**
@@ -34,6 +34,6 @@ import java.util.Map;
  */
 public interface MapPopulator {
 
-    void populate(Map<String, Object> namedArguments) throws ConversionException;
+    void populate(Map<String, Object> namedArguments) throws AgaveConversionException;
     
 }
