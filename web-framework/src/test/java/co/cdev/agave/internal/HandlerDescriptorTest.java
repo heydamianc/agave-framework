@@ -26,15 +26,8 @@
 package co.cdev.agave.internal;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import co.cdev.agave.HttpMethod;
@@ -49,14 +42,6 @@ import co.cdev.agave.sample.SampleHandler;
 public class HandlerDescriptorTest {
     private static final String cls = SampleHandler.class.getName();
     private static final String met = "login";
-
-    Mockery context = new Mockery();
-    HttpServletRequest request;
-    
-    @Before
-    public void setUp() {
-    	request = context.mock(HttpServletRequest.class);
-    }
     
     @Test
     public void testConstructor() throws Exception {
@@ -126,93 +111,6 @@ public class HandlerDescriptorTest {
         }};
         
         Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));
-    }
-    
-    @Test
-    public void testMatches_withNullRequest() throws Exception {
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
-    	Assert.assertFalse(a.matches(null));
-    }
-    
-    @Test
-    public void testMatches_withAnyHttpMethodAndMatchingURI() throws Exception {
-    	context.checking(new Expectations() {{
-    		allowing(request).getMethod(); will(returnValue("GET"));
-    		allowing(request).getServletPath(); will(returnValue("/login"));
-    	}});
-    	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
-    	Assert.assertTrue(a.matches(request));
-    }
-    
-    @Test
-    public void testMatches_withMatchingMethodAndMatchingURI() throws Exception {
-    	context.checking(new Expectations() {{
-    		allowing(request).getMethod(); will(returnValue("GET"));
-    		allowing(request).getServletPath(); will(returnValue("/login"));
-    	}});
-    	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
-    	Assert.assertTrue(a.matches(request));
-    }
-    
-    @Test
-    public void testMatches_withNonMatchingMethodAndMatchingURI() throws Exception {
-    	context.checking(new Expectations() {{
-    		allowing(request).getMethod(); will(returnValue("GET"));
-    		allowing(request).getServletPath(); will(returnValue("/login"));
-    	}});
-    	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met));
-    	Assert.assertFalse(a.matches(request));
-    }
-
-    @Test
-    public void testMatches_withMatchingMethodAndNonMatchingURI() throws Exception {
-    	context.checking(new Expectations() {{
-    		allowing(request).getMethod(); will(returnValue("GET"));
-    		allowing(request).getServletPath(); will(returnValue("/logout"));
-    	}});
-    	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
-    	Assert.assertFalse(a.matches(request));
-    }
-    
-    @Test
-    public void testMatches_withParameterDescriptors() throws Exception {
-        final Map<String, Object> parameterMap = new HashMap<String, Object>();
-        parameterMap.put("color", "orange");
-        parameterMap.put("always", Boolean.FALSE);
-        
-        context.checking(new Expectations() {{
-            allowing(request).getMethod(); will(returnValue("GET"));
-            allowing(request).getServletPath(); will(returnValue("/favorites"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
-        }});
-        
-        HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, cls, met)) {{
-            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(String.class, "color"));
-            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(Boolean.class, "always"));
-        }};
-        
-        Assert.assertTrue(a.matches(request));
-    }
-    
-    @Test
-    public void testMatches_withURIParameters() throws Exception {
-        final Map<String, Object> parameterMap = new HashMap<String, Object>();
-        
-        context.checking(new Expectations() {{
-            allowing(request).getMethod(); will(returnValue("GET"));
-            allowing(request).getServletPath(); will(returnValue("/favorites/orange"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
-        }});
-        
-        HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites/${color}", HttpMethod.GET, cls, met)) {{
-            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(String.class, "color"));
-        }};
-        
-        Assert.assertTrue(a.matches(request));
     }
     
 }

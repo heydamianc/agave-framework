@@ -28,8 +28,6 @@ package co.cdev.agave.internal;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.exception.InvalidHandlerException;
 import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
@@ -108,12 +106,6 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     public boolean initiatesWorkflow();
 
     public boolean completesWorkflow();
-
-    /**
-     * Whether or not this {@code HandlerDescriptor} matches the supplied request.  The URI string 
-     * should be the result of calling {@code HttpServletRequest.getRequestURI()}.
-     */
-    public boolean matches(HttpServletRequest request);
 
     /**
      * Whether or not this {@code HandlerDescriptor} is equivalent to the supplied object.

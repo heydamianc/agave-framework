@@ -30,9 +30,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.CompletesWorkflow;
 import co.cdev.agave.HttpMethod;
@@ -279,28 +276,6 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         } else if (!workflowName.equals(other.workflowName))
             return false;
         return true;
-    }
-
-    @Override
-    public boolean matches(HttpServletRequest request) {
-        boolean matches = request != null && request.getMethod() != null && pattern.matches(request);
-        
-        if (matches) {
-            matches &= method.matches(HttpMethod.valueOf(request.getMethod().toUpperCase()));
-            
-            if (!parameterDescriptors.isEmpty()) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> requestParams = request.getParameterMap();
-                Map<String, String> uriParams = pattern.getParameterMap(request);
-                
-                for (ParameterDescriptor param : parameterDescriptors) {
-                    String paramName = param.getName();
-                    matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
-                }
-            }
-        }
-        
-        return matches;
     }
     
     @Override

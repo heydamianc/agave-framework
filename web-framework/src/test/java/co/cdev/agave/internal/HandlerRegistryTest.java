@@ -25,11 +25,17 @@
  */
 package co.cdev.agave.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +44,7 @@ import co.cdev.agave.exception.DuplicateDescriptorException;
 import co.cdev.agave.sample.SampleHandler;
 
 public class HandlerRegistryTest {
-
+    
     private Mockery context = new Mockery();
     private HandlerRegistry registry;
     private HttpServletRequest request;
@@ -51,109 +57,174 @@ public class HandlerRegistryTest {
 
     @Test(expected = DuplicateDescriptorException.class)
     public void testAddDescriptor() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/pattern", 
-                SampleHandler.class.getName(), 
-                "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/pattern", 
-                SampleHandler.class.getName(), 
-                "login")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/pattern", 
-                HttpMethod.GET, 
-                SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(
-                new ScanResultImpl("/pattern", HttpMethod.POST, 
-                SampleHandler.class.getName(), 
-                "login")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
 
-        Assert.assertEquals(2, registry.getDescriptors().size());
+        assertEquals(2, registry.getDescriptors().size());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAddToUnmodifiable() throws Exception {
-        registry.getDescriptors().add(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", 
-                SampleHandler.class.getName(), "login")));
+        registry.getDescriptors().add(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testMatches() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(
-                new ScanResultImpl("/some/path", 
-                SampleHandler.class.getName(),
-                "login")));
-        
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/other/path", 
-                SampleHandler.class.getName(),
-                "login")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/some/path", SampleHandler.class.getName(), "login")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/other/path", SampleHandler.class.getName(), "login")));
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/some/path"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/some/path"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
 
         HandlerDescriptor descriptor = registry.findMatch(request);
-        Assert.assertNotNull(descriptor);
-        Assert.assertEquals("/some/path", descriptor.getPattern().toString());
+        
+        assertNotNull(descriptor);
+        assertEquals("/some/path", descriptor.getPattern().toString());
     }
     
     @Test
     public void testMatches_withOverloadedHandlerDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/overloaded", 
-                SampleHandler.class.getName(),
-                "overloaded")));
-        
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/overloaded/${param}", 
-                SampleHandler.class.getName(),
-                "overloaded")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/overloaded/blah"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/overloaded/blah"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
-        Assert.assertNotNull(descriptor);
-        Assert.assertEquals("/overloaded/${param}", descriptor.getPattern().toString());
+        
+        assertNotNull(descriptor);
+        assertEquals("/overloaded/${param}", descriptor.getPattern().toString());
     }
         
     @Test
     public void testMatches_withOverloadedHandlerDescriptors2() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/overloaded/${param}", 
-                SampleHandler.class.getName(),
-                "overloaded")));
-        
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl(
-                "/overloaded", 
-                SampleHandler.class.getName(),
-                "overloaded")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
         
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/overloaded"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/overloaded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
-        Assert.assertNotNull(descriptor);
-        Assert.assertEquals("/overloaded", descriptor.getPattern().toString());        
+        
+        assertNotNull(descriptor);
+        assertEquals("/overloaded", descriptor.getPattern().toString());   
     }
+    
+    @Test
+    public void testMatches_withAnyHttpMethodAndMatchingURI() throws Exception {
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", SampleHandler.class.getName(), "login")));
+        
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/login"));
+        }});
+        
+        HandlerDescriptor descriptor = registry.findMatch(request);
+        
+        assertNotNull(descriptor);
+        assertEquals("/login", descriptor.getPattern().toString());
+    }
+  
+    @Test
+    public void testMatches_withMatchingMethodAndMatchingURI() throws Exception {
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+    
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/login"));
+        }});
+      
+        HandlerDescriptor descriptor = registry.findMatch(request);
+    
+        assertNotNull(descriptor);
+        assertEquals("/login", descriptor.getPattern().toString());
+    }
+  
+  @Test
+  public void testMatches_withNonMatchingMethodAndMatchingURI() throws Exception {    
+      registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+    
+      context.checking(new Expectations() {{
+          allowing(request).getMethod(); will(returnValue("GET"));
+          allowing(request).getServletPath(); will(returnValue("/login"));
+      }});
+  
+      HandlerDescriptor descriptor = registry.findMatch(request);
+
+      assertNull(descriptor);
+  }
+
+    @Test
+    public void testMatches_withMatchingMethodAndNonMatchingURI() throws Exception {
+        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/logout"));
+        }});
+        
+        HandlerDescriptor descriptor = registry.findMatch(request);
+
+        assertNull(descriptor);
+    }
+  
+    @Test
+    public void testMatches_withParameterDescriptors() throws Exception {
+        final Map<String, Object> parameterMap = new HashMap<String, Object>();
+        parameterMap.put("color", "orange");
+        parameterMap.put("always", Boolean.FALSE);
+      
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/favorites"));
+            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+        }});
+      
+        HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login")) {{
+            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(String.class, "color"));
+            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(Boolean.class, "always"));
+        }};
+        
+        registry.addDescriptor(a);
+        
+        HandlerDescriptor descriptor = registry.findMatch(request);
+        
+        assertNotNull(descriptor);
+        assertEquals("/favorites", descriptor.getPattern().toString());
+    }
+  
+  @Test
+  public void testMatches_withURIParameters() throws Exception {
+      final Map<String, Object> parameterMap = new HashMap<String, Object>();
+      
+      context.checking(new Expectations() {{
+          allowing(request).getMethod(); will(returnValue("GET"));
+          allowing(request).getServletPath(); will(returnValue("/favorites/orange"));
+          allowing(request).getParameterMap(); will(returnValue(parameterMap));
+      }});
+      
+      HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login")) {{
+          addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(String.class, "color"));
+      }};
+      
+      registry.addDescriptor(a);
+      
+      HandlerDescriptor descriptor = registry.findMatch(request);
+      
+      assertNotNull(descriptor);
+      assertEquals("/favorites/${color}", descriptor.getPattern().toString());
+  }
     
 }

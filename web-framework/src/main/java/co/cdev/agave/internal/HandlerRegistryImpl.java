@@ -28,11 +28,14 @@ package co.cdev.agave.internal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import co.cdev.agave.HttpMethod;
 import co.cdev.agave.exception.DuplicateDescriptorException;
+import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * A repository used to group all registered handlers. Handlers are registered
@@ -86,7 +89,26 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     @Override
     public HandlerDescriptor findMatch(HttpServletRequest request) {
         for (HandlerDescriptor descriptor : descriptors) {
-            if (descriptor.matches(request)) {                
+            boolean matches = request != null && request.getMethod() != null && descriptor.getPattern().matches(request);
+            
+            if (matches) {
+                HttpMethod method = HttpMethod.valueOf(request.getMethod().toUpperCase());
+                
+                matches &= descriptor.getMethod().matches(method);
+                
+                if (!descriptor.getParamDescriptors().isEmpty()) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> requestParams = request.getParameterMap();
+                    Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
+                    
+                    for (ParameterDescriptor param : descriptor.getParamDescriptors()) {
+                        String paramName = param.getName();
+                        matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
+                    }
+                }
+            }
+            
+            if (matches) {
                 return descriptor;
             }
         }

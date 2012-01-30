@@ -7,7 +7,6 @@
     <module>samples</module>
     <module>jsp-template-tags</module>
     <module>web-framework</module>
-    <module>core</module>
   </modules>
   
   <modelVersion>4.0.0</modelVersion>
