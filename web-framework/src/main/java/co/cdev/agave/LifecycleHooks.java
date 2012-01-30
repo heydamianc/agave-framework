@@ -32,7 +32,7 @@ import java.net.URI;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * <p>
@@ -94,7 +94,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean afterHandlerIsDiscovered(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
             ServletContext servletContext) throws ServletException, IOException;
 
     /**
@@ -108,7 +108,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor,
+    public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
             RoutingContext context) throws ServletException, IOException;
 
     /**
@@ -123,7 +123,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor,
+    public boolean beforeInitializingForm(HandlerDescriptor descriptor,
             Object formInstance, RoutingContext context)
             throws ServletException, IOException;
 
@@ -139,7 +139,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean afterInitializingForm(HandlerMethodDescriptor descriptor,
+    public boolean afterInitializingForm(HandlerDescriptor descriptor,
             Object formInstance, RoutingContext context)
             throws ServletException, IOException;
 
@@ -154,7 +154,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, RoutingContext context)
             throws ServletException, IOException;
 
@@ -170,7 +170,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, RoutingContext context)
             throws ServletException, IOException;
 
@@ -187,7 +187,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, Destination destination,
             RoutingContext context) throws ServletException, IOException;
 
@@ -204,7 +204,7 @@ public interface LifecycleHooks {
      * @throws ServletException
      * @throws IOException
      */
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, URI destination, RoutingContext context)
             throws ServletException, IOException;
 }

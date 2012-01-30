@@ -61,7 +61,7 @@ public class HandlerFactoryImpl implements HandlerFactory {
      */
     @Override
     public Object createHandlerInstance(ServletContext servletContext,
-            HandlerMethodDescriptor descriptor) throws HandlerException {
+            HandlerDescriptor descriptor) throws HandlerException {
         Object handlerInstance = null;
         if (descriptor.getHandlerClass() != null) {
             try {

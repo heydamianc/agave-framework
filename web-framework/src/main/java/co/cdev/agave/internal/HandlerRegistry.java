@@ -45,9 +45,9 @@ public interface HandlerRegistry {
      * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm used in determining the 
      * specificity
      */ 
-    public void addDescriptor(HandlerMethodDescriptor added) throws DuplicateDescriptorException;
-    public void addAllDescriptors(Collection<HandlerMethodDescriptor> descriptors) throws DuplicateDescriptorException;
-    public HandlerMethodDescriptor findMatch(HttpServletRequest request);
-    public Collection<HandlerMethodDescriptor> getDescriptors();
+    public void addDescriptor(HandlerDescriptor added) throws DuplicateDescriptorException;
+    public void addAllDescriptors(Collection<HandlerDescriptor> descriptors) throws DuplicateDescriptorException;
+    public HandlerDescriptor findMatch(HttpServletRequest request);
+    public Collection<HandlerDescriptor> getDescriptors();
     
 }

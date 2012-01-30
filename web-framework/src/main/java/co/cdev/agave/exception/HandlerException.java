@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.exception;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -51,17 +51,17 @@ public class HandlerException extends AgaveException {
     }
 
     // TODO internationalize this
-    public HandlerException(HandlerMethodDescriptor descriptor, InstantiationException rootCause) {
+    public HandlerException(HandlerDescriptor descriptor, InstantiationException rootCause) {
         this(getErrorMessage(descriptor), rootCause);
             
     }
     
     // TODO internationalize this
-    public HandlerException(HandlerMethodDescriptor descriptor, IllegalAccessException rootCause) {
+    public HandlerException(HandlerDescriptor descriptor, IllegalAccessException rootCause) {
         this(getErrorMessage(descriptor), rootCause);
     }
     
-    private synchronized static String getErrorMessage(HandlerMethodDescriptor descriptor) {
+    private synchronized static String getErrorMessage(HandlerDescriptor descriptor) {
        return  "Unable to create an instance of handler " +  descriptor.getHandlerClass().getName();
     }
 

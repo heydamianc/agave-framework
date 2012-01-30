@@ -50,7 +50,7 @@ import co.cdev.agave.exception.InvalidParamException;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
+public class HandlerDescriptorImpl implements HandlerDescriptor {
 
     private URIPattern pattern;
     private HttpMethod method;
@@ -62,7 +62,7 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
     private boolean completesWorkflow;
     private String workflowName;
 
-    public HandlerMethodDescriptorImpl(ScanResult scanResult) throws ClassNotFoundException, InvalidHandlerException {
+    public HandlerDescriptorImpl(ScanResult scanResult) throws ClassNotFoundException, InvalidHandlerException {
         pattern              = new URIPatternImpl(scanResult.getUri());
         method               = scanResult.getMethod();
         handlerClass         = Class.forName(scanResult.getClassName());
@@ -215,7 +215,7 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
     }
 
     @Override
-    public int compareTo(HandlerMethodDescriptor that) {
+    public int compareTo(HandlerDescriptor that) {
         int result = pattern.compareTo(that.getPattern());
         
         if (result == 0) {
@@ -251,7 +251,7 @@ public class HandlerMethodDescriptorImpl implements HandlerMethodDescriptor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        HandlerMethodDescriptorImpl other = (HandlerMethodDescriptorImpl) obj;
+        HandlerDescriptorImpl other = (HandlerDescriptorImpl) obj;
         if (completesWorkflow != other.completesWorkflow)
             return false;
         if (handlerMethod == null) {

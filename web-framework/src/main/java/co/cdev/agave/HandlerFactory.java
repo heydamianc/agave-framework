@@ -3,7 +3,7 @@ package co.cdev.agave;
 import javax.servlet.ServletContext;
 
 import co.cdev.agave.exception.HandlerException;
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * Creates instances of handlers for the {@link AgaveFilter}. The default
@@ -56,5 +56,5 @@ public interface HandlerFactory {
      *             if construction fails
      */
     public Object createHandlerInstance(ServletContext servletContext,
-            HandlerMethodDescriptor descriptor) throws HandlerException;
+            HandlerDescriptor descriptor) throws HandlerException;
 }

@@ -31,7 +31,7 @@ import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 import co.cdev.agave.sample.AliasedForm;
 import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
@@ -53,7 +53,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         }});
         
         filter.init(filterConfig);
-        HandlerMethodDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
     }
@@ -67,7 +67,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
             allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
-        HandlerMethodDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
         Assert.assertEquals(SimpleHandler.class, desc.getHandlerClass());
     }
 
@@ -80,7 +80,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
             allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
-        HandlerMethodDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
         
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
@@ -96,7 +96,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
             allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
-        HandlerMethodDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
         
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());

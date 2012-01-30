@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.exception;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -51,17 +51,17 @@ public class FormException extends AgaveException {
     }
 
     // TODO internationalize this
-    public FormException(HandlerMethodDescriptor descriptor, InstantiationException rootCause) {
+    public FormException(HandlerDescriptor descriptor, InstantiationException rootCause) {
         this(getErrorMessage(descriptor), rootCause);
             
     }
     
     // TODO internationalize this
-    public FormException(HandlerMethodDescriptor descriptor, IllegalAccessException rootCause) {
+    public FormException(HandlerDescriptor descriptor, IllegalAccessException rootCause) {
         this(getErrorMessage(descriptor), rootCause);
     }
     
-    private synchronized static String getErrorMessage(HandlerMethodDescriptor descriptor) {
+    private synchronized static String getErrorMessage(HandlerDescriptor descriptor) {
        return  "Unable to create an instance of form " + descriptor.getFormClass() + " for "
            + descriptor.getHandlerClass().getName() + "#" + descriptor.getHandlerMethod().getName();
     }

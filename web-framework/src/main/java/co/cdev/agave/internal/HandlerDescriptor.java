@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.exception.InvalidHandlerException;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -65,7 +65,7 @@ import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface HandlerMethodDescriptor extends Comparable<HandlerMethodDescriptor> {
+public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
     
     /**
      * Locates annotated handler methods to field requests with

@@ -36,7 +36,7 @@ import javax.servlet.ServletException;
 import co.cdev.agave.Destination;
 import co.cdev.agave.RoutingContext;
 import co.cdev.agave.LifecycleHooks;
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * Aggregates handler classes into the set supplied in the constructor.  This class functions as a 
@@ -62,7 +62,7 @@ public class InjectionLifecycleHooks implements LifecycleHooks {
     }
 
     @Override
-    public boolean afterHandlerIsDiscovered(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor,
             ServletContext servletContext) throws ServletException, IOException {
         
         // Save the handler class so that it can be configured later
@@ -72,48 +72,48 @@ public class InjectionLifecycleHooks implements LifecycleHooks {
     }
 
     @Override
-    public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor,
+    public boolean beforeFilteringRequest(HandlerDescriptor descriptor,
             RoutingContext context) throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.beforeFilteringRequest(descriptor, context);
     }
 
     @Override
-    public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor,
+    public boolean beforeInitializingForm(HandlerDescriptor descriptor,
             Object formInstance, RoutingContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.beforeInitializingForm(descriptor, formInstance, context);
     }
 
     @Override
-    public boolean afterInitializingForm(HandlerMethodDescriptor descriptor,
+    public boolean afterInitializingForm(HandlerDescriptor descriptor,
             Object formInstance, RoutingContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterInitializingForm(descriptor, formInstance, context);
     }
 
     @Override
-    public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean beforeHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, RoutingContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.beforeHandlingRequest(descriptor, handlerInstance, context);
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, RoutingContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterHandlingRequest(descriptor, handlerInstance, context);
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, Destination destination,
             RoutingContext context) throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterHandlingRequest(descriptor, handlerInstance, destination, context);
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
             Object handlerInstance, URI destination, RoutingContext context)
             throws ServletException, IOException {
         return wrappedHooks == null ? false : wrappedHooks.afterHandlingRequest(descriptor, handlerInstance, destination, context);

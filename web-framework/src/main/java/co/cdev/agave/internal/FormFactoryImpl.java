@@ -60,7 +60,7 @@ public class FormFactoryImpl implements FormFactory {
      */
     @Override
     public Object createFormInstance(ServletContext servletContext,
-            HandlerMethodDescriptor descriptor) throws FormException {
+            HandlerDescriptor descriptor) throws FormException {
         Object formInstance = null;
         if (descriptor.getFormClass() != null) {
             try {

@@ -39,7 +39,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -49,7 +49,7 @@ public class MapPopulatorTest {
     private Mockery context = new Mockery();
     
     private HttpServletRequest request;
-    private HandlerMethodDescriptor descriptor;
+    private HandlerDescriptor descriptor;
     private URIPattern pattern;
     
     private Locale locale;
@@ -62,7 +62,7 @@ public class MapPopulatorTest {
     @Before
     public void setup() throws Exception {        
         request = context.mock(HttpServletRequest.class);
-        descriptor = context.mock(HandlerMethodDescriptor.class);
+        descriptor = context.mock(HandlerDescriptor.class);
         pattern = context.mock(URIPattern.class);
         
         locale = Locale.getDefault();

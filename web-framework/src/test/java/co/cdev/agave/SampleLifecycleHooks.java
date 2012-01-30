@@ -30,7 +30,7 @@ import java.net.URI;
 
 import javax.servlet.ServletContext;
 
-import co.cdev.agave.internal.HandlerMethodDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
@@ -46,7 +46,7 @@ public class SampleLifecycleHooks extends DefaultLifecycleHooks {
     }
     
     @Override
-    public boolean afterHandlerIsDiscovered(HandlerMethodDescriptor descriptor, ServletContext servletContext) {
+    public boolean afterHandlerIsDiscovered(HandlerDescriptor descriptor, ServletContext servletContext) {
         servletContext.setAttribute("afterHandlerIsDiscovered", Boolean.TRUE);
         return false;
     }
@@ -54,45 +54,45 @@ public class SampleLifecycleHooks extends DefaultLifecycleHooks {
     // from doFilter
     
     @Override
-    public boolean beforeFilteringRequest(HandlerMethodDescriptor descriptor, RoutingContext context) {
+    public boolean beforeFilteringRequest(HandlerDescriptor descriptor, RoutingContext context) {
         context.getServletContext().setAttribute("beforeFilteringRequest", Boolean.TRUE);
         return false;
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor, Object handlerInstance, RoutingContext context) {
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, RoutingContext context) {
         context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
         return false;
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor, Object handlerInstance,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance,
         Destination destination, RoutingContext context) {
         context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
         return false;
     }
 
     @Override
-    public boolean afterHandlingRequest(HandlerMethodDescriptor descriptor, Object handlerInstance,
+    public boolean afterHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance,
         URI destination, RoutingContext context) {
         context.getServletContext().setAttribute("afterHandlingRequest", Boolean.TRUE);
         return false;
     }
 
     @Override
-    public boolean afterInitializingForm(HandlerMethodDescriptor descriptor, Object formInstance, RoutingContext context) {
+    public boolean afterInitializingForm(HandlerDescriptor descriptor, Object formInstance, RoutingContext context) {
         context.getServletContext().setAttribute("afterInitializingForm", Boolean.TRUE);
         return false;
     }
 
     @Override
-    public boolean beforeHandlingRequest(HandlerMethodDescriptor descriptor, Object handlerInstance, RoutingContext context) {
+    public boolean beforeHandlingRequest(HandlerDescriptor descriptor, Object handlerInstance, RoutingContext context) {
         context.getServletContext().setAttribute("beforeHandlingRequest", Boolean.TRUE);
         return false;
     }
 
     @Override
-    public boolean beforeInitializingForm(HandlerMethodDescriptor descriptor, Object formInstance, RoutingContext context) {
+    public boolean beforeInitializingForm(HandlerDescriptor descriptor, Object formInstance, RoutingContext context) {
         context.getServletContext().setAttribute("beforeInitializingForm", Boolean.TRUE);
         return false;
     }

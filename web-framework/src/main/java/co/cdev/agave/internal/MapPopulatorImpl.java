@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.conversion.StringParamConverter;
 import co.cdev.agave.exception.ConversionException;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * 
@@ -40,9 +40,9 @@ import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
 public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator {
 
     private final HttpServletRequest request;
-    private final HandlerMethodDescriptor descriptor;
+    private final HandlerDescriptor descriptor;
     
-    public MapPopulatorImpl(HttpServletRequest request, HandlerMethodDescriptor descriptor) {
+    public MapPopulatorImpl(HttpServletRequest request, HandlerDescriptor descriptor) {
         super(request.getLocale());
    
         this.request = request;

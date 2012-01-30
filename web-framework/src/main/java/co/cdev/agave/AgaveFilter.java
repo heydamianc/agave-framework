@@ -63,9 +63,9 @@ import co.cdev.agave.internal.FileMultipartParser;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
 import co.cdev.agave.internal.HandlerFactoryImpl;
-import co.cdev.agave.internal.HandlerMethodDescriptor;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl;
-import co.cdev.agave.internal.HandlerMethodDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.internal.HandlerDescriptorImpl;
+import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 import co.cdev.agave.internal.HandlerScanner;
@@ -317,7 +317,7 @@ public class AgaveFilter implements Filter {
         }
         
         if (!handlerRegistry.getDescriptors().isEmpty()) {
-            for (HandlerMethodDescriptor descriptor : handlerRegistry.getDescriptors()) {
+            for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
                 LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[] {
                     descriptor.getPattern(),
                     descriptor.getHandlerMethod()
@@ -340,7 +340,7 @@ public class AgaveFilter implements Filter {
             configuration.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
             configuration.append("Configuration:\n");
             
-            for (HandlerMethodDescriptor descriptor : getHandlerRegistry().getDescriptors()) {
+            for (HandlerDescriptor descriptor : getHandlerRegistry().getDescriptors()) {
                 configuration.append(String.format("  %s\n", descriptor.getPattern()));
                 configuration.append(String.format("    Handler Method: %s\n", descriptor.getHandlerMethod()));
                 configuration.append(String.format("    HTTP Method: %s\n", descriptor.getMethod()));
@@ -468,7 +468,7 @@ public class AgaveFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        HandlerMethodDescriptor descriptor = handlerRegistry.findMatch(request);
+        HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
         
         if (descriptor != null) {
             
@@ -786,7 +786,7 @@ public class AgaveFilter implements Filter {
                         classReader.accept(new HandlerScanner(scanResults), ClassReader.SKIP_CODE);
 
                         for (ScanResult scanResult : scanResults) {
-                            HandlerMethodDescriptor descriptor = new HandlerMethodDescriptorImpl(scanResult);
+                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(scanResult);
                             descriptor.locateAnnotatedHandlerMethods(scanResult);
                             handlerRegistry.addDescriptor(descriptor);
 
