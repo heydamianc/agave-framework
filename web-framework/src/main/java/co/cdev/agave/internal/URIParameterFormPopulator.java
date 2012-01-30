@@ -27,6 +27,8 @@ package co.cdev.agave.internal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import co.cdev.agave.HandlerDescriptor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

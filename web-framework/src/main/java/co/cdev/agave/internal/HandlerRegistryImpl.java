@@ -33,9 +33,11 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import co.cdev.agave.HandlerDescriptor;
+import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.URIPattern;
 import co.cdev.agave.exception.DuplicateDescriptorException;
-import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * A repository used to group all registered handlers. Handlers are registered

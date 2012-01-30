@@ -32,7 +32,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import co.cdev.agave.exception.AgaveConversionException;
 /**
  * This class support a profile of the functionality defined in the ISO/FDIS 
  * 8601:2000(E) date format. The international standard describes multiple ways

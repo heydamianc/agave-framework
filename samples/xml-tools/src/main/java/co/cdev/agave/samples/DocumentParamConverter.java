@@ -11,8 +11,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 
 import co.cdev.agave.Part;
+import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.conversion.PartParamConverter;
-import co.cdev.agave.exception.AgaveConversionException;
 
 public class DocumentParamConverter implements PartParamConverter<Document, File> {
     

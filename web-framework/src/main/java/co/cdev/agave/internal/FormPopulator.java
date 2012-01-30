@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import co.cdev.agave.exception.AgaveConversionException;
+import co.cdev.agave.conversion.AgaveConversionException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;

@@ -25,16 +25,31 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
- * Converts an object from the input type to the output type.
+ * Converts a {@code String} input into a {@code Character} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface StringParamConverter<OutputT> extends ParamConverter<String, OutputT> {
-    
+public class CharacterParamConverter implements StringParamConverter<Character> {
+
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Character} object representing the truth value of the input
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
+     */ 
     @Override
-    public OutputT convert(String input, Locale locale) throws AgaveConversionException;
-    
+    public Character convert(String input, Locale locale) throws AgaveConversionException {
+        Character value = null;
+        if (input != null && !"".equals(input)) {
+            try {
+                value = (char)Character.codePointAt(input, 0);
+            } catch (Exception ex) {
+                throw new AgaveConversionException("Could not convert " + input + " to a Character object", ex.getCause());
+            }
+        }
+        return value;
+    }
+
 }

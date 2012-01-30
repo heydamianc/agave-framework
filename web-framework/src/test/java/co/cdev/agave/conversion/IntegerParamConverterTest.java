@@ -29,7 +29,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**

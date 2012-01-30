@@ -27,7 +27,6 @@ package co.cdev.agave;
 
 import java.net.URI;
 
-import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>

@@ -1,4 +1,4 @@
-package co.cdev.agave.exception;
+package co.cdev.agave;
 
 public class AgaveConfigurationException extends Exception {
 

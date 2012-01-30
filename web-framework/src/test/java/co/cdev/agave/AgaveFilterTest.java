@@ -31,7 +31,6 @@ import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
-import co.cdev.agave.internal.HandlerDescriptor;
 import co.cdev.agave.sample.AliasedForm;
 import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;

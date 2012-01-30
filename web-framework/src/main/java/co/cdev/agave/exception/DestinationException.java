@@ -26,7 +26,8 @@
 package co.cdev.agave.exception;
 
 import co.cdev.agave.Destination;
-import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.HandlerDescriptor;
+
 import java.net.URI;
 
 

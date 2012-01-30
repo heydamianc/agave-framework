@@ -25,32 +25,17 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
+import co.cdev.agave.Part;
+
 /**
- * Converts an input {@code String} into a signed decimal {@code Byte} object.
+ * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ByteParamConverter implements StringParamConverter<Byte> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Byte} object representing the truth value of the input
-     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
-     */ 
+public interface PartParamConverter<OutputT, PartT> extends ParamConverter<Part<PartT>, OutputT> {
+    
     @Override
-    public Byte convert(String input, Locale locale) throws AgaveConversionException {
-        Byte value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Byte.parseByte(input);
-            } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " into a Byte object", ex.getCause());
-            }
-        }
-        return value;
-    }
-
+    public OutputT convert(Part<PartT> input, Locale locale) throws AgaveConversionException;
+    
 }

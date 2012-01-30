@@ -25,6 +25,8 @@
  */
 package co.cdev.agave.exception;
 
+import co.cdev.agave.AgaveConfigurationException;
+
 public class InvalidHandlerException extends AgaveConfigurationException {
 
 	private static final long serialVersionUID = 1L;

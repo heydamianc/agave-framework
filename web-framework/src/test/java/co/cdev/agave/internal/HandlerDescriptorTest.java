@@ -30,6 +30,8 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import co.cdev.agave.HandlerDescriptor;
+import co.cdev.agave.HandlerDescriptorImpl;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.RoutingContext;
 import co.cdev.agave.sample.LoginForm;

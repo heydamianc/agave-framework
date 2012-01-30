@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import co.cdev.agave.PartImpl;
 import co.cdev.agave.Part;
 
 /**
@@ -96,7 +97,7 @@ public abstract class AbstractMultipartParser<T> implements MultipartParser<T> {
         
         try {
             while (true) {
-                Part<T> part = new DefaultPart<T>();
+                Part<T> part = new PartImpl<T>();
                 readHeaders(part);
                 if (part.getFilename() != null) {                    
                     if (readPart(part)) {

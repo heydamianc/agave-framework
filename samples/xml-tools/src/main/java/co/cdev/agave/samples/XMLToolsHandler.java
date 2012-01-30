@@ -4,7 +4,8 @@ import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
-import co.cdev.agave.exception.AgaveConversionException;
+import co.cdev.agave.conversion.AgaveConversionException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

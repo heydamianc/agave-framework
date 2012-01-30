@@ -54,8 +54,8 @@ import javax.servlet.http.HttpSession;
 
 import org.objectweb.asm.ClassReader;
 
-import co.cdev.agave.exception.AgaveConfigurationException;
-import co.cdev.agave.exception.AgaveConversionException;
+import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.exception.AgaveWebException;
 import co.cdev.agave.exception.DestinationException;
 import co.cdev.agave.exception.FormException;
@@ -65,9 +65,6 @@ import co.cdev.agave.internal.DestinationImpl;
 import co.cdev.agave.internal.FileMultipartParser;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
-import co.cdev.agave.internal.HandlerDescriptor;
-import co.cdev.agave.internal.HandlerDescriptorImpl;
-import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.internal.HandlerFactoryImpl;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;

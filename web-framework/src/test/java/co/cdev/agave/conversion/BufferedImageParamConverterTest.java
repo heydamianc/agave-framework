@@ -34,8 +34,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import co.cdev.agave.PartImpl;
 import co.cdev.agave.Part;
-import co.cdev.agave.internal.DefaultPart;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -53,7 +53,7 @@ public class BufferedImageParamConverterTest {
 	
 	@Test
 	public void testConvert() throws Exception {
-		Part<File> part = new DefaultPart<File>();
+		Part<File> part = new PartImpl<File>();
 		part.setContents(imageFile);
 		part.setName("sampleImg");
 		part.setFilename("vim.gif");

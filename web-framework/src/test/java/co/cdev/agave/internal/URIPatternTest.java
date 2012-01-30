@@ -35,6 +35,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import co.cdev.agave.URIPattern;
+import co.cdev.agave.URIPatternImpl;
+
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */

@@ -23,17 +23,16 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import co.cdev.agave.Part;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DefaultPart<T> implements Part<T> {
+public class PartImpl<T> implements Part<T> {
 
     private String name;
     private String filename;
@@ -42,7 +41,7 @@ public class DefaultPart<T> implements Part<T> {
     private String parameterValue;
     private Map<String, String> otherHeaders = new HashMap<String, String>();
 
-    public DefaultPart() {
+    public PartImpl() {
     }
 
     @Override

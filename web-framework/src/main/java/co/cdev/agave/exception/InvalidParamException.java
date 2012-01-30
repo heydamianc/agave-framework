@@ -25,6 +25,8 @@
  */
 package co.cdev.agave.exception;
 
+import co.cdev.agave.AgaveConfigurationException;
+
 /**
  *
  * @author <a href="mailto:damiancarrilo@gmail.com">Damian Carrillo</a>

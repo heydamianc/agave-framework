@@ -25,32 +25,14 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
- * Converts a {@code String} input into a {@code Integer} object.
+ * Converts an object from the input type to the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class IntegerParamConverter implements StringParamConverter<Integer> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Integer} object representing the truth value of the input
-     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Integer convert(String input, Locale locale) throws AgaveConversionException {
-        Integer value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " to a Integer object", ex.getCause());
-            }
-        }
-        return value;
-    }
-
+public interface ParamConverter<InputT, OutputT> {
+    
+    public OutputT convert(InputT input, Locale locale) throws AgaveConversionException;
+    
 }

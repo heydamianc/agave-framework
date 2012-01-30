@@ -25,29 +25,28 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
- * Converts a {@code String} input into a {@code Short} object.
+ * Converts a {@code String} input into a {@code Integer} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ShortParamConverter implements StringParamConverter<Short> {
+public class IntegerParamConverter implements StringParamConverter<Integer> {
 
     /**
      * Performs the conversion.
      * @param input the input parameter as a {@code String}.
-     * @return a {@code Short} object representing the truth value of the input
+     * @return a {@code Integer} object representing the truth value of the input
      * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Short convert(String input, Locale locale) throws AgaveConversionException {
-        Short value = null;
+    public Integer convert(String input, Locale locale) throws AgaveConversionException {
+        Integer value = null;
         if (input != null && !"".equals(input)) {
             try {
-                value = Short.parseShort(input);
+                value = Integer.parseInt(input);
             } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " to a Short object", ex.getCause());
+                throw new AgaveConversionException("Could not convert " + input + " to a Integer object", ex.getCause());
             }
         }
         return value;

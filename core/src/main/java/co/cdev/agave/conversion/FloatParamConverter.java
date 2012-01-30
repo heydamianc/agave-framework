@@ -27,16 +27,29 @@ package co.cdev.agave.conversion;
 
 import java.util.Locale;
 
-import co.cdev.agave.Part;
-import co.cdev.agave.exception.AgaveConversionException;
-
 /**
- * Converts an object from a string array to a collection of the output type.
+ * Converts a {@code String} input into a {@code Float} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface PartParamConverter<OutputT, PartT> extends ParamConverter<Part<PartT>, OutputT> {
-    
+public class FloatParamConverter implements StringParamConverter<Float> {
+
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Float} object representing the truth value of the input
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
+     */ 
     @Override
-    public OutputT convert(Part<PartT> input, Locale locale) throws AgaveConversionException;
-    
+    public Float convert(String input, Locale locale) throws AgaveConversionException {
+        Float value = null;
+        if (input != null && !"".equals(input)) {
+            try {
+                value = Float.parseFloat(input);
+            } catch (NumberFormatException ex) {
+                throw new AgaveConversionException("Could not convert " + input + " to a Float object", ex.getCause());
+            }
+        }
+        return value;
+    }
+
 }

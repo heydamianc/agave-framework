@@ -30,7 +30,6 @@ import java.net.URI;
 
 import javax.servlet.ServletException;
 
-import co.cdev.agave.internal.HandlerDescriptor;
 
 /**
  * <p>

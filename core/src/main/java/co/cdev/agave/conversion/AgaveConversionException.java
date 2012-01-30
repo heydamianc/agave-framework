@@ -25,32 +25,36 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
-import java.util.Locale;
+import java.lang.reflect.Method;
+
 
 /**
- * Converts a {@code String} input into a {@code Double} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DoubleParamConverter implements StringParamConverter<Double> {
+public class AgaveConversionException extends Exception {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Double} object representing the truth value of the input
-     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Double convert(String input, Locale locale) throws AgaveConversionException {
-        Double value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Double.parseDouble(input);
-            } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " to a Double object", ex.getCause());
-            }
-        }
-        return value;
+    private static final long serialVersionUID = 1L;
+
+    public AgaveConversionException() {
+        super();
+    }
+
+    public AgaveConversionException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public AgaveConversionException(String message) {
+        super(message);
+    }
+
+    public AgaveConversionException(Throwable rootCause) {
+        super(rootCause);
+    }
+    
+    @SuppressWarnings("rawtypes")
+	public AgaveConversionException(Method method, Class<? extends ParamConverter> converterClass) {
+        this(converterClass.getName() + " is an unsupported converter for " 
+                + method.getDeclaringClass() + "#" + method.getName() + "()");
     }
 
 }

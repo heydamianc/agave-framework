@@ -25,9 +25,9 @@
  */
 package co.cdev.agave.guice;
 
+import co.cdev.agave.HandlerDescriptor;
 import co.cdev.agave.HandlerFactory;
 import co.cdev.agave.exception.HandlerException;
-import co.cdev.agave.internal.HandlerDescriptor;
 import com.google.inject.Injector;
 import javax.servlet.ServletContext;
 

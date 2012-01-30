@@ -25,33 +25,31 @@
  */
 package co.cdev.agave.conversion;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
-import javax.imageio.ImageIO;
-
-import co.cdev.agave.Part;
-import co.cdev.agave.exception.AgaveConversionException;
-
 /**
- * Converts an uploaded file directly into a manipulatable {@code BufferedImage}.
- * 
+ * Converts a {@code String} input into a {@code Double} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BufferedImageParamConverter implements PartParamConverter<BufferedImage, File> {
+public class DoubleParamConverter implements StringParamConverter<Double> {
 
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Double} object representing the truth value of the input
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
+     */ 
     @Override
-    public BufferedImage convert(Part<File> input, Locale locale) throws AgaveConversionException {
-        BufferedImage image = null;
-        if (input != null) {
+    public Double convert(String input, Locale locale) throws AgaveConversionException {
+        Double value = null;
+        if (input != null && !"".equals(input)) {
             try {
-                image = ImageIO.read((File) input.getContents());
-            } catch (IOException ex) {
-                throw new AgaveConversionException(ex.getCause());
+                value = Double.parseDouble(input);
+            } catch (NumberFormatException ex) {
+                throw new AgaveConversionException("Could not convert " + input + " to a Double object", ex.getCause());
             }
         }
-        return image;
+        return value;
     }
+
 }

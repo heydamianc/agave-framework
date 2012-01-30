@@ -25,62 +25,28 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
- * Converts an input {@code String} into a {@code Boolean} object.
+ * Converts a {@code String} input into a {@code Long} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BooleanParamConverter implements StringParamConverter<Boolean> {
+public class LongParamConverter implements StringParamConverter<Long> {
 
     /**
      * Performs the conversion.
-     * @param input the input parameter as a {@code String}. Supported inputs are (none are case sensitive): 
-     *  <p>
-     *    <strong>Input values that resolve to {@code Boolean.TRUE}:</strong>
-     *    <ul>
-     *      <li>true</li>
-     *      <li>t</li>
-     *      <li>1</li>
-     *      <li>yes</li>
-     *      <li>y</li>
-     *    </ul>
-     *  </p>
-     *  <p>
-     *    <strong>Input values that resolve to {@code Boolean.FALSE}:</strong>
-     *    <ul>
-     *      <li>false</li>
-     *      <li>f</li>
-     *      <li>0</li>
-     *      <li>no</li>
-     *      <li>n</li>
-     *    </ul>
-     *  </p>
-     * @return a {@code Boolean} object representing the truth value of the input
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Long} object representing the truth value of the input
      * @throws AgaveConversionException when an unsupported input string is supplied as an argument
      */ 
     @Override
-    public Boolean convert(String input, Locale locale) throws AgaveConversionException {
-        Boolean value = null;
+    public Long convert(String input, Locale locale) throws AgaveConversionException {
+        Long value = null;
         if (input != null && !"".equals(input)) {
-            String parameter = input.toLowerCase();
-            if ("true".equals(parameter)
-                || "t".equals(parameter)
-                || "1".equals(parameter)
-                || "on".equals(parameter)
-                || "yes".equals(parameter)
-                || "y".equals(parameter)) {
-                value = Boolean.TRUE;
-            } else if ("false".equals(parameter)
-                || "f".equals(parameter)
-                || "0".equals(parameter)
-                || "off".equals(parameter)
-                || "no".equals(parameter)
-                || "n".endsWith(parameter)) {
-                value = Boolean.FALSE;
-            } else {
-                throw new AgaveConversionException("Could not convert " + input + " into a boolean object");
+            try {
+                value = Long.parseLong(input);
+            } catch (NumberFormatException ex) {
+                throw new AgaveConversionException("Could not convert " + input + " to a Long object", ex.getCause());
             }
         }
         return value;

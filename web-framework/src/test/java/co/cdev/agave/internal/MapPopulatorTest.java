@@ -39,7 +39,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.internal.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.HandlerDescriptor;
+import co.cdev.agave.URIPattern;
+import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

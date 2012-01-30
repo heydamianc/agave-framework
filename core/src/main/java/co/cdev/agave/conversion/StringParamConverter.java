@@ -25,32 +25,15 @@
  */
 package co.cdev.agave.conversion;
 
-import co.cdev.agave.exception.AgaveConversionException;
 import java.util.Locale;
 
 /**
- * Converts a {@code String} input into a {@code Float} object.
+ * Converts an object from the input type to the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FloatParamConverter implements StringParamConverter<Float> {
-
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Float} object representing the truth value of the input
-     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
-     */ 
+public interface StringParamConverter<OutputT> extends ParamConverter<String, OutputT> {
+    
     @Override
-    public Float convert(String input, Locale locale) throws AgaveConversionException {
-        Float value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Float.parseFloat(input);
-            } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " to a Float object", ex.getCause());
-            }
-        }
-        return value;
-    }
-
+    public OutputT convert(String input, Locale locale) throws AgaveConversionException;
+    
 }

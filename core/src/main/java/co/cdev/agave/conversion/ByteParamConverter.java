@@ -23,39 +23,33 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.exception;
+package co.cdev.agave.conversion;
 
-import java.lang.reflect.Method;
-
-import co.cdev.agave.conversion.ParamConverter;
+import java.util.Locale;
 
 /**
+ * Converts an input {@code String} into a signed decimal {@code Byte} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class AgaveConversionException extends Exception {
+public class ByteParamConverter implements StringParamConverter<Byte> {
 
-    private static final long serialVersionUID = 1L;
-
-    public AgaveConversionException() {
-        super();
-    }
-
-    public AgaveConversionException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
-
-    public AgaveConversionException(String message) {
-        super(message);
-    }
-
-    public AgaveConversionException(Throwable rootCause) {
-        super(rootCause);
-    }
-    
-    @SuppressWarnings("rawtypes")
-	public AgaveConversionException(Method method, Class<? extends ParamConverter> converterClass) {
-        this(converterClass.getName() + " is an unsupported converter for " 
-                + method.getDeclaringClass() + "#" + method.getName() + "()");
+    /**
+     * Performs the conversion.
+     * @param input the input parameter as a {@code String}.
+     * @return a {@code Byte} object representing the truth value of the input
+     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
+     */ 
+    @Override
+    public Byte convert(String input, Locale locale) throws AgaveConversionException {
+        Byte value = null;
+        if (input != null && !"".equals(input)) {
+            try {
+                value = Byte.parseByte(input);
+            } catch (NumberFormatException ex) {
+                throw new AgaveConversionException("Could not convert " + input + " into a Byte object", ex.getCause());
+            }
+        }
+        return value;
     }
 
 }

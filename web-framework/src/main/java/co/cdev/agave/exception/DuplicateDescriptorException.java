@@ -25,7 +25,9 @@
  */
 package co.cdev.agave.exception;
 
-import co.cdev.agave.internal.HandlerDescriptor;
+import co.cdev.agave.AgaveConfigurationException;
+import co.cdev.agave.HandlerDescriptor;
+
 
 /**
  * An exception that is thrown to indicate that two handlers share the same

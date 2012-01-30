@@ -27,7 +27,6 @@ package co.cdev.agave.internal;
 
 import co.cdev.agave.Converter;
 import co.cdev.agave.conversion.*;
-import co.cdev.agave.exception.AgaveConversionException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;

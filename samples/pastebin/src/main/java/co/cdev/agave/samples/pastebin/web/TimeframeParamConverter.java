@@ -25,11 +25,11 @@
  */
 package co.cdev.agave.samples.pastebin.web;
 
+import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.conversion.StringParamConverter;
 import java.util.Locale;
 
 import co.cdev.agave.samples.pastebin.snippet.Timeframe;
-import co.cdev.agave.exception.AgaveConversionException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

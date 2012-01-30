@@ -39,8 +39,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
 import co.cdev.agave.AgaveFilter;
+import co.cdev.agave.HandlerDescriptor;
 import co.cdev.agave.HandlerFactory;
-import co.cdev.agave.internal.HandlerDescriptor;
 import co.cdev.agave.internal.HandlerRegistry;
 
 import com.google.inject.AbstractModule;
