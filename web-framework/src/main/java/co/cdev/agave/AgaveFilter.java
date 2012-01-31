@@ -494,6 +494,9 @@ public class AgaveFilter implements Filter {
                 request.getServletPath(),
                 descriptor.getHandlerMethod()
             });
+            
+            URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(descriptor.getPattern());
+            Map<String, String> uriParams = uriParamExtractor.extractParams(request);
 
             Object formInstance = null;
 
@@ -542,7 +545,7 @@ public class AgaveFilter implements Filter {
                         formPopulator.populate(formInstance);
                     }
                     
-                    formPopulator = new URIParamFormPopulator(request, descriptor);
+                    formPopulator = new URIParamFormPopulator(request, descriptor, uriParams);
                     formPopulator.populate(formInstance);
                 } catch (NoSuchMethodException ex) {
                     throw new FormException(ex);
@@ -573,9 +576,6 @@ public class AgaveFilter implements Filter {
                 // the handler method is expecting.  Reinsertion into the map is negligible
                 
                 arguments = new LinkedHashMap<String, Object>();
-                
-                URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(descriptor.getPattern());
-                Map<String, String> uriParams = uriParamExtractor.extractParams(request);
                 
                 // Establish the order of the parameter so the params can be looked up
                 
