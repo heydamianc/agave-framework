@@ -36,7 +36,11 @@ import javax.servlet.http.HttpServletRequest;
 import co.cdev.agave.HandlerDescriptor;
 import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.URIParamExtractor;
+import co.cdev.agave.URIParamExtractorImpl;
 import co.cdev.agave.URIPattern;
+import co.cdev.agave.URIPatternMatcher;
+import co.cdev.agave.URIPatternMatcherImpl;
 import co.cdev.agave.exception.DuplicateDescriptorException;
 
 /**
@@ -91,7 +95,8 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     @Override
     public HandlerDescriptor findMatch(HttpServletRequest request) {
         for (HandlerDescriptor descriptor : descriptors) {
-            boolean matches = request != null && request.getMethod() != null && descriptor.getPattern().matches(request);
+            URIPatternMatcher patternMatcher = new URIPatternMatcherImpl(descriptor.getPattern());
+            boolean matches = request != null && request.getMethod() != null && patternMatcher.matches(request);
             
             if (matches) {
                 HttpMethod method = HttpMethod.valueOf(request.getMethod().toUpperCase());
@@ -101,7 +106,9 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
                 if (!descriptor.getParamDescriptors().isEmpty()) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> requestParams = request.getParameterMap();
-                    Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
+                    
+                    URIParamExtractor extractor = new URIParamExtractorImpl(descriptor.getPattern());
+                    Map<String, String> uriParams = extractor.extractParams(request);
                     
                     for (ParameterDescriptor param : descriptor.getParamDescriptors()) {
                         String paramName = param.getName();

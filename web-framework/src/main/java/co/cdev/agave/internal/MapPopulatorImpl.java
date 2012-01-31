@@ -41,19 +41,19 @@ import co.cdev.agave.conversion.StringParamConverter;
 public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator {
 
     private final HttpServletRequest request;
+    private final Map<String, String> uriParams;
     private final HandlerDescriptor descriptor;
     
-    public MapPopulatorImpl(HttpServletRequest request, HandlerDescriptor descriptor) {
+    public MapPopulatorImpl(HttpServletRequest request, Map<String, String> uriParams, HandlerDescriptor descriptor) {
         super(request.getLocale());
    
         this.request = request;
+        this.uriParams = uriParams;
         this.descriptor = descriptor;
     }
     
     @Override
     public void populate(Map<String, Object> namedArguments) throws AgaveConversionException {
-        
-        Map<String, String> uriParams = descriptor.getPattern().getParameterMap(request);
         
 		@SuppressWarnings("unchecked")
         Map<String, Object[]> requestParams = request.getParameterMap();

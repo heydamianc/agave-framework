@@ -25,14 +25,7 @@
  */
 package co.cdev.agave.internal;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import co.cdev.agave.URIPattern;
@@ -42,14 +35,6 @@ import co.cdev.agave.URIPatternImpl;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class URIPatternTest {
-    
-    Mockery context = new Mockery();
-    HttpServletRequest request;
-    
-    @Before
-    public void setup() throws Exception {
-        request = context.mock(HttpServletRequest.class);
-    }
 
     @Test // transitively checks testNormalizePattern
     public void testConstructor() throws Exception {
@@ -107,46 +92,6 @@ public class URIPatternTest {
     }
     
     @Test
-    public void testMatches() throws Exception {
-        Assert.assertTrue(new URIPatternImpl("/").matches("/"));
-        Assert.assertFalse(new URIPatternImpl("/").matches("/one"));
-        Assert.assertTrue(new URIPatternImpl("/one/*/").matches("/one/two/"));
-        Assert.assertTrue(new URIPatternImpl("/one/*/").matches("/one/two"));
-        Assert.assertTrue(new URIPatternImpl("/one/*").matches("/one/two/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/three/").matches("/one/two/three/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/three/").matches("/one/two/three"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/three").matches("/one/two/three/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/three").matches("/one/two/three"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/four").matches("/one/two/three/four"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/four").matches("/one/two/three/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/four/").matches("/one/two/three/four"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/four/").matches("/one/two/three/four/"));
-        Assert.assertFalse(new URIPatternImpl("/one/**/four/").matches("/one/two/three"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/**/four/").matches("/one/two/three/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/*/four/").matches("/one/two/three/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/*/**/four/").matches("/one/two/three/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/*/**/four/").matches("/one/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**").matches("/one/two/three/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/").matches("/one/two/three/four/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/").matches("/one/two/three/four"));
-        Assert.assertTrue(new URIPatternImpl("/one/**").matches("/one/two/three/four"));
-        Assert.assertTrue(new URIPatternImpl("/one/**").matches("/one/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**").matches("/one"));
-        Assert.assertFalse(new URIPatternImpl("/one/**").matches("/on/"));
-        Assert.assertTrue(new URIPatternImpl("/one/**/four/*").matches("/one/two/three/four/five"));
-        Assert.assertTrue(new URIPatternImpl("/one/${var}").matches("/one/two"));
-        Assert.assertTrue(new URIPatternImpl("/one/${var}/").matches("/one/two"));
-        Assert.assertTrue(new URIPatternImpl("/one/${var}").matches("/one/two/"));
-        Assert.assertTrue(new URIPatternImpl("/one/${var}/").matches("/one/two/"));
-        Assert.assertTrue(new URIPatternImpl("/one/two/").matches("/ONE/tWo"));
-        Assert.assertTrue(new URIPatternImpl("/One/Two").matches("/one/TWO"));
-        Assert.assertFalse(new URIPatternImpl("/one/${two}").matches("/"));
-        Assert.assertFalse(new URIPatternImpl("/one/").matches("/one/two"));
-        Assert.assertFalse(new URIPatternImpl("/one/two").matches("/one"));
-        Assert.assertFalse(new URIPatternImpl("/one/${var}").matches("/one"));
-    }
-    
-    @Test
     public void testCompareTo() throws Exception {
         Assert.assertTrue(new URIPatternImpl("/").compareTo(new URIPatternImpl("/")) == 0);
         Assert.assertTrue(new URIPatternImpl("/one/two/three").compareTo(new URIPatternImpl("/")) < 0);
@@ -181,22 +126,6 @@ public class URIPatternTest {
         Assert.assertTrue(new URIPatternImpl("/test1").equals(new URIPatternImpl("/test1")));
         Assert.assertTrue(!new URIPatternImpl("/test1").equals(new URIPatternImpl("/test2")));
     }
-   
-    @Test
-    public void testGetParameterMap() throws Exception {
-        
-        context.checking(new Expectations() {{
-            allowing(request).getServletPath(); will(returnValue("/one/two/buckle/my/shoe/"));
-        }});
-        
-        URIPattern u = new URIPatternImpl("/one/two/${three}/${four}/${five}");
-        Assert.assertNotNull(u);
-        Map<String, String> params = u.getParameterMap(request);
-        Assert.assertNotNull(params);
-        Assert.assertEquals(3, params.size());
-        Assert.assertEquals("buckle", params.get("three"));
-        Assert.assertEquals("my", params.get("four"));
-        Assert.assertEquals("shoe", params.get("five"));
-    }
+    
 }
 

@@ -74,7 +74,7 @@ import co.cdev.agave.internal.MapPopulatorImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
 import co.cdev.agave.internal.ScanResult;
-import co.cdev.agave.internal.URIParameterFormPopulator;
+import co.cdev.agave.internal.URIParamFormPopulator;
 
 /**
  * <p>
@@ -401,7 +401,7 @@ public class AgaveFilter implements Filter {
      * the {@link ConvertWith} annotation on mutator arguments. Note that URI
      * parameters will override request parameters if they are similarly named.</li>
      * <li>
-     * {@link URIParameterFormPopulator Populates URI parameters} if necessary,
+     * {@link URIParamFormPopulator Populates URI parameters} if necessary,
      * leveraging any {@link agave.conversion.Converter}s named with the
      * {@link ConvertWith} annotation on mutator arguments.</li>
      * </ol>
@@ -542,7 +542,7 @@ public class AgaveFilter implements Filter {
                         formPopulator.populate(formInstance);
                     }
                     
-                    formPopulator = new URIParameterFormPopulator(request, descriptor);
+                    formPopulator = new URIParamFormPopulator(request, descriptor);
                     formPopulator.populate(formInstance);
                 } catch (NoSuchMethodException ex) {
                     throw new FormException(ex);
@@ -574,12 +574,13 @@ public class AgaveFilter implements Filter {
                 
                 arguments = new LinkedHashMap<String, Object>();
                 
-                Map<String, String> uriValues = descriptor.getPattern().getParameterMap(request);
+                URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(descriptor.getPattern());
+                Map<String, String> uriParams = uriParamExtractor.extractParams(request);
                 
                 // Establish the order of the parameter so the params can be looked up
                 
                 for (ParameterDescriptor paramDescriptor : paramDescriptors) {
-                    String value = uriValues.get(paramDescriptor.getName());
+                    String value = uriParams.get(paramDescriptor.getName());
                     
                     if (value == null) {
                 		value = request.getParameter(paramDescriptor.getName());
@@ -591,7 +592,7 @@ public class AgaveFilter implements Filter {
                 // Now that the argument order has been established, populate
                 // the actual values
                 
-                MapPopulator argumentPopulator = new MapPopulatorImpl(request, descriptor);
+                MapPopulator argumentPopulator = new MapPopulatorImpl(request, uriParams, descriptor);
                 
                 try {
                     argumentPopulator.populate(arguments);

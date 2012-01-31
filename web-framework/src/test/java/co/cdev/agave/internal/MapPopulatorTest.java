@@ -73,26 +73,13 @@ public class MapPopulatorTest {
         paramDescriptors = new ArrayList<ParameterDescriptor>();
         
         context.checking(new Expectations() {{
-            allowing(request).getLocale();
-            will(returnValue(locale));
-            
-            allowing(request).getParameterMap();
-            will(returnValue(requestParams));
-            
-            allowing(descriptor).getPattern(); 
-            will(returnValue(pattern));
-            
-            allowing(descriptor).getParamDescriptors();
-            will(returnValue(paramDescriptors));
-            
-            allowing(pattern).getParameterMap(with(any(HttpServletRequest.class))); 
-            will(returnValue(uriParams));
+            allowing(request).getLocale(); will(returnValue(locale));
+            allowing(request).getParameterMap(); will(returnValue(requestParams));
+            allowing(descriptor).getPattern(); will(returnValue(pattern));
+            allowing(descriptor).getParamDescriptors(); will(returnValue(paramDescriptors));
         }});
         
-        // The constructor is proactive, so it must be called after the context
-        // has been set up.
-        
-        populator = new MapPopulatorImpl(request, descriptor);
+        populator = new MapPopulatorImpl(request, uriParams, descriptor);
     }
     
     @Test

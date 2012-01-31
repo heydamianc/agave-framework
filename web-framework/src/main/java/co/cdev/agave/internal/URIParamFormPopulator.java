@@ -25,23 +25,27 @@
  */
 package co.cdev.agave.internal;
 
-import javax.servlet.http.HttpServletRequest;
-
-import co.cdev.agave.HandlerDescriptor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import co.cdev.agave.HandlerDescriptor;
+import co.cdev.agave.URIParamExtractor;
+import co.cdev.agave.URIParamExtractorImpl;
+
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class URIParameterFormPopulator extends AbstractFormPopulator {
+public class URIParamFormPopulator extends AbstractFormPopulator {
 
-    public URIParameterFormPopulator(HttpServletRequest request, HandlerDescriptor descriptor) {
+    public URIParamFormPopulator(HttpServletRequest request, HandlerDescriptor descriptor) {
         super(request.getLocale());
 
-        Map<String, String> uriParameters = descriptor.getPattern().getParameterMap(request);
+        URIParamExtractor paramExtractor = new URIParamExtractorImpl(descriptor.getPattern());
+        
+        Map<String, String> uriParameters = paramExtractor.extractParams(request);
         for (String key : uriParameters.keySet()) {
             List<Object> parameter = new ArrayList<Object>(1);
             parameter.add(uriParameters.get(key));
