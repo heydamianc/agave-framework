@@ -25,12 +25,12 @@
  */
 package co.cdev.agave.configuration;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.URIPattern;
-import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 
@@ -63,7 +63,7 @@ import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
+public interface HandlerDescriptor extends Comparable<HandlerDescriptor>, Serializable {
     
     /**
      * Locates annotated handler methods to field requests with
@@ -101,7 +101,7 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor> {
      */
     public String getWorkflowName();
 
-    public List<ParameterDescriptor> getParamDescriptors();
+    public List<ParamDescriptor> getParamDescriptors();
     
     public boolean initiatesWorkflow();
 

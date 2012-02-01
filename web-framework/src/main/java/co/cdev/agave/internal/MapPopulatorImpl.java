@@ -30,7 +30,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.conversion.StringParamConverter;
 
@@ -58,7 +58,7 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
 		@SuppressWarnings("unchecked")
         Map<String, Object[]> requestParams = request.getParameterMap();
         
-        for (ParameterDescriptor paramDescriptor : descriptor.getParamDescriptors()) {
+        for (ParamDescriptor paramDescriptor : descriptor.getParamDescriptors()) {
             Object value = uriParams.get(paramDescriptor.getName());
             
             if (value == null) {

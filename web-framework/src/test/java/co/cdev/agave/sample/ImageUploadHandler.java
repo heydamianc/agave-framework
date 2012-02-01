@@ -26,8 +26,8 @@
 package co.cdev.agave.sample;
 
 
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
+import co.cdev.agave.configuration.RoutingContext;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

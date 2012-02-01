@@ -25,12 +25,14 @@
  */
 package co.cdev.agave;
 
+import java.io.Serializable;
+
 /**
  * All supported values for the {@link HandlesRequestsTo} {@code method} parameter.
  * 
  *@author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public enum HttpMethod {
+public enum HttpMethod implements Serializable {
 
     GET,
     PUT,

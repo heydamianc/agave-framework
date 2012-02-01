@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 
 import co.cdev.agave.Param;
 import co.cdev.agave.Route;
-import co.cdev.agave.RoutingContext;
+import co.cdev.agave.configuration.RoutingContext;
 import co.cdev.agave.conversion.IntegerParamConverter;
 
 public class SampleHandler {

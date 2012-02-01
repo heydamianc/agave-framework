@@ -31,6 +31,7 @@ import java.net.URI;
 import javax.servlet.ServletException;
 
 import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.configuration.RoutingContext;
 
 
 /**

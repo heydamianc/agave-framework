@@ -40,7 +40,7 @@ import co.cdev.agave.URIPattern;
 import co.cdev.agave.URIPatternMatcher;
 import co.cdev.agave.URIPatternMatcherImpl;
 import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.exception.DuplicateDescriptorException;
 
 /**
@@ -110,7 +110,7 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
                     URIParamExtractor extractor = new URIParamExtractorImpl(descriptor.getPattern());
                     Map<String, String> uriParams = extractor.extractParams(request);
                     
-                    for (ParameterDescriptor param : descriptor.getParamDescriptors()) {
+                    for (ParamDescriptor param : descriptor.getParamDescriptors()) {
                         String paramName = param.getName();
                         matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
                     }

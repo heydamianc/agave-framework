@@ -31,11 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import co.cdev.agave.HttpMethod;
-import co.cdev.agave.RoutingContext;
-import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.configuration.HandlerDescriptorImpl;
-import co.cdev.agave.configuration.ScanResult;
-import co.cdev.agave.configuration.ScanResultImpl;
+import co.cdev.agave.sample.AliasedForm;
 import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
 
@@ -57,7 +53,7 @@ public class HandlerDescriptorTest {
     @Test
     public void testLocateAnnotatedHandlerMethods() throws Exception {
     	ScanResult scanResult = new ScanResultImpl("/login", cls, met);
-    	scanResult.setParameterTypes(Arrays.asList(new Class<?>[] {RoutingContext.class, LoginForm.class}));
+    	scanResult.setParameterTypes(Arrays.asList(new Class<?>[] {AliasedForm.class, LoginForm.class}));
     	
     	HandlerDescriptor a = new HandlerDescriptorImpl(scanResult);
     	a.locateAnnotatedHandlerMethods(scanResult);
@@ -103,15 +99,21 @@ public class HandlerDescriptorTest {
     
     @Test
     public void testCompareTo_withDuplicatePathAndMethodAndDifferentNumberOfParameters() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met)) {{
-            addParameterDescriptor(new ParameterDescriptor(String.class, "a"));
-            addParameterDescriptor(new ParameterDescriptor(String.class, "b"));
-            addParameterDescriptor(new ParameterDescriptor(String.class, "c"));
+        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met)) 
+        {
+            private static final long serialVersionUID = 1L;
+        {
+            addParamDescriptor(new ParamDescriptorImpl(String.class, "a"));
+            addParamDescriptor(new ParamDescriptorImpl(String.class, "b"));
+            addParamDescriptor(new ParamDescriptorImpl(String.class, "c"));
         }};
         
-        HandlerDescriptor b = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met)) {{
-            addParameterDescriptor(new ParameterDescriptor(String.class, "a"));
-            addParameterDescriptor(new ParameterDescriptor(String.class, "b"));
+        HandlerDescriptor b = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met))
+        {
+            private static final long serialVersionUID = 1L;
+        {
+            addParamDescriptor(new ParamDescriptorImpl(String.class, "a"));
+            addParamDescriptor(new ParamDescriptorImpl(String.class, "b"));
         }};
         
         Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));

@@ -25,12 +25,12 @@
  */
 package co.cdev.agave.samples.pastebin.web;
 
+import co.cdev.agave.configuration.RoutingContext;
 import co.cdev.agave.samples.pastebin.ServiceException;
 import co.cdev.agave.samples.pastebin.overview.Overview;
 import co.cdev.agave.samples.pastebin.snippet.Snippet;
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
 import javax.servlet.ServletContext;
 

@@ -39,7 +39,6 @@ import co.cdev.agave.ResumesWorkflow;
 import co.cdev.agave.URIPattern;
 import co.cdev.agave.URIPatternImpl;
 import co.cdev.agave.conversion.PassThroughParamConverter;
-import co.cdev.agave.conversion.StringParamConverter;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -49,11 +48,13 @@ import co.cdev.agave.conversion.StringParamConverter;
  */
 public class HandlerDescriptorImpl implements HandlerDescriptor {
 
+    private static final long serialVersionUID = 1L;
+    
     private URIPattern pattern;
     private HttpMethod method;
     private Class<?> handlerClass;
     private Method handlerMethod;
-    private List<ParameterDescriptor> parameterDescriptors; // only applicable when @Param is used
+    private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
     private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
@@ -63,7 +64,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         pattern              = new URIPatternImpl(scanResult.getUri());
         method               = scanResult.getMethod();
         handlerClass         = Class.forName(scanResult.getClassName());
-        parameterDescriptors = Collections.emptyList();
+        paramDescriptors = Collections.emptyList();
     }
 
     /**
@@ -122,20 +123,20 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                         
                         if (expectedType == actualType) {
                             try {
-                                ParameterDescriptor parameterDescriptor;
-                                parameterDescriptor = ParameterDescriptor.createIfApplicable(actualType, annotations);
-                                addParameterDescriptor(parameterDescriptor);
+                                ParamDescriptor parameterDescriptor;
+                                parameterDescriptor = createParamDescriptorIfApplicable(actualType, annotations);
+                                addParamDescriptor(parameterDescriptor);
                             } catch (InvalidParamException ex) {
                                 throw new InvalidHandlerException(ex);
                             }
                         }                        
                     }
                     
-                    if (parameterDescriptors.size() == expectedParameterCount - 1) {
+                    if (paramDescriptors.size() == expectedParameterCount - 1) {
                         handlerMethod = m;
                         return;
                     } else {
-                        parameterDescriptors.clear();
+                        paramDescriptors.clear();
                     }
                 }
             }
@@ -145,12 +146,45 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
             throw new InvalidHandlerException(String.format("Unable to find handler method for %s", scanResult.getUri()));
         }
     }
-
-    protected void addParameterDescriptor(ParameterDescriptor parameterDescriptor) {
-        if (parameterDescriptors.isEmpty()) {
-            parameterDescriptors = new ArrayList<ParameterDescriptor>();
+    
+    private ParamDescriptor createParamDescriptorIfApplicable(Class<?> paramType, Annotation[] annotations) 
+            throws InvalidParamException {
+        
+        ParamDescriptor descriptor = null;
+        
+        for (int i = 0; i < annotations.length; i++) {
+            Class<?> annotationType = annotations[i].annotationType();
+            
+            if (annotationType.isAssignableFrom(Param.class)) {
+                Param param = (Param) annotations[i];
+                String name = param.name();
+                
+                if (name == null || "".equals(name)) {
+                    name = param.value();
+                } 
+                
+                if (name != null) {
+                    descriptor = new ParamDescriptorImpl(paramType, name);
+                    
+                    if (!param.converter().equals(PassThroughParamConverter.class)) {
+                        descriptor.setConverter(param.converter());
+                    }
+                }
+                
+                if (name == null) {
+                    
+                }
+            }
         }
-        parameterDescriptors.add(parameterDescriptor);
+        
+        return descriptor;
+    }
+
+    protected void addParamDescriptor(ParamDescriptor paramDescriptor) {
+        if (paramDescriptors.isEmpty()) {
+            paramDescriptors = new ArrayList<ParamDescriptor>();
+        }
+        paramDescriptors.add(paramDescriptor);
     }
     
     private boolean hasAdditionalParams(Method m) {
@@ -220,7 +254,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         }
         
         if (result == 0) {
-            result = -(parameterDescriptors.size() - that.getParamDescriptors().size());
+            result = -(paramDescriptors.size() - that.getParamDescriptors().size());
         }
         
         return result;
@@ -234,7 +268,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         result = prime * result + ((handlerMethod == null) ? 0 : handlerMethod.hashCode());
         result = prime * result + (initiatesWorkflow ? 1231 : 1237);
         result = prime * result + ((method == null) ? 0 : method.hashCode());
-        result = prime * result + ((parameterDescriptors == null) ? 0 : parameterDescriptors.hashCode());
+        result = prime * result + ((paramDescriptors == null) ? 0 : paramDescriptors.hashCode());
         result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
         result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
         return result;
@@ -260,10 +294,10 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
             return false;
         if (method != other.method)
             return false;
-        if (parameterDescriptors == null) {
-            if (other.parameterDescriptors != null)
+        if (paramDescriptors == null) {
+            if (other.paramDescriptors != null)
                 return false;
-        } else if (!parameterDescriptors.equals(other.parameterDescriptors))
+        } else if (!paramDescriptors.equals(other.paramDescriptors))
             return false;
         if (pattern == null) {
             if (other.pattern != null)
@@ -284,8 +318,8 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     }
 
     @Override
-    public List<ParameterDescriptor> getParamDescriptors() {
-        return parameterDescriptors;
+    public List<ParamDescriptor> getParamDescriptors() {
+        return paramDescriptors;
     }
 
     public boolean isCompletesWorkflow() {
@@ -294,89 +328,6 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
 
     public boolean isInitiatesWorkflow() {
         return initiatesWorkflow;
-    }
-    
-    public static class ParameterDescriptor {
-        
-        private Class<?> type;
-        private String name;
-        private Class<? extends StringParamConverter<?>> converter;
-        
-        public ParameterDescriptor(Class<?> type, String name) {
-            this.type = type;
-            this.name = name;
-        }
-
-        public Class<? extends StringParamConverter<?>> getConverter() {
-            return converter;
-        }
-
-        public void setConverter(Class<? extends StringParamConverter<?>> converter) {
-            this.converter = converter;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Class<?> getType() {
-            return type;
-        }
-
-        public void setType(Class<?> type) {
-            this.type = type;
-        }
-        
-        private static ParameterDescriptor createIfApplicable(Class<?> paramType, Annotation[] annotations) 
-                throws InvalidParamException {
-            
-            ParameterDescriptor descriptor = null;
-            
-            for (int i = 0; i < annotations.length; i++) {
-                Class<?> annotationType = annotations[i].annotationType();
-                
-                if (annotationType.isAssignableFrom(Param.class)) {
-                    Param param = (Param) annotations[i];
-                    String name = param.name();
-                    
-                    if (name == null || "".equals(name)) {
-                        name = param.value();
-                    } 
-                    
-                    if (name != null) {
-                        descriptor = new ParameterDescriptor(paramType, name);
-                        
-                        if (!param.converter().equals(PassThroughParamConverter.class)) {
-                            descriptor.setConverter(param.converter());
-                        }
-                    }
-                    
-                    if (name == null) {
-                        
-                    }
-                }
-            }
-            
-            return descriptor;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder representation = new StringBuilder();
-            representation.append("[");
-            representation.append("type:").append(type.getName());
-            representation.append(",").append("name:").append(name);
-            if (converter != null) {
-                representation.append(",").append("converter:").append(converter.getName());
-            }
-            representation.append("]");
-            return representation.toString();
-        }
-        
     }
     
 }

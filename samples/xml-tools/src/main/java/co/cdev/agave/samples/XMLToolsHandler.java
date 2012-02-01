@@ -2,8 +2,8 @@ package co.cdev.agave.samples;
 
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
+import co.cdev.agave.configuration.RoutingContext;
 import co.cdev.agave.conversion.AgaveConversionException;
 
 import java.io.BufferedReader;

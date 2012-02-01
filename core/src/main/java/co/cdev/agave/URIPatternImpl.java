@@ -43,6 +43,8 @@ import java.util.regex.Matcher;
  */
 public class URIPatternImpl implements URIPattern {
 
+    private static final long serialVersionUID = 1L;
+    
     private String pattern;
     private String[] parts;
 

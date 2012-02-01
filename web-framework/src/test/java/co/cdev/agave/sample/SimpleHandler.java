@@ -29,8 +29,8 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
+import co.cdev.agave.configuration.RoutingContext;
 
 /**
  * A simple example of a handler class that fields requests to a single URL.  This class is 

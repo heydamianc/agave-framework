@@ -9,6 +9,7 @@
     <module>web-framework</module>
     <module>core</module>
     <module>configuration</module>
+    <module>configuration-plugin</module>
   </modules>
   
   <modelVersion>4.0.0</modelVersion>

@@ -25,6 +25,7 @@
  */
 package co.cdev.agave;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 
@@ -36,7 +37,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface URIPattern extends Comparable<URIPattern> {
+public interface URIPattern extends Comparable<URIPattern>, Serializable {
 
     static final String FORWARD_SLASH = "/";
     static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{(.*)\\}");

@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import co.cdev.agave.RoutingContext;
+import co.cdev.agave.configuration.RoutingContext;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

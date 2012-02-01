@@ -25,9 +25,6 @@
  */
 package co.cdev.agave.configuration;
 
-import co.cdev.agave.configuration.HandlerScanner;
-import co.cdev.agave.configuration.ScanResult;
-import co.cdev.agave.sample.SampleHandler;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +33,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
+
+import co.cdev.agave.sample.SampleHandler;
 
 public class HandlerScannerTest {
     

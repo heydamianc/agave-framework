@@ -33,7 +33,7 @@ import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
 import co.cdev.agave.Part;
 import co.cdev.agave.Route;
-import co.cdev.agave.RoutingContext;
+import co.cdev.agave.configuration.RoutingContext;
 
 public class StegoHandler {
 

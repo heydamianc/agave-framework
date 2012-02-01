@@ -57,8 +57,9 @@ import org.objectweb.asm.ClassReader;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.HandlerDescriptorImpl;
 import co.cdev.agave.configuration.HandlerScanner;
+import co.cdev.agave.configuration.ParamDescriptor;
+import co.cdev.agave.configuration.RoutingContext;
 import co.cdev.agave.configuration.ScanResult;
-import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.exception.AgaveWebException;
 import co.cdev.agave.exception.DestinationException;
@@ -358,7 +359,7 @@ public class AgaveFilter implements Filter {
                 if (descriptor.getParamDescriptors() != null && !descriptor.getParamDescriptors().isEmpty()) {
                     configuration.append(String.format("    Params:\n"));
                     
-                    for (ParameterDescriptor param : descriptor.getParamDescriptors()) {
+                    for (ParamDescriptor param : descriptor.getParamDescriptors()) {
                         configuration.append(String.format("      * %s - %s (Converter: %s)\n", 
                                 param.getType().getName(),
                                 param.getName(),
@@ -570,7 +571,7 @@ public class AgaveFilter implements Filter {
             // from either the URI path or the request params.  URI params override request params.
             
             LinkedHashMap<String, Object> arguments = null;
-            List<ParameterDescriptor> paramDescriptors = descriptor.getParamDescriptors();
+            List<ParamDescriptor> paramDescriptors = descriptor.getParamDescriptors();
             
             if (formInstance == null && !paramDescriptors.isEmpty()) {
                 
@@ -581,7 +582,7 @@ public class AgaveFilter implements Filter {
                 
                 // Establish the order of the parameter so the params can be looked up
                 
-                for (ParameterDescriptor paramDescriptor : paramDescriptors) {
+                for (ParamDescriptor paramDescriptor : paramDescriptors) {
                     String value = uriParams.get(paramDescriptor.getName());
                     
                     if (value == null) {

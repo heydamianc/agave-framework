@@ -2,6 +2,8 @@ package co.cdev.agave;
 
 import javax.servlet.http.HttpServletRequest;
 
+import co.cdev.agave.configuration.RoutingContext;
+
 public final class RequestUtils {
     
     public static final String MULTIPART_FORM_DATA = "multipart/form-data";

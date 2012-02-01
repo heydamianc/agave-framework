@@ -33,8 +33,8 @@ import java.util.Map;
 
 import co.cdev.agave.Destination;
 import co.cdev.agave.Destinations;
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Route;
+import co.cdev.agave.configuration.RoutingContext;
 import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.samples.gameOfLife.simulation.Board;
 import co.cdev.agave.samples.gameOfLife.simulation.Cell;

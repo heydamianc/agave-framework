@@ -42,6 +42,7 @@ import org.junit.Test;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.HandlerDescriptorImpl;
+import co.cdev.agave.configuration.ParamDescriptorImpl;
 import co.cdev.agave.configuration.ScanResultImpl;
 import co.cdev.agave.exception.DuplicateDescriptorException;
 import co.cdev.agave.sample.SampleHandler;
@@ -195,9 +196,12 @@ public class HandlerRegistryTest {
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
         }});
       
-        HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login")) {{
-            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(String.class, "color"));
-            addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(Boolean.class, "always"));
+        HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login"))
+        {
+            private static final long serialVersionUID = 1L;
+        {
+            addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
+            addParamDescriptor(new ParamDescriptorImpl(Boolean.class, "always"));
         }};
         
         registry.addDescriptor(a);
@@ -218,8 +222,11 @@ public class HandlerRegistryTest {
           allowing(request).getParameterMap(); will(returnValue(parameterMap));
       }});
       
-      HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login")) {{
-          addParameterDescriptor(new HandlerDescriptorImpl.ParameterDescriptor(String.class, "color"));
+      HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login"))
+      {
+        private static final long serialVersionUID = 1L;
+      {
+          addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
       }};
       
       registry.addDescriptor(a);
