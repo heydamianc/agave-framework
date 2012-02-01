@@ -28,8 +28,8 @@ package co.cdev.agave.internal;
 import javax.servlet.ServletContext;
 
 import co.cdev.agave.AgaveFilter;
-import co.cdev.agave.HandlerDescriptor;
 import co.cdev.agave.HandlerFactory;
+import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.exception.HandlerException;
 
 

@@ -23,38 +23,31 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave;
+package co.cdev.agave.configuration;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import co.cdev.agave.conversion.ParamConverter;
+import co.cdev.agave.AgaveConfigurationException;
 
 /**
- * Indicates which {@link Converter} to use.  An example of using this annotation is:
- * 
- * <pre>public class SomeForm {
- *     
- *     private SomeType someParameter;
- *     
- *     public void setSomeParameter(ConvertWith(com.domain.package.SomeTypeConverter) SomeType someParameter) {
- *         this.someParameter = someParameter;
- *     }
- * }</pre>
- * 
- * The value supplied to the named converter is a String value coming from a form input, a request parameter, or a 
- * URI's positional parameter.
- * 
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ *
+ * @author <a href="mailto:damiancarrilo@gmail.com">Damian Carrillo</a>
  */
-@Documented
-@Inherited
-@Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Converter {
-    Class<? extends ParamConverter<?,?>> value();
+public class InvalidParamException extends AgaveConfigurationException {
+
+	private static final long serialVersionUID = 1L;
+
+	public InvalidParamException() {
+    }
+
+    public InvalidParamException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public InvalidParamException(String message) {
+        super(message);
+    }
+
+    public InvalidParamException(Throwable rootCause) {
+        super(rootCause);
+    }
+    
 }

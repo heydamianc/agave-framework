@@ -33,14 +33,14 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import co.cdev.agave.HandlerDescriptor;
-import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.URIParamExtractor;
 import co.cdev.agave.URIParamExtractorImpl;
 import co.cdev.agave.URIPattern;
 import co.cdev.agave.URIPatternMatcher;
 import co.cdev.agave.URIPatternMatcherImpl;
+import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.exception.DuplicateDescriptorException;
 
 /**

@@ -8,6 +8,7 @@
     <module>jsp-template-tags</module>
     <module>web-framework</module>
     <module>core</module>
+    <module>configuration</module>
   </modules>
   
   <modelVersion>4.0.0</modelVersion>
@@ -45,6 +46,11 @@
       <dependency>
         <groupId>co.cdev.agave</groupId>
         <artifactId>core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>co.cdev.agave</groupId>
+        <artifactId>configuration</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

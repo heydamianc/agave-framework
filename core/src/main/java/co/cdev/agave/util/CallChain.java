@@ -23,31 +23,24 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.exception;
+package co.cdev.agave.util;
 
-import co.cdev.agave.AgaveConfigurationException;
+import java.util.List;
 
 /**
- *
- * @author <a href="mailto:damiancarrilo@gmail.com">Damian Carrillo</a>
+ * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class InvalidParamException extends AgaveConfigurationException {
+public interface CallChain {
 
-	private static final long serialVersionUID = 1L;
+    public String getParameterName();
 
-	public InvalidParamException() {
-    }
+    public List<String> getAccessorNames();
 
-    public InvalidParamException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
+    public MutatorType getMutatorType();
 
-    public InvalidParamException(String message) {
-        super(message);
-    }
+    public String getMutatorName();
 
-    public InvalidParamException(Throwable rootCause) {
-        super(rootCause);
-    }
-    
+    public String getKey();
+
+    public Integer getIndex();
 }

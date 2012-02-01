@@ -23,14 +23,14 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave;
+package co.cdev.agave.configuration;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
-import co.cdev.agave.exception.InvalidHandlerException;
-import co.cdev.agave.internal.ScanResult;
+import co.cdev.agave.HttpMethod;
+import co.cdev.agave.URIPattern;
+import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
 
 /**
  * A descriptor that aggregates information about the handler so that the configured filter can 

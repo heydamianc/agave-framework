@@ -23,7 +23,7 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave;
+package co.cdev.agave.configuration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -31,11 +31,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import co.cdev.agave.CompletesWorkflow;
+import co.cdev.agave.HttpMethod;
+import co.cdev.agave.InitiatesWorkflow;
+import co.cdev.agave.Param;
+import co.cdev.agave.ResumesWorkflow;
+import co.cdev.agave.URIPattern;
+import co.cdev.agave.URIPatternImpl;
 import co.cdev.agave.conversion.PassThroughParamConverter;
 import co.cdev.agave.conversion.StringParamConverter;
-import co.cdev.agave.exception.InvalidHandlerException;
-import co.cdev.agave.exception.InvalidParamException;
-import co.cdev.agave.internal.ScanResult;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers

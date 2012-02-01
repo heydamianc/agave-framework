@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,54 +23,36 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave.sample;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.EmptyVisitor;
-
-import co.cdev.agave.Route;
+import co.cdev.agave.Converter;
+import co.cdev.agave.conversion.BooleanParamConverter;
 
 /**
- * Scans classes for methods which are possible candidates to be handler
- * methods.
- * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class MethodScanner extends EmptyVisitor {
+public class AliasedForm {
 
-    private static final Collection<String> desirableAnnotations = new ArrayList<String>();
+    private String someProperty;
+    private Boolean anotherProperty;
 
-    static {
-        desirableAnnotations.add(Type.getDescriptor(Route.class));
-    }
-    
-    private Collection<ScanResult> scanResults;
-    private String handlerClassName;
-    private String handlerMethodName;
-    private String handlerMethodDescriptor;
-
-    public MethodScanner(Collection<ScanResult> scanResults,
-                         String handlerClassName, 
-                         String handlerMethodName,
-                         String handlerMethodDescriptor) {
-        this.scanResults = scanResults;
-        this.handlerClassName = handlerClassName;
-        this.handlerMethodName = handlerMethodName;
-        this.handlerMethodDescriptor = handlerMethodDescriptor;
+    /**
+     * &quot;someAlias&quot; serves as an alias for the {@code someProperty}.
+     */
+    public void setSomeProperty(String someProperty) {
+        this.someProperty = someProperty;
     }
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationVisitor annotationVisitor = null;
-        if (visible && desirableAnnotations.contains(desc)) {
-            annotationVisitor = new AnnotationScanner(scanResults,
-                    handlerClassName, handlerMethodName,
-                    handlerMethodDescriptor, desc);
-        }
-        return annotationVisitor;
+    public String getSomeProperty() {
+        return someProperty;
     }
+
+    public void setAnotherProperty(@Converter(BooleanParamConverter.class) Boolean anotherProperty) {
+        this.anotherProperty = anotherProperty;
+    }
+
+    public Boolean getAnotherProperty() {
+        return anotherProperty;
+    }
+
 }

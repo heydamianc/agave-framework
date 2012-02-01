@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,27 +23,39 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.exception;
+package co.cdev.agave.sample;
 
-import co.cdev.agave.AgaveConfigurationException;
+import co.cdev.agave.Converter;
+import co.cdev.agave.conversion.BooleanParamConverter;
 
-public class InvalidHandlerException extends AgaveConfigurationException {
+public class LoginForm {
 
-	private static final long serialVersionUID = 1L;
+    private String username;
+    private String password;
+    private Boolean remembered;
 
-	public InvalidHandlerException(Throwable rootCause) {
-        super(rootCause);
-    }
-
-    public InvalidHandlerException(String message) {
-        super(message);
-    }
-
-    public InvalidHandlerException(String message, Throwable rootCause) {
-        super(message, rootCause);
-    }
-
-    public InvalidHandlerException() {
+    public void setUsername(String username) {
+        this.username = username;
     }
     
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setRemembered(@Converter(BooleanParamConverter.class) Boolean remembered) {
+        this.remembered = remembered;
+    }
+
+    public Boolean isRemembered() {
+        return remembered;
+    }
+
 }

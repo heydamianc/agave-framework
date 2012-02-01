@@ -23,45 +23,54 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave.configuration;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
+import co.cdev.agave.Route;
+
 /**
+ * Scans classes for methods which are possible candidates to be handler
+ * methods.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
+public class MethodScanner extends EmptyVisitor {
 
-    Collection<ScanResult> scanResults;
-    String className;
+    private static final Collection<String> desirableAnnotations = new ArrayList<String>();
 
-    public HandlerScanner(Collection<ScanResult> scanResults) {
-        super();
+    static {
+        desirableAnnotations.add(Type.getDescriptor(Route.class));
+    }
+    
+    private Collection<ScanResult> scanResults;
+    private String handlerClassName;
+    private String handlerMethodName;
+    private String handlerMethodDescriptor;
+
+    public MethodScanner(Collection<ScanResult> scanResults,
+                         String handlerClassName, 
+                         String handlerMethodName,
+                         String handlerMethodDescriptor) {
         this.scanResults = scanResults;
+        this.handlerClassName = handlerClassName;
+        this.handlerMethodName = handlerMethodName;
+        this.handlerMethodDescriptor = handlerMethodDescriptor;
     }
 
     @Override
-    public void visit(int version, int access, String name, String signature, String superName, 
-        String[] interfaces) {
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            this.className = name;
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        AnnotationVisitor annotationVisitor = null;
+        if (visible && desirableAnnotations.contains(desc)) {
+            annotationVisitor = new AnnotationScanner(scanResults,
+                    handlerClassName, handlerMethodName,
+                    handlerMethodDescriptor, desc);
         }
+        return annotationVisitor;
     }
-
-    @Override
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] interfaces) { 
-        MethodVisitor methodScanner = null;
-        
-        if ((access & Opcodes.ACC_PUBLIC) > 0) {
-            methodScanner = new MethodScanner(scanResults, className, name, desc);
-        }
-        
-        return methodScanner;
-    }
-
 }

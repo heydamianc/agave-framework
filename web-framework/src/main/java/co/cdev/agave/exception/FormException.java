@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.exception;
 
-import co.cdev.agave.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>

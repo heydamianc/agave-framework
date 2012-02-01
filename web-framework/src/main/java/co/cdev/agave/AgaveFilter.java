@@ -54,7 +54,11 @@ import javax.servlet.http.HttpSession;
 
 import org.objectweb.asm.ClassReader;
 
-import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptorImpl;
+import co.cdev.agave.configuration.HandlerScanner;
+import co.cdev.agave.configuration.ScanResult;
+import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.exception.AgaveWebException;
 import co.cdev.agave.exception.DestinationException;
@@ -68,12 +72,10 @@ import co.cdev.agave.internal.FormPopulator;
 import co.cdev.agave.internal.HandlerFactoryImpl;
 import co.cdev.agave.internal.HandlerRegistry;
 import co.cdev.agave.internal.HandlerRegistryImpl;
-import co.cdev.agave.internal.HandlerScanner;
 import co.cdev.agave.internal.MapPopulator;
 import co.cdev.agave.internal.MapPopulatorImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
 import co.cdev.agave.internal.RequestPartFormPopulator;
-import co.cdev.agave.internal.ScanResult;
 import co.cdev.agave.internal.URIParamFormPopulator;
 
 /**

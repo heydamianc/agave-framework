@@ -23,16 +23,27 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave.configuration;
 
-/**
- * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
- */
-public enum MutatorType {
+import co.cdev.agave.AgaveConfigurationException;
 
-    SETTING, 
-    APPENDING, 
-    INSERTING, 
-    PUTTING;
+public class InvalidHandlerException extends AgaveConfigurationException {
+
+	private static final long serialVersionUID = 1L;
+
+	public InvalidHandlerException(Throwable rootCause) {
+        super(rootCause);
+    }
+
+    public InvalidHandlerException(String message) {
+        super(message);
+    }
+
+    public InvalidHandlerException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public InvalidHandlerException() {
+    }
     
 }

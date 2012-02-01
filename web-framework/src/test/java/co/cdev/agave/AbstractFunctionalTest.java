@@ -50,6 +50,7 @@ import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 
+import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.internal.HandlerRegistryImpl;
 
 /**

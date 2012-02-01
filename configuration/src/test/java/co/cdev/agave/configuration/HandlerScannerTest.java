@@ -23,8 +23,10 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave.configuration;
 
+import co.cdev.agave.configuration.HandlerScanner;
+import co.cdev.agave.configuration.ScanResult;
 import co.cdev.agave.sample.SampleHandler;
 import java.io.InputStream;
 import java.util.ArrayList;

@@ -30,6 +30,8 @@ import java.net.URI;
 
 import javax.servlet.ServletException;
 
+import co.cdev.agave.configuration.HandlerDescriptor;
+
 
 /**
  * Stub implementations of all the lifecycle hooks.  All methods return false, indicating that

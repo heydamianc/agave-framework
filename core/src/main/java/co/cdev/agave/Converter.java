@@ -23,24 +23,39 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave;
 
-import java.util.List;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import co.cdev.agave.conversion.ParamConverter;
+
 
 /**
- * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
+ * Indicates which {@link Converter} to use.  An example of using this annotation is:
+ * 
+ * <pre>public class SomeForm {
+ *     
+ *     private SomeType someParameter;
+ *     
+ *     public void setSomeParameter(ConvertWith(com.domain.package.SomeTypeConverter) SomeType someParameter) {
+ *         this.someParameter = someParameter;
+ *     }
+ * }</pre>
+ * 
+ * The value supplied to the named converter is a String value coming from a form input, a request parameter, or a 
+ * URI's positional parameter.
+ * 
+ * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface CallChain {
-
-    public String getParameterName();
-
-    public List<String> getAccessorNames();
-
-    public MutatorType getMutatorType();
-
-    public String getMutatorName();
-
-    public String getKey();
-
-    public Integer getIndex();
+@Documented
+@Inherited
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Converter {
+    Class<? extends ParamConverter<?,?>> value();
 }

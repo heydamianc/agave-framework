@@ -23,17 +23,19 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.internal;
+package co.cdev.agave.configuration;
 
 import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import co.cdev.agave.HandlerDescriptor;
-import co.cdev.agave.HandlerDescriptorImpl;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.RoutingContext;
+import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptorImpl;
+import co.cdev.agave.configuration.ScanResult;
+import co.cdev.agave.configuration.ScanResultImpl;
 import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
 

@@ -29,8 +29,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import co.cdev.agave.HandlerDescriptor;
-import co.cdev.agave.HandlerDescriptorImpl.ParameterDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptorImpl.ParameterDescriptor;
 import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.conversion.StringParamConverter;
 

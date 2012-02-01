@@ -31,7 +31,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import co.cdev.agave.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>

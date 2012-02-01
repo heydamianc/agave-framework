@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Damian Carrillo
+ * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,35 +23,16 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.guice;
-
-import co.cdev.agave.HandlerFactory;
-import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.exception.HandlerException;
-import com.google.inject.Injector;
-import javax.servlet.ServletContext;
+package co.cdev.agave.util;
 
 /**
- *
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
+ * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
-public class InjectionHandlerFactory implements HandlerFactory {
-    
-    private Injector injector;
+public enum MutatorType {
 
-    @Override
-    public void initialize() {
-        // do nothing
-    }
-
-    @Override
-    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
-            throws HandlerException {
-        return injector.getInstance(descriptor.getHandlerClass());
-    }
-
-    public void setInjector(Injector injector) {
-        this.injector = injector;
-    }
+    SETTING, 
+    APPENDING, 
+    INSERTING, 
+    PUTTING;
     
 }

@@ -39,9 +39,10 @@ import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.HandlerDescriptor;
-import co.cdev.agave.HandlerDescriptorImpl;
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.configuration.HandlerDescriptorImpl;
+import co.cdev.agave.configuration.ScanResultImpl;
 import co.cdev.agave.exception.DuplicateDescriptorException;
 import co.cdev.agave.sample.SampleHandler;
 

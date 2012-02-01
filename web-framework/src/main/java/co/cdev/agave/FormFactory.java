@@ -2,6 +2,7 @@ package co.cdev.agave;
 
 import javax.servlet.ServletContext;
 
+import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.exception.FormException;
 
 /**

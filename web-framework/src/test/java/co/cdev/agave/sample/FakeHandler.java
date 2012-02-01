@@ -1,8 +1,8 @@
 package co.cdev.agave.sample;
 
-import co.cdev.agave.RoutingContext;
 import co.cdev.agave.Param;
 import co.cdev.agave.Route;
+import co.cdev.agave.RoutingContext;
 
 public class FakeHandler {
     

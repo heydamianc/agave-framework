@@ -29,8 +29,8 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
-import co.cdev.agave.HandlerDescriptor;
 import co.cdev.agave.URIPattern;
+import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.exception.DuplicateDescriptorException;
 
 /**

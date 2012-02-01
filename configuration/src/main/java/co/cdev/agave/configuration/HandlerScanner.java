@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Damian Carrillo
+ * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,35 +23,45 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.guice;
+package co.cdev.agave.configuration;
 
-import co.cdev.agave.HandlerFactory;
-import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.exception.HandlerException;
-import com.google.inject.Injector;
-import javax.servlet.ServletContext;
+import java.util.Collection;
+
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
- *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class InjectionHandlerFactory implements HandlerFactory {
-    
-    private Injector injector;
+public class HandlerScanner extends EmptyVisitor implements ClassVisitor {
 
-    @Override
-    public void initialize() {
-        // do nothing
+    Collection<ScanResult> scanResults;
+    String className;
+
+    public HandlerScanner(Collection<ScanResult> scanResults) {
+        super();
+        this.scanResults = scanResults;
     }
 
     @Override
-    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
-            throws HandlerException {
-        return injector.getInstance(descriptor.getHandlerClass());
+    public void visit(int version, int access, String name, String signature, String superName, 
+        String[] interfaces) {
+        if ((access & Opcodes.ACC_PUBLIC) > 0) {
+            this.className = name;
+        }
     }
 
-    public void setInjector(Injector injector) {
-        this.injector = injector;
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] interfaces) { 
+        MethodVisitor methodScanner = null;
+        
+        if ((access & Opcodes.ACC_PUBLIC) > 0) {
+            methodScanner = new MethodScanner(scanResults, className, name, desc);
+        }
+        
+        return methodScanner;
     }
-    
+
 }
