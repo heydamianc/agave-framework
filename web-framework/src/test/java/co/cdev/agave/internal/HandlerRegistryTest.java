@@ -91,7 +91,7 @@ public class HandlerRegistryTest {
         HandlerDescriptor descriptor = registry.findMatch(request);
         
         assertNotNull(descriptor);
-        assertEquals("/some/path", descriptor.getPattern().toString());
+        assertEquals("/some/path", descriptor.getURIPattern().toString());
     }
     
     @Test
@@ -107,7 +107,7 @@ public class HandlerRegistryTest {
         HandlerDescriptor descriptor = registry.findMatch(request);
         
         assertNotNull(descriptor);
-        assertEquals("/overloaded/${param}", descriptor.getPattern().toString());
+        assertEquals("/overloaded/${param}", descriptor.getURIPattern().toString());
     }
         
     @Test
@@ -123,7 +123,7 @@ public class HandlerRegistryTest {
         HandlerDescriptor descriptor = registry.findMatch(request);
         
         assertNotNull(descriptor);
-        assertEquals("/overloaded", descriptor.getPattern().toString());   
+        assertEquals("/overloaded", descriptor.getURIPattern().toString());   
     }
     
     @Test
@@ -138,7 +138,7 @@ public class HandlerRegistryTest {
         HandlerDescriptor descriptor = registry.findMatch(request);
         
         assertNotNull(descriptor);
-        assertEquals("/login", descriptor.getPattern().toString());
+        assertEquals("/login", descriptor.getURIPattern().toString());
     }
   
     @Test
@@ -153,7 +153,7 @@ public class HandlerRegistryTest {
         HandlerDescriptor descriptor = registry.findMatch(request);
     
         assertNotNull(descriptor);
-        assertEquals("/login", descriptor.getPattern().toString());
+        assertEquals("/login", descriptor.getURIPattern().toString());
     }
   
   @Test
@@ -209,7 +209,7 @@ public class HandlerRegistryTest {
         HandlerDescriptor descriptor = registry.findMatch(request);
         
         assertNotNull(descriptor);
-        assertEquals("/favorites", descriptor.getPattern().toString());
+        assertEquals("/favorites", descriptor.getURIPattern().toString());
     }
   
   @Test
@@ -234,7 +234,7 @@ public class HandlerRegistryTest {
       HandlerDescriptor descriptor = registry.findMatch(request);
       
       assertNotNull(descriptor);
-      assertEquals("/favorites/${color}", descriptor.getPattern().toString());
+      assertEquals("/favorites/${color}", descriptor.getURIPattern().toString());
   }
     
 }

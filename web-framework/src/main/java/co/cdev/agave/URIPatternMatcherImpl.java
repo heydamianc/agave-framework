@@ -41,13 +41,13 @@ public class URIPatternMatcherImpl implements URIPatternMatcher {
 
         // check for root (so as to not match all patterns starting with a '/')
         if ("/".equals(uri)) {
-            if ("/".equals(uriPattern.getPattern())) {
+            if ("/".equals(uriPattern.toString())) {
                 return true;
             }
             return false;
         }
         
-        String[] patternTokens = uriPattern.getPattern().split(FORWARD_SLASH);
+        String[] patternTokens = uriPattern.toString().split(FORWARD_SLASH);
         String[] uriTokens = uriPattern.normalizeURI(uri).split(FORWARD_SLASH);
         
         int pi = 0, ui = 0;

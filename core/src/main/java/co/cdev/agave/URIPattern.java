@@ -41,8 +41,6 @@ public interface URIPattern extends Comparable<URIPattern>, Serializable {
 
     static final String FORWARD_SLASH = "/";
     static final Pattern REPLACEMENT_PATTERN = Pattern.compile("\\$\\{(.*)\\}");
-    
-    public String getPattern();
 
     public String[] getParts();
     

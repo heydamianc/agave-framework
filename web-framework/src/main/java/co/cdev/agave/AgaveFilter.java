@@ -322,7 +322,7 @@ public class AgaveFilter implements Filter {
         if (!handlerRegistry.getDescriptors().isEmpty()) {
             for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
                 LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[] {
-                    descriptor.getPattern(),
+                    descriptor.getURIPattern(),
                     descriptor.getHandlerMethod()
                 });
             }
@@ -344,7 +344,7 @@ public class AgaveFilter implements Filter {
             configuration.append("Configuration:\n");
             
             for (HandlerDescriptor descriptor : getHandlerRegistry().getDescriptors()) {
-                configuration.append(String.format("  %s\n", descriptor.getPattern()));
+                configuration.append(String.format("  %s\n", descriptor.getURIPattern()));
                 configuration.append(String.format("    Handler Method: %s\n", descriptor.getHandlerMethod()));
                 configuration.append(String.format("    HTTP Method: %s\n", descriptor.getMethod()));
                 
@@ -498,7 +498,7 @@ public class AgaveFilter implements Filter {
                 descriptor.getHandlerMethod()
             });
             
-            URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(descriptor.getPattern());
+            URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(descriptor.getURIPattern());
             Map<String, String> uriParams = uriParamExtractor.extractParams(request);
 
             Object formInstance = null;

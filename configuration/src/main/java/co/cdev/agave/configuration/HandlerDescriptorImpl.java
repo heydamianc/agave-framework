@@ -50,7 +50,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
 
     private static final long serialVersionUID = 1L;
     
-    private URIPattern pattern;
+    private URIPattern uriPattern;
     private HttpMethod method;
     private Class<?> handlerClass;
     private Method handlerMethod;
@@ -61,7 +61,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     private String workflowName;
 
     public HandlerDescriptorImpl(ScanResult scanResult) throws ClassNotFoundException, InvalidHandlerException {
-        pattern              = new URIPatternImpl(scanResult.getUri());
+        uriPattern           = new URIPatternImpl(scanResult.getUri());
         method               = scanResult.getMethod();
         handlerClass         = Class.forName(scanResult.getClassName());
         paramDescriptors = Collections.emptyList();
@@ -206,8 +206,8 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     }
     
     @Override
-    public URIPattern getPattern() {
-        return pattern;
+    public URIPattern getURIPattern() {
+        return uriPattern;
     }
 
     @Override
@@ -247,7 +247,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
 
     @Override
     public int compareTo(HandlerDescriptor that) {
-        int result = pattern.compareTo(that.getPattern());
+        int result = uriPattern.compareTo(that.getURIPattern());
         
         if (result == 0) {
             result = method.ordinal() - that.getMethod().ordinal();
@@ -269,7 +269,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         result = prime * result + (initiatesWorkflow ? 1231 : 1237);
         result = prime * result + ((method == null) ? 0 : method.hashCode());
         result = prime * result + ((paramDescriptors == null) ? 0 : paramDescriptors.hashCode());
-        result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+        result = prime * result + ((uriPattern == null) ? 0 : uriPattern.hashCode());
         result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
         return result;
     }
@@ -299,10 +299,10 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                 return false;
         } else if (!paramDescriptors.equals(other.paramDescriptors))
             return false;
-        if (pattern == null) {
-            if (other.pattern != null)
+        if (uriPattern == null) {
+            if (other.uriPattern != null)
                 return false;
-        } else if (!pattern.equals(other.pattern))
+        } else if (!uriPattern.equals(other.uriPattern))
             return false;
         if (workflowName == null) {
             if (other.workflowName != null)
@@ -314,7 +314,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     
     @Override
     public String toString() {
-        return "HandlerMethodDescriptorImpl [pattern=" + pattern + ", method=" + method + "]";
+        return "HandlerMethodDescriptorImpl [pattern=" + uriPattern + ", method=" + method + "]";
     }
 
     @Override

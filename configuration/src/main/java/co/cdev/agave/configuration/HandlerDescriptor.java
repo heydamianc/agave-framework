@@ -74,7 +74,7 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor>, Serial
     /**
      * Gets the {@link agave.internal.URIPattern URIPattern} that this {@code HandlerDescriptor} describes.
      */
-    public URIPattern getPattern();
+    public URIPattern getURIPattern();
 
     /**
      * Gets  the {@link agave.HttpMethod HttpMethod} that this {@code HandlerDescriptor} describes.

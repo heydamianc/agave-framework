@@ -76,7 +76,7 @@ public class MapPopulatorTest {
         context.checking(new Expectations() {{
             allowing(request).getLocale(); will(returnValue(locale));
             allowing(request).getParameterMap(); will(returnValue(requestParams));
-            allowing(descriptor).getPattern(); will(returnValue(pattern));
+            allowing(descriptor).getURIPattern(); will(returnValue(pattern));
             allowing(descriptor).getParamDescriptors(); will(returnValue(paramDescriptors));
         }});
         

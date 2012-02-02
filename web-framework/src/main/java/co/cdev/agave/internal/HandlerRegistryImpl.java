@@ -95,7 +95,7 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
     @Override
     public HandlerDescriptor findMatch(HttpServletRequest request) {
         for (HandlerDescriptor descriptor : descriptors) {
-            URIPatternMatcher patternMatcher = new URIPatternMatcherImpl(descriptor.getPattern());
+            URIPatternMatcher patternMatcher = new URIPatternMatcherImpl(descriptor.getURIPattern());
             boolean matches = request != null && request.getMethod() != null && patternMatcher.matches(request);
             
             if (matches) {
@@ -107,7 +107,7 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> requestParams = request.getParameterMap();
                     
-                    URIParamExtractor extractor = new URIParamExtractorImpl(descriptor.getPattern());
+                    URIParamExtractor extractor = new URIParamExtractorImpl(descriptor.getURIPattern());
                     Map<String, String> uriParams = extractor.extractParams(request);
                     
                     for (ParamDescriptor param : descriptor.getParamDescriptors()) {

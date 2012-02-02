@@ -47,7 +47,7 @@ public class HandlerDescriptorTest {
     public void testConstructor() throws Exception {
         HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
         Assert.assertNotNull(a);
-        Assert.assertNotNull(a.getPattern());
+        Assert.assertNotNull(a.getURIPattern());
     }
     
     @Test

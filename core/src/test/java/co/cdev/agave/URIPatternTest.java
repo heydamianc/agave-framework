@@ -38,29 +38,31 @@ public class URIPatternTest {
 
     @Test // transitively checks testNormalizePattern
     public void testConstructor() throws Exception {
-        Assert.assertEquals("/", new URIPatternImpl("/").getPattern());
-        Assert.assertEquals("/", new URIPatternImpl("/").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one/").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one/.").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one/./").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one/two/..").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one/two/../").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one/two/../three/four/../../").getPattern());
-        Assert.assertEquals("/one", new URIPatternImpl("/one").getPattern());
-        Assert.assertEquals("/one/*", new URIPatternImpl("/one/*").getPattern());
-        Assert.assertEquals("/one/*", new URIPatternImpl("/one/*/").getPattern());
-        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**").getPattern());
-        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**/").getPattern());
-        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**/*").getPattern());
-        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**/**").getPattern());
-        Assert.assertEquals("/one/**", new URIPatternImpl("/one/*/**/*/").getPattern());
+        Assert.assertEquals("/", new URIPatternImpl("/").toString());
+        Assert.assertEquals("/", new URIPatternImpl("/").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one/").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one/.").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one/./").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one/two/..").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one/two/../").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one/two/../three/four/../../").toString());
+        Assert.assertEquals("/one", new URIPatternImpl("/one").toString());
+        Assert.assertEquals("/one/*", new URIPatternImpl("/one/*").toString());
+        Assert.assertEquals("/one/*", new URIPatternImpl("/one/*/").toString());
+        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**").toString());
+        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**/").toString());
+        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**/*").toString());
+        Assert.assertEquals("/one/**", new URIPatternImpl("/one/**/**").toString());
+        Assert.assertEquals("/one/**", new URIPatternImpl("/one/*/**/*/").toString());
     }
     
     @Test // for posterity
     public void testNormalizeURI() throws Exception {
         // widen visibility of normalizeURI so we can call it directly
         URIPattern pattern = new URIPatternImpl("/") {
+            private static final long serialVersionUID = 1L;
+
             public String normalizeURI(String uri) {
                 return super.normalizeURI(uri);
             }

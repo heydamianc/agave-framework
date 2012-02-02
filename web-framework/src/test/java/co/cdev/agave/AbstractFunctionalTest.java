@@ -106,7 +106,7 @@ public abstract class AbstractFunctionalTest {
     }
     
     protected AgaveFilter scanRoot() throws Exception {
-        URL rootUrl = getClass().getClassLoader().getResource("co/cdev/agave");
+        URL rootUrl = getClass().getClassLoader().getResource(".");
         Assert.assertNotNull(rootUrl);
         File root = new File(rootUrl.toURI());
         Assert.assertNotNull(root);

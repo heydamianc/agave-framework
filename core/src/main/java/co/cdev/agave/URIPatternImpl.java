@@ -72,11 +72,6 @@ public class URIPatternImpl implements URIPattern {
         return parts;
     }
 
-    @Override
-    public String getPattern() {
-        return pattern;
-    }
-
     protected String normalizePattern(String pattern) {
         URI uri;
         try {
@@ -143,7 +138,7 @@ public class URIPatternImpl implements URIPattern {
             return false;
         
         URIPattern that = (URIPattern) obj;
-        return pattern.equalsIgnoreCase(that.getPattern());
+        return pattern.equalsIgnoreCase(that.toString());
     }
 
     @Override
@@ -171,7 +166,7 @@ public class URIPatternImpl implements URIPattern {
         Integer value = null;
 
         String[] thisTokens = pattern.split(FORWARD_SLASH);
-        String[] thatTokens = that.getPattern().split(FORWARD_SLASH);
+        String[] thatTokens = that.toString().split(FORWARD_SLASH);
 
         for (int i = 0; i < thisTokens.length && i < thatTokens.length; i++) {
             if ("**".equals(thisTokens[i]) && !"**".equals(thatTokens[i])) {
@@ -224,7 +219,7 @@ public class URIPatternImpl implements URIPattern {
 
     @Override
     public String toString() {
-    	return getPattern();
+    	return pattern;
     }
     
 }
