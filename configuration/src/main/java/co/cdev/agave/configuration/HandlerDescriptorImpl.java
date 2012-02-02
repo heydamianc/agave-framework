@@ -52,9 +52,10 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     
     private URIPattern uriPattern;
     private HttpMethod method;
+    private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
+    
     private Class<?> handlerClass;
     private Method handlerMethod;
-    private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
     private Class<?> formClass;
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;

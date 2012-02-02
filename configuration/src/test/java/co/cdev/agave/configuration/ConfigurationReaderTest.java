@@ -1,6 +1,7 @@
 package co.cdev.agave.configuration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -32,15 +33,16 @@ public class ConfigurationReaderTest {
     public void testScanForHandlers() throws Exception {
         Config config = configReader.scanForHandlers(rootDir);
         
-        assertNotNull(config.get("/login"));
-        assertNotNull(config.get("/aliased"));
-        assertNotNull(config.get("/uri-params/${username}/${password}/"));
-        assertNotNull(config.get("/throws/nullPointerException"));
-        assertNotNull(config.get("/throws/ioException"));
-        assertNotNull(config.get("/lacks/form"));
-        assertNotNull(config.get("/has/named/params/${something}/${aNumber}"));
-        assertNotNull(config.get("/overloaded"));
-        assertNotNull(config.get("/overloaded/${param}"));
+        assertFalse(config.getCandidatesFor("/login").isEmpty());
+        assertFalse(config.getCandidatesFor("/aliased").isEmpty());
+        assertFalse(config.getCandidatesFor("/uri-params/${username}/${password}/").isEmpty());
+        assertFalse(config.getCandidatesFor("/throws/nullPointerException").isEmpty());
+        assertFalse(config.getCandidatesFor("/throws/ioException").isEmpty());
+        assertFalse(config.getCandidatesFor("/lacks/form").isEmpty());
+        assertFalse(config.getCandidatesFor("/has/named/params/${something}/${aNumber}").isEmpty());
+        assertFalse(config.getCandidatesFor("/overloaded").isEmpty());
+        assertFalse(config.getCandidatesFor("/overloaded/${param}").isEmpty());
+        
         assertEquals(9, config.size());
     }
     

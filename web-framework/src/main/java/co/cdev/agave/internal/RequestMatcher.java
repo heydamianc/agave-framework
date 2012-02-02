@@ -25,31 +25,16 @@
  */
 package co.cdev.agave.internal;
 
-import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 
-import co.cdev.agave.URIPattern;
 import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.exception.DuplicateDescriptorException;
 
 /**
- * A repository used to group all registered handlers.  Handlers are registered by means of scanning
- * the classpath for classes that have methods annotated with the {@code HandlesRequestsTo} annotation.
+ * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public interface HandlerRegistry {
+public interface RequestMatcher {
     
-    /**
-     * Adds handlers descriptors to a sorted set of descriptors.  The set is sorted according to the 
-     * specificity of the URIPattern.
-     * @param added the HandlerDescriptor to be added.
-     * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm used in determining the 
-     * specificity
-     */ 
-    public void addDescriptor(HandlerDescriptor added) throws DuplicateDescriptorException;
-    public void addAllDescriptors(Collection<HandlerDescriptor> descriptors) throws DuplicateDescriptorException;
     public HandlerDescriptor findMatch(HttpServletRequest request);
-    public Collection<HandlerDescriptor> getDescriptors();
     
 }

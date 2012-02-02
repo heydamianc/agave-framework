@@ -26,15 +26,10 @@
 package co.cdev.agave;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,14 +47,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.objectweb.asm.ClassReader;
-
+import co.cdev.agave.configuration.Config;
+import co.cdev.agave.configuration.ConfigReaderImpl;
 import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.configuration.HandlerDescriptorImpl;
-import co.cdev.agave.configuration.HandlerScanner;
 import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.configuration.ScanResult;
 import co.cdev.agave.conversion.AgaveConversionException;
 import co.cdev.agave.exception.AgaveWebException;
 import co.cdev.agave.exception.DestinationException;
@@ -71,8 +63,8 @@ import co.cdev.agave.internal.FileMultipartParser;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.FormPopulator;
 import co.cdev.agave.internal.HandlerFactoryImpl;
-import co.cdev.agave.internal.HandlerRegistry;
-import co.cdev.agave.internal.HandlerRegistryImpl;
+import co.cdev.agave.internal.RequestMatcher;
+import co.cdev.agave.internal.RequestMatcherImpl;
 import co.cdev.agave.internal.MapPopulator;
 import co.cdev.agave.internal.MapPopulatorImpl;
 import co.cdev.agave.internal.RequestParameterFormPopulator;
@@ -123,12 +115,13 @@ public class AgaveFilter implements Filter {
     private static final String WORKFLOW_HANDLER_SUFFIX = "-handler";
     private static final String WORKFLOW_FORM_SUFFIX = "-form";
     
-    private FilterConfig config;
+    private FilterConfig filterConfig;
+    private Config config;
     private LifecycleHooks lifecycleHooks;
     private File classesDirectory;
     private HandlerFactory handlerFactory;
     private FormFactory formFactory;
-    private HandlerRegistry handlerRegistry;
+    private RequestMatcher requestMatcher;
     private boolean classesDirectoryProvided;
 
     /**
@@ -279,37 +272,38 @@ public class AgaveFilter implements Filter {
 
     /**
      * Initializes the {@code AgaveFilter} by scanning for handler classes and
-     * populating a {@link agave.internal.HandlerRegistry HandlerRegistry} with
+     * populating a {@link RequestMatcher.internal.HandlerRegistry HandlerRegistry} with
      * them. Then, this initializes the dependency injection container (if any)
      * by instantiating a {@link agave.InstanceCreator}.
      * 
-     * @param config
+     * @param filterConfig
      *            the supplied filter configuration object
      * @throws ServletException
      */
     @Override
-    public void init(FilterConfig config) throws ServletException {
-        this.config = config;
+    public void init(FilterConfig filterConfig) throws ServletException {
+        this.filterConfig = filterConfig;
 
         try {
-            lifecycleHooks = provideLifecycleHooks(config);
+            lifecycleHooks = provideLifecycleHooks(filterConfig);
             
             LOGGER.log(Level.INFO, "Using lifecycle hooks: {0}", new Object[] {
                 lifecycleHooks.getClass().getName()
             });
             
-            classesDirectory = provideClassesDirectory(config);
-            Collection<HandlerDescriptor> descriptors = scanClassesDirForHandlers(classesDirectory);
-            setHandlerRegistry(new HandlerRegistryImpl(descriptors));
+            classesDirectory = provideClassesDirectory(filterConfig);
+            config = new ConfigReaderImpl().scanForHandlers(classesDirectory);
             
-            handlerFactory = provideHandlerFactory(config);
+            setRequestMatcher(new RequestMatcherImpl(config));
+            
+            handlerFactory = provideHandlerFactory(filterConfig);
             handlerFactory.initialize();
             
             LOGGER.log(Level.INFO, "Using handler factory: {0}", new Object[] {
                 handlerFactory.getClass().getName()
             });
             
-            formFactory = provideFormFactory(config);            
+            formFactory = provideFormFactory(filterConfig);            
             formFactory.initialize();
             
             LOGGER.log(Level.INFO, "Using form factory: {0}", new Object[] {
@@ -319,8 +313,8 @@ public class AgaveFilter implements Filter {
             throw new ServletException(ex);
         }
         
-        if (!handlerRegistry.getDescriptors().isEmpty()) {
-            for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
+        if (!config.isEmpty()) {
+            for (HandlerDescriptor descriptor : config) {
                 LOGGER.log(Level.FINE, "Routing \"{0}\" to \"{1}\"", new Object[] {
                     descriptor.getURIPattern(),
                     descriptor.getHandlerMethod()
@@ -329,7 +323,7 @@ public class AgaveFilter implements Filter {
         } else {
             StringBuilder message = new StringBuilder("No handlers have been registered.");
             if (classesDirectoryProvided) {
-            } else if (config.getServletContext().getServerInfo().toLowerCase().contains("jetty")) {
+            } else if (filterConfig.getServletContext().getServerInfo().toLowerCase().contains("jetty")) {
                 message.append("  If you are running this webapp with 'mvn jetty:run', no"
                         + " handlers will ever be found.  Try 'mvn jetty:run-war' instead.");
             }
@@ -343,7 +337,7 @@ public class AgaveFilter implements Filter {
             configuration.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
             configuration.append("Configuration:\n");
             
-            for (HandlerDescriptor descriptor : getHandlerRegistry().getDescriptors()) {
+            for (HandlerDescriptor descriptor : config) {
                 configuration.append(String.format("  %s\n", descriptor.getURIPattern()));
                 configuration.append(String.format("    Handler Method: %s\n", descriptor.getHandlerMethod()));
                 configuration.append(String.format("    HTTP Method: %s\n", descriptor.getMethod()));
@@ -380,9 +374,9 @@ public class AgaveFilter implements Filter {
      */
     @Override
     public void destroy() {
-        config = null;
+        filterConfig = null;
         classesDirectory = null;
-        handlerRegistry = null;
+        requestMatcher = null;
         handlerFactory = null;
         formFactory = null;
     }
@@ -467,11 +461,11 @@ public class AgaveFilter implements Filter {
     public final void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) 
             throws IOException, ServletException {
         
-        ServletContext servletContext = config.getServletContext();
+        ServletContext servletContext = filterConfig.getServletContext();
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        HandlerDescriptor descriptor = handlerRegistry.findMatch(request);
+        HandlerDescriptor descriptor = requestMatcher.findMatch(request);
         
         if (descriptor != null) {
             
@@ -704,7 +698,7 @@ public class AgaveFilter implements Filter {
                     }
 
                     try {
-                        uri = new URI(null, destination.encode(config.getServletContext()), null);
+                        uri = new URI(null, destination.encode(filterConfig.getServletContext()), null);
                         if (destination.getRedirect() == null) {
                             if (HttpMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
                                 redirect = true;
@@ -764,40 +758,6 @@ public class AgaveFilter implements Filter {
         return new DefaultMultipartRequest<File>(request, new FileMultipartParser());
     }
 
-    protected Collection<HandlerDescriptor> scanClassesDirForHandlers(File root)
-            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
-        Collection<HandlerDescriptor> descriptors = new HashSet<HandlerDescriptor>();
-        scanClassesDirForHandlers(root, descriptors);
-        return descriptors;
-    }
-    
-    private void scanClassesDirForHandlers(File root, Collection<HandlerDescriptor> descriptors)
-            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
-        if (root != null && root.canRead()) {
-            for (File node : root.listFiles()) {
-                if (node.isDirectory()) {
-                    scanClassesDirForHandlers(node, descriptors);
-                } else if (node.isFile() && node.getName().endsWith(".class")) {
-                    FileInputStream nodeIn = new FileInputStream(node);
-                    
-                    try {
-                        ClassReader classReader = new ClassReader(nodeIn);
-                        Collection<ScanResult> scanResults = new ArrayList<ScanResult>();
-                        classReader.accept(new HandlerScanner(scanResults), ClassReader.SKIP_CODE);
-
-                        for (ScanResult scanResult : scanResults) {
-                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(scanResult);
-                            descriptor.locateAnnotatedHandlerMethods(scanResult);
-                            descriptors.add(descriptor);
-                        }
-                    } finally {
-                        nodeIn.close();
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Sets the configuration object for this filter.
      * 
@@ -805,7 +765,7 @@ public class AgaveFilter implements Filter {
      *            the configuration object
      */
     protected void setConfig(FilterConfig config) {
-        this.config = config;
+        this.filterConfig = config;
     }
 
     /**
@@ -814,28 +774,28 @@ public class AgaveFilter implements Filter {
      * @return the configuration object
      */
     protected FilterConfig getConfig() {
-        return config;
+        return filterConfig;
     }
 
     /**
-     * Sets the {@link HandlerRegistry} that this filter will use for mapping
+     * Sets the {@link RequestMatcher} that this filter will use for mapping
      * requests to handlers.
      * 
-     * @param handlerRegistry
-     *            the registry
+     * @param requestMatcher
+     *            the matchers
      */
-    protected void setHandlerRegistry(HandlerRegistry handlerRegistry) {
-        this.handlerRegistry = handlerRegistry;
+    protected void setRequestMatcher(RequestMatcher requestMatcher) {
+        this.requestMatcher = requestMatcher;
     }
 
     /**
-     * Gets the {@link HandlerRegistry} that houses the generated
+     * Gets the {@link RequestMatcher} that houses the generated
      * {@link HandlerDescriptor}.
      * 
-     * @return the {@link HandlerRegistry}
+     * @return the {@link RequestMatcher}
      */
-    protected HandlerRegistry getHandlerRegistry() {
-        return handlerRegistry;
+    protected RequestMatcher getRequestMatcher() {
+        return requestMatcher;
     }
 
     /**

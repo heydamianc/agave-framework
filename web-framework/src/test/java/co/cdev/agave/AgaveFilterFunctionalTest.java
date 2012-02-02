@@ -61,8 +61,8 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
 
         filter.init(filterConfig);
 
-        Assert.assertNotNull(filter.getHandlerRegistry());
-        Assert.assertNotNull(filter.getHandlerRegistry().findMatch(request));
+        Assert.assertNotNull(filter.getRequestMatcher());
+        Assert.assertNotNull(filter.getRequestMatcher().findMatch(request));
     }
 
     @Test

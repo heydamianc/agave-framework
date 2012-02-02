@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,52 +41,38 @@ import org.junit.Before;
 import org.junit.Test;
 
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.HandlerDescriptorImpl;
 import co.cdev.agave.configuration.ParamDescriptorImpl;
+import co.cdev.agave.configuration.ScanResult;
 import co.cdev.agave.configuration.ScanResultImpl;
-import co.cdev.agave.exception.DuplicateDescriptorException;
 import co.cdev.agave.sample.SampleHandler;
 
+@SuppressWarnings("serial")
 public class HandlerRegistryTest {
     
     private Mockery context = new Mockery();
-    private HandlerRegistry registry;
+    private Config config;
+    private RequestMatcher registry;
     private HttpServletRequest request;
 
     @Before
     public void setup() {
-        registry = new HandlerRegistryImpl();
         request = context.mock(HttpServletRequest.class);
-    }
-
-    @Test(expected = DuplicateDescriptorException.class)
-    public void testAddDescriptor() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
-    }
-
-    @Test
-    public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
-
-        assertEquals(2, registry.getDescriptors().size());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testAddToUnmodifiable() throws Exception {
-        registry.getDescriptors().add(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
+        config = context.mock(Config.class);
+        registry = new RequestMatcherImpl(config);
     }
 
     @Test
     public void testMatches() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/some/path", SampleHandler.class.getName(), "login")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/other/path", SampleHandler.class.getName(), "login")));
-
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/some/path"));
             allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/some/path", SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/other/path", SampleHandler.class.getName(), "login")));
+            }}.iterator()));
         }});
 
         HandlerDescriptor descriptor = registry.findMatch(request);
@@ -96,12 +83,13 @@ public class HandlerRegistryTest {
     
     @Test
     public void testMatches_withOverloadedHandlerDescriptors() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
-
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/overloaded/blah"));
             allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
+            }}.iterator()));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
@@ -112,12 +100,13 @@ public class HandlerRegistryTest {
         
     @Test
     public void testMatches_withOverloadedHandlerDescriptors2() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
-        
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/overloaded"));
             allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
+            }}.iterator()));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
@@ -128,11 +117,12 @@ public class HandlerRegistryTest {
     
     @Test
     public void testMatches_withAnyHttpMethodAndMatchingURI() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", SampleHandler.class.getName(), "login")));
-        
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/login", SampleHandler.class.getName(), "login")));
+            }}.iterator()));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
@@ -143,11 +133,12 @@ public class HandlerRegistryTest {
   
     @Test
     public void testMatches_withMatchingMethodAndMatchingURI() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-    
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+            }}.iterator()));
         }});
       
         HandlerDescriptor descriptor = registry.findMatch(request);
@@ -157,12 +148,13 @@ public class HandlerRegistryTest {
     }
   
   @Test
-  public void testMatches_withNonMatchingMethodAndMatchingURI() throws Exception {    
-      registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, SampleHandler.class.getName(), "login")));
-    
+  public void testMatches_withNonMatchingMethodAndMatchingURI() throws Exception {
       context.checking(new Expectations() {{
           allowing(request).getMethod(); will(returnValue("GET"));
           allowing(request).getServletPath(); will(returnValue("/login"));
+          allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+              add(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+          }}.iterator()));
       }});
   
       HandlerDescriptor descriptor = registry.findMatch(request);
@@ -172,11 +164,12 @@ public class HandlerRegistryTest {
 
     @Test
     public void testMatches_withMatchingMethodAndNonMatchingURI() throws Exception {
-        registry.addDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/logout"));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+            }}.iterator()));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
@@ -190,21 +183,20 @@ public class HandlerRegistryTest {
         parameterMap.put("color", "orange");
         parameterMap.put("always", Boolean.FALSE);
       
-        context.checking(new Expectations() {{
-            allowing(request).getMethod(); will(returnValue("GET"));
-            allowing(request).getServletPath(); will(returnValue("/favorites"));
-            allowing(request).getParameterMap(); will(returnValue(parameterMap));
-        }});
-      
-        HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login"))
-        {
-            private static final long serialVersionUID = 1L;
-        {
+        ScanResult scanResult = new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login");
+        final HandlerDescriptorImpl favorites = new HandlerDescriptorImpl(scanResult) {{
             addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
             addParamDescriptor(new ParamDescriptorImpl(Boolean.class, "always"));
         }};
         
-        registry.addDescriptor(a);
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/favorites"));
+            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(favorites);
+            }}.iterator()));
+        }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
         
@@ -216,20 +208,19 @@ public class HandlerRegistryTest {
   public void testMatches_withURIParameters() throws Exception {
       final Map<String, Object> parameterMap = new HashMap<String, Object>();
       
+      ScanResult scanResult = new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login");
+      final HandlerDescriptorImpl favoriteColor = new HandlerDescriptorImpl(scanResult) {{
+          addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
+      }};
+      
       context.checking(new Expectations() {{
           allowing(request).getMethod(); will(returnValue("GET"));
           allowing(request).getServletPath(); will(returnValue("/favorites/orange"));
           allowing(request).getParameterMap(); will(returnValue(parameterMap));
+          allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+              add(favoriteColor);
+          }}.iterator()));
       }});
-      
-      HandlerDescriptorImpl a = new HandlerDescriptorImpl(new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login"))
-      {
-        private static final long serialVersionUID = 1L;
-      {
-          addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
-      }};
-      
-      registry.addDescriptor(a);
       
       HandlerDescriptor descriptor = registry.findMatch(request);
       

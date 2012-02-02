@@ -28,7 +28,6 @@ package co.cdev.agave;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -50,8 +49,9 @@ import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Before;
 
-import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.internal.HandlerRegistryImpl;
+import co.cdev.agave.configuration.Config;
+import co.cdev.agave.configuration.ConfigReaderImpl;
+import co.cdev.agave.internal.RequestMatcherImpl;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
@@ -108,8 +108,8 @@ public abstract class AbstractFunctionalTest {
     protected AgaveFilter scanRoot() throws Exception {
         URL rootUrl = getClass().getClassLoader().getResource(".");
         Assert.assertNotNull(rootUrl);
-        File root = new File(rootUrl.toURI());
-        Assert.assertNotNull(root);
+        File rootDir = new File(rootUrl.toURI());
+        Assert.assertNotNull(rootDir);
 
         AgaveFilter filter = new AgaveFilter();
         
@@ -121,8 +121,8 @@ public abstract class AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
         
         filter.init(filterConfig);
-        Collection<HandlerDescriptor> descriptors = filter.scanClassesDirForHandlers(root);
-        filter.setHandlerRegistry(new HandlerRegistryImpl(descriptors));
+        Config config = new ConfigReaderImpl().scanForHandlers(rootDir);
+        filter.setRequestMatcher(new RequestMatcherImpl(config));
         return filter;
     }
     

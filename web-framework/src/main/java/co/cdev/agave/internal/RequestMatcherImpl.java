@@ -25,23 +25,18 @@
  */
 package co.cdev.agave.internal;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.URIParamExtractor;
 import co.cdev.agave.URIParamExtractorImpl;
-import co.cdev.agave.URIPattern;
 import co.cdev.agave.URIPatternMatcher;
 import co.cdev.agave.URIPatternMatcherImpl;
+import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.ParamDescriptor;
-import co.cdev.agave.exception.DuplicateDescriptorException;
 
 /**
  * A repository used to group all registered handlers. Handlers are registered
@@ -50,51 +45,17 @@ import co.cdev.agave.exception.DuplicateDescriptorException;
  * 
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public final class HandlerRegistryImpl implements HandlerRegistry {
+public final class RequestMatcherImpl implements RequestMatcher {
 
-    private Collection<HandlerDescriptor> descriptors;
-
-    public HandlerRegistryImpl() {
-        descriptors = new TreeSet<HandlerDescriptor>();
-    }
-
-    public HandlerRegistryImpl(Collection<HandlerDescriptor> descriptors)
-            throws DuplicateDescriptorException {
-        this();
-        addAllDescriptors(descriptors);
-    }
-
-    /**
-     * Adds handlers descriptors to a sorted set of descriptors. The set is
-     * sorted according to the specificity of the URIPattern.
-     * 
-     * @param descriptor
-     *            the HandlerDescriptor to be added.
-     * @see agave.internal.URIPattern#compareTo(URIPattern) for the algorithm
-     *      used in determining the specificity
-     */
-    @Override
-    public void addDescriptor(HandlerDescriptor descriptor)
-            throws DuplicateDescriptorException {
-        for (HandlerDescriptor existingDescriptor : descriptors) {
-            if (existingDescriptor.equals(descriptor)) {
-                throw new DuplicateDescriptorException(existingDescriptor, descriptor);
-            }
-        }
-        descriptors.add(descriptor);
-    }
-
-    @Override
-    public void addAllDescriptors(Collection<HandlerDescriptor> descriptors)
-            throws DuplicateDescriptorException {
-        for (HandlerDescriptor descriptor : descriptors) {
-            addDescriptor(descriptor);
-        }
+    private Config config;
+    
+    public RequestMatcherImpl(Config config) {
+        this.config = config;
     }
 
     @Override
     public HandlerDescriptor findMatch(HttpServletRequest request) {
-        for (HandlerDescriptor descriptor : descriptors) {
+        for (HandlerDescriptor descriptor : config) {
             URIPatternMatcher patternMatcher = new URIPatternMatcherImpl(descriptor.getURIPattern());
             boolean matches = request != null && request.getMethod() != null && patternMatcher.matches(request);
             
@@ -122,30 +83,6 @@ public final class HandlerRegistryImpl implements HandlerRegistry {
             }
         }
         return null;
-    }
-
-    @Override
-    public Collection<HandlerDescriptor> getDescriptors() {
-        return Collections.unmodifiableCollection(descriptors);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder("HandlerRegistryImpl [descriptors=");
-        
-        Iterator<HandlerDescriptor> itr = descriptors.iterator();
-        
-         while (itr.hasNext()) {
-             s.append(itr.next().toString());
-             
-             if (itr.hasNext()) {
-                 s.append(",");
-             }
-         }
-        
-        s.append("]");
-        
-        return s.toString();
     }
     
 }

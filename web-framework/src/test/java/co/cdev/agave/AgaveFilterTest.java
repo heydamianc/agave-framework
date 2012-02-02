@@ -53,7 +53,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
         }});
         
         filter.init(filterConfig);
-        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getRequestMatcher().findMatch(request);
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
     }
@@ -67,7 +67,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
             allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
-        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getRequestMatcher().findMatch(request);
         Assert.assertEquals(SimpleHandler.class, desc.getHandlerClass());
     }
 
@@ -80,7 +80,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
             allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
-        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getRequestMatcher().findMatch(request);
         
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
@@ -96,7 +96,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
             allowing(request).getMethod(); will(returnValue("GET"));
         }});
         
-        HandlerDescriptor desc = filter.getHandlerRegistry().findMatch(request);
+        HandlerDescriptor desc = filter.getRequestMatcher().findMatch(request);
         
         Assert.assertNotNull(desc);
         Assert.assertEquals(SampleHandler.class, desc.getHandlerClass());
