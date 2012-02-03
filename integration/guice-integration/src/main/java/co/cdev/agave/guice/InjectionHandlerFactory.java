@@ -45,9 +45,9 @@ public class InjectionHandlerFactory implements HandlerFactory {
     }
 
     @Override
-    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor descriptor) 
+    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor handlerDescriptor) 
             throws HandlerException {
-        return injector.getInstance(descriptor.getHandlerClass());
+        return injector.getInstance(handlerDescriptor.getHandlerClass());
     }
 
     public void setInjector(Injector injector) {

@@ -135,6 +135,10 @@ public class AgaveInjectionFilter extends AgaveFilter {
         return Collections.emptyList();
     }
     
+    public Injector getInjector() {
+        return injector;
+    }
+    
     private static class HandlersModule extends AbstractModule {
         
         private final Set<Class<?>> handlerClasses;

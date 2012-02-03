@@ -54,14 +54,14 @@ import org.junit.Before;
  */
 public abstract class AbstractFunctionalTest {
 
-    Mockery context = new Mockery();
-    FilterChain filterChain;
-    FilterConfig filterConfig;
-    HttpServletRequest request;
-    HttpServletResponse response;
-    ServletContext servletContext;
-    RequestDispatcher requestDispatcher;
-    HttpSession session;
+    protected Mockery context = new Mockery();
+    protected FilterChain filterChain;
+    protected FilterConfig filterConfig;
+    protected HttpServletRequest request;
+    protected HttpServletResponse response;
+    protected ServletContext servletContext;
+    protected RequestDispatcher requestDispatcher;
+    protected HttpSession session;
 
     @Before
     public void setup() throws Exception {
@@ -77,7 +77,7 @@ public abstract class AbstractFunctionalTest {
     protected void emulateServletContainer(final Map<String, String[]> parameters)
         throws URISyntaxException {
 
-        final URL rootUrl = getClass().getClassLoader().getResource("co/cdev/agave");
+        final URL rootUrl = getClass().getClassLoader().getResource(".");
         
         // When the filter scans for handlers, this will redirect it to use the test class path
         
