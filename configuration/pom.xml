@@ -8,8 +8,7 @@
     <version>1.3-SNAPSHOT</version>
   </parent>
   <artifactId>configuration</artifactId>
-  <name>configuration</name>
-  <url>http://maven.apache.org</url>
+  <name>Agave Configuration</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

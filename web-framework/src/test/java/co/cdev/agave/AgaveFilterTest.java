@@ -45,7 +45,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
     
     @Test
     public void testScanClassesDirForLoginHandler() throws Exception {
-        AgaveFilter filter = scanRoot();
+        AgaveFilter filter = scanRootDir();
 
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/login"));
@@ -60,7 +60,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
     
     @Test
     public void testScanClassesDirForSimpleHandler() throws Exception {
-        AgaveFilter filter = scanRoot();
+        AgaveFilter filter = scanRootDir();
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/test1"));
@@ -73,7 +73,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
 
     @Test
     public void testScanClassesDirForHandlerForms() throws Exception {
-        AgaveFilter filter = scanRoot();
+        AgaveFilter filter = scanRootDir();
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/login"));
@@ -89,7 +89,7 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
 
     @Test
     public void testScanClassesDirForHandlerFormsWithAliasedProperties() throws Exception {
-        AgaveFilter filter = scanRoot();
+        AgaveFilter filter = scanRootDir();
         
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/aliased"));
@@ -105,12 +105,12 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
 
 	@Test
 	public void testOverrideClassesDirectory() throws Exception {
-		File targetDir = new File(getClass().getResource("/").toURI());
-		AgaveFilter filter = scanRoot();
+		File targetDir = new File(getClass().getResource("/co").toURI());
+		AgaveFilter filter = scanRootDir();
 		Assert.assertFalse(targetDir.getAbsolutePath().equals(filter.getClassesDirectory().getAbsolutePath()));
 
 		System.setProperty("classesDirectory", targetDir.getAbsolutePath());
-		filter = scanRoot();
+		filter = scanRootDir();
 		Assert.assertEquals(targetDir.getAbsolutePath(), filter.getClassesDirectory().getAbsolutePath());
 	}
     

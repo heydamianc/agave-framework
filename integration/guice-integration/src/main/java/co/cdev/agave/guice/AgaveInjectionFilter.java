@@ -41,7 +41,6 @@ import javax.servlet.ServletException;
 import co.cdev.agave.AgaveFilter;
 import co.cdev.agave.HandlerFactory;
 import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.internal.RequestMatcher;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
@@ -70,9 +69,7 @@ public class AgaveInjectionFilter extends AgaveFilter {
         super.init(config);
         
         Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
-        
-        RequestMatcher handlerRegistry = super.getRequestMatcher();
-        for (HandlerDescriptor descriptor : handlerRegistry.getDescriptors()) {
+        for (HandlerDescriptor descriptor : super.getConfig()) {
             handlerClasses.add(descriptor.getHandlerClass());
         }
         

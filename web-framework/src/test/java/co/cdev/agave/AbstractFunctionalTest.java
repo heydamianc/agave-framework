@@ -46,12 +46,7 @@ import javax.servlet.http.HttpSession;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Assert;
 import org.junit.Before;
-
-import co.cdev.agave.configuration.Config;
-import co.cdev.agave.configuration.ConfigReaderImpl;
-import co.cdev.agave.internal.RequestMatcherImpl;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
@@ -91,10 +86,7 @@ public abstract class AbstractFunctionalTest {
         context.checking(new Expectations() {{
             allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
             allowing(filterConfig).getServletContext(); will(returnValue(servletContext));
-            allowing(filterConfig).getInitParameter("lifecycleHooks"); will(returnValue(null));
-            allowing(filterConfig).getInitParameter("classesDirectory"); will(returnValue(null));
-            allowing(filterConfig).getInitParameter("handlerFactory"); will(returnValue(null));
-            allowing(filterConfig).getInitParameter("formFactory"); will(returnValue(null));
+            allowing(filterConfig).getInitParameter(with(any(String.class))); will(returnValue(null));
             allowing(request).getLocale(); will(returnValue(Locale.ENGLISH));
             allowing(request).getSession(true); will(returnValue(session));
             allowing(request).getParameterMap(); will(returnValue(parameters));
@@ -105,12 +97,7 @@ public abstract class AbstractFunctionalTest {
         }});
     }
     
-    protected AgaveFilter scanRoot() throws Exception {
-        URL rootUrl = getClass().getClassLoader().getResource(".");
-        Assert.assertNotNull(rootUrl);
-        File rootDir = new File(rootUrl.toURI());
-        Assert.assertNotNull(rootDir);
-
+    protected AgaveFilter scanRootDir() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         
         Logger agaveFilterLogger = LogManager.getLogManager().getLogger(AgaveFilter.class.getName());
@@ -121,8 +108,7 @@ public abstract class AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
         
         filter.init(filterConfig);
-        Config config = new ConfigReaderImpl().scanForHandlers(rootDir);
-        filter.setRequestMatcher(new RequestMatcherImpl(config));
+        
         return filter;
     }
     
