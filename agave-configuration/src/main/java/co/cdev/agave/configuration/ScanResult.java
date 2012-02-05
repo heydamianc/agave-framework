@@ -51,8 +51,8 @@ public interface ScanResult {
 
     public String getMethodName();
     
-    public List<Class<?>> getParameterTypes();
+    public List<String> getParameterClassNames();
     
-    public void setParameterTypes(List<Class<?>> parameterTypes);
+    public void setParameterClassNames(List<String> parameterClassNames);
     
 }

@@ -70,8 +70,8 @@ public class HandlerRegistryTest {
             allowing(request).getServletPath(); will(returnValue("/some/path"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/some/path", SampleHandler.class.getName(), "login")));
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/other/path", SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/some/path", SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/other/path", SampleHandler.class.getName(), "login")));
             }}.iterator()));
         }});
 
@@ -87,8 +87,8 @@ public class HandlerRegistryTest {
             allowing(request).getServletPath(); will(returnValue("/overloaded/blah"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
             }}.iterator()));
         }});
         
@@ -104,8 +104,8 @@ public class HandlerRegistryTest {
             allowing(request).getServletPath(); will(returnValue("/overloaded"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
             }}.iterator()));
         }});
         
@@ -121,7 +121,7 @@ public class HandlerRegistryTest {
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/login"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/login", SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", SampleHandler.class.getName(), "login")));
             }}.iterator()));
         }});
         
@@ -137,7 +137,7 @@ public class HandlerRegistryTest {
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/login"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
             }}.iterator()));
         }});
       
@@ -153,7 +153,7 @@ public class HandlerRegistryTest {
           allowing(request).getMethod(); will(returnValue("GET"));
           allowing(request).getServletPath(); will(returnValue("/login"));
           allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-              add(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+              add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.POST, SampleHandler.class.getName(), "login")));
           }}.iterator()));
       }});
   
@@ -168,7 +168,7 @@ public class HandlerRegistryTest {
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/logout"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
             }}.iterator()));
         }});
         
@@ -184,7 +184,7 @@ public class HandlerRegistryTest {
         parameterMap.put("always", Boolean.FALSE);
       
         ScanResult scanResult = new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login");
-        final HandlerDescriptorImpl favorites = new HandlerDescriptorImpl(scanResult) {{
+        final HandlerDescriptorImpl favorites = new HandlerDescriptorImpl(getClass().getClassLoader(), scanResult) {{
             addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
             addParamDescriptor(new ParamDescriptorImpl(Boolean.class, "always"));
         }};
@@ -209,7 +209,7 @@ public class HandlerRegistryTest {
       final Map<String, Object> parameterMap = new HashMap<String, Object>();
       
       ScanResult scanResult = new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login");
-      final HandlerDescriptorImpl favoriteColor = new HandlerDescriptorImpl(scanResult) {{
+      final HandlerDescriptorImpl favoriteColor = new HandlerDescriptorImpl(getClass().getClassLoader(), scanResult) {{
           addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
       }};
       

@@ -43,7 +43,7 @@ public final class ScanResultImpl implements ScanResult {
     private HttpMethod method;
     private String className;
     private String methodName;
-    private List<Class<?>> parameterTypes;
+    private List<String> parameterClassNames;
 
     public ScanResultImpl() {
     	this(null, null, null);
@@ -54,15 +54,15 @@ public final class ScanResultImpl implements ScanResult {
     }
     
     public ScanResultImpl(String uri, HttpMethod method, String className, String methodName) {
-        this(uri, method, className, methodName, new ArrayList<Class<?>>());
+        this(uri, method, className, methodName, new ArrayList<String>());
     }
     
-    public ScanResultImpl(String uri, HttpMethod method, String className, String methodName, List<Class<?>> parameterTypes) {
-    	setUri(uri);
-    	setMethod(method);
-        setClassName(className);
-        setMethodName(methodName);
-        setParameterTypes(parameterTypes);
+    public ScanResultImpl(String uri, HttpMethod method, String className, String methodName, List<String> parameterClassNames) {
+        this.uri = uri;
+        this.method = method;
+        this.className = className;
+        this.methodName = methodName;
+        this.parameterClassNames = parameterClassNames;
     }
 
     @Override
@@ -106,13 +106,13 @@ public final class ScanResultImpl implements ScanResult {
     }
 
     @Override
-    public List<Class<?>> getParameterTypes() {
-        return parameterTypes;
+    public List<String> getParameterClassNames() {
+        return parameterClassNames;
     }
 
     @Override
-    public void setParameterTypes(List<Class<?>> paramTypes) {
-        this.parameterTypes = paramTypes;
+    public void setParameterClassNames(List<String> parameterClassNames) {
+        this.parameterClassNames = parameterClassNames;
     }
 
 }

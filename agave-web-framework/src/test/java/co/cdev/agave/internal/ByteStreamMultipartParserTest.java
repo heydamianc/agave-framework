@@ -29,7 +29,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import javax.servlet.DelegatingServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;

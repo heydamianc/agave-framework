@@ -8,7 +8,10 @@ import co.cdev.agave.AgaveConfigurationException;
 
 public interface ConfigGenerator {
 
-    public abstract Config scanClassesWithinRootDirectory(File rootDirectory) throws FileNotFoundException, IOException,
-            ClassNotFoundException, AgaveConfigurationException;
+    public Config scanClassesWithinRootDirectory(File rootDirectory)
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException;
+    
+    public abstract Config scanClassesWithinRootDirectory(ClassLoader classLoader, File rootDirectory) 
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException;
 
 }

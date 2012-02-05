@@ -27,8 +27,6 @@ package co.cdev.agave.configuration;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
@@ -41,8 +39,6 @@ import co.cdev.agave.HttpMethod;
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class AnnotationScanner implements AnnotationVisitor {
-    
-    private static final Logger LOGGER = Logger.getLogger(AnnotationScanner.class.getName());
 
     private static final String ANNOTATION_VALUE_PARAM = "value";
     private static final String ANNOTATION_URI_PARAM = "uri";
@@ -63,51 +59,46 @@ public class AnnotationScanner implements AnnotationVisitor {
         this.scanResult.setMethod(HttpMethod.ANY);
         
         Type[] argumentTypes = Type.getArgumentTypes(methodDescriptor);
-        Class<?>[] argumentClasses = new Class<?>[argumentTypes.length];
+        String[] argumentClassNames = new String[argumentTypes.length];
         
         for (int i = 0; i < argumentTypes.length; i++) {
             Type argumentType = argumentTypes[i];
             
             switch (argumentType.getSort()) {
-            case Type.ARRAY:
-                // TODO FIGURE OUT HOW TO SUPPORT THIS
-                break;
-            case Type.BOOLEAN:
-                argumentClasses[i] = boolean.class;
-                break;
-            case Type.BYTE:
-                argumentClasses[i] = byte.class;
-                break;
-            case Type.CHAR:
-                argumentClasses[i] = char.class;
-                break;
-            case Type.DOUBLE:
-                argumentClasses[i] = double.class;
-                break;
-            case Type.FLOAT:
-                argumentClasses[i] = float.class;
-                break;
-            case Type.INT:
-                argumentClasses[i] = int.class;
-                break;
-            case Type.LONG:
-                argumentClasses[i] = long.class;
-                break;
-            case Type.SHORT:
-                argumentClasses[i] = short.class;
-                break;
-            default:
-                try {
-                    argumentClasses[i] = Class.forName(argumentTypes[i].getClassName());
-                } catch (ClassNotFoundException e) {
-                    LOGGER.log(Level.INFO, String.format("Unable to find argument class: %s [%s.%s(%s)]", 
-                            argumentTypes[i].getClassName(), scanResult.getClassName(),
-                            scanResult.getMethodName(), methodDescriptor));
-                }
+                case Type.ARRAY:
+                    // TODO FIGURE OUT HOW TO SUPPORT THIS
+                    break;
+                case Type.BOOLEAN:
+                    argumentClassNames[i] = boolean.class.getCanonicalName();
+                    break;
+                case Type.BYTE:
+                    argumentClassNames[i] = byte.class.getCanonicalName();
+                    break;
+                case Type.CHAR:
+                    argumentClassNames[i] = char.class.getCanonicalName();
+                    break;
+                case Type.DOUBLE:
+                    argumentClassNames[i] = double.class.getCanonicalName();
+                    break;
+                case Type.FLOAT:
+                    argumentClassNames[i] = float.class.getCanonicalName();
+                    break;
+                case Type.INT:
+                    argumentClassNames[i] = int.class.getCanonicalName();
+                    break;
+                case Type.LONG:
+                    argumentClassNames[i] = long.class.getCanonicalName();
+                    break;
+                case Type.SHORT:
+                    argumentClassNames[i] = short.class.getCanonicalName();
+                    break;
+                default:
+                    argumentClassNames[i] = argumentTypes[i].getClassName();
+                    break;
             }
         }
         
-        this.scanResult.setParameterTypes(Arrays.asList(argumentClasses));
+        this.scanResult.setParameterClassNames(Arrays.asList(argumentClassNames));
     }
 
     @Override

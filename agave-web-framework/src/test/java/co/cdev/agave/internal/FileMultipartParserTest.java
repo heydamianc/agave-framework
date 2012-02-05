@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import javax.servlet.DelegatingServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
@@ -58,14 +57,11 @@ public class FileMultipartParserTest {
                 "multipart/form-data; boundary=---------------------------2746393686911676941624173958";
 
         final InputStream sampleStream =
-                new DelegatingServletInputStream(
-                getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
+                new DelegatingServletInputStream(getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
         try {
             context.checking(new Expectations() {{
-                allowing(request).getContentType();
-                will(returnValue(contentType));
-                allowing(request).getInputStream();
-                will(returnValue(sampleStream));
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getInputStream(); will(returnValue(sampleStream));
             }});
 
             MultipartParser<File> parser = new FileMultipartParser();
@@ -89,15 +85,12 @@ public class FileMultipartParserTest {
         final String contentType =
                 "multipart/form-data; boundary=---------------------------2746393686911676941624173958";
 
-        final InputStream sampleStream =
-                new DelegatingServletInputStream(
+        final InputStream sampleStream = new DelegatingServletInputStream(
                 getClass().getClassLoader().getResourceAsStream("multipart-sample-jetty"));
         try {
             context.checking(new Expectations() {{
-                allowing(request).getContentType();
-                will(returnValue(contentType));
-                allowing(request).getInputStream();
-                will(returnValue(sampleStream));
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getInputStream(); will(returnValue(sampleStream));
             }});
 
             MultipartParser<File> parser = new FileMultipartParser();

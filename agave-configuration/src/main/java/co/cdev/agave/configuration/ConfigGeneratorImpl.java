@@ -16,17 +16,23 @@ public class ConfigGeneratorImpl implements ConfigGenerator {
     @Override
     public Config scanClassesWithinRootDirectory(File rootDirectory) 
             throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
+        return scanClassesWithinRootDirectory(getClass().getClassLoader(), rootDirectory);
+    }
+    
+    @Override
+    public Config scanClassesWithinRootDirectory(ClassLoader classLoader, File rootDirectory) 
+            throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
         Config config = new ConfigImpl();
-        scanForHandlers(rootDirectory, config);
+        scanForHandlers(classLoader, rootDirectory, config);
         return config;
     }
     
-    private void scanForHandlers(File rootDirectory, Config config)
+    private void scanForHandlers(ClassLoader classLoader, File rootDirectory, Config config)
             throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
         if (rootDirectory != null && rootDirectory.isDirectory() && rootDirectory.canRead()) {
             for (File node : rootDirectory.listFiles()) {
                 if (node.isDirectory()) {
-                    scanForHandlers(node, config);
+                    scanForHandlers(classLoader, node, config);
                 } else if (node.isFile() && node.getName().endsWith(".class")) {
                     FileInputStream nodeIn = new FileInputStream(node);
                     
@@ -36,7 +42,7 @@ public class ConfigGeneratorImpl implements ConfigGenerator {
                         classReader.accept(new HandlerScanner(scanResults), ClassReader.SKIP_CODE);
 
                         for (ScanResult scanResult : scanResults) {
-                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(scanResult);
+                            HandlerDescriptor descriptor = new HandlerDescriptorImpl(classLoader, scanResult);
                             descriptor.locateAnnotatedHandlerMethods(scanResult);
                             config.addHandlerDescriptor(descriptor);
                         }

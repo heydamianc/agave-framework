@@ -25,22 +25,28 @@ public class ConfigTest {
     
     @Test(expected = DuplicateDescriptorException.class)
     public void testAddDescriptor() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
     }
 
     @Test
     public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
 
         assertEquals(2, config.size());
     }
     
     @Test
     public void testWriteToOutputStream() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         
@@ -61,8 +67,10 @@ public class ConfigTest {
     
     @Test
     public void testWriteToFile() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(),
+                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         
@@ -82,8 +90,10 @@ public class ConfigTest {
     
     @Test
     public void testReadFromInputStream() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         File configFile = new File(rootDir, "testWriteToOutputStream.conf");
@@ -102,8 +112,10 @@ public class ConfigTest {
     
     @Test
     public void testReadFromFile() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
+                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         File configFile = new File(rootDir, "testReadFromFile.conf");

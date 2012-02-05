@@ -30,13 +30,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.DelegatingServletInputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
+import co.cdev.agave.internal.DelegatingServletInputStream;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.HandlerFactoryImpl;
 

@@ -60,25 +60,58 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     private boolean initiatesWorkflow;
     private boolean completesWorkflow;
     private String workflowName;
+    
+    private List<Class<?>> expectedParameterClasses;
 
-    public HandlerDescriptorImpl(ScanResult scanResult) throws ClassNotFoundException, InvalidHandlerException {
+    public HandlerDescriptorImpl(ClassLoader classLoader, ScanResult scanResult) 
+            throws ClassNotFoundException, InvalidHandlerException {
+        
         uriPattern       = new URIPatternImpl(scanResult.getUri());
         method           = scanResult.getMethod();
-        handlerClass     = Class.forName(scanResult.getClassName());
+        handlerClass     = Class.forName(scanResult.getClassName(), true, classLoader);
         paramDescriptors = Collections.emptyList();
+        
+        expectedParameterClasses = new ArrayList<Class<?>>(scanResult.getParameterClassNames().size());
+        
+        for (String parameterClassName : scanResult.getParameterClassNames()) {
+            if (parameterClassName.equals(boolean.class.getCanonicalName())) {
+                expectedParameterClasses.add(boolean.class);
+            } else if (parameterClassName.equals(Boolean.class.getCanonicalName())) {
+                expectedParameterClasses.add(Boolean.class);
+            } else if (parameterClassName.equals(byte.class.getCanonicalName())) {
+                expectedParameterClasses.add(byte.class);
+            } else if (parameterClassName.equals(Byte.class.getCanonicalName())) {
+                expectedParameterClasses.add(Byte.class);
+            } else if (parameterClassName.equals(char.class.getCanonicalName())) {
+                expectedParameterClasses.add(char.class);
+            } else if (parameterClassName.equals(Character.class.getCanonicalName())) {
+                expectedParameterClasses.add(Character.class);
+            } else if (parameterClassName.equals(double.class.getCanonicalName())) {
+                expectedParameterClasses.add(double.class);
+            } else if (parameterClassName.equals(Double.class.getCanonicalName())) {
+                expectedParameterClasses.add(Double.class);
+            } else if (parameterClassName.equals(float.class.getCanonicalName())) {
+                expectedParameterClasses.add(float.class);
+            } else if (parameterClassName.equals(Float.class.getCanonicalName())) {
+                expectedParameterClasses.add(Float.class);
+            } else if (parameterClassName.equals(int.class.getCanonicalName())) {
+                expectedParameterClasses.add(int.class);
+            } else if (parameterClassName.equals(Integer.class.getCanonicalName())) {
+                expectedParameterClasses.add(Integer.class);
+            } else if (parameterClassName.equals(long.class.getCanonicalName())) {
+                expectedParameterClasses.add(long.class);
+            } else if (parameterClassName.equals(Long.class.getCanonicalName())) {
+                expectedParameterClasses.add(Long.class);
+            } else if (parameterClassName.equals(short.class.getCanonicalName())) {
+                expectedParameterClasses.add(short.class);
+            } else if (parameterClassName.equals(Short.class.getCanonicalName())) {
+                expectedParameterClasses.add(Short.class);
+            } else {
+                expectedParameterClasses.add(Class.forName(parameterClassName, true, classLoader));
+            }
+        }
     }
 
-    /**
-     * Locates annotated methods on a handler class. This method will find the
-     * annotated method that is identified by the supplied
-     * {@code Scanresult} and then proceed to find any workflow-related
-     * annotations ({@code InitiatesWorkflow}, {@code ResumesWorkflow},
-     * {@code CompletesWorkflow}.
-     * 
-     * @param scanResult
-     *            the {@code HandlerIdentifier} that was created while scanning
-     *            for a handler method
-     */
     @Override
     public void locateAnnotatedHandlerMethods(ScanResult scanResult) throws InvalidHandlerException {
         for (Method m : handlerClass.getMethods()) {
@@ -106,7 +139,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
             // Determine if the handler method matches the scan result
             
             Class<?>[] parameterTypes = m.getParameterTypes();
-            int expectedParameterCount = scanResult.getParameterTypes().size();
+            int expectedParameterCount = expectedParameterClasses.size();
             
             if (scanResult.getMethodName().equals(m.getName()) && expectedParameterCount == parameterTypes.length) {
                 if (parameterTypes.length == 1 && !hasAdditionalParams(m)) {
@@ -118,7 +151,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                     return;
                 } else if (expectedParameterCount == parameterTypes.length) {
                     for (int i = 1; i < parameterTypes.length; i++) {
-                        Class<?> expectedType = scanResult.getParameterTypes().get(i);
+                        Class<?> expectedType = expectedParameterClasses.get(i);
                         Class<?> actualType = parameterTypes[i];
                         Annotation[] annotations = m.getParameterAnnotations()[i];
                         

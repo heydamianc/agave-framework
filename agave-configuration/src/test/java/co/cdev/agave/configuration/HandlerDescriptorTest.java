@@ -25,7 +25,7 @@
  */
 package co.cdev.agave.configuration;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,13 +39,14 @@ import co.cdev.agave.sample.SampleHandler;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
+@SuppressWarnings("serial")
 public class HandlerDescriptorTest {
     private static final String cls = SampleHandler.class.getName();
     private static final String met = "login";
     
     @Test
     public void testConstructor() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
+        HandlerDescriptor a = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", cls, met));
         Assert.assertNotNull(a);
         Assert.assertNotNull(a.getURIPattern());
     }
@@ -53,9 +54,12 @@ public class HandlerDescriptorTest {
     @Test
     public void testLocateAnnotatedHandlerMethods() throws Exception {
     	ScanResult scanResult = new ScanResultImpl("/login", cls, met);
-    	scanResult.setParameterTypes(Arrays.asList(new Class<?>[] {AliasedForm.class, LoginForm.class}));
+    	scanResult.setParameterClassNames(new ArrayList<String>() {{
+    	    add(AliasedForm.class.getCanonicalName());
+    	    add(LoginForm.class.getCanonicalName());
+    	}});
     	
-    	HandlerDescriptor a = new HandlerDescriptorImpl(scanResult);
+    	HandlerDescriptor a = new HandlerDescriptorImpl(getClass().getClassLoader(), scanResult);
     	a.locateAnnotatedHandlerMethods(scanResult);
     	
     	Assert.assertEquals(LoginForm.class, a.getFormClass());
@@ -63,12 +67,12 @@ public class HandlerDescriptorTest {
 
     @Test
     public void testEquals() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
-        HandlerDescriptor b = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
-        HandlerDescriptor c = new HandlerDescriptorImpl(new ScanResultImpl("/notLogin", cls, met));
-        HandlerDescriptor d = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
-        HandlerDescriptor e = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met));
-        HandlerDescriptor f = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.ANY, cls, met));
+        HandlerDescriptor a = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", cls, met));
+        HandlerDescriptor b = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", cls, met));
+        HandlerDescriptor c = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/notLogin", cls, met));
+        HandlerDescriptor d = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.GET, cls, met));
+        HandlerDescriptor e = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.POST, cls, met));
+        HandlerDescriptor f = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.ANY, cls, met));
         
         Assert.assertEquals(a, b);
         Assert.assertFalse(a.equals(c));
@@ -80,38 +84,32 @@ public class HandlerDescriptorTest {
 
     @Test
     public void testCompareTo_withDistinctPath() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
-        HandlerDescriptor b = new HandlerDescriptorImpl(new ScanResultImpl("/login", cls, met));
+        HandlerDescriptor a = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", cls, met));
+        HandlerDescriptor b = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", cls, met));
         Assert.assertEquals(0, a.compareTo(b));
         
-        a = new HandlerDescriptorImpl(new ScanResultImpl("/a", cls, met));
-        b = new HandlerDescriptorImpl(new ScanResultImpl("/b", cls, met));
+        a = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/a", cls, met));
+        b = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/b", cls, met));
         
         Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));
     }
     
     @Test
     public void testCompareTo_withDuplicatePathAndDistinctMethod() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.GET, cls, met));
-        HandlerDescriptor b = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met));
+        HandlerDescriptor a = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.GET, cls, met));
+        HandlerDescriptor b = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.POST, cls, met));
         Assert.assertTrue(a.compareTo(b) < 0 && 0 < b.compareTo(a));
     }
     
     @Test
     public void testCompareTo_withDuplicatePathAndMethodAndDifferentNumberOfParameters() throws Exception {
-        HandlerDescriptor a = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met)) 
-        {
-            private static final long serialVersionUID = 1L;
-        {
+        HandlerDescriptor a = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.POST, cls, met)) {{
             addParamDescriptor(new ParamDescriptorImpl(String.class, "a"));
             addParamDescriptor(new ParamDescriptorImpl(String.class, "b"));
             addParamDescriptor(new ParamDescriptorImpl(String.class, "c"));
         }};
         
-        HandlerDescriptor b = new HandlerDescriptorImpl(new ScanResultImpl("/login", HttpMethod.POST, cls, met))
-        {
-            private static final long serialVersionUID = 1L;
-        {
+        HandlerDescriptor b = new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.POST, cls, met)) {{
             addParamDescriptor(new ParamDescriptorImpl(String.class, "a"));
             addParamDescriptor(new ParamDescriptorImpl(String.class, "b"));
         }};
