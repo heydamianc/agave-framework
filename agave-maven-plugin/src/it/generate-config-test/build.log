@@ -1,0 +1,85 @@
+OUT: -------------------------------------------------------------------------------
+OUT: TEST BUILD: /Users/ddc/Development/agave-web-framework/agave-maven-plugin/src/it/generate-config-test/pom.xml
+OUT: Goals: clean compile agave:generate-config
+OUT: -------------------------------------------------------------------------------
+OUT: [INFO] Error stacktraces are turned on.
+OUT: [INFO] Scanning for projects...
+OUT: [INFO]                                                                         
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] Building generate-config-test 1.3-SNAPSHOT
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] 
+OUT: [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ generate-config-test ---
+OUT: [INFO] 
+OUT: [INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ generate-config-test ---
+OUT: [INFO] Using 'UTF-8' encoding to copy filtered resources.
+OUT: [INFO] skip non existing resourceDirectory /Users/ddc/Development/agave-web-framework/agave-maven-plugin/src/it/generate-config-test/src/main/resources
+OUT: [INFO] 
+OUT: [INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ generate-config-test ---
+OUT: [INFO] Compiling 1 source file to /Users/ddc/Development/agave-web-framework/agave-maven-plugin/src/it/generate-config-test/target/classes
+OUT: [INFO] 
+OUT: [INFO] --- agave-maven-plugin:1.3-SNAPSHOT:generate-config (default-cli) @ generate-config-test ---
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] BUILD FAILURE
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [INFO] Total time: 1.759s
+OUT: [INFO] Finished at: Sat Feb 04 17:26:32 CST 2012
+OUT: [INFO] Final Memory: 8M/81M
+OUT: [INFO] ------------------------------------------------------------------------
+OUT: [ERROR] Failed to execute goal co.cdev:agave-maven-plugin:1.3-SNAPSHOT:generate-config (default-cli) on project generate-config-test: java.lang.reflect.Method -> [Help 1]
+OUT: org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal co.cdev:agave-maven-plugin:1.3-SNAPSHOT:generate-config (default-cli) on project generate-config-test: java.lang.reflect.Method
+OUT: 	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:217)
+OUT: 	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:153)
+OUT: 	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:145)
+OUT: 	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:84)
+OUT: 	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:59)
+OUT: 	at org.apache.maven.lifecycle.internal.LifecycleStarter.singleThreadedBuild(LifecycleStarter.java:183)
+OUT: 	at org.apache.maven.lifecycle.internal.LifecycleStarter.execute(LifecycleStarter.java:161)
+OUT: 	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:319)
+OUT: 	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:156)
+OUT: 	at org.apache.maven.cli.MavenCli.execute(MavenCli.java:537)
+OUT: 	at org.apache.maven.cli.MavenCli.doMain(MavenCli.java:196)
+OUT: 	at org.apache.maven.cli.MavenCli.main(MavenCli.java:141)
+OUT: 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+OUT: 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+OUT: 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+OUT: 	at java.lang.reflect.Method.invoke(Method.java:597)
+OUT: 	at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced(Launcher.java:290)
+OUT: 	at org.codehaus.plexus.classworlds.launcher.Launcher.launch(Launcher.java:230)
+OUT: 	at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode(Launcher.java:409)
+OUT: 	at org.codehaus.plexus.classworlds.launcher.Launcher.main(Launcher.java:352)
+OUT: 	at org.codehaus.classworlds.Launcher.main(Launcher.java:47)
+OUT: Caused by: org.apache.maven.plugin.MojoExecutionException: java.lang.reflect.Method
+OUT: 	at co.cdev.agave.GenerateConfigMojo.execute(GenerateConfigMojo.java:53)
+OUT: 	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:101)
+OUT: 	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:209)
+OUT: 	... 20 more
+OUT: Caused by: java.io.NotSerializableException: java.lang.reflect.Method
+OUT: 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1164)
+OUT: 	at java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputStream.java:1518)
+OUT: 	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1483)
+OUT: 	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1400)
+OUT: 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1158)
+OUT: 	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:330)
+OUT: 	at java.util.TreeSet.writeObject(TreeSet.java:492)
+OUT: 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+OUT: 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+OUT: 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+OUT: 	at java.lang.reflect.Method.invoke(Method.java:597)
+OUT: 	at java.io.ObjectStreamClass.invokeWriteObject(ObjectStreamClass.java:945)
+OUT: 	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1469)
+OUT: 	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1400)
+OUT: 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1158)
+OUT: 	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:330)
+OUT: 	at co.cdev.agave.configuration.ConfigImpl.writeToOutputStream(ConfigImpl.java:87)
+OUT: 	at co.cdev.agave.configuration.ConfigImpl.writeToFile(ConfigImpl.java:77)
+OUT: 	at co.cdev.agave.GenerateConfigMojo.execute(GenerateConfigMojo.java:51)
+OUT: 	... 22 more
+OUT: [ERROR] 
+OUT: [ERROR] Re-run Maven using the -X switch to enable full debug logging.
+OUT: [ERROR] 
+OUT: [ERROR] For more information about the errors and possible solutions, please read the following articles:
+OUT: [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+OUT: -------------------------------------------------------------------------------
+OUT: -------------------------------------------------------------------------------
+ERR: FAILURE: Execution exited with status: 1

@@ -1,7 +1,6 @@
 package co.cdev.agave.configuration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -14,7 +13,7 @@ import org.junit.Test;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.sample.SampleHandler;
-
+    
 public class ConfigTest {
     
     private Config config;
@@ -92,11 +91,11 @@ public class ConfigTest {
         
         Config anotherConfig = new ConfigImpl();
         
-        assertTrue(anotherConfig.getCandidatesFor("/pattern").isEmpty());
+        assertEquals(0, anotherConfig.getCandidatesFor("/pattern").size());
         
         anotherConfig.readFromInputStream(new FileInputStream(configFile));
         
-        assertFalse(anotherConfig.getCandidatesFor("/pattern").isEmpty());
+        assertEquals(2, anotherConfig.getCandidatesFor("/pattern").size());
         
         configFile.delete();
     }
@@ -112,11 +111,11 @@ public class ConfigTest {
         
         Config anotherConfig = new ConfigImpl();
         
-        assertTrue(anotherConfig.getCandidatesFor("/pattern").isEmpty());
+        assertEquals(0, anotherConfig.getCandidatesFor("/pattern").size());
         
         anotherConfig.readFromFile(configFile);
         
-        assertFalse(anotherConfig.getCandidatesFor("/pattern").isEmpty());
+        assertEquals(2, anotherConfig.getCandidatesFor("/pattern").size());
         
         configFile.delete();
     }

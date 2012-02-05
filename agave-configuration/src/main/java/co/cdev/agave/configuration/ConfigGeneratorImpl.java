@@ -11,10 +11,10 @@ import org.objectweb.asm.ClassReader;
 
 import co.cdev.agave.AgaveConfigurationException;
 
-public class ConfigReaderImpl implements ConfigReader {
+public class ConfigGeneratorImpl implements ConfigGenerator {
 
     @Override
-    public Config readConfig(File rootDirectory) 
+    public Config scanClassesWithinRootDirectory(File rootDirectory) 
             throws FileNotFoundException, IOException, ClassNotFoundException, AgaveConfigurationException {
         Config config = new ConfigImpl();
         scanForHandlers(rootDirectory, config);

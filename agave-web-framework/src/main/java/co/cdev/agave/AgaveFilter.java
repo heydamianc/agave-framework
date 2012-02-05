@@ -48,8 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import co.cdev.agave.configuration.Config;
-import co.cdev.agave.configuration.ConfigReader;
-import co.cdev.agave.configuration.ConfigReaderImpl;
+import co.cdev.agave.configuration.ConfigGenerator;
+import co.cdev.agave.configuration.ConfigGeneratorImpl;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.configuration.RoutingContext;
@@ -79,7 +79,7 @@ public class AgaveFilter implements Filter {
     private static final String WORKFLOW_FORM_SUFFIX = "-form";
     
     private FilterConfig filterConfig;
-    private ConfigReader configReader;
+    private ConfigGenerator configGenerator;
     private Config config;
     private LifecycleHooks lifecycleHooks;
     private File classesDirectory;
@@ -100,19 +100,18 @@ public class AgaveFilter implements Filter {
         return classesDir;
     }
     
-    protected ConfigReader provideConfigReader(FilterConfig filterConfig)
+    protected ConfigGenerator provideConfigGenerator(FilterConfig filterConfig)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        ConfigReader configReader = null;
-
+        ConfigGenerator configGenerator = null;
         String configReaderParameter = filterConfig.getInitParameter("configReader");
 
         if (configReaderParameter != null) {
-            configReader = (ConfigReader) Class.forName(configReaderParameter).newInstance();
+            configGenerator = (ConfigGenerator) Class.forName(configReaderParameter).newInstance();
         } else {
-            configReader = new ConfigReaderImpl();
+            configGenerator = new ConfigGeneratorImpl();
         }
 
-        return configReader;
+        return configGenerator;
     }
     
     protected LifecycleHooks provideLifecycleHooks(FilterConfig filterConfig)
@@ -180,8 +179,8 @@ public class AgaveFilter implements Filter {
 
         try {
             classesDirectory = provideClassesDirectory(filterConfig);
-            configReader = provideConfigReader(filterConfig);
-            config = configReader.readConfig(classesDirectory);
+            configGenerator = provideConfigGenerator(filterConfig);
+            config = configGenerator.scanClassesWithinRootDirectory(classesDirectory);
             
             lifecycleHooks = provideLifecycleHooks(filterConfig);
             requestMatcher = provideRequestMatcher(filterConfig);
@@ -200,7 +199,7 @@ public class AgaveFilter implements Filter {
     @Override
     public void destroy() {
         classesDirectory = null;
-        configReader = null;
+        configGenerator = null;
         config = null;
         filterConfig = null;
         requestMatcher = null;
@@ -505,8 +504,8 @@ public class AgaveFilter implements Filter {
         return config;
     }
     
-    public ConfigReader getConfigReader() {
-        return configReader;
+    public ConfigGenerator getConfigGenerator() {
+        return configGenerator;
     }
     
     public RequestMatcher getRequestMatcher() {

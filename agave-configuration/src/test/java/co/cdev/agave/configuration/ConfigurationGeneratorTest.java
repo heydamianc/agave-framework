@@ -11,17 +11,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConfigurationReaderTest {
+public class ConfigurationGeneratorTest {
 
     private File rootDir;
-    private ConfigReader configReader;
+    private ConfigGenerator configGenerator;
     
     @Before
     public void setUp() throws Exception {
         URL rootUrl = getClass().getClassLoader().getResource(".");
         Assert.assertNotNull(rootUrl);
         rootDir = new File(rootUrl.toURI());
-        configReader = new ConfigReaderImpl();
+        configGenerator = new ConfigGeneratorImpl();
     }
     
     @Test
@@ -31,7 +31,7 @@ public class ConfigurationReaderTest {
     
     @Test
     public void testScanForHandlers() throws Exception {
-        Config config = configReader.readConfig(rootDir);
+        Config config = configGenerator.scanClassesWithinRootDirectory(rootDir);
         
         assertFalse(config.getCandidatesFor("/login").isEmpty());
         assertFalse(config.getCandidatesFor("/aliased").isEmpty());

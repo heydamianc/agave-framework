@@ -62,9 +62,9 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     private String workflowName;
 
     public HandlerDescriptorImpl(ScanResult scanResult) throws ClassNotFoundException, InvalidHandlerException {
-        uriPattern           = new URIPatternImpl(scanResult.getUri());
-        method               = scanResult.getMethod();
-        handlerClass         = Class.forName(scanResult.getClassName());
+        uriPattern       = new URIPatternImpl(scanResult.getUri());
+        method           = scanResult.getMethod();
+        handlerClass     = Class.forName(scanResult.getClassName());
         paramDescriptors = Collections.emptyList();
     }
 

@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import co.cdev.agave.AgaveConfigurationException;
 
-public interface ConfigReader {
+public interface ConfigGenerator {
 
-    public abstract Config readConfig(File rootDirectory) throws FileNotFoundException, IOException,
+    public abstract Config scanClassesWithinRootDirectory(File rootDirectory) throws FileNotFoundException, IOException,
             ClassNotFoundException, AgaveConfigurationException;
 
 }
