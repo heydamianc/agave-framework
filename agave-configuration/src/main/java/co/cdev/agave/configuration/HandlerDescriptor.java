@@ -14,10 +14,10 @@ public interface HandlerDescriptor extends Comparable<HandlerDescriptor>, Serial
     public URIPattern getURIPattern();
     public HttpMethod getHttpMethod();
     public Class<?> getFormClass();
-    public String getWorkflowName();
     public List<ParamDescriptor> getParamDescriptors();
     public boolean initiatesWorkflow();
     public boolean completesWorkflow();
+    public String getWorkflowName();
 
     @Override
     public boolean equals(Object that);

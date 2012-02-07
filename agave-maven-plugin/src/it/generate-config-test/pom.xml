@@ -31,6 +31,14 @@
         <groupId>${project.groupId}</groupId>
         <artifactId>agave-maven-plugin</artifactId>
         <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>generate-config</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

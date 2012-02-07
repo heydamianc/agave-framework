@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -18,6 +17,8 @@ import org.apache.maven.project.MavenProject;
 import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.ConfigGenerator;
 import co.cdev.agave.configuration.ConfigGeneratorImpl;
+import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.util.ClassUtils;
 import co.cdev.agave.util.FileSystem;
 
 /**
@@ -55,6 +56,7 @@ public class GenerateConfigMojo extends AbstractMojo {
         
         ClassLoader classLoader = loadCompiledClasses();
         Config config = createConfigFromCompiledClasses(classLoader);
+        formatConfig(config);
         writeConfigToFile(config, new File(outputDirectory, outputFilename));
     }
 
@@ -77,7 +79,6 @@ public class GenerateConfigMojo extends AbstractMojo {
             for (Object compiledClasspathelementPath : project.getCompileClasspathElements()) {
                 File compiledClasspathElement = new File((String) compiledClasspathelementPath);
                 urls.add(compiledClasspathElement.toURI().toURL());
-                getLog().info("Adding " + compiledClasspathElement.getAbsolutePath() + " to classpath");            
             }
         } catch (MalformedURLException e) {
             throw new MojoExecutionException(e.getMessage(), e);
@@ -99,8 +100,7 @@ public class GenerateConfigMojo extends AbstractMojo {
                 File compileSourceRoot = new File((String) compileSourceRootPath);
                 
                 for (File javaFile : FileSystem.filterFiles(compileSourceRoot, javaFileFilter)) {
-                    String className = getClassNameForFile(javaFile, compileSourceRoot);
-                    getLog().info("Loading " + className);
+                    String className = ClassUtils.getClassNameForJavaFile(javaFile, compileSourceRoot);
                     compiledClassLoader.loadClass(className);
                 }
             }
@@ -110,43 +110,43 @@ public class GenerateConfigMojo extends AbstractMojo {
         
         return compiledClassLoader;
     }
-    
-    private String getClassNameForFile(File javaFile, File compileSourceRoot) {
-        List<String> parts = new ArrayList<String>();
-        parts.add(javaFile.getName().replace(".java", ""));
-        
-        File dir = javaFile.getParentFile();
-        while (!dir.equals(compileSourceRoot)) {
-            parts.add(0, dir.getName());
-            dir = dir.getParentFile();
-        }
-        
-        StringBuilder className = new StringBuilder();
-        
-        Iterator<String> itr = parts.iterator();
-        while (itr.hasNext()) {
-            className.append(itr.next());
-            
-            if (itr.hasNext()) {
-                className.append(".");
-            }
-        }
-        
-        return className.toString();
-    }
-    
+
     private Config createConfigFromCompiledClasses(ClassLoader classLoader) throws MojoExecutionException {
         ConfigGenerator configGenerator = new ConfigGeneratorImpl(classLoader, rootDirectory);
         Config config = null;
         
         try {
-            getLog().info("Scanning for classes under " + rootDirectory.getAbsolutePath());
+            getLog().info("Scanning classes under " + rootDirectory.getAbsolutePath());
             config = configGenerator.generateConfig();
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
         
         return config;
+    }
+    
+    private void formatConfig(Config config) {
+        getLog().info("Found the following handler methods:");
+        
+        for (HandlerDescriptor handlerDescriptor : config) {
+            StringBuilder methodRepresentation = new StringBuilder();
+            methodRepresentation.append(handlerDescriptor.getHandlerClass().getCanonicalName()).append(".");
+            methodRepresentation.append(handlerDescriptor.getHandlerMethod().getName()).append("(");
+            
+            for (Class<?> parameterClass : handlerDescriptor.getHandlerMethod().getParameterTypes()) {
+                methodRepresentation.append(parameterClass.getSimpleName());
+            }
+            
+            methodRepresentation.append(")");
+            
+            getLog().info("  " + methodRepresentation.toString());
+            getLog().info("    URI pattern:        " + handlerDescriptor.getURIPattern());
+            getLog().info("    HTTP method:        " + handlerDescriptor.getHttpMethod().name().toLowerCase());
+            getLog().info("    Form class:         " + (handlerDescriptor.getFormClass() == null ? "none" : handlerDescriptor.getFormClass()));
+            getLog().info("    Initiates workflow: " + (handlerDescriptor.initiatesWorkflow() ? "yes" : "no"));
+            getLog().info("    Completes workflow: " + (handlerDescriptor.completesWorkflow() ? "yes" : "no"));
+            getLog().info("    Workflow name:      " + (handlerDescriptor.getWorkflowName() == null ? "none" : handlerDescriptor.getWorkflowName()));
+        }
     }
     
     private void writeConfigToFile(Config config, File configFile) throws MojoExecutionException {
