@@ -25,6 +25,9 @@
  */
 package co.cdev.agave;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Matcher;
@@ -47,6 +50,10 @@ public class URIPatternImpl implements URIPattern {
     
     private String pattern;
     private String[] parts;
+    
+    protected URIPatternImpl() {
+        
+    }
 
     public URIPatternImpl(String pattern) {
         if (!pattern.startsWith("/")) {
@@ -220,6 +227,31 @@ public class URIPatternImpl implements URIPattern {
     @Override
     public String toString() {
     	return pattern;
+    }
+    
+    // Serialization
+    
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+    
+    private void readObject(ObjectInputStream in) throws InvalidObjectException {
+        throw new InvalidObjectException("Expected SerializationProxy");
+    }
+    
+    private static class SerializationProxy implements Serializable {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private final String pattern;
+        
+        SerializationProxy(URIPatternImpl uriPattern) {
+            this.pattern = uriPattern.pattern;
+        }
+        
+        private Object readResolve() {
+            return new URIPatternImpl(pattern);
+        }
     }
     
 }

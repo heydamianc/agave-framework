@@ -11,6 +11,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import co.cdev.agave.conversion.IntegerParamConverter;
+import co.cdev.agave.conversion.PassThroughParamConverter;
+
 public class ConfigurationGeneratorTest {
 
     private File rootDir;
@@ -21,7 +24,7 @@ public class ConfigurationGeneratorTest {
         URL rootUrl = getClass().getClassLoader().getResource(".");
         Assert.assertNotNull(rootUrl);
         rootDir = new File(rootUrl.toURI());
-        configGenerator = new ConfigGeneratorImpl();
+        configGenerator = new ConfigGeneratorImpl(rootDir);
     }
     
     @Test
@@ -30,8 +33,8 @@ public class ConfigurationGeneratorTest {
     }
     
     @Test
-    public void testScanForHandlers() throws Exception {
-        Config config = configGenerator.scanClassesWithinRootDirectory(rootDir);
+    public void testGenerateConfig() throws Exception {
+        Config config = configGenerator.generateConfig();
         
         assertFalse(config.getCandidatesFor("/login").isEmpty());
         assertFalse(config.getCandidatesFor("/aliased").isEmpty());
@@ -44,6 +47,23 @@ public class ConfigurationGeneratorTest {
         assertFalse(config.getCandidatesFor("/overloaded/${param}").isEmpty());
         
         assertEquals(9, config.size());
+    }
+    
+    @Test
+    public void testGenerateConfig_expectNamedParametersWithConvertersToBeNamed() throws Exception {
+        Config config = configGenerator.generateConfig();
+        
+        for (HandlerDescriptor handlerDescriptor : config.getCandidatesFor("/has/named/params/${something}/${aNumber}")) {
+            ParamDescriptor paramDescriptor = handlerDescriptor.getParamDescriptors().get(0);
+            assertEquals(String.class, paramDescriptor.getParameterClass());
+            assertEquals("something", paramDescriptor.getName());
+            assertEquals(PassThroughParamConverter.class, paramDescriptor.getConverterClass());
+            
+            paramDescriptor = handlerDescriptor.getParamDescriptors().get(1);
+            assertEquals(int.class, paramDescriptor.getParameterClass());
+            assertEquals("aNumber", paramDescriptor.getName());
+            assertEquals(IntegerParamConverter.class, paramDescriptor.getConverterClass());
+        }
     }
     
 }

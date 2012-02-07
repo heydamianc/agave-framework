@@ -85,8 +85,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withURIParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(String.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(String.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(String.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(String.class, "two", null));
         
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
@@ -103,8 +103,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withRequestParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(String.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(String.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(String.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(String.class, "two", null));
         
         requestParams.put("one", new String[] {"cat"});
         requestParams.put("two", new String[] {"possum"});
@@ -121,8 +121,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withURIParamsOverridingRequestParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(String.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(String.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(String.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(String.class, "two", null));
         
         uriParams.put("one", "cat");
         uriParams.put("two", "possum");
@@ -142,8 +142,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withImplicitConvertedURIParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(Integer.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(Double.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(Integer.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(Double.class, "two", null));
         
         uriParams.put("one", "1");
         uriParams.put("two", "2.0");
@@ -160,8 +160,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testCollectParameters_withImplicitConvertedRequestParams() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(Integer.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(Double.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(Integer.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(Double.class, "two", null));
         
         requestParams.put("one", new String[] {"1"});
         requestParams.put("two", new String[] {"2.0"});
@@ -178,8 +178,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testPopulate_withNullRequestParameters() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(Integer.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(Double.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(Integer.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(Double.class, "two", null));
 
         requestParams.put("one", null);
         requestParams.put("two", null);
@@ -196,8 +196,8 @@ public class MapPopulatorTest {
     
     @Test
     public void testPopulate_withNullRequestParametersForPrimitiveArguments() throws Exception {
-        paramDescriptors.add(new ParamDescriptorImpl(int.class, "one"));
-        paramDescriptors.add(new ParamDescriptorImpl(double.class, "two"));
+        paramDescriptors.add(new ParamDescriptorImpl(int.class, "one", null));
+        paramDescriptors.add(new ParamDescriptorImpl(double.class, "two", null));
 
         requestParams.put("one", null);
         requestParams.put("two", null);

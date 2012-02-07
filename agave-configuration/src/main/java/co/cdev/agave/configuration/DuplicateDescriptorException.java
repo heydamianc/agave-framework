@@ -42,7 +42,7 @@ public class DuplicateDescriptorException extends AgaveConfigurationException {
             HandlerDescriptor added) {
         super("Failed to register a duplicate handler mapping, ("
                 + added.getURIPattern().toString() + ", "
-                + added.getMethod().toString() + ") for "
+                + added.getHttpMethod().toString() + ") for "
                 + added.getHandlerClass().getName()
                 + ".  Handler is already mapped in "
                 + existing.getHandlerClass().getName() + ".");

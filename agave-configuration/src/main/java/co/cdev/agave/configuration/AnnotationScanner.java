@@ -47,13 +47,13 @@ public class AnnotationScanner implements AnnotationVisitor {
     private ScanResult scanResult;
 
     public AnnotationScanner(Collection<ScanResult> scanResults,
-            String className, String methodName, String methodDescriptor,
-            String annotationDescriptor) {
+                             String className, 
+                             String methodName,
+                             String methodDescriptor,
+                             String annotationDescriptor) {
+        
         this.scanResults = scanResults;
         this.scanResult = new ScanResultImpl();
-        
-        // TODO I'm pretty sure this won't work on Windows
-        
         this.scanResult.setClassName(className.replace("/", "."));
         this.scanResult.setMethodName(methodName);
         this.scanResult.setMethod(HttpMethod.ANY);

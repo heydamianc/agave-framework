@@ -55,31 +55,31 @@ public final class RequestMatcherImpl implements RequestMatcher {
 
     @Override
     public HandlerDescriptor findMatch(HttpServletRequest request) {
-        for (HandlerDescriptor descriptor : config) {
-            URIPatternMatcher patternMatcher = new URIPatternMatcherImpl(descriptor.getURIPattern());
+        for (HandlerDescriptor handlerDescriptor : config) {
+            URIPatternMatcher patternMatcher = new URIPatternMatcherImpl(handlerDescriptor.getURIPattern());
             boolean matches = request != null && request.getMethod() != null && patternMatcher.matches(request);
             
             if (matches) {
                 HttpMethod method = HttpMethod.valueOf(request.getMethod().toUpperCase());
                 
-                matches &= descriptor.getMethod().matches(method);
+                matches &= handlerDescriptor.getHttpMethod().matches(method);
                 
-                if (!descriptor.getParamDescriptors().isEmpty()) {
+                if (!handlerDescriptor.getParamDescriptors().isEmpty()) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> requestParams = request.getParameterMap();
                     
-                    URIParamExtractor extractor = new URIParamExtractorImpl(descriptor.getURIPattern());
+                    URIParamExtractor extractor = new URIParamExtractorImpl(handlerDescriptor.getURIPattern());
                     Map<String, String> uriParams = extractor.extractParams(request);
                     
-                    for (ParamDescriptor param : descriptor.getParamDescriptors()) {
-                        String paramName = param.getName();
+                    for (ParamDescriptor paramDescriptor : handlerDescriptor.getParamDescriptors()) {
+                        String paramName = paramDescriptor.getName();
                         matches &= requestParams.containsKey(paramName) || uriParams.containsKey(paramName);
                     }
                 }
             }
             
             if (matches) {
-                return descriptor;
+                return handlerDescriptor;
             }
         }
         return null;

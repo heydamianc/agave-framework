@@ -74,7 +74,7 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
             
             if (value != null) {
                 StringParamConverter<?> converter = null;
-                Class<? extends StringParamConverter<?>> converterClass = paramDescriptor.getConverter();
+                Class<? extends StringParamConverter<?>> converterClass = paramDescriptor.getConverterClass();
                 
                 if (converterClass != null) {
                     try {
@@ -85,7 +85,7 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
                         throw new AgaveConversionException(ex);
                     }
                 } else {
-                    converter = (StringParamConverter<?>) determineMostAppropriateConverter(paramDescriptor.getType());
+                    converter = (StringParamConverter<?>) determineMostAppropriateConverter(paramDescriptor.getParameterClass());
                 }
                 
                 if (converter != null) {
@@ -95,11 +95,11 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
             }
             
             if (value == null 
-                    && (paramDescriptor.getType() == int.class
-                    || paramDescriptor.getType() == long.class
-                    || paramDescriptor.getType() == short.class
-                    || paramDescriptor.getType() == float.class
-                    || paramDescriptor.getType() == double.class)) {
+                    && (paramDescriptor.getParameterClass() == int.class
+                    || paramDescriptor.getParameterClass() == long.class
+                    || paramDescriptor.getParameterClass() == short.class
+                    || paramDescriptor.getParameterClass() == float.class
+                    || paramDescriptor.getParameterClass() == double.class)) {
                 namedArguments.put(paramDescriptor.getName(), 0);
             } else {
                 namedArguments.put(paramDescriptor.getName(), value);

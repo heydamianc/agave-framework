@@ -105,12 +105,9 @@ public class AgaveFilterTest extends AbstractFunctionalTest {
 
 	@Test
 	public void testOverrideClassesDirectory() throws Exception {
-		File targetDir = new File(getClass().getResource("/co").toURI());
-		AgaveFilter filter = scanRootDir();
-		Assert.assertFalse(targetDir.getAbsolutePath().equals(filter.getClassesDirectory().getAbsolutePath()));
-
-		System.setProperty("classesDirectory", targetDir.getAbsolutePath());
-		filter = scanRootDir();
+	    File targetDir = new File(getClass().getResource("/").toURI());
+	    System.setProperty("classesDirectory", targetDir.getAbsolutePath());
+		AgaveFilter filter = scanRootDir();		
 		Assert.assertEquals(targetDir.getAbsolutePath(), filter.getClassesDirectory().getAbsolutePath());
 	}
     

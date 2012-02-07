@@ -66,11 +66,15 @@ public class MethodScanner extends EmptyVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         AnnotationVisitor annotationVisitor = null;
+        
         if (visible && desirableAnnotations.contains(desc)) {
             annotationVisitor = new AnnotationScanner(scanResults,
-                    handlerClassName, handlerMethodName,
-                    handlerMethodDescriptor, desc);
+                                                      handlerClassName,
+                                                      handlerMethodName,
+                                                      handlerMethodDescriptor, 
+                                                      desc);
         }
+        
         return annotationVisitor;
     }
 }

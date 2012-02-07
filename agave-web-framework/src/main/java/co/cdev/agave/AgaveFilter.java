@@ -108,7 +108,7 @@ public class AgaveFilter implements Filter {
         if (configReaderParameter != null) {
             configGenerator = (ConfigGenerator) Class.forName(configReaderParameter).newInstance();
         } else {
-            configGenerator = new ConfigGeneratorImpl();
+            configGenerator = new ConfigGeneratorImpl(classesDirectory);
         }
 
         return configGenerator;
@@ -180,7 +180,7 @@ public class AgaveFilter implements Filter {
         try {
             classesDirectory = provideClassesDirectory(filterConfig);
             configGenerator = provideConfigGenerator(filterConfig);
-            config = configGenerator.scanClassesWithinRootDirectory(classesDirectory);
+            config = configGenerator.generateConfig();
             
             lifecycleHooks = provideLifecycleHooks(filterConfig);
             requestMatcher = provideRequestMatcher(filterConfig);
@@ -216,9 +216,9 @@ public class AgaveFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        HandlerDescriptor descriptor = requestMatcher.findMatch(request);
+        HandlerDescriptor handlerDescriptor = requestMatcher.findMatch(request);
         
-        if (descriptor != null) {
+        if (handlerDescriptor != null) {
             
             // Wrap the request if necessary so that the uploaded content can be accessed like
             // regular string parameters
@@ -234,16 +234,16 @@ public class AgaveFilter implements Filter {
             HttpSession session = request.getSession(true);
             RoutingContext routingContext = new RoutingContext(servletContext, request, response, session);
 
-            if (lifecycleHooks.beforeFilteringRequest(descriptor, routingContext)) {
+            if (lifecycleHooks.beforeFilteringRequest(handlerDescriptor, routingContext)) {
                 return;
             }
 
             LOGGER.log(Level.FINE, "Handling requests to \"{0}\" with \"{1}\"", new Object[] {
                 request.getServletPath(),
-                descriptor.getHandlerMethod()
+                handlerDescriptor.getHandlerMethod()
             });
             
-            URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(descriptor.getURIPattern());
+            URIParamExtractor uriParamExtractor = new URIParamExtractorImpl(handlerDescriptor.getURIPattern());
             Map<String, String> uriParams = uriParamExtractor.extractParams(request);
 
             Object formInstance = null;
@@ -251,18 +251,18 @@ public class AgaveFilter implements Filter {
             // Attempt to pull a form instance out of the session, stored from a
             // previous workflow phase
             
-            if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
-                formInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
+            if (handlerDescriptor.getWorkflowName() != null && !handlerDescriptor.initiatesWorkflow()) {
+                formInstance = session.getAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
             }
 
             // Create a form instance
             
             if (formInstance == null) {
-                formInstance = formFactory.createFormInstance(servletContext, descriptor);
+                formInstance = formFactory.createFormInstance(servletContext, handlerDescriptor);
 
-                if (descriptor.getFormClass() != null && formInstance == null) {
+                if (handlerDescriptor.getFormClass() != null && formInstance == null) {
                     throw new FormException(String.format("Unable to create instance of \"%s\" with \"%s\"",
-                            descriptor.getFormClass().getName(),
+                            handlerDescriptor.getFormClass().getName(),
                             handlerFactory.getClass().getName()));
                 }
             }
@@ -271,11 +271,11 @@ public class AgaveFilter implements Filter {
             // beyond the HandlerContext, it is assumed that it will be a form object.
             
             if (formInstance != null) {
-                if (descriptor.initiatesWorkflow()) {
-                    session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX, formInstance);
+                if (handlerDescriptor.initiatesWorkflow()) {
+                    session.setAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX, formInstance);
                 }
 
-                if (lifecycleHooks.beforeHandlingRequest(descriptor, formInstance, routingContext)) {
+                if (lifecycleHooks.beforeHandlingRequest(handlerDescriptor, formInstance, routingContext)) {
                     return;
                 }
 
@@ -293,7 +293,7 @@ public class AgaveFilter implements Filter {
                         formPopulator.populate(formInstance);
                     }
                     
-                    formPopulator = new URIParamFormPopulator(request, descriptor, uriParams);
+                    formPopulator = new URIParamFormPopulator(request, handlerDescriptor, uriParams);
                     formPopulator.populate(formInstance);
                 } catch (NoSuchMethodException ex) {
                     throw new FormException(ex);
@@ -307,7 +307,7 @@ public class AgaveFilter implements Filter {
                     throw new FormException(ex);
                 }
 
-                if (lifecycleHooks.afterInitializingForm(descriptor, formInstance, routingContext)) {
+                if (lifecycleHooks.afterInitializingForm(handlerDescriptor, formInstance, routingContext)) {
                     return;
                 }
             }
@@ -316,7 +316,7 @@ public class AgaveFilter implements Filter {
             // from either the URI path or the request params.  URI params override request params.
             
             LinkedHashMap<String, Object> arguments = null;
-            List<ParamDescriptor> paramDescriptors = descriptor.getParamDescriptors();
+            List<ParamDescriptor> paramDescriptors = handlerDescriptor.getParamDescriptors();
             
             if (formInstance == null && !paramDescriptors.isEmpty()) {
                 
@@ -340,7 +340,7 @@ public class AgaveFilter implements Filter {
                 // Now that the argument order has been established, populate
                 // the actual values
                 
-                MapPopulator argumentPopulator = new MapPopulatorImpl(request, uriParams, descriptor);
+                MapPopulator argumentPopulator = new MapPopulatorImpl(request, uriParams, handlerDescriptor);
                 
                 try {
                     argumentPopulator.populate(arguments);
@@ -354,28 +354,28 @@ public class AgaveFilter implements Filter {
             // Attempt to pull a handler from a previous workflow phase out of
             // the session
             
-            if (descriptor.getWorkflowName() != null && !descriptor.initiatesWorkflow()) {
-                handlerInstance = session.getAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
+            if (handlerDescriptor.getWorkflowName() != null && !handlerDescriptor.initiatesWorkflow()) {
+                handlerInstance = session.getAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
             }
 
             // Create a handler
             
             if (handlerInstance == null) {
-                handlerInstance = handlerFactory.createHandlerInstance(servletContext, descriptor);
+                handlerInstance = handlerFactory.createHandlerInstance(servletContext, handlerDescriptor);
 
                 if (handlerInstance == null) {
                     throw new HandlerException(String.format("Unable to create instance of \"%s\" with \"%s\"",
-                            descriptor.getHandlerClass().getName(), handlerFactory.getClass().getName()));
+                            handlerDescriptor.getHandlerClass().getName(), handlerFactory.getClass().getName()));
                 }
             }
 
             // Initiate a new workflow if necessary
             
-            if (descriptor.initiatesWorkflow()) {
-                session.setAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
+            if (handlerDescriptor.initiatesWorkflow()) {
+                session.setAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX, handlerInstance);
             }
 
-            if (lifecycleHooks.beforeHandlingRequest(descriptor, handlerInstance, routingContext)) {
+            if (lifecycleHooks.beforeHandlingRequest(handlerDescriptor, handlerInstance, routingContext)) {
                 return;
             }
 
@@ -387,10 +387,10 @@ public class AgaveFilter implements Filter {
             
             try {
                 if (formInstance != null) {
-                    if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance, routingContext, formInstance);
+                    if (handlerDescriptor.getHandlerMethod().getReturnType() != null) {
+                        result = handlerDescriptor.getHandlerMethod().invoke(handlerInstance, routingContext, formInstance);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, routingContext, formInstance);
+                        handlerDescriptor.getHandlerMethod().invoke(handlerInstance, routingContext, formInstance);
                     }
                 } else if (arguments != null) {
                     Object[] actualArguments = new Object[arguments.size() + 1];
@@ -403,16 +403,16 @@ public class AgaveFilter implements Filter {
                         actualArguments[i++] = arguments.get(name);
                     }
                     
-                    if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance, actualArguments);
+                    if (handlerDescriptor.getHandlerMethod().getReturnType() != null) {
+                        result = handlerDescriptor.getHandlerMethod().invoke(handlerInstance, actualArguments);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, actualArguments);
+                        handlerDescriptor.getHandlerMethod().invoke(handlerInstance, actualArguments);
                     }
                 } else {
-                    if (descriptor.getHandlerMethod().getReturnType() != null) {
-                        result = descriptor.getHandlerMethod().invoke(handlerInstance, routingContext);
+                    if (handlerDescriptor.getHandlerMethod().getReturnType() != null) {
+                        result = handlerDescriptor.getHandlerMethod().invoke(handlerInstance, routingContext);
                     } else {
-                        descriptor.getHandlerMethod().invoke(handlerInstance, routingContext);
+                        handlerDescriptor.getHandlerMethod().invoke(handlerInstance, routingContext);
                     }
                 }
             } catch (InvocationTargetException ex) {
@@ -426,25 +426,25 @@ public class AgaveFilter implements Filter {
                     throw new HandlerException(ex.getMessage(), ex.getCause());
                 }
             } catch (IllegalAccessException ex) {
-                throw new HandlerException(descriptor, ex);
+                throw new HandlerException(handlerDescriptor, ex);
             }
 
             // Complete a workflow and flushes the referenced attributes from
             // the session
-            if (descriptor.completesWorkflow()) {
-                session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
-                session.removeAttribute(descriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
+            if (handlerDescriptor.completesWorkflow()) {
+                session.removeAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
+                session.removeAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
             }
 
             // Determine a destination
-            if (descriptor.getHandlerMethod().getReturnType() != null && result != null && !response.isCommitted()) {
+            if (handlerDescriptor.getHandlerMethod().getReturnType() != null && result != null && !response.isCommitted()) {
                 URI uri = null;
                 boolean redirect = false;
 
                 if (result instanceof DestinationImpl) {
                     Destination destination = (Destination) result;
 
-                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, destination, routingContext)) {
+                    if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, destination, routingContext)) {
                         return;
                     }
 
@@ -458,12 +458,12 @@ public class AgaveFilter implements Filter {
                             redirect = destination.getRedirect();
                         }
                     } catch (URISyntaxException ex) {
-                        throw new DestinationException(destination, descriptor, ex);
+                        throw new DestinationException(destination, handlerDescriptor, ex);
                     }
                 } else if (result instanceof URI) {
                     uri = (URI) result;
 
-                    if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, uri, routingContext)) {
+                    if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, uri, routingContext)) {
                         return;
                     }
 
@@ -483,7 +483,7 @@ public class AgaveFilter implements Filter {
                     request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
             } else {
-                if (lifecycleHooks.afterHandlingRequest(descriptor, handlerInstance, routingContext)) {
+                if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, routingContext)) {
                     return;
                 }
             }

@@ -29,6 +29,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -41,12 +43,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.URIPatternImpl;
 import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.HandlerDescriptorImpl;
+import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.configuration.ParamDescriptorImpl;
-import co.cdev.agave.configuration.ScanResult;
-import co.cdev.agave.configuration.ScanResultImpl;
+import co.cdev.agave.configuration.RoutingContext;
+import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
 
 @SuppressWarnings("serial")
@@ -56,22 +60,44 @@ public class HandlerRegistryTest {
     private Config config;
     private RequestMatcher registry;
     private HttpServletRequest request;
+    private Class<?> handlerClass;
 
     @Before
-    public void setup() {
+    public void setUp() throws SecurityException, NoSuchMethodException {
         request = context.mock(HttpServletRequest.class);
         config = context.mock(Config.class);
         registry = new RequestMatcherImpl(config);
+        handlerClass = SampleHandler.class;
     }
 
     @Test
     public void testMatches() throws Exception {
+        final Method handlerMethod = handlerClass.getMethod("login", RoutingContext.class, LoginForm.class);
+        
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/some/path"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/some/path", SampleHandler.class.getName(), "login")));
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/other/path", SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/some/path"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/other/path"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
             }}.iterator()));
         }});
 
@@ -83,12 +109,32 @@ public class HandlerRegistryTest {
     
     @Test
     public void testMatches_withOverloadedHandlerDescriptors() throws Exception {
+        final Method handlerMethod = handlerClass.getMethod("overloaded", RoutingContext.class);
+        
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/overloaded/blah"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/overloaded"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/overloaded/${param}"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
             }}.iterator()));
         }});
         
@@ -100,12 +146,32 @@ public class HandlerRegistryTest {
         
     @Test
     public void testMatches_withOverloadedHandlerDescriptors2() throws Exception {
+        final Method handlerMethod = handlerClass.getMethod("overloaded", RoutingContext.class);
+        
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/overloaded"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded/${param}", SampleHandler.class.getName(), "overloaded")));
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/overloaded", SampleHandler.class.getName(), "overloaded")));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/overloaded/${param}"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/overloaded"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
             }}.iterator()));
         }});
         
@@ -117,11 +183,22 @@ public class HandlerRegistryTest {
     
     @Test
     public void testMatches_withAnyHttpMethodAndMatchingURI() throws Exception {
+        final Method handlerMethod = handlerClass.getMethod("login", RoutingContext.class, LoginForm.class);
+        
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/login"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/login"), 
+                        HttpMethod.ANY, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
             }}.iterator()));
         }});
         
@@ -130,14 +207,25 @@ public class HandlerRegistryTest {
         assertNotNull(descriptor);
         assertEquals("/login", descriptor.getURIPattern().toString());
     }
-  
+
     @Test
     public void testMatches_withMatchingMethodAndMatchingURI() throws Exception {
+        final Method handlerMethod = handlerClass.getMethod("login", RoutingContext.class, LoginForm.class);
+        
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/login"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/login"), 
+                        HttpMethod.ANY, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
             }}.iterator()));
         }});
       
@@ -149,11 +237,22 @@ public class HandlerRegistryTest {
   
   @Test
   public void testMatches_withNonMatchingMethodAndMatchingURI() throws Exception {
+      final Method handlerMethod = handlerClass.getMethod("login", RoutingContext.class, LoginForm.class);
+      
       context.checking(new Expectations() {{
           allowing(request).getMethod(); will(returnValue("GET"));
           allowing(request).getServletPath(); will(returnValue("/login"));
           allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-              add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+              add(new HandlerDescriptorImpl(
+                      handlerClass, 
+                      handlerMethod, 
+                      new URIPatternImpl("/login"), 
+                      HttpMethod.POST, 
+                      false,
+                      false,
+                      (String) null, 
+                      (Class<?>) null, 
+                      new ArrayList<ParamDescriptor>()));
           }}.iterator()));
       }});
   
@@ -164,11 +263,22 @@ public class HandlerRegistryTest {
 
     @Test
     public void testMatches_withMatchingMethodAndNonMatchingURI() throws Exception {
+        final Method handlerMethod = handlerClass.getMethod("login", RoutingContext.class, LoginForm.class);
+        
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getServletPath(); will(returnValue("/logout"));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(new HandlerDescriptorImpl(getClass().getClassLoader(), new ScanResultImpl("/login", HttpMethod.GET, SampleHandler.class.getName(), "login")));
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/login"), 
+                        HttpMethod.GET, 
+                        false,
+                        false,
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>()));
             }}.iterator()));
         }});
         
@@ -178,54 +288,70 @@ public class HandlerRegistryTest {
     }
   
     @Test
-    public void testMatches_withParameterDescriptors() throws Exception {
+    public void testMatches_withParams() throws Exception {
         final Map<String, Object> parameterMap = new HashMap<String, Object>();
-        parameterMap.put("color", "orange");
-        parameterMap.put("always", Boolean.FALSE);
+        parameterMap.put("something", "something");
+        parameterMap.put("aNumber", Integer.valueOf(32));
       
-        ScanResult scanResult = new ScanResultImpl("/favorites", HttpMethod.GET, SampleHandler.class.getName(), "login");
-        final HandlerDescriptorImpl favorites = new HandlerDescriptorImpl(getClass().getClassLoader(), scanResult) {{
-            addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
-            addParamDescriptor(new ParamDescriptorImpl(Boolean.class, "always"));
-        }};
+        final Method handlerMethod = handlerClass.getMethod("hasNamedParams", RoutingContext.class, String.class, int.class);
         
         context.checking(new Expectations() {{
             allowing(request).getMethod(); will(returnValue("GET"));
-            allowing(request).getServletPath(); will(returnValue("/favorites"));
+            allowing(request).getServletPath(); will(returnValue("/has/params"));
             allowing(request).getParameterMap(); will(returnValue(parameterMap));
             allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-                add(favorites);
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/has/params"), 
+                        HttpMethod.ANY, 
+                        false, 
+                        false, 
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>() {{
+                            add(new ParamDescriptorImpl(String.class, "something", null));
+                            add(new ParamDescriptorImpl(int.class, "aNumber", null));
+                        }}));
             }}.iterator()));
         }});
         
         HandlerDescriptor descriptor = registry.findMatch(request);
         
         assertNotNull(descriptor);
-        assertEquals("/favorites", descriptor.getURIPattern().toString());
+        assertEquals("/has/params", descriptor.getURIPattern().toString());
     }
-  
-  @Test
-  public void testMatches_withURIParameters() throws Exception {
-      final Map<String, Object> parameterMap = new HashMap<String, Object>();
-      
-      ScanResult scanResult = new ScanResultImpl("/favorites/${color}", HttpMethod.GET, SampleHandler.class.getName(), "login");
-      final HandlerDescriptorImpl favoriteColor = new HandlerDescriptorImpl(getClass().getClassLoader(), scanResult) {{
-          addParamDescriptor(new ParamDescriptorImpl(String.class, "color"));
-      }};
-      
-      context.checking(new Expectations() {{
-          allowing(request).getMethod(); will(returnValue("GET"));
-          allowing(request).getServletPath(); will(returnValue("/favorites/orange"));
-          allowing(request).getParameterMap(); will(returnValue(parameterMap));
-          allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
-              add(favoriteColor);
-          }}.iterator()));
-      }});
-      
-      HandlerDescriptor descriptor = registry.findMatch(request);
-      
-      assertNotNull(descriptor);
-      assertEquals("/favorites/${color}", descriptor.getURIPattern().toString());
-  }
+    
+    @Test
+    public void testMatches_withURIParametersDescriptors() throws Exception {
+        final Map<String, Object> parameterMap = new HashMap<String, Object>();
+        final Method handlerMethod = handlerClass.getMethod("hasNamedParams", RoutingContext.class, String.class, int.class);
+        
+        context.checking(new Expectations() {{
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/has/named/params/something/32"));
+            allowing(request).getParameterMap(); will(returnValue(parameterMap));
+            allowing(config).iterator(); will(returnValue(new TreeSet<HandlerDescriptor>() {{
+                add(new HandlerDescriptorImpl(
+                        handlerClass, 
+                        handlerMethod, 
+                        new URIPatternImpl("/has/named/params/${something}/${aNumber}"), 
+                        HttpMethod.ANY, 
+                        false, 
+                        false, 
+                        (String) null, 
+                        (Class<?>) null, 
+                        new ArrayList<ParamDescriptor>() {{
+                            add(new ParamDescriptorImpl(String.class, "something", null));
+                            add(new ParamDescriptorImpl(int.class, "aNumber", null));
+                        }}));
+            }}.iterator()));
+        }});
+        
+        HandlerDescriptor descriptor = registry.findMatch(request);
+        
+        assertNotNull(descriptor);
+        assertEquals("/has/named/params/${something}/${aNumber}", descriptor.getURIPattern().toString());
+    }
     
 }

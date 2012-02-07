@@ -53,8 +53,8 @@ public class GenerateConfigMojo extends AbstractMojo {
             outputDirectory.mkdirs();
         }
         
-        loadCompiledClasses();
-        Config config = createConfigFromCompiledClasses();
+        ClassLoader classLoader = loadCompiledClasses();
+        Config config = createConfigFromCompiledClasses(classLoader);
         writeConfigToFile(config, new File(outputDirectory, outputFilename));
     }
 
@@ -70,7 +70,7 @@ public class GenerateConfigMojo extends AbstractMojo {
         return outputFilename;
     }
 
-    private void loadCompiledClasses() throws MojoExecutionException {
+    private ClassLoader loadCompiledClasses() throws MojoExecutionException {
         List<URL> urls = new ArrayList<URL>();
         
         try {
@@ -93,7 +93,6 @@ public class GenerateConfigMojo extends AbstractMojo {
         };
         
         ClassLoader compiledClassLoader = new URLClassLoader(urls.toArray(new URL[] {}), getClass().getClassLoader());
-        Thread.currentThread().setContextClassLoader(compiledClassLoader);
         
         try {
             for (Object compileSourceRootPath : project.getCompileSourceRoots()) {
@@ -108,6 +107,8 @@ public class GenerateConfigMojo extends AbstractMojo {
         } catch (ClassNotFoundException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+        
+        return compiledClassLoader;
     }
     
     private String getClassNameForFile(File javaFile, File compileSourceRoot) {
@@ -134,13 +135,13 @@ public class GenerateConfigMojo extends AbstractMojo {
         return className.toString();
     }
     
-    private Config createConfigFromCompiledClasses() throws MojoExecutionException {
-        ConfigGenerator configGenerator = new ConfigGeneratorImpl();
+    private Config createConfigFromCompiledClasses(ClassLoader classLoader) throws MojoExecutionException {
+        ConfigGenerator configGenerator = new ConfigGeneratorImpl(classLoader, rootDirectory);
         Config config = null;
         
         try {
             getLog().info("Scanning for classes under " + rootDirectory.getAbsolutePath());
-            config = configGenerator.scanClassesWithinRootDirectory(rootDirectory);
+            config = configGenerator.generateConfig();
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

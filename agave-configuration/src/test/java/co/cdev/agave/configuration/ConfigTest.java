@@ -7,46 +7,104 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import co.cdev.agave.HttpMethod;
+import co.cdev.agave.URIPatternImpl;
+import co.cdev.agave.sample.LoginForm;
 import co.cdev.agave.sample.SampleHandler;
-    
+
 public class ConfigTest {
     
+    private Class<?> handlerClass;
+    private Method handlerMethod;
     private Config config;
-    
+
     @Before
-    public void setUp() {
+    public void setUp() throws SecurityException, NoSuchMethodException {
+        handlerClass = SampleHandler.class;
+        handlerMethod = handlerClass.getMethod("login", RoutingContext.class, LoginForm.class);
         config = new ConfigImpl();
     }
     
     @Test(expected = DuplicateDescriptorException.class)
     public void testAddDescriptor() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
+
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
     }
 
-    @Test
     public void testAddDescriptor_withUniqueDescriptors() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
 
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
+        
         assertEquals(2, config.size());
     }
     
     @Test
     public void testWriteToOutputStream() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
+
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         
@@ -67,10 +125,27 @@ public class ConfigTest {
     
     @Test
     public void testWriteToFile() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(),
-                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
+
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         
@@ -90,10 +165,27 @@ public class ConfigTest {
     
     @Test
     public void testReadFromInputStream() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
+
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         File configFile = new File(rootDir, "testWriteToOutputStream.conf");
@@ -101,21 +193,38 @@ public class ConfigTest {
         
         Config anotherConfig = new ConfigImpl();
         
-        assertEquals(0, anotherConfig.getCandidatesFor("/pattern").size());
+        assertEquals(0, anotherConfig.getCandidatesFor("/login").size());
         
         anotherConfig.readFromInputStream(new FileInputStream(configFile));
         
-        assertEquals(2, anotherConfig.getCandidatesFor("/pattern").size());
+        assertEquals(2, anotherConfig.getCandidatesFor("/login").size());
         
         configFile.delete();
     }
     
     @Test
     public void testReadFromFile() throws Exception {
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.GET, SampleHandler.class.getName(), "login")));
-        config.addHandlerDescriptor(new HandlerDescriptorImpl(getClass().getClassLoader(), 
-                new ScanResultImpl("/pattern", HttpMethod.POST, SampleHandler.class.getName(), "login")));
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
+
+        config.addHandlerDescriptor(new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.POST, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>()));
         
         File rootDir = new File(getClass().getResource(".").toURI());
         File configFile = new File(rootDir, "testReadFromFile.conf");
@@ -123,11 +232,11 @@ public class ConfigTest {
         
         Config anotherConfig = new ConfigImpl();
         
-        assertEquals(0, anotherConfig.getCandidatesFor("/pattern").size());
+        assertEquals(0, anotherConfig.getCandidatesFor("/login").size());
         
         anotherConfig.readFromFile(configFile);
         
-        assertEquals(2, anotherConfig.getCandidatesFor("/pattern").size());
+        assertEquals(2, anotherConfig.getCandidatesFor("/login").size());
         
         configFile.delete();
     }

@@ -25,20 +25,16 @@
  */
 package co.cdev.agave.configuration;
 
-import java.lang.annotation.Annotation;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
-import co.cdev.agave.CompletesWorkflow;
 import co.cdev.agave.HttpMethod;
-import co.cdev.agave.InitiatesWorkflow;
-import co.cdev.agave.Param;
-import co.cdev.agave.ResumesWorkflow;
 import co.cdev.agave.URIPattern;
-import co.cdev.agave.URIPatternImpl;
-import co.cdev.agave.conversion.PassThroughParamConverter;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -49,232 +45,70 @@ import co.cdev.agave.conversion.PassThroughParamConverter;
 public class HandlerDescriptorImpl implements HandlerDescriptor {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger.getLogger(HandlerDescriptorImpl.class.getName());
     
-    private URIPattern uriPattern;
-    private HttpMethod method;
-    private List<ParamDescriptor> paramDescriptors; // only applicable when @Param is used
+    private final Class<?>              handlerClass;
+    private final Method                handlerMethod;
+    private final URIPattern            uriPattern;
+    private final HttpMethod            httpMethod;
+    private final boolean               initiatesWorkflow;
+    private final boolean               completesWorkflow;
+    private final String                workflowName;
+    private final Class<?>              formClass;
+    private final List<ParamDescriptor> paramDescriptors;
     
-    private Class<?> handlerClass;
-    private Method handlerMethod;
-    private Class<?> formClass;
-    private boolean initiatesWorkflow;
-    private boolean completesWorkflow;
-    private String workflowName;
-    
-    private List<Class<?>> expectedParameterClasses;
-
-    public HandlerDescriptorImpl(ClassLoader classLoader, ScanResult scanResult) 
-            throws ClassNotFoundException, InvalidHandlerException {
-        
-        uriPattern       = new URIPatternImpl(scanResult.getUri());
-        method           = scanResult.getMethod();
-        handlerClass     = Class.forName(scanResult.getClassName(), true, classLoader);
-        paramDescriptors = Collections.emptyList();
-        
-        expectedParameterClasses = new ArrayList<Class<?>>(scanResult.getParameterClassNames().size());
-        
-        for (String parameterClassName : scanResult.getParameterClassNames()) {
-            if (parameterClassName.equals(boolean.class.getCanonicalName())) {
-                expectedParameterClasses.add(boolean.class);
-            } else if (parameterClassName.equals(Boolean.class.getCanonicalName())) {
-                expectedParameterClasses.add(Boolean.class);
-            } else if (parameterClassName.equals(byte.class.getCanonicalName())) {
-                expectedParameterClasses.add(byte.class);
-            } else if (parameterClassName.equals(Byte.class.getCanonicalName())) {
-                expectedParameterClasses.add(Byte.class);
-            } else if (parameterClassName.equals(char.class.getCanonicalName())) {
-                expectedParameterClasses.add(char.class);
-            } else if (parameterClassName.equals(Character.class.getCanonicalName())) {
-                expectedParameterClasses.add(Character.class);
-            } else if (parameterClassName.equals(double.class.getCanonicalName())) {
-                expectedParameterClasses.add(double.class);
-            } else if (parameterClassName.equals(Double.class.getCanonicalName())) {
-                expectedParameterClasses.add(Double.class);
-            } else if (parameterClassName.equals(float.class.getCanonicalName())) {
-                expectedParameterClasses.add(float.class);
-            } else if (parameterClassName.equals(Float.class.getCanonicalName())) {
-                expectedParameterClasses.add(Float.class);
-            } else if (parameterClassName.equals(int.class.getCanonicalName())) {
-                expectedParameterClasses.add(int.class);
-            } else if (parameterClassName.equals(Integer.class.getCanonicalName())) {
-                expectedParameterClasses.add(Integer.class);
-            } else if (parameterClassName.equals(long.class.getCanonicalName())) {
-                expectedParameterClasses.add(long.class);
-            } else if (parameterClassName.equals(Long.class.getCanonicalName())) {
-                expectedParameterClasses.add(Long.class);
-            } else if (parameterClassName.equals(short.class.getCanonicalName())) {
-                expectedParameterClasses.add(short.class);
-            } else if (parameterClassName.equals(Short.class.getCanonicalName())) {
-                expectedParameterClasses.add(Short.class);
-            } else {
-                expectedParameterClasses.add(Class.forName(parameterClassName, true, classLoader));
-            }
-        }
+    public HandlerDescriptorImpl(Class<?>              handlerClass,
+                                 Method                handlerMethod,
+                                 URIPattern            uriPattern,
+                                 HttpMethod            httpMethod,
+                                 boolean               initiatesWorkflow,
+                                 boolean               completesWorkflow,
+                                 String                workflowName,
+                                 Class<?>              formClass,
+                                 List<ParamDescriptor> paramDescriptors) {
+        this.handlerClass = handlerClass;
+        this.handlerMethod = handlerMethod;
+        this.uriPattern = uriPattern;
+        this.httpMethod = httpMethod;
+        this.initiatesWorkflow = initiatesWorkflow;
+        this.completesWorkflow = completesWorkflow;
+        this.workflowName = workflowName;
+        this.formClass = formClass;
+        this.paramDescriptors = paramDescriptors;
     }
 
-    @Override
-    public void locateAnnotatedHandlerMethods(ScanResult scanResult) throws InvalidHandlerException {
-        for (Method m : handlerClass.getMethods()) {
-            
-            initiatesWorkflow = false;
-            completesWorkflow = false;
-            workflowName = null;
-            
-            // Interpret workflow-related information
-            
-            if (m.getAnnotation(InitiatesWorkflow.class) != null) {
-                initiatesWorkflow = true;
-                completesWorkflow = false;
-                workflowName = m.getAnnotation(InitiatesWorkflow.class).value();
-            } else if (m.getAnnotation(CompletesWorkflow.class) != null) {
-                initiatesWorkflow = false;
-                completesWorkflow = true;
-                workflowName = m.getAnnotation(CompletesWorkflow.class).value();
-            } else if (m.getAnnotation(ResumesWorkflow.class) != null) {
-                initiatesWorkflow = false;
-                completesWorkflow = false;
-                workflowName = m.getAnnotation(ResumesWorkflow.class).value();
-            }
-            
-            // Determine if the handler method matches the scan result
-            
-            Class<?>[] parameterTypes = m.getParameterTypes();
-            int expectedParameterCount = expectedParameterClasses.size();
-            
-            if (scanResult.getMethodName().equals(m.getName()) && expectedParameterCount == parameterTypes.length) {
-                if (parameterTypes.length == 1 && !hasAdditionalParams(m)) {
-                    handlerMethod = m;
-                    return;
-                } else if (parameterTypes.length == 2 && !hasNamedParams(m)) {
-                    handlerMethod = m;
-                    formClass = parameterTypes[1];
-                    return;
-                } else if (expectedParameterCount == parameterTypes.length) {
-                    for (int i = 1; i < parameterTypes.length; i++) {
-                        Class<?> expectedType = expectedParameterClasses.get(i);
-                        Class<?> actualType = parameterTypes[i];
-                        Annotation[] annotations = m.getParameterAnnotations()[i];
-                        
-                        if (expectedType == actualType) {
-                            try {
-                                ParamDescriptor parameterDescriptor;
-                                parameterDescriptor = createParamDescriptorIfApplicable(actualType, annotations);
-                                addParamDescriptor(parameterDescriptor);
-                            } catch (InvalidParamException ex) {
-                                throw new InvalidHandlerException(ex);
-                            }
-                        }                        
-                    }
-                    
-                    if (paramDescriptors.size() == expectedParameterCount - 1) {
-                        handlerMethod = m;
-                        return;
-                    } else {
-                        paramDescriptors.clear();
-                    }
-                }
-            }
-        }
-        
-        if (handlerMethod == null) {
-            throw new InvalidHandlerException(String.format("Unable to find handler method for %s", scanResult.getUri()));
-        }
-    }
-    
-    private ParamDescriptor createParamDescriptorIfApplicable(Class<?> paramType, Annotation[] annotations) 
-            throws InvalidParamException {
-        
-        ParamDescriptor descriptor = null;
-        
-        for (int i = 0; i < annotations.length; i++) {
-            Class<?> annotationType = annotations[i].annotationType();
-            
-            if (annotationType.isAssignableFrom(Param.class)) {
-                Param param = (Param) annotations[i];
-                String name = param.name();
-                
-                if (name == null || "".equals(name)) {
-                    name = param.value();
-                } 
-                
-                if (name != null) {
-                    descriptor = new ParamDescriptorImpl(paramType, name);
-                    
-                    if (!param.converter().equals(PassThroughParamConverter.class)) {
-                        descriptor.setConverter(param.converter());
-                    }
-                }
-                
-                if (name == null) {
-                    
-                }
-            }
-        }
-        
-        return descriptor;
-    }
-
-    protected void addParamDescriptor(ParamDescriptor paramDescriptor) {
-        if (paramDescriptors.isEmpty()) {
-            paramDescriptors = new ArrayList<ParamDescriptor>();
-        }
-        paramDescriptors.add(paramDescriptor);
-    }
-    
-    private boolean hasAdditionalParams(Method m) {
-        return m.getParameterTypes().length > 1;
-    }
-    
-    private boolean hasNamedParams(Method m) {
-        Annotation[][] annotations = m.getParameterAnnotations();
-        
-        for (int i = 1; i < annotations.length; i++) {
-            for (int j = 0; j < annotations[i].length; j++) {
-                if (annotations[i][j].annotationType() == Param.class) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    @Override
     public URIPattern getURIPattern() {
         return uriPattern;
     }
 
-    @Override
-    public HttpMethod getMethod() {
-        return method;
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
     }
 
-    @Override
     public Class<?> getHandlerClass() {
         return handlerClass;
     }
 
-    @Override
-    public Class<?> getFormClass() {
-        return formClass;
-    }
-
-    @Override
     public Method getHandlerMethod() {
         return handlerMethod;
     }
 
-    @Override
+    public Class<?> getFormClass() {
+        return formClass;
+    }
+
+    public List<ParamDescriptor> getParamDescriptors() {
+        return Collections.unmodifiableList(paramDescriptors);
+    }
+
     public boolean initiatesWorkflow() {
         return initiatesWorkflow;
     }
 
-    @Override
     public boolean completesWorkflow() {
         return completesWorkflow;
     }
-
-    @Override
+    
     public String getWorkflowName() {
         return workflowName;
     }
@@ -284,7 +118,7 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         int result = uriPattern.compareTo(that.getURIPattern());
         
         if (result == 0) {
-            result = method.ordinal() - that.getMethod().ordinal();
+            result = httpMethod.ordinal() - that.getHttpMethod().ordinal();
         }
         
         if (result == 0) {
@@ -298,13 +132,11 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (completesWorkflow ? 1231 : 1237);
+        result = prime * result + ((handlerClass == null) ? 0 : handlerClass.getCanonicalName().hashCode());
         result = prime * result + ((handlerMethod == null) ? 0 : handlerMethod.hashCode());
-        result = prime * result + (initiatesWorkflow ? 1231 : 1237);
-        result = prime * result + ((method == null) ? 0 : method.hashCode());
+        result = prime * result + ((httpMethod == null) ? 0 : httpMethod.hashCode());
         result = prime * result + ((paramDescriptors == null) ? 0 : paramDescriptors.hashCode());
         result = prime * result + ((uriPattern == null) ? 0 : uriPattern.hashCode());
-        result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
         return result;
     }
 
@@ -314,19 +146,18 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
-            return false;
         HandlerDescriptorImpl other = (HandlerDescriptorImpl) obj;
-        if (completesWorkflow != other.completesWorkflow)
+        if (handlerClass == null) {
+            if (other.handlerClass != null)
+                return false;
+        } else if (!handlerClass.getCanonicalName().equals(other.handlerClass.getCanonicalName()))
             return false;
         if (handlerMethod == null) {
             if (other.handlerMethod != null)
                 return false;
         } else if (!handlerMethod.equals(other.handlerMethod))
             return false;
-        if (initiatesWorkflow != other.initiatesWorkflow)
-            return false;
-        if (method != other.method)
+        if (httpMethod != other.httpMethod)
             return false;
         if (paramDescriptors == null) {
             if (other.paramDescriptors != null)
@@ -338,30 +169,76 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
                 return false;
         } else if (!uriPattern.equals(other.uriPattern))
             return false;
-        if (workflowName == null) {
-            if (other.workflowName != null)
-                return false;
-        } else if (!workflowName.equals(other.workflowName))
-            return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
-        return "HandlerMethodDescriptorImpl [pattern=" + uriPattern + ", method=" + method + "]";
-    }
-
-    @Override
-    public List<ParamDescriptor> getParamDescriptors() {
-        return paramDescriptors;
-    }
-
-    public boolean isCompletesWorkflow() {
-        return completesWorkflow;
-    }
-
-    public boolean isInitiatesWorkflow() {
-        return initiatesWorkflow;
+        return "HandlerDescriptorImpl [handlerClass=" + handlerClass + ", handlerMethod=" + handlerMethod
+                + ", uriPattern=" + uriPattern + ", httpMethod=" + httpMethod + ", initiatesWorkflow="
+                + initiatesWorkflow + ", completesWorkflow=" + completesWorkflow + ", workflowName=" + workflowName
+                + ", formClass=" + formClass + ", paramDescriptors=" + paramDescriptors + "]";
     }
     
+    // Serialization
+    
+    private Object writeReplace() {
+        return new SerializationProxy(this);
+    }
+    
+    private void readObject(ObjectInputStream in) throws InvalidObjectException {
+        throw new InvalidObjectException("Expected SerializationProxy");
+    }
+    
+    private static class SerializationProxy implements Serializable {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private final Class<?>              handlerClass;
+        private final String                handlerMethodName;
+        private final Class<?>[]            handlerMethodParameterClasses;
+        private final URIPattern            uriPattern;
+        private final HttpMethod            httpMethod;
+        private final boolean               initiatesWorkflow;
+        private final boolean               completesWorkflow;
+        private final String                workflowName;
+        private final Class<?>              formClass;
+        private final List<ParamDescriptor> paramDescriptors;
+        
+        SerializationProxy(HandlerDescriptorImpl handlerDescriptor) {
+            handlerClass = handlerDescriptor.getHandlerClass();
+            handlerMethodName = handlerDescriptor.getHandlerMethod().getName();
+            handlerMethodParameterClasses = handlerDescriptor.getHandlerMethod().getParameterTypes();
+            uriPattern = handlerDescriptor.getURIPattern();
+            httpMethod = handlerDescriptor.getHttpMethod();
+            initiatesWorkflow = handlerDescriptor.initiatesWorkflow();
+            completesWorkflow = handlerDescriptor.completesWorkflow();
+            workflowName = handlerDescriptor.getWorkflowName();
+            formClass = handlerDescriptor.getFormClass();
+            paramDescriptors = handlerDescriptor.getParamDescriptors();
+        }
+        
+        private Object readResolve() {
+            Method handlerMethod = null;
+            
+            try {
+                handlerMethod = handlerClass.getMethod(handlerMethodName, handlerMethodParameterClasses);
+            } catch (Exception e) {
+                LOGGER.severe("Unable to find handler method named " + handlerMethodName);
+            }
+            
+            HandlerDescriptor handlerDescriptor = new HandlerDescriptorImpl(handlerClass,
+                                                                            handlerMethod,
+                                                                            uriPattern,
+                                                                            httpMethod,
+                                                                            initiatesWorkflow,
+                                                                            completesWorkflow,
+                                                                            workflowName,
+                                                                            formClass,
+                                                                            paramDescriptors);
+            
+            return handlerDescriptor;
+        }
+    }
+
 }
