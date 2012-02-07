@@ -25,6 +25,7 @@
  */
 package co.cdev.agave;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -36,6 +37,9 @@ import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
+import co.cdev.agave.configuration.Config;
+import co.cdev.agave.configuration.ConfigGenerator;
+import co.cdev.agave.configuration.ConfigGeneratorImpl;
 import co.cdev.agave.internal.DelegatingServletInputStream;
 import co.cdev.agave.internal.FormFactoryImpl;
 import co.cdev.agave.internal.HandlerFactoryImpl;
@@ -52,11 +56,8 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/login/"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
+            allowing(request).getServletPath(); will(returnValue("/login/"));
+            allowing(request).getMethod(); will(returnValue("GET"));
         }});
 
         filter.init(filterConfig);
@@ -77,14 +78,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/login"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
 
             one(request).setAttribute("loggedIn", Boolean.TRUE);
             one(response).setStatus(400);
@@ -98,14 +94,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/login"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/login"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
 
             one(request).setAttribute("loggedIn", Boolean.FALSE);
             one(response).setStatus(400);
@@ -123,14 +114,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/throws/nullPointerException"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/throws/nullPointerException"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
         }});
 
         filter.init(filterConfig);
@@ -145,14 +131,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
             emulateServletContainer(parameterMap);
 
             context.checking(new Expectations() {{
-                allowing(request).getServletPath();
-                will(returnValue("/throws/ioException"));
-
-                allowing(request).getMethod();
-                will(returnValue("GET"));
-
-                allowing(request).getContentType();
-                will(returnValue("application/x-www-form-urlencoded"));
+                allowing(request).getServletPath(); will(returnValue("/throws/ioException"));
+                allowing(request).getMethod(); will(returnValue("GET"));
+                allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             }});
 
             filter.init(filterConfig);
@@ -167,14 +148,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/lacks/form"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/lacks/form"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
 
             one(request).setAttribute("noErrors", Boolean.TRUE);
         }});
@@ -191,14 +167,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/no/matching/pattern"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/no/matching/pattern"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
 
             one(filterChain).doFilter(request, response);
         }});
@@ -217,17 +188,10 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
 
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/uri-params/damian/secret"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
-
-            allowing(request).getParameterMap();
-            will(returnValue(parameterMap));
+            allowing(request).getServletPath(); will(returnValue("/uri-params/damian/secret"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getParameterMap(); will(returnValue(parameterMap));
 
             one(request).setAttribute("username", "damian");
             one(request).setAttribute("password", "secret");
@@ -245,14 +209,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
         
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/has/named/params/someValue/5"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/has/named/params/someValue/5"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             
             one(request).setAttribute("something", "someValue");
             one(request).setAttribute("aNumber", Integer.valueOf(5));
@@ -270,14 +229,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
         
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/overloaded"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/overloaded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             
             one(request).setAttribute("overloadedWithNoAdditionalParams", Boolean.TRUE);
         }});
@@ -293,14 +247,9 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(parameterMap);
         
         context.checking(new Expectations() {{
-            allowing(request).getServletPath();
-            will(returnValue("/overloaded/something"));
-
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getServletPath(); will(returnValue("/overloaded/something"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             
             one(request).setAttribute("overloadedWithAdditionalParams", "something");
         }});
@@ -320,23 +269,12 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
             emulateServletContainer(new HashMap<String, String[]>());
 
             context.checking(new Expectations() {{
-                allowing(request).getContentType();
-                will(returnValue(contentType));
-                
-                allowing(request).getParameterMap();
-                will(returnValue(new HashMap<String, String[]>()));
-                
-                allowing(request).getServletPath();
-                will(returnValue("/upload/file"));
-                
-                allowing(request).getMethod();
-                will(returnValue("GET"));
-                
-                allowing(request).getContentType();
-                will(returnValue("multipart/form-data"));
-                
-                allowing(request).getInputStream();
-                will(returnValue(new DelegatingServletInputStream(in)));
+                allowing(request).getContentType(); will(returnValue(contentType));
+                allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+                allowing(request).getServletPath(); will(returnValue("/upload/file"));
+                allowing(request).getMethod(); will(returnValue("GET"));
+                allowing(request).getContentType(); will(returnValue("multipart/form-data"));
+                allowing(request).getInputStream(); will(returnValue(new DelegatingServletInputStream(in)));
 
                 one(request).setAttribute("file", false);
                 one(response).setStatus(400);
@@ -356,21 +294,12 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getParameterMap();
-            will(returnValue(new HashMap<String, String[]>()));
-            
-            allowing(request).getServletPath();
-            will(returnValue("/shout/hello"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-            
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
-            
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getServletPath(); will(returnValue("/shout/hello"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             allowing(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
-            allowing(response).isCommitted();
-            will(returnValue(true));
+            allowing(response).isCommitted(); will(returnValue(true));
         }});
 
         filter.init(filterConfig);
@@ -384,23 +313,13 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getParameterMap();
-            will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getServletPath(); will(returnValue("/say/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(response).isCommitted(); will(returnValue(false));
             
-            allowing(request).getServletPath();
-            will(returnValue("/say/hello"));
-            
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-            
-            allowing(response).isCommitted();
-            will(returnValue(false));
-
-            one(request).getRequestDispatcher("/say.jsp?said=hello");
-            will(returnValue(requestDispatcher));
+            one(request).getRequestDispatcher("/say.jsp?said=hello"); will(returnValue(requestDispatcher));
             one(requestDispatcher).forward(request, response);
         }});
 
@@ -415,23 +334,12 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getContextPath();
-            will(returnValue("/app"));
-            
-            allowing(request).getParameterMap();
-            will(returnValue(new HashMap<String, String[]>()));
-            
-            allowing(request).getServletPath();
-            will(returnValue("/say/hello"));
-            
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
-            
-            allowing(request).getMethod();
-            will(returnValue("POST"));
-            
-            allowing(response).isCommitted();
-            will(returnValue(false));
+            allowing(request).getContextPath(); will(returnValue("/app"));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getServletPath(); will(returnValue("/say/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("POST"));
+            allowing(response).isCommitted(); will(returnValue(false));
 
             one(response).sendRedirect("/app/say.jsp?said=hello");
         }});
@@ -447,23 +355,12 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getContextPath();
-            will(returnValue("/app"));
-            
-            allowing(request).getParameterMap();
-            will(returnValue(new HashMap<String, String[]>()));
-            
-            allowing(request).getServletPath();
-            will(returnValue("/whisper/hello"));
-            
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-            
-            allowing(response).isCommitted();
-            will(returnValue(false));
+            allowing(request).getContextPath(); will(returnValue("/app"));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getServletPath(); will(returnValue("/whisper/hello"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(response).isCommitted(); will(returnValue(false));
 
             one(response).sendRedirect("/app/whisper.jsp?how=very%20softly%20&amp;%20sweetly&said=hello");
 
@@ -480,20 +377,11 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         emulateServletContainer(new HashMap<String, String[]>());
 
         context.checking(new Expectations() {{
-            allowing(request).getParameterMap();
-            will(returnValue(new HashMap<String, String[]>()));
-            
-            allowing(request).getServletPath();
-            will(returnValue("/proclaim/hello"));
-            
-            allowing(request).getMethod();
-            will(returnValue("GET"));
-            
-            allowing(request).getContentType();
-            will(returnValue("application/x-www-form-urlencoded"));
-            
-            allowing(response).isCommitted();
-            will(returnValue(false));
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getServletPath(); will(returnValue("/proclaim/hello"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(response).isCommitted(); will(returnValue(false));
 
             one(response).sendRedirect("http://www.utexas.edu/");
         }});
@@ -510,5 +398,140 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         Assert.assertTrue(filter.getHandlerFactory() instanceof HandlerFactoryImpl);
         Assert.assertTrue(filter.getFormFactory() instanceof FormFactoryImpl);
     }
+    
+    
+    private void generateConfigFile() throws Exception {
+        File rootDir = new File(getClass().getResource("/").toURI());
+        File configFile = new File(rootDir, "agave.conf");
+        
+        ConfigGenerator configGenerator = new ConfigGeneratorImpl(rootDir);
+        Config config = configGenerator.generateConfig();
+        config.writeToFile(configFile);
+    }
+    
+    private void deleteConfigFile() throws Exception {
+        File rootDir = new File(getClass().getResource("/").toURI());
+        File configFile = new File(rootDir, "agave.conf");
+        configFile.delete();
+    }
+    
+    @Test
+    public void testInit_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testInit();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testDoFilter_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testDoFilter();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testMultipartRequest_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testMultipartRequest();
+        deleteConfigFile();
+    }
 
+    @Test
+    public void testNamedParams_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testNamedParams();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testNullDestination_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testNullDestination();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testPotentiallyAmbiguousHandlerMethods_expectLongerMatch_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testPotentiallyAmbiguousHandlerMethods_expectLongerMatch();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testPotentiallyAmbiguousHandlerMethods_expectShorterMatch_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testPotentiallyAmbiguousHandlerMethods_expectShorterMatch();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testReturnDestinationWithExplicitRedirect_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testReturnDestinationWithExplicitRedirect();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testReturnDestinationWithForward_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testReturnDestinationWithForward();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testReturnDestinationWithRedirectAfterPost_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testReturnDestinationWithRedirectAfterPost();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testReturnURI_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testReturnURI();
+        deleteConfigFile();
+    }
+    
+    @Test(expected = IOException.class)
+    public void testThrowsIOException_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testThrowsIOException();
+        deleteConfigFile();
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void testThrowsNullPointerException_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testThrowsNullPointerException();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testURIParamsOverrideRequestParams_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testURIParamsOverrideRequestParams();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testWithNoMatchingPattern_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testWithNoMatchingPattern();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testWithNoUserSuppliedInstanceFactory_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testWithNoUserSuppliedInstanceFactory();
+        deleteConfigFile();
+    }
+    
+    @Test
+    public void testWithoutForm_withConfigFilePresent() throws Exception {
+        generateConfigFile();
+        testWithoutForm();
+        deleteConfigFile();
+    }
+    
 }

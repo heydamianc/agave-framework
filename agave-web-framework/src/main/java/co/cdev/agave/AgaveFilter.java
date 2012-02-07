@@ -50,6 +50,7 @@ import javax.servlet.http.HttpSession;
 import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.ConfigGenerator;
 import co.cdev.agave.configuration.ConfigGeneratorImpl;
+import co.cdev.agave.configuration.ConfigImpl;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.configuration.RoutingContext;
@@ -77,9 +78,9 @@ public class AgaveFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AgaveFilter.class.getName());
     private static final String WORKFLOW_HANDLER_SUFFIX = "-handler";
     private static final String WORKFLOW_FORM_SUFFIX = "-form";
+    private static final String DEFAULT_CONFIG_FILE_NAME = "agave.conf";
     
     private FilterConfig filterConfig;
-    private ConfigGenerator configGenerator;
     private Config config;
     private LifecycleHooks lifecycleHooks;
     private File classesDirectory;
@@ -98,20 +99,6 @@ public class AgaveFilter implements Filter {
         }
 
         return classesDir;
-    }
-    
-    protected ConfigGenerator provideConfigGenerator(FilterConfig filterConfig)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        ConfigGenerator configGenerator = null;
-        String configReaderParameter = filterConfig.getInitParameter("configReader");
-
-        if (configReaderParameter != null) {
-            configGenerator = (ConfigGenerator) Class.forName(configReaderParameter).newInstance();
-        } else {
-            configGenerator = new ConfigGeneratorImpl(classesDirectory);
-        }
-
-        return configGenerator;
     }
     
     protected LifecycleHooks provideLifecycleHooks(FilterConfig filterConfig)
@@ -157,21 +144,6 @@ public class AgaveFilter implements Filter {
 
         return factory;
     }
-    
-    protected RequestMatcher provideRequestMatcher(FilterConfig filterConfig)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        RequestMatcher requestMatcher = null;
-
-        String requestMatcherParameter = filterConfig.getInitParameter("requestMatcher");
-
-        if (requestMatcherParameter != null) {
-            requestMatcher = (RequestMatcher) Class.forName(requestMatcherParameter).newInstance();
-        } else {
-            requestMatcher = new RequestMatcherImpl(config);
-        }
-
-        return requestMatcher;
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -179,11 +151,22 @@ public class AgaveFilter implements Filter {
 
         try {
             classesDirectory = provideClassesDirectory(filterConfig);
-            configGenerator = provideConfigGenerator(filterConfig);
-            config = configGenerator.generateConfig();
-            
             lifecycleHooks = provideLifecycleHooks(filterConfig);
-            requestMatcher = provideRequestMatcher(filterConfig);
+            
+            File configFile = new File(classesDirectory, DEFAULT_CONFIG_FILE_NAME);
+            
+            if (configFile.exists() && configFile.canRead()) {
+                config = new ConfigImpl();
+                config.readFromFile(configFile);
+            } else {
+                ConfigGenerator configGenerator = new ConfigGeneratorImpl(classesDirectory);
+                config = configGenerator.generateConfig();
+            }
+            
+            requestMatcher = new RequestMatcherImpl(config);
+            
+            // These need to support dependency injection
+            
             handlerFactory = provideHandlerFactory(filterConfig);
             handlerFactory.initialize();
             formFactory = provideFormFactory(filterConfig);            
@@ -199,7 +182,6 @@ public class AgaveFilter implements Filter {
     @Override
     public void destroy() {
         classesDirectory = null;
-        configGenerator = null;
         config = null;
         filterConfig = null;
         requestMatcher = null;
@@ -502,10 +484,6 @@ public class AgaveFilter implements Filter {
     
     public Config getConfig() {
         return config;
-    }
-    
-    public ConfigGenerator getConfigGenerator() {
-        return configGenerator;
     }
     
     public RequestMatcher getRequestMatcher() {

@@ -77,11 +77,11 @@ public abstract class AbstractFunctionalTest {
     protected void emulateServletContainer(final Map<String, String[]> parameters)
         throws URISyntaxException {
 
-        final URL rootUrl = getClass().getClassLoader().getResource(".");
-        
+        final URL rootURL = getClass().getResource("/");
+
         // When the filter scans for handlers, this will redirect it to use the test class path
         
-        final String realPath = new File(rootUrl.toURI()).getAbsolutePath();
+        final String realPath = new File(rootURL.toURI()).getAbsolutePath();
 
         context.checking(new Expectations() {{
             allowing(servletContext).getRealPath("/WEB-INF/classes"); will(returnValue(realPath));
@@ -97,7 +97,7 @@ public abstract class AbstractFunctionalTest {
         }});
     }
     
-    protected AgaveFilter scanRootDir() throws Exception {
+    protected AgaveFilter scanForHandlerMethods() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         
         Logger agaveFilterLogger = LogManager.getLogManager().getLogger(AgaveFilter.class.getName());
