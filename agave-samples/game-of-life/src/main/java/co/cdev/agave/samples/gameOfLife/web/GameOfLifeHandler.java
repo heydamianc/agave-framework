@@ -31,15 +31,15 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import co.cdev.agave.Destination;
-import co.cdev.agave.Destinations;
 import co.cdev.agave.Route;
 import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.exception.HandlerException;
 import co.cdev.agave.samples.gameOfLife.simulation.Board;
 import co.cdev.agave.samples.gameOfLife.simulation.Cell;
 import co.cdev.agave.samples.gameOfLife.simulation.State;
 import co.cdev.agave.samples.gameOfLife.simulation.Tick;
+import co.cdev.agave.web.Destination;
+import co.cdev.agave.web.Destinations;
+import co.cdev.agave.web.HandlerException;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

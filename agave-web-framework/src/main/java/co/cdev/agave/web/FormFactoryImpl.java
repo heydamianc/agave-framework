@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Damian Carrillo
+ * Copyright (c) 2011, ddc
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,36 +23,52 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.guice;
+package co.cdev.agave.web;
 
-import co.cdev.agave.configuration.HandlerDescriptor;
-import co.cdev.agave.web.HandlerException;
-import co.cdev.agave.web.HandlerFactory;
-
-import com.google.inject.Injector;
 import javax.servlet.ServletContext;
 
-/**
- *
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
- */
-public class InjectionHandlerFactory implements HandlerFactory {
-    
-    private Injector injector;
+import co.cdev.agave.configuration.HandlerDescriptor;
 
+/**
+ * 
+ * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
+ */
+public class FormFactoryImpl implements FormFactory {
+
+    /**
+     * Initializes this {@code HandlerFactory} if necessary. This method is
+     * called in the {@link AgaveFilter#init(javax.servlet.FilterConfig)}
+     * method, so it is an effective way to set up a mechanism for providing
+     * dependency injection or hooking into an IOC library.
+     */
     @Override
     public void initialize() {
         // do nothing
     }
 
+    /**
+     * Creates a new instance of a form object for the handler class
+     * specified in the supplied descriptor by calling its default constructor.
+     * 
+     * @param descriptor
+     *            the handler descriptor that describes which form to
+     *            instantiate.
+     * @throws FormError
+     *             when a form instance failed to be instantiated
+     */
     @Override
-    public Object createHandlerInstance(ServletContext servletContext, HandlerDescriptor handlerDescriptor) 
-            throws HandlerException {
-        return injector.getInstance(handlerDescriptor.getHandlerClass());
+    public Object createFormInstance(ServletContext servletContext,
+            HandlerDescriptor descriptor) throws FormException {
+        Object formInstance = null;
+        if (descriptor.getFormClass() != null) {
+            try {
+                formInstance = descriptor.getFormClass().newInstance();
+            } catch (InstantiationException ex) {
+                throw new FormException(descriptor, ex);
+            } catch (IllegalAccessException ex) {
+                throw new FormException(descriptor, ex);
+            }
+        }
+        return formInstance;
     }
-
-    public void setInjector(Injector injector) {
-        this.injector = injector;
-    }
-    
 }

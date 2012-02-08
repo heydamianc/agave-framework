@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,46 +23,31 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.web;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import javax.servlet.http.HttpServletResponse;
-
-import co.cdev.agave.Route;
-import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.web.Destination;
-import co.cdev.agave.web.Destinations;
+import javax.servlet.ServletException;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class SayHandler {
+public class AgaveWebException extends ServletException {
 
-    @Route("/say/${phrase}")
-    public Destination say(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.create("/say.jsp");
-        dest.addParameter("said", form.getPhrase());
-        return dest;
+    private static final long serialVersionUID = 1L;
+
+    public AgaveWebException() {
+        super();
     }
-    
-    @Route("/whisper/${phrase}")
-    public Destination whisper(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.redirect("/whisper.jsp");
-        dest.addParameter("said", form.getPhrase());
-        dest.addParameter("how", "very softly & sweetly");
-        return dest;
+
+    public AgaveWebException(String message, Throwable rootCause) {
+        super(message, rootCause);
     }
-    
-    @Route("/proclaim/${phrase}")
-    public URI proclaim(RoutingContext context) throws URISyntaxException {
-        return new URI("http", "//www.utexas.edu/", null);
+
+    public AgaveWebException(String message) {
+        super(message);
     }
-    
-    @Route("/shout/${phrase}")
-    public void shout(RoutingContext context) {
-        context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+    public AgaveWebException(Throwable rootCause) {
+        super(rootCause);
     }
-    
+
 }

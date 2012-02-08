@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2008, Damian Carrillo
+/*
+ * Copyright (c) 2012, Damian Carrillo
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted 
@@ -23,46 +23,14 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.web;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
-import co.cdev.agave.Route;
-import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.web.Destination;
-import co.cdev.agave.web.Destinations;
+public interface URIParamExtractor {
 
-/**
- * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
- */
-public class SayHandler {
-
-    @Route("/say/${phrase}")
-    public Destination say(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.create("/say.jsp");
-        dest.addParameter("said", form.getPhrase());
-        return dest;
-    }
-    
-    @Route("/whisper/${phrase}")
-    public Destination whisper(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.redirect("/whisper.jsp");
-        dest.addParameter("said", form.getPhrase());
-        dest.addParameter("how", "very softly & sweetly");
-        return dest;
-    }
-    
-    @Route("/proclaim/${phrase}")
-    public URI proclaim(RoutingContext context) throws URISyntaxException {
-        return new URI("http", "//www.utexas.edu/", null);
-    }
-    
-    @Route("/shout/${phrase}")
-    public void shout(RoutingContext context) {
-        context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-    }
+    public Map<String, String> extractParams(HttpServletRequest request);
     
 }

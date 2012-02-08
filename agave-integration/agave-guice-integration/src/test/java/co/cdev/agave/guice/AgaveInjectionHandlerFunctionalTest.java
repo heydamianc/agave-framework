@@ -12,8 +12,8 @@ import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 
-import co.cdev.agave.AbstractFunctionalTest;
 import co.cdev.agave.sample.SampleHandler;
+import co.cdev.agave.web.AbstractFunctionalTest;
 
 import com.google.inject.Binding;
 import com.google.inject.Injector;

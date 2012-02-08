@@ -23,46 +23,52 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.web;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.io.InputStream;
 
-import javax.servlet.http.HttpServletResponse;
-
-import co.cdev.agave.Route;
-import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.web.Destination;
-import co.cdev.agave.web.Destinations;
+import javax.servlet.ServletInputStream;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class SayHandler {
+public class DelegatingServletInputStream extends ServletInputStream {
 
-    @Route("/say/${phrase}")
-    public Destination say(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.create("/say.jsp");
-        dest.addParameter("said", form.getPhrase());
-        return dest;
+	InputStream in;
+	
+	public DelegatingServletInputStream(InputStream in) {
+		this.in = in;
+	}
+	
+    public int available() throws IOException {
+        return in.available();
     }
-    
-    @Route("/whisper/${phrase}")
-    public Destination whisper(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.redirect("/whisper.jsp");
-        dest.addParameter("said", form.getPhrase());
-        dest.addParameter("how", "very softly & sweetly");
-        return dest;
+    public void close() throws IOException {
+        in.close();
     }
-    
-    @Route("/proclaim/${phrase}")
-    public URI proclaim(RoutingContext context) throws URISyntaxException {
-        return new URI("http", "//www.utexas.edu/", null);
+    public void mark(int readlimit) {
+        in.mark(readlimit);
     }
-    
-    @Route("/shout/${phrase}")
-    public void shout(RoutingContext context) {
-        context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+    public boolean markSupported() {
+        return in.markSupported();
     }
-    
+    public int read() throws IOException {
+        return in.read();
+    }
+    public int read(byte[] bs) throws IOException {
+        return in.read(bs);
+    }
+    public int read(byte[] bs, int off, int len) throws IOException {
+        return in.read(bs, off, len);
+    }
+    public void reset() throws IOException {
+        in.reset();
+    }
+    public long skip(long n) throws IOException {
+        return in.skip(n);
+    }
+    public int readLine(byte[] b, int off, int len) {
+        return -1;
+    }
 }

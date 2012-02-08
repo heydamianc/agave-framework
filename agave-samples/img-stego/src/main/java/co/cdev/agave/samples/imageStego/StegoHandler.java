@@ -29,11 +29,11 @@ import java.io.File;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import co.cdev.agave.Destination;
-import co.cdev.agave.Destinations;
 import co.cdev.agave.Part;
 import co.cdev.agave.Route;
 import co.cdev.agave.configuration.RoutingContext;
+import co.cdev.agave.web.Destination;
+import co.cdev.agave.web.Destinations;
 
 public class StegoHandler {
 

@@ -28,12 +28,12 @@ package co.cdev.agave.sample;
 import java.util.Collection;
 import java.util.Collections;
 
-import co.cdev.agave.Destination;
-import co.cdev.agave.Destinations;
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.Route;
 import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.exception.AgaveWebException;
+import co.cdev.agave.web.AgaveWebException;
+import co.cdev.agave.web.Destination;
+import co.cdev.agave.web.Destinations;
 
 /**
  * Assume there is a domain object named {@code Ticket} whose role is to grant

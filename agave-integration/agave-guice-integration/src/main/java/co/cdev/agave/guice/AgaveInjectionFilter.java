@@ -10,20 +10,15 @@ import java.util.Set;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
-import co.cdev.agave.AgaveFilter;
-import co.cdev.agave.HandlerFactory;
 import co.cdev.agave.configuration.HandlerDescriptor;
+import co.cdev.agave.web.AgaveFilter;
+import co.cdev.agave.web.HandlerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-/**
- * Integrates Agave's handler and form creation into Guice's dependency injection mechanism.
- * 
- * @author <a href="damiancarrillo@gmail.com>Damian Carrillo</a>
- */
 public class AgaveInjectionFilter extends AgaveFilter {
 
     public static final String PARENT_INJECTOR = AgaveInjectionFilter.class.getName() + ".PARENT_INJECTOR";
@@ -61,30 +56,12 @@ public class AgaveInjectionFilter extends AgaveFilter {
         super.destroy();
     }
 
-    /**
-     * Provides a default implementation of a handlerFactory if it has not been overridden in the
-     * web.xml.
-     * 
-     * @param config The filter configuration 
-     * @return the handler factory
-     * 
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
-     * @throws IllegalAccessException 
-     */
     @Override
     protected HandlerFactory provideHandlerFactory(FilterConfig config) throws ClassNotFoundException, 
             InstantiationException, IllegalAccessException {
         return injectionHandlerFactory;
     }
     
-    /**
-     * Provides additional Guice modules for the whole web application.  The handlers are included
-     * automatically, so there is no need to rebind them.  The default implementation returns an
-     * empty list, however you can override this and supply more modules.
-     * 
-     * @return all Guice modules
-     */
     protected Collection<Module> provideGuiceModules() {
         return Collections.emptyList();
     }

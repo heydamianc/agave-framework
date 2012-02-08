@@ -35,6 +35,7 @@ import co.cdev.agave.configuration.RoutingContext;
 import co.cdev.agave.conversion.IntegerParamConverter;
 
 public class SampleHandler {
+    
     @Route("/login")
     public void login(RoutingContext context, LoginForm loginForm) throws ServletException, IOException {
         if ("damian".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {

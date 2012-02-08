@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,46 +23,47 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.web;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import javax.servlet.http.HttpServletResponse;
-
-import co.cdev.agave.Route;
-import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.web.Destination;
-import co.cdev.agave.web.Destinations;
+import co.cdev.agave.configuration.HandlerDescriptor;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class SayHandler {
+public class FormException extends AgaveWebException {
+    
+    private static final long serialVersionUID = 1L;
 
-    @Route("/say/${phrase}")
-    public Destination say(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.create("/say.jsp");
-        dest.addParameter("said", form.getPhrase());
-        return dest;
+    public FormException() {
+        super();
+    }
+
+    public FormException(String message, Throwable rootCause) {
+        super(message, rootCause);
+    }
+
+    public FormException(String message) {
+        super(message);
+    }
+
+    public FormException(Throwable rootCause) {
+        super(rootCause);
+    }
+
+    // TODO internationalize this
+    public FormException(HandlerDescriptor descriptor, InstantiationException rootCause) {
+        this(getErrorMessage(descriptor), rootCause);
+            
     }
     
-    @Route("/whisper/${phrase}")
-    public Destination whisper(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.redirect("/whisper.jsp");
-        dest.addParameter("said", form.getPhrase());
-        dest.addParameter("how", "very softly & sweetly");
-        return dest;
+    // TODO internationalize this
+    public FormException(HandlerDescriptor descriptor, IllegalAccessException rootCause) {
+        this(getErrorMessage(descriptor), rootCause);
     }
     
-    @Route("/proclaim/${phrase}")
-    public URI proclaim(RoutingContext context) throws URISyntaxException {
-        return new URI("http", "//www.utexas.edu/", null);
-    }
-    
-    @Route("/shout/${phrase}")
-    public void shout(RoutingContext context) {
-        context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+    private synchronized static String getErrorMessage(HandlerDescriptor descriptor) {
+       return  "Unable to create an instance of form " + descriptor.getFormClass() + " for "
+           + descriptor.getHandlerClass().getName() + "#" + descriptor.getHandlerMethod().getName();
     }
     
 }

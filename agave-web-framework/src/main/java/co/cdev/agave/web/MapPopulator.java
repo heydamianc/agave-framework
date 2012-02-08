@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -23,46 +23,18 @@
  * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package co.cdev.agave.sample;
+package co.cdev.agave.web;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import co.cdev.agave.conversion.AgaveConversionException;
 
-import javax.servlet.http.HttpServletResponse;
-
-import co.cdev.agave.Route;
-import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.web.Destination;
-import co.cdev.agave.web.Destinations;
+import java.util.Map;
 
 /**
+ *
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class SayHandler {
+public interface MapPopulator {
 
-    @Route("/say/${phrase}")
-    public Destination say(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.create("/say.jsp");
-        dest.addParameter("said", form.getPhrase());
-        return dest;
-    }
-    
-    @Route("/whisper/${phrase}")
-    public Destination whisper(RoutingContext context, SayForm form) {
-        Destination dest = Destinations.redirect("/whisper.jsp");
-        dest.addParameter("said", form.getPhrase());
-        dest.addParameter("how", "very softly & sweetly");
-        return dest;
-    }
-    
-    @Route("/proclaim/${phrase}")
-    public URI proclaim(RoutingContext context) throws URISyntaxException {
-        return new URI("http", "//www.utexas.edu/", null);
-    }
-    
-    @Route("/shout/${phrase}")
-    public void shout(RoutingContext context) {
-        context.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-    }
+    void populate(Map<String, Object> namedArguments) throws AgaveConversionException;
     
 }
