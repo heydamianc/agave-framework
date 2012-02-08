@@ -26,7 +26,6 @@
 package co.cdev.agave.web;
 
 import java.io.IOException;
-import java.net.URI;
 
 import javax.servlet.ServletException;
 
@@ -76,17 +75,4 @@ public class DefaultLifecycleHooks implements LifecycleHooks {
         return false;
     }
 
-    @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
-            Object handlerInstance, Destination destination,
-            RoutingContext context) throws ServletException, IOException {
-        return false;
-    }
-
-    @Override
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
-            Object handlerInstance, URI destination, RoutingContext context)
-            throws ServletException, IOException {
-        return false;
-    }
 }

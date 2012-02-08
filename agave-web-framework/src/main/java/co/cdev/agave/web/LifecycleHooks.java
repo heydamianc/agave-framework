@@ -26,7 +26,6 @@
 package co.cdev.agave.web;
 
 import java.io.IOException;
-import java.net.URI;
 
 import javax.servlet.ServletException;
 
@@ -147,37 +146,4 @@ public interface LifecycleHooks {
             Object handlerInstance, RoutingContext context)
             throws ServletException, IOException;
 
-    /**
-     * Executed by the {@link AgaveFilter} after execution has been routed through the handler
-     * method, and when a destination was requested.
-     *
-     * @param descriptor the generated {@link HandlerDescriptor}
-     * @param handlerInstance The instance of the handler class
-     * @param context the handler context
-     * @param destination The destination that the handler method requested
-     * @return a truth value that indicates whether execution should halt.  See the class-level
-     *         description for more information.
-     * @throws ServletException
-     * @throws IOException
-     */
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
-            Object handlerInstance, Destination destination,
-            RoutingContext context) throws ServletException, IOException;
-
-    /**
-     * Executed by the {@link AgaveFilter} after execution has been routed through the handler
-     * method, and when a resultant URL was requested.
-     *
-     * @param descriptor the generated {@link HandlerDescriptor}
-     * @param handlerInstance The instance of the handler class
-     * @param destination the destination (redirect or forward) to end up at
-     * @param context the handler context
-     * @return a truth value that indicates whether execution should halt.  See the class-level
-     *         description for more information.
-     * @throws ServletException
-     * @throws IOException
-     */
-    public boolean afterHandlingRequest(HandlerDescriptor descriptor,
-            Object handlerInstance, URI destination, RoutingContext context)
-            throws ServletException, IOException;
 }

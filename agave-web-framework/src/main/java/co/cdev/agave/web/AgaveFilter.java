@@ -416,10 +416,10 @@ public class AgaveFilter implements Filter {
                         resultProcessor.process(result, routingContext, handlerDescriptor);
                     }
                 }
-            } else {
-                if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, routingContext)) {
-                    return;
-                }
+            }
+            
+            if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, routingContext)) {
+                return;
             }
         } else {
             chain.doFilter(req, resp);
