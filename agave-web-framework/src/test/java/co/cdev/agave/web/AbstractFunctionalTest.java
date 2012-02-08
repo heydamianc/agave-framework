@@ -48,6 +48,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 
+import co.cdev.agave.util.LoggerUtils;
 import co.cdev.agave.web.AgaveFilter;
 
 /**
@@ -117,10 +118,7 @@ public abstract class AbstractFunctionalTest {
     protected AgaveFilter createSilentAgaveFilter() throws Exception {
         AgaveFilter filter = new AgaveFilter();
         
-        Logger agaveFilterLogger = LogManager.getLogManager().getLogger(AgaveFilter.class.getName());
-        if (agaveFilterLogger != null) {
-            agaveFilterLogger.setLevel(Level.OFF);
-        }
+        LoggerUtils.silenceLoggers();
         
         return filter;
     }
