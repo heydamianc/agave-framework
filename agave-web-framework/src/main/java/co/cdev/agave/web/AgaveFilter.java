@@ -28,8 +28,8 @@ package co.cdev.agave.web;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import co.cdev.agave.HttpMethod;
 import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.ConfigGenerator;
 import co.cdev.agave.configuration.ConfigGeneratorImpl;
@@ -71,6 +70,7 @@ public class AgaveFilter implements Filter {
     private HandlerFactory handlerFactory;
     private FormFactory formFactory;
     private RequestMatcher requestMatcher;
+    private Collection<ResultProcessor> resultProcessors;
 
     protected File provideClassesDirectory(FilterConfig filterConfig)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -128,11 +128,14 @@ public class AgaveFilter implements Filter {
 
         return factory;
     }
+    
+    protected void addResultProcessors(Collection<ResultProcessor> resultTranslators) {
+        // do nothing
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
-
         try {
             classesDirectory = provideClassesDirectory(filterConfig);
             lifecycleHooks = provideLifecycleHooks(filterConfig);
@@ -155,6 +158,11 @@ public class AgaveFilter implements Filter {
             handlerFactory.initialize();
             formFactory = provideFormFactory(filterConfig);            
             formFactory.initialize();
+            
+            resultProcessors = new ArrayList<ResultProcessor>();
+            addResultProcessors(resultProcessors);
+            resultProcessors.add(new DestinationProcessor());
+            resultProcessors.add(new URIProcessor());
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
@@ -402,51 +410,11 @@ public class AgaveFilter implements Filter {
                 session.removeAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
             }
 
-            // Determine a destination
             if (handlerDescriptor.getHandlerMethod().getReturnType() != null && result != null && !response.isCommitted()) {
-                URI uri = null;
-                boolean redirect = false;
-
-                if (result instanceof DestinationImpl) {
-                    Destination destination = (Destination) result;
-
-                    if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, destination, routingContext)) {
-                        return;
+                for (ResultProcessor resultProcessor : resultProcessors) {
+                    if (resultProcessor.canProcessResult(result, routingContext, handlerDescriptor)) {
+                        resultProcessor.process(result, routingContext, handlerDescriptor);
                     }
-
-                    try {
-                        uri = new URI(null, destination.encode(filterConfig.getServletContext()), null);
-                        if (destination.getRedirect() == null) {
-                            if (HttpMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
-                                redirect = true;
-                            }
-                        } else {
-                            redirect = destination.getRedirect();
-                        }
-                    } catch (URISyntaxException ex) {
-                        throw new DestinationException(destination, handlerDescriptor, ex);
-                    }
-                } else if (result instanceof URI) {
-                    uri = (URI) result;
-
-                    if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, uri, routingContext)) {
-                        return;
-                    }
-
-                    redirect = true;
-                } else {
-                    throw new DestinationException(String.format("Invalid destination type (%s); expected either %s or %s",
-                            result.getClass().getName(), Destination.class.getName(), URI.class.getName()));
-                }
-
-                if (redirect) {
-                    String location = uri.toASCIIString();
-                    if (location.startsWith("/")) { // absolute URI
-                        location = request.getContextPath() + location;
-                    }
-                    response.sendRedirect(location);
-                } else {
-                    request.getRequestDispatcher(uri.toASCIIString()).forward(request, response);
                 }
             } else {
                 if (lifecycleHooks.afterHandlingRequest(handlerDescriptor, handlerInstance, routingContext)) {

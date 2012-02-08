@@ -82,9 +82,6 @@ public class URIPatternImpl implements URIPattern {
     protected String normalizePattern(String pattern) {
         URI uri;
         try {
-            // replace illegal characters in the pattern so that URI can do the
-            // work of normalizing the uri - hopefully nobody chooses these
-            // strings in the url :-P
             pattern = pattern.replace("${", "~~agave~~start~~delim~~");
             pattern = pattern.replace("}", "~~agave~~end~~delim~~");
             uri = new URI(pattern);

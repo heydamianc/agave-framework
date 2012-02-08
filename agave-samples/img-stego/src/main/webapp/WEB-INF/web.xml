@@ -3,7 +3,7 @@
     <display-name>img-stego</display-name>
     <filter>
         <filter-name>AgaveFilter</filter-name>
-        <filter-class>co.cdev.agave.AgaveFilter</filter-class>
+        <filter-class>co.cdev.agave.web.AgaveFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AgaveFilter</filter-name>
