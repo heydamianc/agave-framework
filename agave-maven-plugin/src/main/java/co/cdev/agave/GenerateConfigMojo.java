@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -133,8 +135,15 @@ public class GenerateConfigMojo extends AbstractMojo {
             methodRepresentation.append(handlerDescriptor.getHandlerClass().getCanonicalName()).append(".");
             methodRepresentation.append(handlerDescriptor.getHandlerMethod().getName()).append("(");
             
-            for (Class<?> parameterClass : handlerDescriptor.getHandlerMethod().getParameterTypes()) {
-                methodRepresentation.append(parameterClass.getSimpleName());
+            List<Class<?>> parameterClasses = Arrays.asList(handlerDescriptor.getHandlerMethod().getParameterTypes());
+            Iterator<Class<?>> parameterClassItr = parameterClasses.iterator();
+            
+            while (parameterClassItr.hasNext()) {
+                methodRepresentation.append(parameterClassItr.next().getSimpleName());
+                
+                if (parameterClassItr.hasNext()) {
+                    methodRepresentation.append(", ");
+                }
             }
             
             methodRepresentation.append(")");

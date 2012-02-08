@@ -55,18 +55,16 @@ public interface Destination {
 
     public abstract void setPath(String path);
 
-    public abstract Map<String, List<String>> getParameters();
+    public abstract Map<String, List<String>> getParams();
 
-    public abstract void setParameters(Map<String, List<String>> parameters);
+    public abstract void setParams(Map<String, List<String>> parameters);
 
     public abstract Boolean getRedirect();
 
     public abstract void setRedirect(Boolean redirect);
 
     /**
-     * Encodes the {@code Destination} path and available parameters. The parameters have any ampersands
-     * replaced with &{@code &amp;amp;} and parameter names and their associated values are sorted (mainly for
-     * testing purposes).
+     * Encodes the {@code Destination} path and available parameters.
      * 
      * @param context the handler context that this destination is running under
      * @return the encoded destination path and query string
