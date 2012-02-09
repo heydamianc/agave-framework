@@ -14,9 +14,9 @@ import co.cdev.agave.configuration.RoutingContext;
 public class DestinationProcessor implements ResultProcessor {
 
     public boolean canProcessResult(Object result, 
-                                      RoutingContext routingContext, 
-                                      HandlerDescriptor handlerDescriptor) {
-        return result != null && result.getClass().isAssignableFrom(Destination.class);
+                                    RoutingContext routingContext, 
+                                    HandlerDescriptor handlerDescriptor) {
+        return result != null && Destination.class.isAssignableFrom(result.getClass());
     }
     
     @Override

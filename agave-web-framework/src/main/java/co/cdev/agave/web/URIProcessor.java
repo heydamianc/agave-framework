@@ -12,16 +12,16 @@ public class URIProcessor implements ResultProcessor {
 
     @Override
     public boolean canProcessResult(Object result, 
-                                      RoutingContext routingContext,
-                                      HandlerDescriptor handlerDescriptor) {
-        return result != null && result.getClass().isAssignableFrom(URI.class);
+                                    RoutingContext routingContext,
+                                    HandlerDescriptor handlerDescriptor) {
+        return result != null && URI.class.isAssignableFrom(result.getClass());
     }
 
     @Override
     public void process(Object result,
-                          RoutingContext routingContext,
-                          HandlerDescriptor handlerDescriptor)
-                                  throws ServletException {
+                        RoutingContext routingContext,
+                        HandlerDescriptor handlerDescriptor)
+                                throws ServletException {
         String location = ((URI) result).toASCIIString();
         
         if (location.startsWith("/")) { // absolute URI
