@@ -1,38 +1,14 @@
-/*
- * Copyright (c) 2008, Damian Carrillo
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted 
- * provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this list of 
- *     conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice, this list of 
- *     conditions and the following disclaimer in the documentation and/or other materials 
- *     provided with the distribution.
- *   * Neither the name of the copyright holder's organization nor the names of its contributors 
- *     may be used to endorse or promote products derived from this software without specific 
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package co.cdev.agave.web;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,7 +46,7 @@ public class AgaveFilter implements Filter {
     private HandlerFactory handlerFactory;
     private FormFactory formFactory;
     private RequestMatcher requestMatcher;
-    private Collection<ResultProcessor> resultProcessors;
+    private SortedSet<ResultProcessor> resultProcessors;
 
     protected File provideClassesDirectory(FilterConfig filterConfig)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -128,10 +104,6 @@ public class AgaveFilter implements Filter {
 
         return factory;
     }
-    
-    protected void addResultProcessors(Collection<ResultProcessor> resultTranslators) {
-        // do nothing
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -159,13 +131,34 @@ public class AgaveFilter implements Filter {
             formFactory = provideFormFactory(filterConfig);            
             formFactory.initialize();
             
-            resultProcessors = new ArrayList<ResultProcessor>();
-            addResultProcessors(resultProcessors);
-            resultProcessors.add(new DestinationProcessor());
-            resultProcessors.add(new URIProcessor());
+            resultProcessors = new TreeSet<ResultProcessor>(new Comparator<ResultProcessor>() {
+                @Override
+                public int compare(ResultProcessor a, ResultProcessor b) {
+                    Class<?> aa = a.getClass();
+                    Class<?> bb = b.getClass();
+                    
+                    while (true) {
+                        if (aa == null) {
+                            return 1;
+                        } else if (bb == null) {
+                            return -1;
+                        }
+                        
+                        aa = aa.getSuperclass();
+                        bb = bb.getSuperclass();
+                    }
+                }
+            });
+            addResultProcessor(new DestinationProcessor());
+            addResultProcessor(new HTTPResponseProcessor());
+            addResultProcessor(new URIProcessor());
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
+    }
+    
+    protected void addResultProcessor(ResultProcessor resultProcessor) {
+        resultProcessors.add(resultProcessor);
     }
 
     /**
@@ -405,6 +398,7 @@ public class AgaveFilter implements Filter {
 
             // Complete a workflow and flushes the referenced attributes from
             // the session
+            
             if (handlerDescriptor.completesWorkflow()) {
                 session.removeAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_HANDLER_SUFFIX);
                 session.removeAttribute(handlerDescriptor.getWorkflowName() + WORKFLOW_FORM_SUFFIX);
@@ -414,6 +408,7 @@ public class AgaveFilter implements Filter {
                 for (ResultProcessor resultProcessor : resultProcessors) {
                     if (resultProcessor.canProcessResult(result, routingContext, handlerDescriptor)) {
                         resultProcessor.process(result, routingContext, handlerDescriptor);
+                        break;
                     }
                 }
             }

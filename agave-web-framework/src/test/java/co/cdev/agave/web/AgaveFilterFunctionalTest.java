@@ -25,12 +25,18 @@
  */
 package co.cdev.agave.web;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jmock.Expectations;
@@ -40,9 +46,7 @@ import org.junit.Test;
 import co.cdev.agave.configuration.Config;
 import co.cdev.agave.configuration.ConfigGenerator;
 import co.cdev.agave.configuration.ConfigGeneratorImpl;
-import co.cdev.agave.web.AgaveFilter;
-import co.cdev.agave.web.FormFactoryImpl;
-import co.cdev.agave.web.HandlerFactoryImpl;
+import co.cdev.agave.sample.StringResponseProcessor;
 
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
@@ -399,7 +403,6 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         Assert.assertTrue(filter.getFormFactory() instanceof FormFactoryImpl);
     }
     
-    
     private void generateConfigFile() throws Exception {
         File rootDir = new File(getClass().getResource("/").toURI());
         File configFile = new File(rootDir, "agave.conf");
@@ -532,6 +535,40 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         generateConfigFile();
         testWithoutForm();
         deleteConfigFile();
+    }
+    
+    @Test
+    public void testWithCustomResponseProcessor() throws Exception {
+        AgaveFilter filter = new AgaveFilter() {
+            @Override
+            public void init(FilterConfig filterConfig) throws ServletException {
+                super.init(filterConfig);
+                super.addResultProcessor(new StringResponseProcessor());
+            }
+        };
+        
+        emulateServletContainer(new HashMap<String, String[]>());
+        filter.init(filterConfig);
+        
+        final StringWriter resultWriter = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(resultWriter);
+        
+        context.checking(new Expectations() {{
+            allowing(request).getParameterMap(); will(returnValue(new HashMap<String, String[]>()));
+            allowing(request).getServletPath(); will(returnValue("/text"));
+            allowing(request).getMethod(); will(returnValue("GET"));
+            allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
+            allowing(response).isCommitted(); will(returnValue(false));
+
+            allowing(response).setContentType("text/plain");
+            allowing(response).setStatus(StatusCode._200_Ok.getNumericCode());
+            allowing(response).getWriter(); will(returnValue(printWriter));
+        }});
+
+        filter.init(filterConfig);
+        filter.doFilter(request, response, filterChain);
+        
+        assertEquals("Text!", resultWriter.toString());
     }
     
 }
