@@ -38,6 +38,8 @@ public enum HttpMethod implements Serializable {
     PUT,
     POST,
     DELETE,
+    HEAD,
+    OPTIONS,
     ANY;
 
     public boolean matches(HttpMethod method) {
