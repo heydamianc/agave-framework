@@ -10,6 +10,10 @@ public class HTTPResponse {
         this(null, null, null);
     }
     
+    public HTTPResponse(StatusCode statusCode, Object messageBody) {
+        this(statusCode, "text/plain", messageBody);
+    }
+    
     public HTTPResponse(StatusCode statusCode, String contentType, Object messageBody) {
         this.statusCode = statusCode;
         this.contentType = contentType;
