@@ -25,19 +25,25 @@ public class HTTPResponseProcessor implements ResultProcessor {
     }
     
     protected void processContentType(HTTPResponse response, RoutingContext routingContext, HandlerDescriptor handlerDescriptor) {
-        routingContext.getResponse().setContentType(response.getContentType());
+        if (response.getContent() != null) {
+            routingContext.getResponse().setContentType(response.getContentType());
+        }
     }
 
     protected void processStatusCode(HTTPResponse response, RoutingContext routingContext, HandlerDescriptor handlerDescriptor) {
-        routingContext.getResponse().setStatus(response.getStatusCode().getNumericCode());
+        if (response.getStatusCode() != null) {
+            routingContext.getResponse().setStatus(response.getStatusCode().getNumericCode());
+        }
     }
     
     protected void processMessageBody(HTTPResponse response, RoutingContext routingContext, HandlerDescriptor handlerDescriptor) 
             throws ServletException {
-        try {
-            routingContext.getResponse().getWriter().write(response.getMessageBody().toString());
-        } catch (IOException e) {
-            throw new ServletException(e);
+        if (response.getContent() != null) {
+            try {
+                routingContext.getResponse().getWriter().write(response.getContent().toString());
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
         }
     }
 

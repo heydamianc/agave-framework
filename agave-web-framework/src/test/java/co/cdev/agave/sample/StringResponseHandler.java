@@ -10,7 +10,7 @@ public class StringResponseHandler {
     public StringResponse str(RoutingContext context) {
         StringResponse response = new StringResponse();
         response.setContentType("text/plain");
-        response.setMessageBody("Text!");
+        response.setContent("Text!");
         response.setStatusCode(StatusCode._200_Ok);
         return response;
     }

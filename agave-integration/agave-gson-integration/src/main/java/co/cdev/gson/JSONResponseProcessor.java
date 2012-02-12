@@ -29,7 +29,7 @@ public class JSONResponseProcessor extends HTTPResponseProcessor {
     protected void processMessageBody(HTTPResponse response, RoutingContext routingContext, HandlerDescriptor handlerDescriptor) 
             throws ServletException {
         try {
-            gson.toJson(response.getMessageBody(), routingContext.getResponse().getWriter());
+            gson.toJson(response.getContent(), routingContext.getResponse().getWriter());
         } catch (JsonIOException e) {
             throw new ServletException(e);
         } catch (IOException e) {

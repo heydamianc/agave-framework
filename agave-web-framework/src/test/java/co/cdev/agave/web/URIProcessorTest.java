@@ -9,12 +9,12 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
-public class URIProcessorTest extends AbstractProcessorTest {
+public class URIProcessorTest extends AbstractResponseProcessorTest {
     
     private URIProcessor uriProcessor;
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
         uriProcessor = new URIProcessor();
     }

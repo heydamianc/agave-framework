@@ -7,12 +7,12 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DestinationProcessorTest extends AbstractProcessorTest {
+public class DestinationProcessorTest extends AbstractResponseProcessorTest {
     
     private DestinationProcessor destinationProcessor;
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
         destinationProcessor = new DestinationProcessor();
     }

@@ -4,20 +4,24 @@ public class HTTPResponse {
     
     private StatusCode statusCode;
     private String contentType;
-    private Object messageBody;
+    private Object content;
     
     public HTTPResponse() {
         this(null, null, null);
+    }
+    
+    public HTTPResponse(StatusCode statusCode) {
+        this(statusCode, null);
     }
     
     public HTTPResponse(StatusCode statusCode, Object messageBody) {
         this(statusCode, "text/plain", messageBody);
     }
     
-    public HTTPResponse(StatusCode statusCode, String contentType, Object messageBody) {
+    public HTTPResponse(StatusCode statusCode, String contentType, Object content) {
         this.statusCode = statusCode;
         this.contentType = contentType;
-        this.messageBody = messageBody;
+        this.content = content;
     }
     
     public StatusCode getStatusCode() {
@@ -36,12 +40,12 @@ public class HTTPResponse {
         this.contentType = contentType;
     }
     
-    public Object getMessageBody() {
-        return messageBody;
+    public Object getContent() {
+        return content;
     }
     
-    public void setMessageBody(Object messageBody) {
-        this.messageBody = messageBody;
+    public void setContent(Object content) {
+        this.content = content;
     }
     
 }
