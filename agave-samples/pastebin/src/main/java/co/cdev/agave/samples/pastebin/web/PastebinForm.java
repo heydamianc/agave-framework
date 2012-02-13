@@ -26,8 +26,8 @@
 package co.cdev.agave.samples.pastebin.web;
 
 import co.cdev.agave.Converter;
-import co.cdev.agave.conversion.BooleanParamConverter;
-import co.cdev.agave.conversion.LongParamConverter;
+import co.cdev.agave.conversion.BooleanConverter;
+import co.cdev.agave.conversion.LongConverter;
 import co.cdev.agave.samples.pastebin.snippet.Snippet;
 import co.cdev.agave.samples.pastebin.snippet.Timeframe;
 
@@ -64,7 +64,7 @@ public class PastebinForm {
         return revision;
     }
 
-    public void setRevision(@Converter(LongParamConverter.class) Long revision) {
+    public void setRevision(@Converter(LongConverter.class) Long revision) {
         this.revision = revision;
     }
 
@@ -88,7 +88,7 @@ public class PastebinForm {
         return privateSnippet;
     }
 
-    public void setPrivateSnippet(@Converter(BooleanParamConverter.class) Boolean privateSnippet) {
+    public void setPrivateSnippet(@Converter(BooleanConverter.class) Boolean privateSnippet) {
         this.privateSnippet = privateSnippet;
     }
 

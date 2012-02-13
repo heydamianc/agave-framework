@@ -26,7 +26,7 @@
 package co.cdev.agave.samples.gameOfLife.web;
 
 import co.cdev.agave.Converter;
-import co.cdev.agave.conversion.IntegerParamConverter;
+import co.cdev.agave.conversion.IntegerConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -43,7 +43,7 @@ public class GameOfLifeForm {
         return columns;
     }
     
-    public void setColumns(@Converter(IntegerParamConverter.class) Integer columns) {
+    public void setColumns(@Converter(IntegerConverter.class) Integer columns) {
         this.columns = columns;
     }
     
@@ -51,7 +51,7 @@ public class GameOfLifeForm {
         return rows;
     }
     
-    public void setRows(@Converter(IntegerParamConverter.class) Integer rows) {
+    public void setRows(@Converter(IntegerConverter.class) Integer rows) {
         this.rows = rows;
     }
 
@@ -59,7 +59,7 @@ public class GameOfLifeForm {
         return x;
     }
 
-    public void setX(@Converter(IntegerParamConverter.class) int x) {
+    public void setX(@Converter(IntegerConverter.class) int x) {
         this.x = x;
     }
 
@@ -67,7 +67,7 @@ public class GameOfLifeForm {
         return y;
     }
 
-    public void setY(@Converter(IntegerParamConverter.class) int y) {
+    public void setY(@Converter(IntegerConverter.class) int y) {
         this.y = y;
     }
 

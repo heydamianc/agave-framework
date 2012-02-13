@@ -25,7 +25,7 @@ public class HTTPResponseProcessor implements ResultProcessor {
     }
     
     protected void processContentType(HTTPResponse response, RoutingContext routingContext, HandlerDescriptor handlerDescriptor) {
-        if (response.getContent() != null) {
+        if (response.getContentType() != null) {
             routingContext.getResponse().setContentType(response.getContentType());
         }
     }

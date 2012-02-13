@@ -34,19 +34,19 @@ import java.util.Locale;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class IntegerParamConverterTest {
+public class ShortConverterTest {
 
-    private IntegerParamConverter converter;    
+    private ShortConverter converter;    
 
     @Before
     public void setup() throws Exception {
-        converter = new IntegerParamConverter();
+        converter = new ShortConverter();
     }
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(new Integer("10"), converter.convert("10", Locale.getDefault()));
-        Assert.assertEquals(new Integer("-4"), converter.convert("-4", Locale.getDefault()));
+        Assert.assertEquals(new Short("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Short("-4"), converter.convert("-4", Locale.getDefault()));
         Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
         Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }

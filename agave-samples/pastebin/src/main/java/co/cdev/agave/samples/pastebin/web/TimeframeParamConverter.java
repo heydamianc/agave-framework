@@ -26,7 +26,7 @@
 package co.cdev.agave.samples.pastebin.web;
 
 import co.cdev.agave.conversion.AgaveConversionException;
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.conversion.StringConverter;
 import java.util.Locale;
 
 import co.cdev.agave.samples.pastebin.snippet.Timeframe;
@@ -34,7 +34,7 @@ import co.cdev.agave.samples.pastebin.snippet.Timeframe;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class TimeframeParamConverter implements StringParamConverter<Timeframe> {
+public class TimeframeParamConverter implements StringConverter<Timeframe> {
 
     @Override
     public Timeframe convert(String input, Locale locale) throws AgaveConversionException {

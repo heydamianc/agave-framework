@@ -12,14 +12,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ISO8601DateTimeParamConverterTest {
+public class DateConverterTest {
     
-    private DateTimeParamConverter converter;
+    private DateConverter converter;
     private Locale locale;
     
     @Before
     public void setUp() {
-        converter = new DateTimeParamConverter();
+        converter = new DateConverter();
         locale = new Locale("UTC");
     }
     

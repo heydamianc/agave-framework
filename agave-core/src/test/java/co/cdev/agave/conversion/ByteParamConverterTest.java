@@ -36,11 +36,11 @@ import java.util.Locale;
  */
 public class ByteParamConverterTest {
 
-    private ByteParamConverter converter;    
+    private ByteConverter converter;    
 
     @Before
     public void setup() throws Exception {
-        converter = new ByteParamConverter();
+        converter = new ByteConverter();
     }
 
     @Test

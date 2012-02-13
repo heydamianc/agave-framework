@@ -25,29 +25,35 @@
  */
 package co.cdev.agave.conversion;
 
-import java.util.Locale;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Locale;
+
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class CharacterParamConverterTest {
+public class LongConverterTest {
 
-    private CharacterParamConverter converter;    
+    private LongConverter converter;    
 
     @Before
     public void setup() throws Exception {
-        converter = new CharacterParamConverter();
+        converter = new LongConverter();
     }
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(new Character('a'), converter.convert("a", Locale.getDefault()));
-        Assert.assertEquals(new Character('z'), converter.convert("za", Locale.getDefault()));
+        Assert.assertEquals(new Long("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Long("-4"), converter.convert("-4", Locale.getDefault()));
         Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
         Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
+    }
+    
+    @Test(expected = AgaveConversionException.class)
+    public void testConvertWithException() throws Exception {
+        converter.convert("some bad input", Locale.getDefault());
     }
     
 }

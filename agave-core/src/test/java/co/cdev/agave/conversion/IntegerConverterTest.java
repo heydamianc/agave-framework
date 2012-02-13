@@ -34,37 +34,19 @@ import java.util.Locale;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BooleanParamConverterTest {
+public class IntegerConverterTest {
 
-    private BooleanParamConverter converter;    
+    private IntegerConverter converter;    
 
     @Before
     public void setup() throws Exception {
-        converter = new BooleanParamConverter();
+        converter = new IntegerConverter();
     }
 
     @Test
     public void testConvert() throws Exception {
-        Assert.assertEquals(Boolean.TRUE, converter.convert("true", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("TRUE", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("t", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("T", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("yes", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("YES", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("y", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("Y", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("1", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("false", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("FALSE", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("f", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("F", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("no", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("NO", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("n", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("N", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("0", Locale.getDefault()));
-        Assert.assertEquals(Boolean.TRUE, converter.convert("on", Locale.getDefault()));
-        Assert.assertEquals(Boolean.FALSE, converter.convert("off", Locale.getDefault()));
+        Assert.assertEquals(new Integer("10"), converter.convert("10", Locale.getDefault()));
+        Assert.assertEquals(new Integer("-4"), converter.convert("-4", Locale.getDefault()));
         Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
         Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
     }
@@ -75,5 +57,4 @@ public class BooleanParamConverterTest {
     }
     
 }
-
 

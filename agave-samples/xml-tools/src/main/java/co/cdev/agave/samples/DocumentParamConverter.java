@@ -12,9 +12,9 @@ import org.dom4j.DocumentHelper;
 
 import co.cdev.agave.Part;
 import co.cdev.agave.conversion.AgaveConversionException;
-import co.cdev.agave.conversion.PartParamConverter;
+import co.cdev.agave.conversion.PartConverter;
 
-public class DocumentParamConverter implements PartParamConverter<Document, File> {
+public class DocumentParamConverter implements PartConverter<Document, File> {
     
     @Override
     public Document convert(Part<File> part, Locale locale) throws AgaveConversionException {

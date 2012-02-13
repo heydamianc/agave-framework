@@ -1,10 +1,10 @@
 package co.cdev.agave.samples;
 
 import co.cdev.agave.conversion.AgaveConversionException;
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.conversion.StringConverter;
 import java.util.Locale;
 
-public class IndentationParamConverter implements StringParamConverter<String> {
+public class IndentationParamConverter implements StringConverter<String> {
 
     @Override
     public String convert(String input, Locale locale) throws AgaveConversionException {

@@ -11,8 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import co.cdev.agave.conversion.IntegerParamConverter;
-import co.cdev.agave.conversion.PassThroughParamConverter;
+import co.cdev.agave.conversion.IntegerConverter;
+import co.cdev.agave.conversion.NoopConverter;
 
 public class ConfigurationGeneratorTest {
 
@@ -57,12 +57,12 @@ public class ConfigurationGeneratorTest {
             ParamDescriptor paramDescriptor = handlerDescriptor.getParamDescriptors().get(0);
             assertEquals(String.class, paramDescriptor.getParameterClass());
             assertEquals("something", paramDescriptor.getName());
-            assertEquals(PassThroughParamConverter.class, paramDescriptor.getConverterClass());
+            assertEquals(NoopConverter.class, paramDescriptor.getConverterClass());
             
             paramDescriptor = handlerDescriptor.getParamDescriptors().get(1);
             assertEquals(int.class, paramDescriptor.getParameterClass());
             assertEquals("aNumber", paramDescriptor.getName());
-            assertEquals(IntegerParamConverter.class, paramDescriptor.getConverterClass());
+            assertEquals(IntegerConverter.class, paramDescriptor.getConverterClass());
         }
     }
     

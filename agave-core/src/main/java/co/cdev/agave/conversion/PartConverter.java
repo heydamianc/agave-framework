@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,36 +25,17 @@
  */
 package co.cdev.agave.conversion;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.Locale;
 
+import co.cdev.agave.Part;
+
 /**
+ * Converts an object from a string array to a collection of the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class LongParamConverterTest {
-
-    private LongParamConverter converter;    
-
-    @Before
-    public void setup() throws Exception {
-        converter = new LongParamConverter();
-    }
-
-    @Test
-    public void testConvert() throws Exception {
-        Assert.assertEquals(new Long("10"), converter.convert("10", Locale.getDefault()));
-        Assert.assertEquals(new Long("-4"), converter.convert("-4", Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
-    }
+public interface PartConverter<OutputT, PartT> extends ParamConverter<Part<PartT>, OutputT> {
     
-    @Test(expected = AgaveConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert("some bad input", Locale.getDefault());
-    }
+    @Override
+    public OutputT convert(Part<PartT> input, Locale locale) throws AgaveConversionException;
     
 }
-

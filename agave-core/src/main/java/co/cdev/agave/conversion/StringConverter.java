@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,36 +25,15 @@
  */
 package co.cdev.agave.conversion;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.Locale;
 
 /**
+ * Converts an object from the input type to the output type.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DoubleParamConverterTest {
-
-    private DoubleParamConverter converter;    
-
-    @Before
-    public void setup() throws Exception {
-        converter = new DoubleParamConverter();
-    }
-
-    @Test
-    public void testConvert() throws Exception {
-        Assert.assertEquals(new Double("10.0"), converter.convert("10.0", Locale.getDefault()));
-        Assert.assertEquals(new Double("-4.89"), converter.convert("-4.89", Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
-        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
-    }
+public interface StringConverter<OutputT> extends ParamConverter<String, OutputT> {
     
-    @Test(expected = AgaveConversionException.class)
-    public void testConvertWithException() throws Exception {
-        converter.convert("some bad input", Locale.getDefault());
-    }
+    @Override
+    public OutputT convert(String input, Locale locale) throws AgaveConversionException;
     
 }
-

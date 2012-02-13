@@ -1,12 +1,12 @@
 package co.cdev.agave.web;
 
-import co.cdev.agave.conversion.BooleanParamConverter;
-import co.cdev.agave.conversion.ByteParamConverter;
-import co.cdev.agave.conversion.CharacterParamConverter;
-import co.cdev.agave.conversion.DoubleParamConverter;
-import co.cdev.agave.conversion.FloatParamConverter;
-import co.cdev.agave.conversion.IntegerParamConverter;
-import co.cdev.agave.conversion.LongParamConverter;
+import co.cdev.agave.conversion.BooleanConverter;
+import co.cdev.agave.conversion.ByteConverter;
+import co.cdev.agave.conversion.CharacterConverter;
+import co.cdev.agave.conversion.DoubleConverter;
+import co.cdev.agave.conversion.FloatConverter;
+import co.cdev.agave.conversion.IntegerConverter;
+import co.cdev.agave.conversion.LongConverter;
 import co.cdev.agave.conversion.ParamConverter;
 import java.util.Locale;
 
@@ -22,19 +22,19 @@ public abstract class AbstractPopulator {
         ParamConverter<?, ?> converter = null;
         
         if (parameterType.isAssignableFrom(Boolean.class) || parameterType.isAssignableFrom(boolean.class)) {
-            converter = new BooleanParamConverter();
+            converter = new BooleanConverter();
         } else if (parameterType.isAssignableFrom(Byte.class) || parameterType.isAssignableFrom(byte.class)) {
-            converter = new ByteParamConverter();
+            converter = new ByteConverter();
         } else if (parameterType.isAssignableFrom(Character.class) || parameterType.isAssignableFrom(char.class)) {
-            converter = new CharacterParamConverter();
+            converter = new CharacterConverter();
         } else if (parameterType.isAssignableFrom(Double.class) || parameterType.isAssignableFrom(double.class)) {
-            converter = new DoubleParamConverter();
+            converter = new DoubleConverter();
         } else if (parameterType.isAssignableFrom(Float.class) || parameterType.isAssignableFrom(float.class)) {
-            converter = new FloatParamConverter();
+            converter = new FloatConverter();
         } else if (parameterType.isAssignableFrom(Integer.class) || parameterType.isAssignableFrom(int.class)) {
-            converter = new IntegerParamConverter();
+            converter = new IntegerConverter();
         } else if (parameterType.isAssignableFrom(Long.class) || parameterType.isAssignableFrom(long.class)) {
-            converter = new LongParamConverter();
+            converter = new LongConverter();
         }
         
         return converter;

@@ -30,7 +30,7 @@ import java.io.File;
 
 import co.cdev.agave.Converter;
 import co.cdev.agave.Part;
-import co.cdev.agave.conversion.BufferedImageParamConverter;
+import co.cdev.agave.conversion.BufferedImageConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -53,7 +53,7 @@ public class ImageUploadForm {
         return file2;
     }
 
-    public void setFile2(@Converter(BufferedImageParamConverter.class) BufferedImage file2) {
+    public void setFile2(@Converter(BufferedImageConverter.class) BufferedImage file2) {
         this.file2 = file2;
     }
 }

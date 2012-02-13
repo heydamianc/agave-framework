@@ -1,36 +1,13 @@
-/*
- * Copyright (c) 2012, Damian Carrillo
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted 
- * provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this list of 
- *     conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright notice, this list of 
- *     conditions and the following disclaimer in the documentation and/or other materials 
- *     provided with the distribution.
- *   * Neither the name of the copyright holder's organization nor the names of its contributors 
- *     may be used to endorse or promote products derived from this software without specific 
- *     prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-package co.cdev.agave.conversion;
+package co.cdev.agave;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * This class support a profile of the functionality defined in the ISO/FDIS 
@@ -83,11 +60,32 @@ import java.util.Locale;
  *
  * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class DateTimeParamConverter implements StringParamConverter<Date> {
+public class ISO8601DateFormat extends SimpleDateFormat {
+
+    private static final long serialVersionUID = 1L;
     
+    private final Locale locale;
+
+    public ISO8601DateFormat(Locale locale) {
+        super("yyyy-MM-dd'T'HH:mm:ssZ", locale);
+        this.locale = locale;
+        
+        super.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     @Override
-    public Date convert(String input, Locale locale) throws AgaveConversionException {
-        Date value = null;
+    public Date parse(String input) throws ParseException {
+        return (Date) parseObject(input);
+    }
+
+    @Override
+    public Object parseObject(String input) throws ParseException {
+        return parseObject(input, null);
+    }
+
+    @Override
+    public Object parseObject(String input, ParsePosition parsePosition) {
+        Date parsedDate = null;
         
         if (input != null && !"".equals(input)) {
             String formatString = null;
@@ -202,13 +200,16 @@ public class DateTimeParamConverter implements StringParamConverter<Date> {
             SimpleDateFormat format = new SimpleDateFormat(formatString);
             
             try {
-                value = format.parse(actualInput);
+                parsedDate = format.parse(actualInput);
+                parsedDate.setTime(parsedDate.getTime() / 1000 * 1000); // shave off milliseconds
             } catch (ParseException e) {
                 // do nothing on invalid input
             }
         }
         
-        return value;
+        return parsedDate;
     }
+
+
 
 }

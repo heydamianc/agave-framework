@@ -40,14 +40,14 @@ import co.cdev.agave.Part;
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class BufferedImageParamConverterTest {
+public class BufferedImageConverterTest {
 	
-	private BufferedImageParamConverter converter;
+	private BufferedImageConverter converter;
 	private File imageFile;
 	
 	@Before
 	public void setup() throws Exception {
-		converter = new BufferedImageParamConverter();
+		converter = new BufferedImageConverter();
 		imageFile = new File(getClass().getClassLoader().getResource("vim.gif").toURI());
 	}
 	

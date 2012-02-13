@@ -25,8 +25,8 @@
  */
 package co.cdev.agave;
 
-import co.cdev.agave.conversion.PassThroughParamConverter;
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.conversion.NoopConverter;
+import co.cdev.agave.conversion.StringConverter;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -55,6 +55,6 @@ public @interface Param {
     
     String name() default "";
     
-    Class<? extends StringParamConverter<?>> converter() default PassThroughParamConverter.class;
+    Class<? extends StringConverter<?>> converter() default NoopConverter.class;
     
 }

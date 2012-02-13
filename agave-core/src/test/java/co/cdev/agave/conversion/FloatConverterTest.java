@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -25,31 +25,36 @@
  */
 package co.cdev.agave.conversion;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.Locale;
 
 /**
- * Converts a {@code String} input into a {@code Long} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class LongParamConverter implements StringParamConverter<Long> {
+public class FloatConverterTest {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Long} object representing the truth value of the input
-     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Long convert(String input, Locale locale) throws AgaveConversionException {
-        Long value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Long.parseLong(input);
-            } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " to a Long object", ex.getCause());
-            }
-        }
-        return value;
+    private FloatConverter converter;    
+
+    @Before
+    public void setup() throws Exception {
+        converter = new FloatConverter();
     }
 
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new Float("10.0"), converter.convert("10.0", Locale.getDefault()));
+        Assert.assertEquals(new Float("-4.89"), converter.convert("-4.89", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
+    }
+    
+    @Test(expected = AgaveConversionException.class)
+    public void testConvertWithException() throws Exception {
+        converter.convert("some bad input", Locale.getDefault());
+    }
+    
 }
+

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2008, Damian Carrillo
  * All rights reserved.
  * 
@@ -26,30 +26,29 @@
 package co.cdev.agave.conversion;
 
 import java.util.Locale;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Converts a {@code String} input into a {@code Float} object.
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class FloatParamConverter implements StringParamConverter<Float> {
+public class CharacterConverterTest {
 
-    /**
-     * Performs the conversion.
-     * @param input the input parameter as a {@code String}.
-     * @return a {@code Float} object representing the truth value of the input
-     * @throws AgaveConversionException when an unsupported input string is supplied as an argument
-     */ 
-    @Override
-    public Float convert(String input, Locale locale) throws AgaveConversionException {
-        Float value = null;
-        if (input != null && !"".equals(input)) {
-            try {
-                value = Float.parseFloat(input);
-            } catch (NumberFormatException ex) {
-                throw new AgaveConversionException("Could not convert " + input + " to a Float object", ex.getCause());
-            }
-        }
-        return value;
+    private CharacterConverter converter;    
+
+    @Before
+    public void setup() throws Exception {
+        converter = new CharacterConverter();
     }
 
+    @Test
+    public void testConvert() throws Exception {
+        Assert.assertEquals(new Character('a'), converter.convert("a", Locale.getDefault()));
+        Assert.assertEquals(new Character('z'), converter.convert("za", Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert(null, Locale.getDefault()));
+        Assert.assertEquals(null, converter.convert("", Locale.getDefault()));
+    }
+    
 }
+

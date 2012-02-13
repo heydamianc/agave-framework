@@ -26,14 +26,14 @@
 package co.cdev.agave.samples.gameOfLife.web;
 
 import co.cdev.agave.conversion.AgaveConversionException;
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.conversion.StringConverter;
 import java.util.Locale;
 
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
  */
-public class ConfigurationParamConverter implements StringParamConverter<Configuration> {
+public class ConfigurationParamConverter implements StringConverter<Configuration> {
 
     @Override
     public Configuration convert(String input, Locale locale) throws AgaveConversionException {

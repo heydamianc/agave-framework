@@ -32,7 +32,7 @@ import javax.servlet.ServletException;
 import co.cdev.agave.Param;
 import co.cdev.agave.Route;
 import co.cdev.agave.configuration.RoutingContext;
-import co.cdev.agave.conversion.IntegerParamConverter;
+import co.cdev.agave.conversion.IntegerConverter;
 
 public class SampleHandler {
     
@@ -74,7 +74,7 @@ public class SampleHandler {
     @Route("/has/named/params/${something}/${aNumber}")
     public void hasNamedParams(RoutingContext context, 
                                @Param("something") String something, 
-                               @Param(name = "aNumber", converter = IntegerParamConverter.class) int aNumber) throws ServletException, IOException{
+                               @Param(name = "aNumber", converter = IntegerConverter.class) int aNumber) throws ServletException, IOException{
         context.getRequest().setAttribute("something", something);
         context.getRequest().setAttribute("aNumber", aNumber);
     }

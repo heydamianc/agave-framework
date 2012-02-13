@@ -26,7 +26,7 @@
 package co.cdev.agave.sample;
 
 import co.cdev.agave.Converter;
-import co.cdev.agave.conversion.BooleanParamConverter;
+import co.cdev.agave.conversion.BooleanConverter;
 
 /**
  * @author <a href="mailto:damiancarrillo@gmail.com">Damian Carrillo</a>
@@ -47,7 +47,7 @@ public class AliasedForm {
         return someProperty;
     }
 
-    public void setAnotherProperty(@Converter(BooleanParamConverter.class) Boolean anotherProperty) {
+    public void setAnotherProperty(@Converter(BooleanConverter.class) Boolean anotherProperty) {
         this.anotherProperty = anotherProperty;
     }
 

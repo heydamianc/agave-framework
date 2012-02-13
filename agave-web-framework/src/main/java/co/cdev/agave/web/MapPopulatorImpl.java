@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.conversion.AgaveConversionException;
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.conversion.StringConverter;
 
 /**
  * 
@@ -73,8 +73,8 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
             }
             
             if (value != null) {
-                StringParamConverter<?> converter = null;
-                Class<? extends StringParamConverter<?>> converterClass = paramDescriptor.getConverterClass();
+                StringConverter<?> converter = null;
+                Class<? extends StringConverter<?>> converterClass = paramDescriptor.getConverterClass();
                 
                 if (converterClass != null) {
                     try {
@@ -85,7 +85,7 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
                         throw new AgaveConversionException(ex);
                     }
                 } else {
-                    converter = (StringParamConverter<?>) determineMostAppropriateConverter(paramDescriptor.getParameterClass());
+                    converter = (StringConverter<?>) determineMostAppropriateConverter(paramDescriptor.getParameterClass());
                 }
                 
                 if (converter != null) {

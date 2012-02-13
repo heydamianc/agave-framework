@@ -4,7 +4,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
-import co.cdev.agave.conversion.StringParamConverter;
+import co.cdev.agave.conversion.StringConverter;
 
 public class ParamDescriptorImpl implements ParamDescriptor {
     
@@ -12,15 +12,15 @@ public class ParamDescriptorImpl implements ParamDescriptor {
     
     private final Class<?> parameterClass;
     private final String name;
-    private final Class<? extends StringParamConverter<?>> converterClass;
+    private final Class<? extends StringConverter<?>> converterClass;
     
-    public ParamDescriptorImpl(Class<?> parameterClass, String name, Class<? extends StringParamConverter<?>> converterClass) {
+    public ParamDescriptorImpl(Class<?> parameterClass, String name, Class<? extends StringConverter<?>> converterClass) {
         this.parameterClass = parameterClass;
         this.name = name;
         this.converterClass = converterClass;
     }
 
-    public Class<? extends StringParamConverter<?>> getConverterClass() {
+    public Class<? extends StringConverter<?>> getConverterClass() {
         return converterClass;
     }
 
@@ -98,7 +98,7 @@ public class ParamDescriptorImpl implements ParamDescriptor {
         
         private final Class<?> parameterClass;
         private final String name;
-        private final Class<? extends StringParamConverter<?>> converter;
+        private final Class<? extends StringConverter<?>> converter;
         
         SerializationProxy(ParamDescriptorImpl paramDescriptor) {
             parameterClass = paramDescriptor.getParameterClass();
