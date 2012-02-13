@@ -17,6 +17,8 @@ import co.cdev.agave.Param;
 import co.cdev.agave.Route;
 import co.cdev.agave.URIPattern;
 import co.cdev.agave.URIPatternImpl;
+import co.cdev.agave.conversion.Converters;
+import co.cdev.agave.conversion.NoopConverter;
 import co.cdev.agave.conversion.StringConverter;
 import co.cdev.agave.util.ClassUtils;
 
@@ -130,7 +132,16 @@ public class ConfigGeneratorImpl implements ConfigGenerator {
                                 if (paramName == null || paramName.equals("")) {
                                     paramName = param.name();
                                 }
+                                
                                 Class<? extends StringConverter<?>> converterClass = param.converter();
+                                
+                                if (converterClass == null || converterClass.equals(NoopConverter.class)) {
+                                    converterClass = Converters.getMostAppropriateConverterClassFor(paramClass);
+                                    
+                                    if (converterClass == null) {
+                                        converterClass = NoopConverter.class;
+                                    }
+                                }
                                 
                                 if (paramDescriptors.isEmpty()) {
                                     paramDescriptors = new ArrayList<ParamDescriptor>();

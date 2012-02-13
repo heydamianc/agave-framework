@@ -18,22 +18,22 @@ public abstract class AbstractPopulator {
         this.locale = locale;
     }
     
-    protected ParamConverter<?, ?> determineMostAppropriateConverter(Class<?> parameterType) {
+    protected ParamConverter<?, ?> determineMostAppropriateConverter(Class<?> paramClass) {
         ParamConverter<?, ?> converter = null;
         
-        if (parameterType.isAssignableFrom(Boolean.class) || parameterType.isAssignableFrom(boolean.class)) {
+        if (paramClass.isAssignableFrom(Boolean.class) || paramClass.isAssignableFrom(boolean.class)) {
             converter = new BooleanConverter();
-        } else if (parameterType.isAssignableFrom(Byte.class) || parameterType.isAssignableFrom(byte.class)) {
+        } else if (paramClass.isAssignableFrom(Byte.class) || paramClass.isAssignableFrom(byte.class)) {
             converter = new ByteConverter();
-        } else if (parameterType.isAssignableFrom(Character.class) || parameterType.isAssignableFrom(char.class)) {
+        } else if (paramClass.isAssignableFrom(Character.class) || paramClass.isAssignableFrom(char.class)) {
             converter = new CharacterConverter();
-        } else if (parameterType.isAssignableFrom(Double.class) || parameterType.isAssignableFrom(double.class)) {
+        } else if (paramClass.isAssignableFrom(Double.class) || paramClass.isAssignableFrom(double.class)) {
             converter = new DoubleConverter();
-        } else if (parameterType.isAssignableFrom(Float.class) || parameterType.isAssignableFrom(float.class)) {
+        } else if (paramClass.isAssignableFrom(Float.class) || paramClass.isAssignableFrom(float.class)) {
             converter = new FloatConverter();
-        } else if (parameterType.isAssignableFrom(Integer.class) || parameterType.isAssignableFrom(int.class)) {
+        } else if (paramClass.isAssignableFrom(Integer.class) || paramClass.isAssignableFrom(int.class)) {
             converter = new IntegerConverter();
-        } else if (parameterType.isAssignableFrom(Long.class) || parameterType.isAssignableFrom(long.class)) {
+        } else if (paramClass.isAssignableFrom(Long.class) || paramClass.isAssignableFrom(long.class)) {
             converter = new LongConverter();
         }
         

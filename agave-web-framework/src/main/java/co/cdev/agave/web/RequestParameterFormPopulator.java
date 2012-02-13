@@ -41,14 +41,15 @@ public class RequestParameterFormPopulator extends AbstractFormPopulator {
         super(request.getLocale());
 
 		@SuppressWarnings("unchecked")
-		Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String parameterName = parameterNames.nextElement();
+		Enumeration<String> paramNames = request.getParameterNames();
+		
+        while (paramNames.hasMoreElements()) {
+            String parameterName = paramNames.nextElement();
             List<Object> parameterValues = new ArrayList<Object>();
             if (request.getParameterValues(parameterName) != null) {
                 parameterValues.addAll(Arrays.asList(request.getParameterValues(parameterName)));
             }
-            parameters.put(parameterName, parameterValues);
+            params.put(parameterName, parameterValues);
         }
     }
 }

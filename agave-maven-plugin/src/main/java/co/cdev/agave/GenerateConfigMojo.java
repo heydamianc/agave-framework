@@ -21,7 +21,7 @@ import co.cdev.agave.configuration.ConfigGenerator;
 import co.cdev.agave.configuration.ConfigGeneratorImpl;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.util.ClassUtils;
-import co.cdev.agave.util.FileSystem;
+import co.cdev.agave.util.FileSystemUtils;
 
 /**
  * @goal generate-config
@@ -101,7 +101,7 @@ public class GenerateConfigMojo extends AbstractMojo {
             for (Object compileSourceRootPath : project.getCompileSourceRoots()) {
                 File compileSourceRoot = new File((String) compileSourceRootPath);
                 
-                for (File javaFile : FileSystem.filterFiles(compileSourceRoot, javaFileFilter)) {
+                for (File javaFile : FileSystemUtils.filterFiles(compileSourceRoot, javaFileFilter)) {
                     String className = ClassUtils.getClassNameForJavaFile(javaFile, compileSourceRoot);
                     compiledClassLoader.loadClass(className);
                 }

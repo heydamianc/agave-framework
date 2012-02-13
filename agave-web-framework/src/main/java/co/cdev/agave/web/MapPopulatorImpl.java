@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import co.cdev.agave.configuration.HandlerDescriptor;
 import co.cdev.agave.configuration.ParamDescriptor;
 import co.cdev.agave.conversion.AgaveConversionException;
+import co.cdev.agave.conversion.Converters;
 import co.cdev.agave.conversion.StringConverter;
 
 /**
@@ -85,7 +86,7 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
                         throw new AgaveConversionException(ex);
                     }
                 } else {
-                    converter = (StringConverter<?>) determineMostAppropriateConverter(paramDescriptor.getParameterClass());
+                    converter = (StringConverter<?>) Converters.getMostAppropriateFor(paramDescriptor.getParamClass());
                 }
                 
                 if (converter != null) {
@@ -95,11 +96,11 @@ public class MapPopulatorImpl extends AbstractPopulator implements MapPopulator 
             }
             
             if (value == null 
-                    && (paramDescriptor.getParameterClass() == int.class
-                    || paramDescriptor.getParameterClass() == long.class
-                    || paramDescriptor.getParameterClass() == short.class
-                    || paramDescriptor.getParameterClass() == float.class
-                    || paramDescriptor.getParameterClass() == double.class)) {
+                    && (paramDescriptor.getParamClass() == int.class
+                    || paramDescriptor.getParamClass() == long.class
+                    || paramDescriptor.getParamClass() == short.class
+                    || paramDescriptor.getParamClass() == float.class
+                    || paramDescriptor.getParamClass() == double.class)) {
                 namedArguments.put(paramDescriptor.getName(), 0);
             } else {
                 namedArguments.put(paramDescriptor.getName(), value);

@@ -36,7 +36,7 @@ import java.util.SortedMap;
  */
 public interface FormPopulator {
     
-    public SortedMap<String, List<Object>> getParameters();
+    public SortedMap<String, List<Object>> getParams();
 
     public void populate(Object formInstance) 
         throws NoSuchMethodException, 

@@ -10,12 +10,12 @@ public class ParamDescriptorImpl implements ParamDescriptor {
     
     private static final long serialVersionUID = 1L;
     
-    private final Class<?> parameterClass;
+    private final Class<?> paramClass;
     private final String name;
     private final Class<? extends StringConverter<?>> converterClass;
     
     public ParamDescriptorImpl(Class<?> parameterClass, String name, Class<? extends StringConverter<?>> converterClass) {
-        this.parameterClass = parameterClass;
+        this.paramClass = parameterClass;
         this.name = name;
         this.converterClass = converterClass;
     }
@@ -28,11 +28,9 @@ public class ParamDescriptorImpl implements ParamDescriptor {
         return name;
     }
 
-    public Class<?> getParameterClass() {
-        return parameterClass;
+    public Class<?> getParamClass() {
+        return paramClass;
     }
-
-    
     
     @Override
     public int hashCode() {
@@ -40,7 +38,7 @@ public class ParamDescriptorImpl implements ParamDescriptor {
         int result = 1;
         result = prime * result + ((converterClass == null) ? 0 : converterClass.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((parameterClass == null) ? 0 : parameterClass.hashCode());
+        result = prime * result + ((paramClass == null) ? 0 : paramClass.hashCode());
         return result;
     }
 
@@ -61,10 +59,10 @@ public class ParamDescriptorImpl implements ParamDescriptor {
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (parameterClass == null) {
-            if (other.parameterClass != null)
+        if (paramClass == null) {
+            if (other.paramClass != null)
                 return false;
-        } else if (!parameterClass.equals(other.parameterClass))
+        } else if (!paramClass.equals(other.paramClass))
             return false;
         return true;
     }
@@ -73,7 +71,7 @@ public class ParamDescriptorImpl implements ParamDescriptor {
     public String toString() {
         StringBuilder representation = new StringBuilder();
         representation.append("[");
-        representation.append("parameterClass:").append(parameterClass.getName());
+        representation.append("paramClass:").append(paramClass.getName());
         representation.append(",").append("name:").append(name);
         if (converterClass != null) {
             representation.append(",").append("converter:").append(converterClass.getName());
@@ -96,18 +94,18 @@ public class ParamDescriptorImpl implements ParamDescriptor {
         
         private static final long serialVersionUID = 1L;
         
-        private final Class<?> parameterClass;
+        private final Class<?> paramClass;
         private final String name;
         private final Class<? extends StringConverter<?>> converter;
         
         SerializationProxy(ParamDescriptorImpl paramDescriptor) {
-            parameterClass = paramDescriptor.getParameterClass();
+            paramClass = paramDescriptor.getParamClass();
             name = paramDescriptor.getName();
             converter = paramDescriptor.getConverterClass();
         }
         
         private Object readResolve() {
-            return new ParamDescriptorImpl(parameterClass, name, converter);
+            return new ParamDescriptorImpl(paramClass, name, converter);
         }
     }
     

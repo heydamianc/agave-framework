@@ -5,9 +5,9 @@ import java.io.FileFilter;
 import java.util.Collection;
 import java.util.HashSet;
 
-public final class FileSystem {
+public final class FileSystemUtils {
 
-    private FileSystem() {
+    private FileSystemUtils() {
         
     }
     

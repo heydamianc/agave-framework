@@ -25,11 +25,6 @@
  */
 package co.cdev.agave.web;
 
-import co.cdev.agave.Converter;
-import co.cdev.agave.conversion.*;
-import co.cdev.agave.util.CallChain;
-import co.cdev.agave.util.CallChainImpl;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -39,6 +34,13 @@ import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import co.cdev.agave.Converter;
+import co.cdev.agave.conversion.AgaveConversionException;
+import co.cdev.agave.conversion.Converters;
+import co.cdev.agave.conversion.ParamConverter;
+import co.cdev.agave.util.CallChain;
+import co.cdev.agave.util.CallChainImpl;
+
 /**
  * @author <a href="mailto:damianarrillo@gmail.com">Damian Carrillo</a>
  */
@@ -47,15 +49,15 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
     private static final String ILLEGAL_ARGUMENT_EXCEPTION_MSG =
             "Mutator {0}#{1}(...) is expecting argument of type {2} and recieved {3}";
     
-    protected final SortedMap<String, List<Object>> parameters = new TreeMap<String, List<Object>>();
+    protected final SortedMap<String, List<Object>> params = new TreeMap<String, List<Object>>();
 
     protected AbstractFormPopulator(Locale locale) {
         super(locale);
     }
 
     @Override
-    public SortedMap<String, List<Object>> getParameters() {
-        return parameters;
+    public SortedMap<String, List<Object>> getParams() {
+        return params;
     }
 
     @Override
@@ -68,8 +70,8 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             InstantiationException,
             AgaveConversionException {
         CallChain callChain = null;
-        for (String parameterName : parameters.keySet()) {
-            List<Object> parameterValues = parameters.get(parameterName);
+        for (String parameterName : params.keySet()) {
+            List<Object> parameterValues = params.get(parameterName);
             boolean unique = true;
             if (parameterValues != null && parameterValues.size() > 1) {
                 unique = false;
@@ -79,7 +81,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
         }
     }
 
-    private void populateProperty(Object formInstance, CallChain callChain, List<Object> parameterValues)
+    private void populateProperty(Object formInstance, CallChain callChain, List<Object> paramValues)
             throws NoSuchMethodException,
             SecurityException,
             IllegalAccessException,
@@ -106,25 +108,25 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
                 Object parameterValue = null;
                 switch (callChain.getMutatorType()) {
                     case SETTING:
-                        if (parameterValues != null && !parameterValues.isEmpty()) {
-                            parameterValue = parameterValues.get(0);
+                        if (paramValues != null && !paramValues.isEmpty()) {
+                            parameterValue = paramValues.get(0);
                         }
                         setOrAppendProperty(mutator, targetInstance, parameterValue);
                         break;
                     case APPENDING:
-                        for (Object param : parameterValues) {
+                        for (Object param : paramValues) {
                             setOrAppendProperty(mutator, targetInstance, param);
                         }
                         break;
                     case INSERTING:
-                        if (parameterValues != null && !parameterValues.isEmpty()) {
-                            parameterValue = parameterValues.get(0);
+                        if (paramValues != null && !paramValues.isEmpty()) {
+                            parameterValue = paramValues.get(0);
                         }
                         insertProperty(mutator, targetInstance, callChain.getIndex(), parameterValue);
                         break;
                     case PUTTING:
-                        if (parameterValues != null && !parameterValues.isEmpty()) {
-                            parameterValue = parameterValues.get(0);
+                        if (paramValues != null && !paramValues.isEmpty()) {
+                            parameterValue = paramValues.get(0);
                         }
                         putProperty(mutator, targetInstance, callChain.getKey(), parameterValue);
                         break;
@@ -133,44 +135,44 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
         }
     }
 
-    private void setOrAppendProperty(Method mutator, Object targetInstance, Object parameterValue)
+    private void setOrAppendProperty(Method mutator, Object targetInstance, Object paramValue)
             throws IllegalAccessException,
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
             AgaveConversionException {
         try {
-            mutator.invoke(targetInstance, convertIfNecessary(mutator, parameterValue));
+            mutator.invoke(targetInstance, convertIfNecessary(mutator, paramValue));
         } catch (IllegalArgumentException ex) {
             String errorMessage = MessageFormat.format(ILLEGAL_ARGUMENT_EXCEPTION_MSG,
                     mutator.getDeclaringClass().getName(),
                     mutator.getName(),
                     mutator.getParameterTypes()[0].getName(),
-                    parameterValue.getClass().getName());
+                    paramValue.getClass().getName());
             throw new IllegalArgumentException(errorMessage);
         }
     }
 
-    private void insertProperty(Method mutator, Object targetInstance, int index, Object parameterValue)
+    private void insertProperty(Method mutator, Object targetInstance, int index, Object paramValue)
             throws IllegalAccessException,
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
             AgaveConversionException {
-        mutator.invoke(targetInstance, index, convertIfNecessary(mutator, parameterValue));
+        mutator.invoke(targetInstance, index, convertIfNecessary(mutator, paramValue));
     }
 
-    private void putProperty(Method mutator, Object targetInstance, String key, Object parameterValue)
+    private void putProperty(Method mutator, Object targetInstance, String key, Object paramValue)
             throws IllegalAccessException,
             IllegalArgumentException,
             InvocationTargetException,
             InstantiationException,
             AgaveConversionException {
-        mutator.invoke(targetInstance, key, convertIfNecessary(mutator, parameterValue));
+        mutator.invoke(targetInstance, key, convertIfNecessary(mutator, paramValue));
     }
 
     @SuppressWarnings("unchecked")
-	private Object convertIfNecessary(Method mutator, Object parameterValue)
+	private Object convertIfNecessary(Method mutator, Object paramValue)
             throws AgaveConversionException,
             InstantiationException,
             IllegalAccessException {
@@ -178,7 +180,7 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
 
         if (parameterTypes != null) {
             int parameterOffset = (parameterTypes.length == 1) ? 0 : 1;
-            Class<?> parameterType = parameterTypes[parameterOffset];
+            Class<?> paramType = parameterTypes[parameterOffset];
             
             @SuppressWarnings("rawtypes")
 			ParamConverter converter = null; // keep this vague
@@ -195,18 +197,18 @@ public abstract class AbstractFormPopulator extends AbstractPopulator implements
             // Try to look up a converter for common types
             
             if (converter == null) {
-                converter = determineMostAppropriateConverter(parameterType);
+                converter = Converters.getMostAppropriateFor(paramType);
             }
 
             if (converter != null) {
                 try {
-                    return converter.convert(parameterValue, locale);
+                    return converter.convert(paramValue, locale);
                 } catch (Throwable ex) {
                     throw new AgaveConversionException(ex);
                 }
             }
         }
 
-        return parameterValue;
+        return paramValue;
     }
 }

@@ -62,7 +62,7 @@ public class FormPopulatorTest {
 
         FormPopulator populator = new RequestParameterFormPopulator(request);
 
-        Map<String, List<Object>> params = populator.getParameters();
+        Map<String, List<Object>> params = populator.getParams();
 
         Assert.assertNotNull(params);
         Assert.assertTrue(!params.isEmpty());

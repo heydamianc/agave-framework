@@ -44,7 +44,7 @@ public class URIParamFormPopulator extends AbstractFormPopulator {
         for (String key : uriParams.keySet()) {
             List<Object> parameter = new ArrayList<Object>(1);
             parameter.add(uriParams.get(key));
-            parameters.put(key, parameter);
+            params.put(key, parameter);
         }
     }
 }

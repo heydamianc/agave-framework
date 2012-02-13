@@ -6,7 +6,7 @@ import co.cdev.agave.conversion.StringConverter;
 
 public interface ParamDescriptor extends Serializable {
     
-    public Class<?> getParameterClass();
+    public Class<?> getParamClass();
 
     public String getName();
 

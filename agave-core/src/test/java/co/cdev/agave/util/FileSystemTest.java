@@ -30,7 +30,7 @@ public class FileSystemTest {
     
     @Test
     public void testFilterFiles_withNullRootDir() throws Exception {
-        Collection<File> filteredFiles = FileSystem.filterFiles(null, fileFilter);
+        Collection<File> filteredFiles = FileSystemUtils.filterFiles(null, fileFilter);
         
         assertNotNull(filteredFiles);
         assertTrue(filteredFiles.isEmpty());
@@ -38,7 +38,7 @@ public class FileSystemTest {
     
     @Test
     public void testFilterFiles_withNullFileFilter() throws Exception {
-        Collection<File> filteredFiles = FileSystem.filterFiles(rootDir, null);
+        Collection<File> filteredFiles = FileSystemUtils.filterFiles(rootDir, null);
         
         assertNotNull(filteredFiles);
         assertTrue(filteredFiles.isEmpty());
@@ -46,7 +46,7 @@ public class FileSystemTest {
     
     @Test
     public void testFilterFiles() throws Exception {
-        Collection<File> filteredFiles = FileSystem.filterFiles(rootDir, fileFilter);
+        Collection<File> filteredFiles = FileSystemUtils.filterFiles(rootDir, fileFilter);
         
         assertTrue(filteredFiles.size() >= 3);
         assertTrue(filteredFiles.contains(new File(rootDir, "1.txt")));

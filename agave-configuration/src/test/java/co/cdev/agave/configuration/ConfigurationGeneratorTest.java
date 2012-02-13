@@ -11,7 +11,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import co.cdev.agave.conversion.DateConverter;
 import co.cdev.agave.conversion.IntegerConverter;
+import co.cdev.agave.conversion.LongConverter;
 import co.cdev.agave.conversion.NoopConverter;
 
 public class ConfigurationGeneratorTest {
@@ -46,7 +48,7 @@ public class ConfigurationGeneratorTest {
         assertFalse(config.getCandidatesFor("/overloaded").isEmpty());
         assertFalse(config.getCandidatesFor("/overloaded/${param}").isEmpty());
         
-        assertEquals(9, config.size());
+        assertEquals(11, config.size());
     }
     
     @Test
@@ -55,14 +57,34 @@ public class ConfigurationGeneratorTest {
         
         for (HandlerDescriptor handlerDescriptor : config.getCandidatesFor("/has/named/params/${something}/${aNumber}")) {
             ParamDescriptor paramDescriptor = handlerDescriptor.getParamDescriptors().get(0);
-            assertEquals(String.class, paramDescriptor.getParameterClass());
+            assertEquals(String.class, paramDescriptor.getParamClass());
             assertEquals("something", paramDescriptor.getName());
             assertEquals(NoopConverter.class, paramDescriptor.getConverterClass());
             
             paramDescriptor = handlerDescriptor.getParamDescriptors().get(1);
-            assertEquals(int.class, paramDescriptor.getParameterClass());
+            assertEquals(int.class, paramDescriptor.getParamClass());
             assertEquals("aNumber", paramDescriptor.getName());
             assertEquals(IntegerConverter.class, paramDescriptor.getConverterClass());
+        }
+    }
+    
+    @Test
+    public void testGenerateConfig_expectImplicitConvertersToBeNamed() throws Exception {
+        Config config = configGenerator.generateConfig();
+        
+        for (HandlerDescriptor handlerDescriptor : config.getCandidatesFor("/implicit/conversion/${id}")) {
+            ParamDescriptor paramDescriptor = handlerDescriptor.getParamDescriptors().get(0);
+            assertEquals(LongConverter.class, paramDescriptor.getConverterClass());
+        }
+    }
+    
+    @Test
+    public void testGenerateConfig_expectImplicitDateConvertersToBeNamed() throws Exception {
+        Config config = configGenerator.generateConfig();
+        
+        for (HandlerDescriptor handlerDescriptor : config.getCandidatesFor("/implicit/date/conversion/${date}")) {
+            ParamDescriptor paramDescriptor = handlerDescriptor.getParamDescriptors().get(0);
+            assertEquals(DateConverter.class, paramDescriptor.getConverterClass());
         }
     }
     

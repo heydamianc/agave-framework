@@ -40,7 +40,7 @@ public class RequestPartFormPopulator<T> extends AbstractFormPopulator {
         for (String partName : request.getParts().keySet()) {
             List<Object> partContents = new ArrayList<Object>(1);
             partContents.add(request.getParts().get(partName));
-            parameters.put(partName, partContents);
+            params.put(partName, partContents);
         }
     }
 }

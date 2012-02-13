@@ -26,6 +26,7 @@
 package co.cdev.agave.sample;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 
@@ -87,6 +88,16 @@ public class SampleHandler {
     @Route("/overloaded/${param}")
     public void overloaded(RoutingContext context, @Param("param") String param) {
         context.getRequest().setAttribute("overloadedWithAdditionalParams", param);
+    }
+    
+    @Route("/implicit/conversion/${id}")
+    public void implicitConversion(RoutingContext context, @Param("id") long id) {
+        context.getRequest().setAttribute("implicitConversion", Long.valueOf(id));
+    }
+    
+    @Route("/implicit/date/conversion/${date}")
+    public void implicitDateConversion(RoutingContext context, @Param("date") Date date) {
+        context.getRequest().setAttribute("implicitDateConversion", date);
     }
     
 }
