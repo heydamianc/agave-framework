@@ -1,6 +1,7 @@
 package co.cdev.agave.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -244,6 +245,48 @@ public class ReflectionUtils {
         }
         
         return mutatedField;
+    }
+    
+    public static void invokeMutator(Object object, String fieldName, Object fieldValue) 
+            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        Class<?> modelObjectClass = object.getClass();
+        Class<?> actualValueClass = fieldValue.getClass();
+        Class<?> expectedValueClass = actualValueClass;
+        Field field = ReflectionUtils.getField(modelObjectClass, fieldName);
+        
+        if (field != null) {
+            expectedValueClass = field.getType();
+        }
+        
+        Method mutator = ReflectionUtils.getMutator(modelObjectClass, fieldName, expectedValueClass);
+        
+        if (mutator != null) {
+            try {
+                if ((expectedValueClass.equals(int.class) || expectedValueClass.equals(Integer.class)) && Number.class.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, ((Number) fieldValue).intValue());
+                } else if (expectedValueClass.equals(double.class) || expectedValueClass.equals(Double.class) && Number.class.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, ((Number) fieldValue).doubleValue());
+                } else if (expectedValueClass.equals(long.class) || expectedValueClass.equals(Long.class) && Number.class.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, ((Number) fieldValue).longValue());
+                } else if (expectedValueClass.equals(float.class) || expectedValueClass.equals(Float.class) && Number.class.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, ((Number) fieldValue).floatValue());
+                } else if (expectedValueClass.equals(short.class) || expectedValueClass.equals(Short.class) && Number.class.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, ((Number) fieldValue).shortValue());
+                } else if (expectedValueClass.equals(byte.class) || expectedValueClass.equals(Byte.class) && Number.class.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, ((Number) fieldValue).byteValue());
+                } else if (!expectedValueClass.equals(actualValueClass) && expectedValueClass.isAssignableFrom(actualValueClass)) {
+                    mutator.invoke(object, expectedValueClass.cast(fieldValue));
+                } else {
+                    mutator.invoke(object, fieldValue);
+                }
+            } catch (IllegalArgumentException e) {
+                String message = String.format("Argument type mismatch for %s - expected %s, got %s",
+                        mutator,
+                        actualValueClass == null ? "null" : actualValueClass.getName(), 
+                        fieldValue == null ? "null" : fieldValue.getClass().getName());
+                throw new IllegalArgumentException(message);
+            }
+        }
     }
     
 }

@@ -18,7 +18,7 @@ public enum StatusCode {
     
     _200_Ok(200),
     _201_Created(201),
-    _202_Accepted(200),
+    _202_Accepted(202),
     _203_NonAuthoritativeInformation(203),
     _204_NoContent(204),
     _205_ResetContent(205),
