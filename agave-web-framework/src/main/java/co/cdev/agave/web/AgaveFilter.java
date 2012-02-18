@@ -384,15 +384,20 @@ public class AgaveFilter implements Filter {
                 }
             } catch (InvocationTargetException ex) {
                 if (ex.getCause() instanceof AgaveWebException) {
+                    logRequestInformation(request);
                     throw (AgaveWebException) ex.getCause();
                 } else if (ex.getCause() instanceof IOException) {
+                    logRequestInformation(request);
                     throw (IOException) ex.getCause();
                 } else if (ex.getCause() instanceof RuntimeException) {
+                    logRequestInformation(request);
                     throw (RuntimeException) ex.getCause();
                 } else {
+                    logRequestInformation(request);
                     throw new HandlerException(ex.getMessage(), ex.getCause());
                 }
             } catch (IllegalAccessException ex) {
+                logRequestInformation(request); 
                 throw new HandlerException(handlerDescriptor, ex);
             }
 
@@ -419,6 +424,14 @@ public class AgaveFilter implements Filter {
         } else {
             chain.doFilter(req, resp);
         }
+    }
+    
+    private void logRequestInformation(HttpServletRequest request) {
+        LOGGER.log(Level.INFO, "Remote details for exception: {0}@{1} ({2}:{3,number,#})", new Object[] {
+                request.getRemoteUser(),
+                request.getRemoteHost(),
+                request.getRemoteAddr(),
+                request.getRemotePort()});
     }
     
     protected HttpServletRequest wrapMultipartRequest(HttpServletRequest request) throws Exception {

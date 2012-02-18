@@ -116,12 +116,14 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
         final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
         emulateServletContainer(parameterMap);
-
+        
         context.checking(new Expectations() {{
             allowing(request).getServletPath(); will(returnValue("/throws/nullPointerException"));
             allowing(request).getMethod(); will(returnValue("GET"));
             allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
         }});
+        
+        expectDiagnosticInformationOnException();
 
         filter.init(filterConfig);
         filter.doFilter(request, response, filterChain);
@@ -140,6 +142,8 @@ public class AgaveFilterFunctionalTest extends AbstractFunctionalTest {
                 allowing(request).getContentType(); will(returnValue("application/x-www-form-urlencoded"));
             }});
 
+            expectDiagnosticInformationOnException();
+            
             filter.init(filterConfig);
             filter.doFilter(request, response, filterChain);
     }

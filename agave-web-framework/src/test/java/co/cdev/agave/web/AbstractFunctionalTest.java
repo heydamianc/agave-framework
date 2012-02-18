@@ -123,4 +123,13 @@ public abstract class AbstractFunctionalTest {
         return filter;
     }
     
+    protected void expectDiagnosticInformationOnException() {
+        context.checking(new Expectations() {{
+            allowing(request).getRemoteHost();
+            allowing(request).getRemoteAddr();
+            allowing(request).getRemotePort();
+            allowing(request).getRemoteUser();
+        }});
+    }
+    
 }
