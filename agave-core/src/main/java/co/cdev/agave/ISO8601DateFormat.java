@@ -58,6 +58,10 @@ import java.util.TimeZone;
  * or minutes. The specification is relative to UTC, and the granularity depends
  * on the number of specified digits. 
  *
+ * Note that this also corresponds to RFC 3339 Timestamps: 
+ *   
+ *   http://www.ietf.org/rfc/rfc3339.txt
+ *
  * @author <a href="damiancarrillo@gmail.com">Damian Carrillo</a>
  */
 public class ISO8601DateFormat extends SimpleDateFormat {
