@@ -71,7 +71,7 @@ public class ISO8601DateFormat extends SimpleDateFormat {
     private final Locale locale;
 
     public ISO8601DateFormat(Locale locale) {
-        super("yyyy-MM-dd'T'HH:mm:ssZ", locale);
+        super("yyyy-MM-dd'T'HH':'mm':'ssZ", locale);
         this.locale = locale;
         
         super.setTimeZone(TimeZone.getTimeZone("UTC"));
