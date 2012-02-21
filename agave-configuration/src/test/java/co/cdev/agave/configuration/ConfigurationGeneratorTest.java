@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,8 +48,9 @@ public class ConfigurationGeneratorTest {
         assertFalse(config.getCandidatesFor("/has/named/params/${something}/${aNumber}").isEmpty());
         assertFalse(config.getCandidatesFor("/overloaded").isEmpty());
         assertFalse(config.getCandidatesFor("/overloaded/${param}").isEmpty());
+        assertFalse(config.getCandidatesFor("/birds").isEmpty());
         
-        assertEquals(11, config.size());
+        assertEquals(15, config.size());
     }
     
     @Test
@@ -86,6 +88,15 @@ public class ConfigurationGeneratorTest {
             ParamDescriptor paramDescriptor = handlerDescriptor.getParamDescriptors().get(0);
             assertEquals(DateConverter.class, paramDescriptor.getConverterClass());
         }
+    }
+    
+    @Test
+    public void testGenerateConfig_expectCustomConverter() throws Exception {
+        Config config = configGenerator.generateConfig();
+        Set<HandlerDescriptor> candidates = config.getCandidatesFor("/birds");
+        
+        assertNotNull(candidates);
+        assertEquals(4, candidates.size());
     }
     
 }

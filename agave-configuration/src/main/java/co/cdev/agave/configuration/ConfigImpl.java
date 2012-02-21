@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
@@ -56,7 +55,7 @@ public class ConfigImpl implements Config {
     
     @Override
     public Set<HandlerDescriptor> getCandidatesFor(URIPattern uriPattern) {
-        Set<HandlerDescriptor> candidates = new HashSet<HandlerDescriptor>();
+        Set<HandlerDescriptor> candidates = new TreeSet<HandlerDescriptor>();
         
         if (uriPattern != null) {
             for (HandlerDescriptor handlerDescriptor : handlerDescriptors) {

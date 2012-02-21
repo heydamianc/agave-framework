@@ -30,11 +30,13 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.URIPattern;
+import co.cdev.agave.conversion.NoopConverter;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -122,7 +124,35 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         }
         
         if (result == 0) {
-            result = -(paramDescriptors.size() - that.getParamDescriptors().size());
+            if (paramDescriptors.size() == that.getParamDescriptors().size()) {
+                Iterator<ParamDescriptor> thisParamDescriptorItr = paramDescriptors.iterator();
+                Iterator<ParamDescriptor> thatParamDescriptorItr = that.getParamDescriptors().iterator();
+                
+                int thisValue = 0;
+                int thatValue = 0;
+                
+                while (thisParamDescriptorItr.hasNext() && thatParamDescriptorItr.hasNext()) {
+                    ParamDescriptor thisParamDescriptor = thisParamDescriptorItr.next();  
+                    
+                    if (thisParamDescriptor.getConverterClass() != null && thisParamDescriptor.getConverterClass() != NoopConverter.class) {
+                        thisValue += Math.pow(thisParamDescriptor.getParamClass().getCanonicalName().length(), 2);
+                    } else {
+                        thisValue += thisParamDescriptor.getParamClass().getCanonicalName().length();
+                    }
+                    
+                    ParamDescriptor thatParamDescriptor = thatParamDescriptorItr.next();
+                    
+                    if (thatParamDescriptor.getConverterClass() != null && thatParamDescriptor.getConverterClass() != NoopConverter.class) {
+                        thatValue += Math.pow(thatParamDescriptor.getParamClass().getCanonicalName().length(), 2);
+                    } else {
+                        thatValue += thatParamDescriptor.getParamClass().getCanonicalName().length();
+                    }
+                }
+                
+                result = -(thisValue - thatValue);
+            } else {
+                result = -(paramDescriptors.size() - that.getParamDescriptors().size());
+            }
         }
         
         return result;

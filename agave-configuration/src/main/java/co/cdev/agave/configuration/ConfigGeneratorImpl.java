@@ -124,7 +124,7 @@ public class ConfigGeneratorImpl implements ConfigGenerator {
                     for (int i = 1; i < parameterAnnotations.length; i++) {
                         for (int j = 0; j < parameterAnnotations[i].length; j++) {
                             Class<? extends Annotation> annotationType = parameterAnnotations[i][j].annotationType();
-                            if (annotationType.isAssignableFrom(Param.class)) {
+                            if (Param.class.isAssignableFrom(annotationType)) {
                                 Param param = (Param) parameterAnnotations[i][j];
                                 
                                 Class<?> paramClass = candidateMethod.getParameterTypes()[i]; 

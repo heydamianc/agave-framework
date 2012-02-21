@@ -149,6 +149,39 @@ public class HandlerDescriptorTest {
     }
     
     @Test
+    public void testCompareTo_withDuplicatePathAndMethodAndSameNumberOfParameters() throws Exception {
+        HandlerDescriptor a = new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false, 
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>() {{
+                    add(new ParamDescriptorImpl(String.class, "a", null));
+                    add(new ParamDescriptorImpl(Integer.class, "b", null));
+                }});
+
+        HandlerDescriptor b = new HandlerDescriptorImpl(
+                handlerClass, 
+                handlerMethod, 
+                new URIPatternImpl("/login"), 
+                HttpMethod.GET, 
+                false,
+                false, 
+                (String) null, 
+                (Class<?>) null, 
+                new ArrayList<ParamDescriptor>() {{
+                    add(new ParamDescriptorImpl(String.class, "a", null));
+                    add(new ParamDescriptorImpl(String.class, "b", null));
+                }});
+        
+        Assert.assertTrue(a.compareTo(b) != 0 && b.compareTo(a) != 0);
+    }
+    
+    @Test
     public void testSerialize() throws Exception {
         HandlerDescriptor a = new HandlerDescriptorImpl(
                 handlerClass, 
