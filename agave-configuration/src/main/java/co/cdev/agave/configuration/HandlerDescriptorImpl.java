@@ -29,6 +29,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.sql.Date;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +37,6 @@ import java.util.logging.Logger;
 
 import co.cdev.agave.HttpMethod;
 import co.cdev.agave.URIPattern;
-import co.cdev.agave.conversion.NoopConverter;
 
 /**
  * A descriptor that serves as the configuration for the building of handlers
@@ -115,49 +115,69 @@ public class HandlerDescriptorImpl implements HandlerDescriptor {
         return workflowName;
     }
 
+    /**
+     * Establishes a basis of comparison between two handler descriptors. This is leveraged when
+     * choosing an appropriate handler to field a request.
+     */
     @Override
     public int compareTo(HandlerDescriptor that) {
         int result = uriPattern.compareTo(that.getURIPattern());
+        if (result != 0) 
+            return result;
         
-        if (result == 0) {
-            result = httpMethod.ordinal() - that.getHttpMethod().ordinal();
-        }
+        result = httpMethod.ordinal() - that.getHttpMethod().ordinal();
+        if (result != 0) 
+            return result;
         
-        if (result == 0) {
-            if (paramDescriptors.size() == that.getParamDescriptors().size()) {
-                Iterator<ParamDescriptor> thisParamDescriptorItr = paramDescriptors.iterator();
-                Iterator<ParamDescriptor> thatParamDescriptorItr = that.getParamDescriptors().iterator();
+        if (paramDescriptors.size() == that.getParamDescriptors().size()) {
+            Iterator<ParamDescriptor> thisParamDescriptorItr = paramDescriptors.iterator();
+            Iterator<ParamDescriptor> thatParamDescriptorItr = that.getParamDescriptors().iterator();
+            
+            while (thisParamDescriptorItr.hasNext() && thatParamDescriptorItr.hasNext()) {
+                int thisValue = getParamClassValue(thisParamDescriptorItr.next().getParamClass());
+                int thatValue = getParamClassValue(thatParamDescriptorItr.next().getParamClass());
                 
-                int thisValue = 0;
-                int thatValue = 0;
-                
-                while (thisParamDescriptorItr.hasNext() && thatParamDescriptorItr.hasNext()) {
-                    ParamDescriptor thisParamDescriptor = thisParamDescriptorItr.next();  
-                    
-                    if (thisParamDescriptor.getConverterClass() != null && thisParamDescriptor.getConverterClass() != NoopConverter.class) {
-                        thisValue += Math.pow(thisParamDescriptor.getParamClass().getCanonicalName().length(), 2);
-                    } else {
-                        thisValue += thisParamDescriptor.getParamClass().getCanonicalName().length();
-                    }
-                    
-                    ParamDescriptor thatParamDescriptor = thatParamDescriptorItr.next();
-                    
-                    if (thatParamDescriptor.getConverterClass() != null && thatParamDescriptor.getConverterClass() != NoopConverter.class) {
-                        thatValue += Math.pow(thatParamDescriptor.getParamClass().getCanonicalName().length(), 2);
-                    } else {
-                        thatValue += thatParamDescriptor.getParamClass().getCanonicalName().length();
-                    }
-                }
-                
-                result = -(thisValue - thatValue);
-            } else {
-                result = -(paramDescriptors.size() - that.getParamDescriptors().size());
+                if (thisValue != thatValue)
+                    return -(thisValue - thatValue);
             }
-        }
+        } else
+            return -(paramDescriptors.size() - that.getParamDescriptors().size());
         
-        return result;
+        return 0;
     }
 
+    /*
+     * This helps establish a hierarchy of parameter types so thatmore specific ones are chosen 
+     * earlier than less specific ones. 
+     */
+    private int getParamClassValue(Class<?> paramClass) {
+        int value = 0;
+
+        if (String.class.isAssignableFrom(paramClass)) {
+            value = 1;
+        } else if (Byte.class.isAssignableFrom(paramClass) || byte.class.isAssignableFrom(paramClass)) {
+            value = 2;
+        } else if (Character.class.isAssignableFrom(paramClass) || char.class.isAssignableFrom(paramClass)) {
+            value = 3;
+        } else if (Boolean.class.isAssignableFrom(paramClass) || boolean.class.isAssignableFrom(paramClass)) {
+            value = 4;
+        } else if (Integer.class.isAssignableFrom(paramClass) || int.class.isAssignableFrom(paramClass)) {
+            value = 5;
+        } else if (Long.class.isAssignableFrom(paramClass) || long.class.isAssignableFrom(paramClass)) {
+            value = 6;
+        } else if (Float.class.isAssignableFrom(paramClass) || float.class.isAssignableFrom(paramClass)) {
+            value = 7;
+        } else if (Double.class.isAssignableFrom(paramClass) || double.class.isAssignableFrom(paramClass)) {
+            value = 8;
+        } else if (Date.class.isAssignableFrom(paramClass)) {
+            value = 9;
+        } else {
+            value = 10;
+        }
+        
+        return value;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

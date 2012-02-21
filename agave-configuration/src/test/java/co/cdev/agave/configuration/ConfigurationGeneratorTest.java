@@ -5,17 +5,23 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import co.cdev.agave.HttpMethod;
+import co.cdev.agave.URIPatternImpl;
 import co.cdev.agave.conversion.DateConverter;
 import co.cdev.agave.conversion.IntegerConverter;
 import co.cdev.agave.conversion.LongConverter;
 import co.cdev.agave.conversion.NoopConverter;
+import co.cdev.agave.sample.SampleEndpoint;
 
 public class ConfigurationGeneratorTest {
 
@@ -90,13 +96,77 @@ public class ConfigurationGeneratorTest {
         }
     }
     
-    @Test
-    public void testGenerateConfig_expectCustomConverter() throws Exception {
+    @Test @SuppressWarnings("serial")
+    public void testGenerateConfig_withVaryingDegreesOfSpecificity() throws Exception {
         Config config = configGenerator.generateConfig();
-        Set<HandlerDescriptor> candidates = config.getCandidatesFor("/birds");
+        List<HandlerDescriptor> candidates = new ArrayList<HandlerDescriptor>(config.getCandidatesFor("/birds"));
         
         assertNotNull(candidates);
         assertEquals(4, candidates.size());
+        
+        Class<?> handlerClass = SampleEndpoint.class;
+        Method handlerMethod = handlerClass.getMethod("listBirds", RoutingContext.class, String.class, Date.class);
+        List<ParamDescriptor> paramDescriptors = new ArrayList<ParamDescriptor>() {{
+           add(new ParamDescriptorImpl(String.class, "token", NoopConverter.class));
+           add(new ParamDescriptorImpl(Date.class, "since", DateConverter.class));
+        }};
+        HandlerDescriptor expectedHandlerDescriptor = new HandlerDescriptorImpl(handlerClass, 
+                                                                                handlerMethod, 
+                                                                                new URIPatternImpl("/birds"), 
+                                                                                HttpMethod.GET, 
+                                                                                false,
+                                                                                false, 
+                                                                                (String) null, 
+                                                                                (Class<?>) null, 
+                                                                                paramDescriptors);
+        assertEquals(expectedHandlerDescriptor, candidates.get(0));
+        
+        handlerMethod = handlerClass.getMethod("listBirds", RoutingContext.class, String.class, int.class);
+        paramDescriptors = new ArrayList<ParamDescriptor>() {{
+            add(new ParamDescriptorImpl(String.class, "token", NoopConverter.class));
+            add(new ParamDescriptorImpl(int.class, "page", IntegerConverter.class));
+        }};
+        expectedHandlerDescriptor = new HandlerDescriptorImpl(handlerClass, 
+                                                              handlerMethod, 
+                                                              new URIPatternImpl("/birds"), 
+                                                              HttpMethod.GET, 
+                                                              false,
+                                                              false, 
+                                                              (String) null, 
+                                                              (Class<?>) null, 
+                                                              paramDescriptors);
+        
+        assertEquals(expectedHandlerDescriptor, candidates.get(1));
+        
+        handlerMethod = handlerClass.getMethod("listBirds", RoutingContext.class, String.class);
+        paramDescriptors = new ArrayList<ParamDescriptor>() {{
+            add(new ParamDescriptorImpl(String.class, "token", NoopConverter.class));
+        }};
+        expectedHandlerDescriptor = new HandlerDescriptorImpl(handlerClass, 
+                                                              handlerMethod, 
+                                                              new URIPatternImpl("/birds"), 
+                                                              HttpMethod.GET, 
+                                                              false,
+                                                              false, 
+                                                              (String) null, 
+                                                              (Class<?>) null, 
+                                                              paramDescriptors);
+        
+        assertEquals(expectedHandlerDescriptor, candidates.get(2));
+        
+        handlerMethod = handlerClass.getMethod("listBirds", RoutingContext.class);
+        paramDescriptors = new ArrayList<ParamDescriptor>();
+        expectedHandlerDescriptor = new HandlerDescriptorImpl(handlerClass, 
+                                                              handlerMethod, 
+                                                              new URIPatternImpl("/birds"), 
+                                                              HttpMethod.GET, 
+                                                              false,
+                                                              false, 
+                                                              (String) null, 
+                                                              (Class<?>) null, 
+                                                              paramDescriptors);
+        
+        assertEquals(expectedHandlerDescriptor, candidates.get(3));
     }
     
 }
