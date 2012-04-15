@@ -1,9 +1,9 @@
 package $package;
 
-import agave.Destination;
-import agave.Destinations;
-import agave.HandlerContext;
-import agave.HandlesRequestsTo;
+import co.cdev.agave.web.Destination;
+import co.cdev.agave.web.Destinations;
+import co.cdev.agave.Route;
+import co.cdev.agave.configuration.RoutingContext;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,11 +18,11 @@ public class WelcomeHandler {
      * @throws Exception if anything goes wrong
      * @return a destination object that wraps the index.jsp page
      */
-    @HandlesRequestsTo("/")
-    public Destination welcome(HandlerContext handlerContext) throws Exception {
-        HttpServletRequest request = handlerContext.getRequest();
+    @Route("/")
+    public Destination welcome(RoutingContext routingContext) throws Exception {
+        HttpServletRequest request = routingContext.getRequest();
 
-        request.setAttribute("world", System.getProperty("user.name"));
+        request.setAttribute("userName", System.getProperty("user.name"));
         request.setAttribute("contextPath", request.getContextPath());
 
         return Destinations.forward("/WEB-INF/jsp/index.jsp");

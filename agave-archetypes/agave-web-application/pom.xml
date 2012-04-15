@@ -12,8 +12,8 @@
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>basic-web-application</artifactId>
-  <name>Agave Archetypes: Basic Web Application</name>
+  <artifactId>agave-web-application</artifactId>
+  <name>Archetypes: Agave Web Application</name>
   <description>
     Maven archetype that provides the groundwork for building a webapp on top of Agave.
   </description>

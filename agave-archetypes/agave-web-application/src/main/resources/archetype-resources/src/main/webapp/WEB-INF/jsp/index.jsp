@@ -11,6 +11,6 @@
     </style>
   </head>
   <body>
-    <h1>Hello, ${requestScope.world}!</h1>
+    <h1>Hello, ${requestScope.userName}!</h1>
   </body>
 </html>

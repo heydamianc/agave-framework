@@ -12,7 +12,7 @@
   </parent>
   
   <modules>
-    <module>basic-web-application</module>
+    <module>agave-web-application</module>
   </modules>
   
   <modelVersion>4.0.0</modelVersion>
